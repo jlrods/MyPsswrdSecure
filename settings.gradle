@@ -1,0 +1,2 @@
+rootProject.name='MyPsswrdSecure'
+include ':app'
