@@ -1,5 +1,6 @@
 package io.github.jlrods.mypsswrdsecure;
 
+import android.database.Cursor;
 import android.util.Log;
 
 class Category {
@@ -60,4 +61,33 @@ class Category {
     public void setIcon(Icon icon) {
         this.icon = icon;
     }
+
+    //Other methods
+    //Method to extract a Category from a cursor object
+    public static Category extractCategory(Cursor c){
+        Log.d("Ent_ExtractCategory","Enter extractCategory method in the Category class.");
+        //Declare and initialize a null category object, the one to be returned by the method
+        Category category =null;
+        //Declare an int variable to hold the Category id retrieved from the cursor
+        int id;
+        //Declare a string object to hold the name attribute retrieved from the cursor
+        String name="";
+        //Retrieve the id value from the cursor object
+        id = c.getInt(0);
+        //Retrieve the name value from the cursor object
+        name = c.getString(1);
+        int icon;
+        icon = c.getInt(2);
+        if(icon > 0){
+            Icon iconObject = new Icon();
+            category = new Category (id, name, iconObject);
+        }else{
+            //Create a new Category object by using the no icon constructor
+            category = new Category(id,name);
+        }//End of if else statement
+
+        Log.d("Ext_ExtractCategory","Exit extractCategory method in the Category class.");
+        //Return the category object
+        return category;
+    }//End of extractCategory method
 }// End of Category class

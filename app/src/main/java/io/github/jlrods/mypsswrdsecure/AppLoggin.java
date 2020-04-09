@@ -15,20 +15,20 @@ class AppLoggin extends Loggin {
     //Constructors
     //Default Constructor
     public AppLoggin(){
+        super();
         Log.d("AppLogginDef_Ent","Enter AppLoggin Default Constructor");
-        this.userName = "";
-        this.psswrd = "";
         this.name = "";
         this.email = "";
         this.message = "";
         this.picture = null;
         Log.d("AppLoggin_Def_Ext","Exit AppLoggin Default Constructor");
     }
+
     //Constructor with no password given
-    public AppLoggin(String userName){
+    public AppLoggin(UserName userName){
         Log.d("AppLoggin_NoPass_Ent","Enter AppLoggin Constructor 2");
         this.userName = userName;
-        this.psswrd = "";
+        this.psswrd = null;
         this.name = "";
         this.email = "";
         this.message ="";
@@ -36,10 +36,9 @@ class AppLoggin extends Loggin {
         Log.d("AppLoggin_NoPass_Ext","Exit AppLoggin Constructor 2");
     }
     //Full Constructor
-    public AppLoggin(String userName, String psswrd, String name, String email,String message, Icon picture){
+    public AppLoggin(int _id, UserName userName, Psswrd psswrd, String name, String email,String message, Icon picture){
+        super(_id, userName, psswrd);
         Log.d("AppLog_Full_Ent","Enter AppLoggin Full Constructor");
-        this.userName = userName;
-        this.psswrd = psswrd;
         this.name = name;
         this.email = email;
         this.message = message;
@@ -48,6 +47,21 @@ class AppLoggin extends Loggin {
     }
 
     //Getter and Setter methods
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public String getMessage() {
         return message;
