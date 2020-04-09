@@ -10,7 +10,6 @@
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
     <string name="home_second">Home Second</string>
-
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign in or register</string>
@@ -19,4 +18,30 @@
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
+    <string name="petNameQuestion">What\'s the name of your first pet?</string>
+    <string name="firstCarQuestion">What was the model of your first car?</string>
+    <string name="grannyNameQuestion">What\'s your Granny\'s name?</string>
+    <string name="placeMarryQuestion">Where did you get married</string>
+    <string name="motherNameQuestion">What\'s your mother\'s maiden name?</string>
+    <string name="placeBirthQuestion">What\'s the name of the town where you were born?</string>
+    <string name="phoneNumberQuestion">Which phone number do you remember most from your childhood?</string>
+    <string name="streetNameQuestion" >What street did you grow up on?</string>
+    <string name="schoolNameQuestion">What is the name of your first school?</string>
+    <string name="dadMiddleNameQuestion">What is your father\'s middle name?</string>
+
+    <string name="SocialMedia">Social Media</string>
+    <string name="Entertainment">Entertainment</string>
+    <string name="Communication">Communication</string>
+    <string name="Internet">Internet</string>
+    <string name="Shopping">Shopping</string>
+    <string name="Travel">Travel</string>
+    <string name="Learning">Learning</string>
+    <string name="Food">Food</string>
+    <string name="Finance">Finance</string>
+    <string name="Insurance">Insurance</string>
+    <string name="JobHunting">Job Hunting</string>
+    <string name="Utilities">Utilities</string>
+    <string name="Work">Work</string>
+
+
 </resources>

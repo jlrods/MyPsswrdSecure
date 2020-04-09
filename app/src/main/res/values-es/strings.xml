@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MyPsswrdSecure</string>
+    <string name="navigation_drawer_open">Abrir menú de navegación</string>
+    <string name="navigation_drawer_close">Cerrar menú de navegación</string>
+    <string name="nav_header_title">MyPsswrdSecure App</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Menú de navegación</string>
+    <string name="action_settings">Configuración</string>
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Galería</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="home_second">Casa</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Clave</string>
+    <string name="action_sign_in">Iniciar sesion or registrarse</string>
+    <string name="action_sign_in_short">Iniciar sesión</string>
+    <string name="welcome">"Bievenido !"</string>
+    <string name="invalid_username">Nombre de usuarion inválido</string>
+    <string name="invalid_password">Clave de seguridad debe ser >5 caracteres</string>
+    <string name="login_failed">Inicio de sesión fallido</string>
+    <string name="petNameQuestion">Cuál es el nombre de tu mascota favorita?</string>
+    <string name="firstCarQuestion">Cuál fue el modelo de tu primer carro?</string>
+    <string name="grannyNameQuestion">Cuál es el nombre de tu abuela?</string>
+    <string name="placeMarryQuestion">Dónde te casaste?</string>
+    <string name="motherNameQuestion">Cuál es el nombre de soltera de tu mamá?</string>
+    <string name="placeBirthQuestion">En cuál ciudad o pueblo naciste?</string>
+    <string name="phoneNumberQuestion">Cuál número telefónico de tu niñéz recuerdas más?</string>
+    <string name="streetNameQuestion" >Cuál es el nombre de la calle en que creciste?</string>
+    <string name="dadMiddleNameQuestion">Cuál es el segundo nombre de tu papá?</string>
+    <string name="schoolNameQuestion">Cuál es el nomber de tu primera escula?</string>
+
+    <string name="SocialMedia">Social</string>
+    <string name="Entertainment">Entretenimiento</string>
+    <string name="Communication">Comunicación</string>
+    <string name="Internet">Internet</string>
+    <string name="Shopping">Compras</string>
+    <string name="Travel">Viajes</string>
+    <string name="Learning">Estudio</string>
+    <string name="Food">Comida</string>
+    <string name="Finance">Finanzas</string>
+    <string name="Insurance">Seguros</string>
+    <string name="JobHunting">Job Hunting</string>
+    <string name="Utilities">Búsqueda de Empleo</string>
+    <string name="Work">Trabajo</string>
+</resources>

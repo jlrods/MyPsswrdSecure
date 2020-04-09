@@ -8,6 +8,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
+//Class to manage all DB interaction
 class AccountsDB extends SQLiteOpenHelper {
 
     private Context context;
@@ -20,52 +21,68 @@ class AccountsDB extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         Log.d("Ent_DBOncreate","Enter onCreate method in AccountsDB class.");
-        //Create table to store app state
-        db.execSQL("CREATE TABLE APP (_id INTEGER PRIMARY KEY AUTOINCREMENT,currentCategory INTEGER ,\n" +
-                "showAllAccounts INTEGER,isFavoriteFilter INTEGER,isSearchFilter INTEGER,lastSearch TEXT);");
-        //Populate default state of app
-        db.execSQL("INSERT INTO APP VALUES(null,null,1,0,0,'')");
 
-        //Create table to store security answers
+        //Create table to store security answers. Leave empty as user has to create their own answers
         db.execSQL("CREATE TABLE ANSWER (_id INTEGER PRIMARY KEY AUTOINCREMENT,Value TEXT);");
 
-        //Create table to store security questions
-        db.execSQL("CREATE TABLE QUESTION (_id INTEGER PRIMARY KEY AUTOINCREMENT,Value TEXT);");
+        //Create table to store security questions (linked to Answer ID as Foreign key)"
+        db.execSQL("CREATE TABLE QUESTION (_id INTEGER PRIMARY KEY AUTOINCREMENT,Value TEXT,\n" +
+                "AnswerID INTEGER, FOREIGN KEY (AnswerID) REFERENCES ANSWER(_id));");
+        //Insert pre-defined suggested security questions in the DB. No answer associated to question yet.
+        db.execSQL("INSERT INTO QUESTION VALUES(null,'petNameQuestion',null);");
+        db.execSQL("INSERT INTO QUESTION VALUES(null,'firstCarQuestion',null);");
+        db.execSQL("INSERT INTO QUESTION VALUES(null,'grannyNameQuestion',null);");
+        db.execSQL("INSERT INTO QUESTION VALUES(null,'placeMarryQuestion',null);");
+        db.execSQL("INSERT INTO QUESTION VALUES(null,'motherNameQuestion',null);");
+        db.execSQL("INSERT INTO QUESTION VALUES(null,'placeBirthQuestion',null);");
+        db.execSQL("INSERT INTO QUESTION VALUES(null,'phoneNumberQuestion',null);");
+        db.execSQL("INSERT INTO QUESTION VALUES(null,'schoolNameQuestion',null);");
+        db.execSQL("INSERT INTO QUESTION VALUES(null,'streetNameQuestion',null);");
+        db.execSQL("INSERT INTO QUESTION VALUES(null,'dadMiddleNameQuestion',null);");
 
-
-        //Create intermediate table to associate several questions to one list of questions
-        db.execSQL("CREATE TABLE QUESTIONLIST (_id INTEGER PRIMARY KEY AUTOINCREMENT,Question1 INTEGER,\n" +
-                "                Question2 INTEGER, Question3 INTEGER,\n" +
-                "                FOREIGN KEY (Question1) REFERENCES QUESTION(_id),\n" +
-                "                FOREIGN KEY (Question2) REFERENCES QUESTION(_id),\n" +
-                "                FOREIGN KEY (Question3) REFERENCES QUESTION(_id));");
+        //Create intermediate table to associate several questions to one list of questions.
+        // Leave empty as user has to group their own questions and assign them to an account.
+        db.execSQL("CREATE TABLE QUESTIONLIST (_id INTEGER PRIMARY KEY AUTOINCREMENT,QuestionID1 INTEGER,\n" +
+                "QuestionID2 INTEGER, QuestionID3 INTEGER,\n" +
+                "FOREIGN KEY (QuestionID1) REFERENCES QUESTION(_id),\n" +
+                "FOREIGN KEY (QuestionID2) REFERENCES QUESTION(_id),\n" +
+                "FOREIGN KEY (QuestionID3) REFERENCES QUESTION(_id));");
 
         //Create intermediate table to link QuestionListID and QuestionID, this way all the questions in one list
-        // can be populated in one table.
+        // can be populated in one table. This solve QuestionID ambiguity issue.
+        // Leave empty as user has to group their own questions and link them to an account.
         db.execSQL("CREATE TABLE QUESTIONASSIGNMENT (_id INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
                 "QuestionListID INTEGER, QuestionID INTEGER,\n" +
                 "FOREIGN KEY (QuestionListID) REFERENCES QUESTIONLIST(_id),\n" +
                 "FOREIGN KEY (QuestionID) REFERENCES QUESTION(_id));");
 
         //Create table to store usernames for site loggins
+        // Leave empty as user has to create their own user names.
         db.execSQL("CREATE TABLE USERNAME (_id INTEGER PRIMARY KEY AUTOINCREMENT,Value TEXT);");
 
         //Create table to store passwords for site loggins
+        // Leave empty as user has to create their own passwords.
         db.execSQL("CREATE TABLE PSSWRD (_id INTEGER PRIMARY KEY AUTOINCREMENT,Value TEXT);");
 
         //Create table to store new icon/image locations (selected by user)
+        // Leave empty as pre populated icons
         db.execSQL("CREATE TABLE ICON (_id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT,Location TEXT);");
 
-        //Create table to store MyPsswrdSecure App user data
-        db.execSQL("CREATE TABLE APPLOGGIN (_id INTEGER PRIMARY KEY AUTOINCREMENT,UserName INTEGER, " +
-                "Psswrd INTEGER, Name TEXT, Email TEXT, Message TEXT, Picture INT);");
+        //Create table to store MyPsswrdSecure App Logging data
+        db.execSQL("CREATE TABLE APPLOGGIN (_id INTEGER PRIMARY KEY AUTOINCREMENT,UserNameID TEXT, \n" +
+                "PsswrdID TEXT,Name TEXT,Email TEXT,Message TEXT, PictureID INT,\n" +
+                "FOREIGN KEY (UserNameID) REFERENCES USERNAME(_id),\n" +
+                "FOREIGN KEY (PsswrdID) REFERENCES PSSWRD(_id),\n" +
+                "FOREIGN KEY (PictureID) REFERENCES ICON(_id));");
 
         //Create table to store the different categories an account can be associated to
-        db.execSQL("CREATE TABLE CATEGORY (_id INTEGER PRIMARY KEY AUTOINCREMENT,Name TEXT, Icon INTEGER);");
+        db.execSQL("CREATE TABLE CATEGORY (_id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, \n" +
+                "IconID INT, FOREIGN KEY (IconID) REFERENCES ICON(_id));");
         //Populate the Category table with some default category items
-        db.execSQL("INSERT INTO CATEGORY (Name) VALUES('Social Media');");
+        db.execSQL("INSERT INTO CATEGORY (Name) VALUES('SocialMedia');");
         db.execSQL("INSERT INTO CATEGORY (Name) VALUES('Entertainment');");
         db.execSQL("INSERT INTO CATEGORY (Name) VALUES('Communication');");
+        db.execSQL("INSERT INTO CATEGORY (Name) VALUES('Work');");
         db.execSQL("INSERT INTO CATEGORY (Name) VALUES('Internet');");
         db.execSQL("INSERT INTO CATEGORY (Name) VALUES('Shopping');");
         db.execSQL("INSERT INTO CATEGORY (Name) VALUES('Travel');");
@@ -73,12 +90,27 @@ class AccountsDB extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO CATEGORY (Name) VALUES('Food');");
         db.execSQL("INSERT INTO CATEGORY (Name) VALUES('Finance');");
         db.execSQL("INSERT INTO CATEGORY (Name) VALUES('Insurance');");
-        db.execSQL("INSERT INTO CATEGORY (Name) VALUES('Job Hunting');");
+        db.execSQL("INSERT INTO CATEGORY (Name) VALUES('JobHunting');");
         db.execSQL("INSERT INTO CATEGORY (Name) VALUES('Utilities');");
 
+        //Create table to store app state
+        db.execSQL("CREATE TABLE APPSTATE(_id INTEGER PRIMARY KEY AUTOINCREMENT,currentCategoryID INTEGER,\n" +
+                "showAllAccounts INTEGER,isFavoriteFilter INTEGER,isSearchFilter INTEGER,\n" +
+                "lastSearch TEXT, FOREIGN KEY (currentCategoryID) REFERENCES CATEGORY(_id));");
+        //Populate default state of app
+        db.execSQL("INSERT INTO APP VALUES(null,null,1,0,0,'');");
 
         //Create a table to store the accounts items
-        db.execSQL("");
+        // Leave empty as user has to create their accounts.
+        db.execSQL("CREATE TABLE ACCOUNTS(_id INTEGER PRIMARY KEY AUTOINCREMENT, UserNameID INTEGER, \n" +
+                "PsswrdID INTEGER, Name TEXT, CategoryID INTEGER, QuestionListID INTEGER,\n" +
+                "IconID INTEGER,  IsFavorite INTEGER, \n" +
+                "FOREIGN KEY (UserNameID) REFERENCES USERNAME(_id),\n" +
+                "FOREIGN KEY (PsswrdID) REFERENCES PSSWRD(_id),\n" +
+                "FOREIGN KEY (CategoryID) REFERENCES CATEGORY(_id),\n" +
+                "FOREIGN KEY (QuestionListID) REFERENCES QUESTIONLIST(_id),\n" +
+                "FOREIGN KEY (IconID) REFERENCES ICON(_id));");
+
         Log.d("Ext_DBOncreate","Exit onCreate method in AccountsDB class.");
     }//End of onCreate method
 
@@ -106,80 +138,6 @@ class AccountsDB extends SQLiteOpenHelper {
         }//End of try catch block
     }//End of runQuery method
 
-    //Method to extract a Category from a cursor object
-    public Icon extractIcon(Cursor c){
-        Log.d("Ent_ExtractIcon","Enter extractIcon method in the AccountsDB class.");
-        //Initialize local variables
-        Icon icon = null;
-        int _id;
-        String name ="";
-        String location ="";
-        //Retrieve the values from the cursor and assign them appropriately
-        _id = c.getInt(0);
-        name = c.getString(1);
-        location = c.getString(2);
-        //Create a new Icon object by calling full constructor
-        icon = new Icon(_id, name, location);
-        Log.d("Ext_ExtractIcon","Exit extractIcon method in the AccountsDB class.");
-        return icon;
-    }// End of extractIcon method
-
-    //Method to extract a Category from a cursor object
-    public Category extractCategory(Cursor c){
-        Log.d("Ent_ExtractCategory","Enter extractCategory method in the AccountsDB class.");
-        //Declare and initialize a null category object, the one to be returned by the method
-        Category category =null;
-        //Declare an int variable to hold the Category id retrieved from the cursor
-        int id;
-        //Declare a string object to hold the name attribute retrieved from the cursor
-        String name="";
-        //Retrieve the id value from the cursor object
-        id = c.getInt(0);
-        //Retrieve the name value from the cursor object
-        name = c.getString(1);
-        int icon;
-        icon = c.getInt(2);
-        if(icon > 0){
-            Icon iconObject = new Icon();
-            category = new Category (id, name, iconObject);
-        }else{
-            //Create a new Category object by using the no icon constructor
-            category = new Category(id,name);
-        }//End of if else statement
-
-        Log.d("Ext_ExtractCategory","Exit extractCategory method in the AccountsDB class.");
-        //Return the category object
-        return category;
-    }//End of extractCategory method
-
-    //Method to extract a Account from a cursor object
-   /* public void extractAccount(Cursor c){
-        Log.d("Ent_ExtractAccount","Enter extractAccount method in the AccountsDB class.");
-        //Declare and initialize a null category object, the one to be returned by the method
-        Category category =null;
-        //Declare an int variable to hold the Category id retrieved from the cursor
-        int id;
-        //Declare a string object to hold the name attribute retrieved from the cursor
-        String name="";
-        //Retrieve the id value from the cursor object
-        id = c.getInt(0);
-        //Retrieve the name value from the cursor object
-        name = c.getString(1);
-        int icon;
-        icon = c.getInt(2);
-        if(icon > 0){
-            Icon iconObject = new Icon();
-            category = new Category (id, name, iconObject);
-        }else{
-            //Create a new Category object by using the no icon constructor
-            category = new Category(id,name);
-        }//End of if else statement
-
-        Log.d("Ext_ExtractAccount","Exit extractAccount method in the AccountsDB class.");
-        //Return the category object
-        return category;
-    }//End of extractCategory method*/
-
     //Method to retrieve the list of categories stored on the database
     public ArrayList<Category> getCategoryList(){
         Log.d("Ent_getCategoryList","Enter getCategoryList method in the AccountsDB class.");
@@ -196,7 +154,7 @@ class AccountsDB extends SQLiteOpenHelper {
             //Loop through the cursor and extract each row as a Category object
             while(c.moveToNext()){
                 //Call method to extract the category
-                item = extractCategory(c);
+                item = Category.extractCategory(c);
                 //Add category to the Array list
                 list.add(item);
             }//End of while loop
@@ -207,7 +165,7 @@ class AccountsDB extends SQLiteOpenHelper {
 
 
     //Method to internally convert a boolean into a int number 1 or  0
-    public int toInt(boolean bool){
+    public static int toInt(boolean bool){
         Log.d("Ent_toInt","Enter toInt method in TasksDB class.");
         if(bool){
             Log.d("Ext_toInt","Exit toInt method in TasksDB class (Returned value 1 ).");
@@ -219,7 +177,7 @@ class AccountsDB extends SQLiteOpenHelper {
     }//End of toInt
 
     //Method to internally convert an int into a boolean true or false. Any value different from 0 will be true
-    public boolean toBoolean (int valueToConvert){
+    public static boolean toBoolean (int valueToConvert){
         Log.d("Ent_toBool","Enter toBoolean method in the TaskDB class.");
         boolean bool;
         if(valueToConvert==0){
