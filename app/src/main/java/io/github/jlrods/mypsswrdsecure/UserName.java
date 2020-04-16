@@ -9,6 +9,8 @@ import java.util.ArrayList;
 
 //Class to handle UsenName object definition
 class UserName extends StringValue {
+    //Attribute definition
+    private long createDate;
 
     //Method definition
 
@@ -19,6 +21,7 @@ class UserName extends StringValue {
 
     public UserName(int _id, String value){
         super(_id,value);
+        this.createDate = System.currentTimeMillis() ;
     }
 
     //Other methods
@@ -27,6 +30,14 @@ class UserName extends StringValue {
     public String toString() {
         Log.d("UsrName_ToStr_Ent","Enter UserValue ToString method");
         return "UserName ID: " + this._id +"\nName: " + this.value;
+    }
+
+    public long getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(long createDate) {
+        this.createDate = createDate;
     }
 
     //Method to extract an Answer from a cursor object

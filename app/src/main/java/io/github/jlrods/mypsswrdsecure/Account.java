@@ -17,42 +17,68 @@ class Account extends Loggin {
 
     //Constructors
     public Account(int _id, UserName userName, Psswrd psswrd, Category category,
-                   ArrayList<Question> questionList, Icon icon, boolean isFavorite){
+                   ArrayList<Question> questionList, Icon icon, boolean isFavorite, long dateChange){
         super(_id,userName, psswrd);
         Log.d("AcctFull_Ent","Enter Account Full Constructor");
         this.category = category;
         this.questionList = questionList;
         this.icon = icon;
         this.isFavorite = isFavorite;
+        this.dateCreated = System.currentTimeMillis();
+        this.dateChange = dateChange;
         Log.d("AcctFull_Ext","Exit Account Full Constructor");
     }
 
     public Account(){
-        this(0,null,null,null,null,null,false);
+        this(0,null,null,null,null,null,false,0);
         Log.d("AcctDef_Ext","Account Default Constructor called Full Account Constructor");
     }
 
     public Account(int _id, UserName userName, Psswrd psswrd, Category category){
-        this(_id,userName, psswrd,category,null,null,false);
+        this(_id,userName, psswrd,category,null,null,false,0);
         Log.d("Acct2_Ext","Account Constructor2 called Full Account Constructor");
+    }
+
+    public Account(int _id, UserName userName, Psswrd psswrd, Category category,long dateChange){
+        this(_id,userName, psswrd,category,null,null,false,dateChange);
+        Log.d("Acct2.1_Ext","Account Constructor2.1 called Full Account Constructor");
     }
 
     public Account(int _id, UserName userName, Psswrd psswrd, Category category,
                    ArrayList<Question> questionList, boolean isFavorite){
-        this(_id,userName, psswrd,category,questionList,null,isFavorite);
+        this(_id,userName, psswrd,category,questionList,null,isFavorite,0);
         Log.d("Acct3_Ext","Account Constructor3 called Full Account Constructor");
     }
 
     public Account(int _id, UserName userName, Psswrd psswrd, Category category,
+                   ArrayList<Question> questionList, boolean isFavorite, long dateChange){
+        this(_id,userName, psswrd,category,questionList,null,isFavorite,dateChange);
+        Log.d("Acct3.1_Ext","Account Constructor3.1 called Full Account Constructor");
+    }
+
+
+    public Account(int _id, UserName userName, Psswrd psswrd, Category category,
                    ArrayList<Question> questionList, Icon icon){
-        this(_id,userName, psswrd,category,questionList,icon,false);
+        this(_id,userName, psswrd,category,questionList,icon,false,0);
         Log.d("Acct4_Ext","Account Constructor4 called Full Account Constructor");
+    }
+
+    public Account(int _id, UserName userName, Psswrd psswrd, Category category,
+                   ArrayList<Question> questionList, Icon icon, long dateChange){
+        this(_id,userName, psswrd,category,questionList,icon,false,dateChange);
+        Log.d("Acct4.1_Ext","Account Constructor4.1 called Full Account Constructor");
     }
 
     public Account(int _id, UserName userName, Psswrd psswrd, Category category, Icon icon,
                    boolean isFavorite){
-        this(_id,userName, psswrd,category,null,icon,isFavorite);
+        this(_id,userName, psswrd,category,null,icon,isFavorite,0);
         Log.d("Acct5_Ext","Account Constructor5 called Full Account Constructor");
+    }
+
+    public Account(int _id, UserName userName, Psswrd psswrd, Category category, Icon icon,
+                   boolean isFavorite, long dateChange){
+        this(_id,userName, psswrd,category,null,icon,isFavorite,dateChange);
+        Log.d("Acct5.1_Ext","Account Constructor5.1 called Full Account Constructor");
     }
 
     //Getter and setter methods

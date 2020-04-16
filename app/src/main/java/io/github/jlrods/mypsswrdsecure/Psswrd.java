@@ -9,6 +9,8 @@ import java.util.ArrayList;
 
 // Class to handle Psswrd object efinition
 class Psswrd extends StringValue{
+    //Attribute definition
+    private long createDate;
     //Method definition
 
     //Constructor
@@ -17,7 +19,9 @@ class Psswrd extends StringValue{
     }
 
     public Psswrd(int _id, String value){
+
         super(_id,value);
+        this.createDate = System.currentTimeMillis() ;
     }
 
     @NonNull
