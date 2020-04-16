@@ -16,7 +16,46 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:layout_scrollFlags="scroll|enterAlways"/>
+
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/listPreferredItemHeight"
+            app:tabGravity="fill"
+            app:tabMode="fixed"
+            app:layout_scrollFlags="enterAlways">
+
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/TabItem1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:icon="@mipmap/ic_account_details_white_48dp"
+                android:text="@string/action_accounts"
+                />
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/TabItem2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:icon="@mipmap/ic_account_group_white_48dp"
+                android:text="@string/action_userNames"
+                />
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/TabItem3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:icon="@mipmap/ic_lock_outline_white_48dp"
+                android:text="@string/action_psswrds"
+                />
+
+        </com.google.android.material.tabs.TabLayout>
+
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -28,6 +67,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+        app:srcCompat="@android:drawable/ic_input_add" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

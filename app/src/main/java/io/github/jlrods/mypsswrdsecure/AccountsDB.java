@@ -58,11 +58,13 @@ class AccountsDB extends SQLiteOpenHelper {
 
         //Create table to store usernames for site loggins
         // Leave empty as user has to create their own user names.
-        db.execSQL("CREATE TABLE USERNAME (_id INTEGER PRIMARY KEY AUTOINCREMENT,Value TEXT);");
+        db.execSQL("CREATE TABLE USERNAME (_id INTEGER PRIMARY KEY AUTOINCREMENT,Value TEXT, \n" +
+                "dateCreated BIGINT);");
 
         //Create table to store passwords for site loggins
         // Leave empty as user has to create their own passwords.
-        db.execSQL("CREATE TABLE PSSWRD (_id INTEGER PRIMARY KEY AUTOINCREMENT,Value TEXT);");
+        db.execSQL("CREATE TABLE PSSWRD (_id INTEGER PRIMARY KEY AUTOINCREMENT,Value TEXT,\n" +
+                "dateCreated BIGINT);");
 
         //Create table to store new icon/image locations (selected by user)
         // Leave empty as pre populated icons
@@ -102,12 +104,12 @@ class AccountsDB extends SQLiteOpenHelper {
 
         //Create a table to store the accounts items
         // Leave empty as user has to create their accounts.
-        db.execSQL("CREATE TABLE ACCOUNTS(_id INTEGER PRIMARY KEY AUTOINCREMENT, UserNameID INTEGER, \n" +
-                "PsswrdID INTEGER, Name TEXT, CategoryID INTEGER, QuestionListID INTEGER,\n" +
-                "IconID INTEGER,  IsFavorite INTEGER, \n" +
+        db.execSQL("CREATE TABLE ACCOUNTS(_id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, \n" +
+                "CategoryID INTEGER , UserNameID INTEGER, PsswrdID INTEGER, QuestionListID INTEGER,\n" +
+                "IconID INTEGER,  IsFavorite INTEGER, , DateCreated INTEGER,\n" +
+                "FOREIGN KEY (CategoryID) REFERENCES CATEGORY(_id),\n" +
                 "FOREIGN KEY (UserNameID) REFERENCES USERNAME(_id),\n" +
                 "FOREIGN KEY (PsswrdID) REFERENCES PSSWRD(_id),\n" +
-                "FOREIGN KEY (CategoryID) REFERENCES CATEGORY(_id),\n" +
                 "FOREIGN KEY (QuestionListID) REFERENCES QUESTIONLIST(_id),\n" +
                 "FOREIGN KEY (IconID) REFERENCES ICON(_id));");
 

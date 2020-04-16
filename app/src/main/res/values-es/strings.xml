@@ -30,6 +30,7 @@
     <string name="dadMiddleNameQuestion">Cuál es el segundo nombre de tu papá?</string>
     <string name="schoolNameQuestion">Cuál es el nomber de tu primera escula?</string>
 
+    <!--    Category names-->
     <string name="SocialMedia">Social</string>
     <string name="Entertainment">Entretenimiento</string>
     <string name="Communication">Comunicación</string>
@@ -43,4 +44,42 @@
     <string name="JobHunting">Job Hunting</string>
     <string name="Utilities">Búsqueda de Empleo</string>
     <string name="Work">Trabajo</string>
+
+    <!--    TabBar Menu texts-->
+    <string name="about">Acerca...</string>
+    <string name="action_search">Buscar</string>
+    <string name="action_accounts">Cuentas</string>
+    <string name="action_userNames">Usuarios</string>
+    <string name="action_psswrds">Claves</string>
+
+    <!--    Add account layout icons-->
+    <string name="account_logo">Logo</string>
+    <string name="account_name">Nombre:</string>
+    <string name="account_cat">Categoría:</string>
+    <string name="account_userName">Nombre de usuario:</string>
+    <string name="account_psswrd">Clave:</string>
+    <string name="account_secQuestion">Preguntas de seguridad:</string>
+    <string name="account_isFavorite">Toque la estrella para Marcar/Desmarcar esta cuesta como Favorita</string>
+    <string name="account_new">Nuevo</string>
+    <string name="account_addQuestion">Agregar</string>
+    <string name="account_dateCreated">Fecha de creación:</string>
+    <string name="account_changePsswrd">Hay que cambiarla?</string>
+    <string name="account_dateChange">Fecha de cambio:</string>
+    <string name="account_nameHint">Escriba el nombre de la cuenta aquí...</string>
+
+    <!--    Security question spinner item-->
+    <string name="question_spinner_answer">Resp:</string>
+
+    <!--    Security Question List Activity-->
+    <string name="question_list_q1">Pregunta 1:</string>
+    <string name="question_list_q2">Pregunta 2:</string>
+    <string name="question_list_q3">Pregunta 3:</string>
+    <string name="question_list_answer">Respuesta:</string>
+
+    <string name="sample_text">4.- The \"+/-\" button allows to toggle between positive and negative numbers and
+        vice versa. This button can only be used when the Temperature property has been selected, as transforming
+        negative magnitudes of weight and volume does not make any sense.Negative sign can be set, even when the
+        input box is empty and has no numerical value yet. Negative values are only possible for Celsius and Fahrenheit scales,
+        since Kelvin is an absolute scale, which minimum point is zero. Minimum valid values for Celsius and Fahrenheit
+        are -273.15°C and -456.67°F, respectively .</string>
 </resources>

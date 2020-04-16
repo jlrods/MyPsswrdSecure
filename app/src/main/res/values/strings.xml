@@ -28,7 +28,7 @@
     <string name="streetNameQuestion" >What street did you grow up on?</string>
     <string name="schoolNameQuestion">What is the name of your first school?</string>
     <string name="dadMiddleNameQuestion">What is your father\'s middle name?</string>
-
+    <!--    Category names-->
     <string name="SocialMedia">Social Media</string>
     <string name="Entertainment">Entertainment</string>
     <string name="Communication">Communication</string>
@@ -43,5 +43,67 @@
     <string name="Utilities">Utilities</string>
     <string name="Work">Work</string>
 
+    <!--    TabBar Menu texts-->
+    <string name="about">About...</string>
+    <string name="action_search">Search</string>
+    <string name="action_accounts">Accounts</string>
+    <string name="action_userNames">User Names</string>
+    <string name="action_psswrds">Passwords</string>
+
+    <!--    Add account layout icons-->
+    <string name="account_logo">Logo</string>
+    <string name="account_name">Name:</string>
+    <string name="account_cat">Category:</string>
+    <string name="account_userName">User Name:</string>
+    <string name="account_psswrd">Password:</string>
+    <string name="account_secQuestion">Security questions:</string>
+    <string name="account_isFavorite">Click the star to Mark/Unmark this account as Favorite</string>
+    <string name="account_new">New</string>
+    <string name="account_addQuestion">Add</string>
+    <string name="account_dateCreated">Date created:</string>
+    <string name="account_changePsswrd">Has to be changed?</string>
+    <string name="account_dateChange">Change date:</string>
+    <string name="account_nameHint">Type the account name here...</string>
+
+    <!--    Security question spinner item-->
+    <string name="question_spinner_answer">Answ:</string>
+
+    <!--    Security Question List Activity-->
+    <string name="question_list_q1">Question 1:</string>
+    <string name="question_list_q2">Question 2:</string>
+    <string name="question_list_q3">Question 3:</string>
+    <string name="question_list_answer">Answer:</string>
+
+
+    <string name="sample_text">4.- The \"+/-\" button allows to toggle between positive and negative numbers and
+        vice versa. This button can only be used when the Temperature property has been selected, as transforming
+        negative magnitudes of weight and volume does not make any sense.Negative sign can be set, even when the
+        input box is empty and has no numerical value yet. Negative values are only possible for Celsius and Fahrenheit scales,
+        since Kelvin is an absolute scale, which minimum point is zero. Minimum valid values for Celsius and Fahrenheit
+        are -273.15°C and -456.67°F, respectively.
+    4.- The \"+/-\" button allows to toggle between positive and negative numbers and
+        vice versa. This button can only be used when the Temperature property has been selected, as transforming
+        negative magnitudes of weight and volume does not make any sense.Negative sign can be set, even when the
+        input box is empty and has no numerical value yet. Negative values are only possible for Celsius and Fahrenheit scales,
+        since Kelvin is an absolute scale, which minimum point is zero. Minimum valid values for Celsius and Fahrenheit
+        are -273.15°C and -456.67°F, respectively.
+    4.- The \"+/-\" button allows to toggle between positive and negative numbers and
+        vice versa. This button can only be used when the Temperature property has been selected, as transforming
+        negative magnitudes of weight and volume does not make any sense.Negative sign can be set, even when the
+        input box is empty and has no numerical value yet. Negative values are only possible for Celsius and Fahrenheit scales,
+        since Kelvin is an absolute scale, which minimum point is zero. Minimum valid values for Celsius and Fahrenheit
+        are -273.15°C and -456.67°F, respectively.
+    4.- The \"+/-\" button allows to toggle between positive and negative numbers and
+        vice versa. This button can only be used when the Temperature property has been selected, as transforming
+        negative magnitudes of weight and volume does not make any sense.Negative sign can be set, even when the
+        input box is empty and has no numerical value yet. Negative values are only possible for Celsius and Fahrenheit scales,
+        since Kelvin is an absolute scale, which minimum point is zero. Minimum valid values for Celsius and Fahrenheit
+        are -273.15°C and -456.67°F, respectively.
+    4.- The \"+/-\" button allows to toggle between positive and negative numbers and
+        vice versa. This button can only be used when the Temperature property has been selected, as transforming
+        negative magnitudes of weight and volume does not make any sense.Negative sign can be set, even when the
+        input box is empty and has no numerical value yet. Negative values are only possible for Celsius and Fahrenheit scales,
+        since Kelvin is an absolute scale, which minimum point is zero. Minimum valid values for Celsius and Fahrenheit
+        are -273.15°C and -456.67°F, respectively.</string>
 
 </resources>
