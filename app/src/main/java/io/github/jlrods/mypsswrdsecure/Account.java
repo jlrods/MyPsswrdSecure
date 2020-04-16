@@ -7,11 +7,12 @@ import java.util.ArrayList;
 
 class Account extends Loggin {
     // Attribute definition
-    Category category; // Account type
-    ArrayList<Question> questionList; // List of Question objects (up to 3 questions stored in DB)
-    Icon icon; // Icon object to store URI icon location
+    private Category category; // Account type
+    private ArrayList<Question> questionList; // List of Question objects (up to 3 questions stored in DB)
+    private Icon icon; // Icon object to store URI icon location
     boolean isFavorite; // Boolean attribute to identify the account as Favorite or not
-
+    private long dateCreated;
+    private long dateChange;
     //Method definition
 
     //Constructors
@@ -86,6 +87,22 @@ class Account extends Loggin {
 
     public void setFavorite(boolean favorite) {
         isFavorite = favorite;
+    }
+
+    public long getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(long dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public long getDateChange() {
+        return dateChange;
+    }
+
+    public void setDateChange(long dateChange) {
+        this.dateChange = dateChange;
     }
 
     //Other methods
