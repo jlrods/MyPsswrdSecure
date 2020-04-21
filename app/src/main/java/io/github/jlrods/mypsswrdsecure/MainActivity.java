@@ -3,6 +3,7 @@ package io.github.jlrods.mypsswrdsecure;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Menu;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -21,6 +22,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.UnsupportedEncodingException;
+
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
@@ -29,10 +32,15 @@ public class MainActivity extends AppCompatActivity {
     private Category currentCategory = null;
     private boolean isSearchFilter = false;
     private String lastSearchText ="";
+    private int counter=0;
+    private byte[] encrypted=null;
+    private String decrypted=null;
 
     //private RecyclerView recyclerView;
     //private RecyclerView.LayoutManager layoutManager;
     private TabLayout tabLayout;
+    Cryptographer cryptographer = new Cryptographer();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +52,25 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+                counter++;
+                if(counter<=1){
+                    encrypted =cryptographer.encryptText("jlrods@gmail.com");
+                    try {
+                        Toast.makeText(MainActivity.this, new String(encrypted,"UTF8"), Toast.LENGTH_LONG).show();
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+//                    encrypted =cryptographer.encryptText("jlrods@gmail.com");
+//                    Snackbar snackbar = Snackbar.make(view, new String(encrypted), Snackbar.LENGTH_LONG);
+//                    snackbar.setAction("Action", null).show();
+                    //Toast.makeText(MainActivity.this, new String(encrypted), Toast.LENGTH_LONG).show();
+                }else{
+                    decrypted = cryptographer.decryptText(encrypted,cryptographer.getIv());
+                    Toast.makeText(MainActivity.this, decrypted, Toast.LENGTH_LONG).show();
+                }
+
             }
         });
         tabLayout=(TabLayout)findViewById(R.id.tabs);
