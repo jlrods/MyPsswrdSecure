@@ -1,5 +1,6 @@
 package io.github.jlrods.mypsswrdsecure;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Menu;
@@ -21,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import java.io.UnsupportedEncodingException;
 
@@ -52,24 +54,11 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-                counter++;
-                if(counter<=1){
-                    encrypted =cryptographer.encryptText("jlrods@gmail.com");
-                    try {
-                        Toast.makeText(MainActivity.this, new String(encrypted,"UTF8"), Toast.LENGTH_LONG).show();
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
-//                    encrypted =cryptographer.encryptText("jlrods@gmail.com");
-//                    Snackbar snackbar = Snackbar.make(view, new String(encrypted), Snackbar.LENGTH_LONG);
-//                    snackbar.setAction("Action", null).show();
-                    //Toast.makeText(MainActivity.this, new String(encrypted), Toast.LENGTH_LONG).show();
-                }else{
-                    decrypted = cryptographer.decryptText(encrypted,cryptographer.getIv());
-                    Toast.makeText(MainActivity.this, decrypted, Toast.LENGTH_LONG).show();
-                }
+                //Declare and instantiate a new intent object
+                Intent i= new Intent(MainActivity.this,SelectLogActivity.class);
+                //Add extras to the intent object, specifically the current category where the add button was pressed from
+                //Start the addTaskActivity class
+                startActivity(i);
 
             }
         });
@@ -91,6 +80,37 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.NestedScollView);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
+    }
+
+
+    public void testRVLogo(){
+        //Declare and instantiate a new intent object
+        Intent i= new Intent(MainActivity.this,SelectLogActivity.class);
+        //Add extras to the intent object, specifically the current category where the add button was pressed from
+        //Start the addTaskActivity class
+        startActivity(i);
+    }
+
+    private void testCriptogrpher(){
+        //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+        counter++;
+        if(counter<=1){
+            encrypted =cryptographer.encryptText("jlrods@gmail.com");
+            try {
+                Toast.makeText(MainActivity.this, new String(encrypted,"UTF8"), Toast.LENGTH_LONG).show();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+//                    encrypted =cryptographer.encryptText("jlrods@gmail.com");
+//                    Snackbar snackbar = Snackbar.make(view, new String(encrypted), Snackbar.LENGTH_LONG);
+//                    snackbar.setAction("Action", null).show();
+            //Toast.makeText(MainActivity.this, new String(encrypted), Toast.LENGTH_LONG).show();
+        }else{
+            decrypted = cryptographer.decryptText(encrypted,cryptographer.getIv());
+            Toast.makeText(MainActivity.this, decrypted, Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
