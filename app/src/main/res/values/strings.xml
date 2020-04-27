@@ -74,6 +74,12 @@
     <string name="question_list_q3">Question 3:</string>
     <string name="question_list_answer">Answer:</string>
 
+    <!--    Menu Icon texts -->
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+
+    <string name="logo_list_header">Pick a logo for your account:</string>
+
 
     <string name="sample_text">4.- The \"+/-\" button allows to toggle between positive and negative numbers and
         vice versa. This button can only be used when the Temperature property has been selected, as transforming

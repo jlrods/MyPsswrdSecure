@@ -9,6 +9,7 @@ class Icon extends StringValue{
 
     //Attribute definition
     String location; // File system location (URI)
+    boolean isSelected; // Bool flat to determine if icon has been selected on RecyclerView
 
     //Method definition
 
@@ -17,12 +18,14 @@ class Icon extends StringValue{
         super();
         Log.d("Icon_Def_Ent","Enter Icon Default Constructor");
         this.location = "";
+        this.isSelected = false;
         Log.d("Icon_Full_Ext","Exit Icon Default Constructor");
     }
-    public Icon(int _id, String name, String location){
+    public Icon(int _id, String name, String location,boolean isSelected){
         super(_id,name);
         Log.d("Icon_Full_Ent","Enter Icon Full Constructor");
         this.location = location;
+        this.isSelected = isSelected;
         Log.d("Icon_Full_Ext","Exit Icon Full Constructor");
     }
 
@@ -51,6 +54,14 @@ class Icon extends StringValue{
         return location;
     }
 
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
+
     //Other methods
     public Icon extractIcon(Cursor c){
         Log.d("Ent_ExtractIcon","Enter extractIcon method in the Icon class.");
@@ -61,7 +72,7 @@ class Icon extends StringValue{
         ArrayList<Object> attributes = this.extractStrValue(c);
         location = c.getString(2);
         //Create a new Icon object by calling full constructor
-        icon = new Icon((int) attributes.get(0), (String) attributes.get(1), location);
+        icon = new Icon((int) attributes.get(0), (String) attributes.get(1), location,false);
         Log.d("Ext_ExtractIcon","Exit extractIcon method in the Icon class.");
         return icon;
     }// End of extractIcon method
