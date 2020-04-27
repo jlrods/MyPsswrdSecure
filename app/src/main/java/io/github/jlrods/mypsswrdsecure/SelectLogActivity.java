@@ -48,11 +48,7 @@ public class SelectLogActivity extends AppCompatActivity {
             }//End of OnClick method
         });
         rvLogos.setAdapter(iconAdapter);
-        //rvLogos.setLayoutManager(new LinearLayoutManager(this));
         rvLogos.setLayoutManager(new StaggeredGridLayoutManager(2,RecyclerView.VERTICAL));
-        RecyclerView.ItemDecoration itemDecoration =  new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
-        rvLogos.addItemDecoration(itemDecoration);
-        //rvLogos.setItemAnimator(new FadeInAnimator());
         Log.d("SelLogOnCreate","Exit  onCreate method in SelectLogoActivity class.");
     }//End of onCreate
 
