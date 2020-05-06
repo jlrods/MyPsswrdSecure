@@ -9,12 +9,12 @@ import android.util.Log;
 import java.util.ArrayList;
 
 //Class to manage all DB interaction
-class AccountsDB extends SQLiteOpenHelper {
+public class AccountsDB extends SQLiteOpenHelper {
 
     private Context context;
     //Default constructor
     public AccountsDB(Context context){
-        super(context, "Task Database",null, 1);
+        super(context, "Accounts Database",null, 1);
         this.context = context;
     }//End of default constructor
 
@@ -59,12 +59,12 @@ class AccountsDB extends SQLiteOpenHelper {
         //Create table to store usernames for site loggins
         // Leave empty as user has to create their own user names.
         db.execSQL("CREATE TABLE USERNAME (_id INTEGER PRIMARY KEY AUTOINCREMENT,Value TEXT, \n" +
-                "dateCreated BIGINT);");
+                "DateCreated BIGINT);");
 
         //Create table to store passwords for site loggins
         // Leave empty as user has to create their own passwords.
         db.execSQL("CREATE TABLE PSSWRD (_id INTEGER PRIMARY KEY AUTOINCREMENT,Value TEXT,\n" +
-                "dateCreated BIGINT);");
+                "DateCreated BIGINT);");
 
         //Create table to store new icon/image locations (selected by user)
         // Leave empty as pre populated icons
@@ -97,21 +97,38 @@ class AccountsDB extends SQLiteOpenHelper {
 
         //Create table to store app state
         db.execSQL("CREATE TABLE APPSTATE(_id INTEGER PRIMARY KEY AUTOINCREMENT,currentCategoryID INTEGER,\n" +
-                "showAllAccounts INTEGER,isFavoriteFilter INTEGER,isSearchFilter INTEGER,\n" +
+                "currentTab INTEGER,showAllAccounts INTEGER,isFavoriteFilter INTEGER,isSearchFilter INTEGER,\n" +
                 "lastSearch TEXT, FOREIGN KEY (currentCategoryID) REFERENCES CATEGORY(_id));");
         //Populate default state of app
-        db.execSQL("INSERT INTO APP VALUES(null,null,1,0,0,'');");
+        db.execSQL("INSERT INTO APPSTATE VALUES(null,null,1,1,0,0,'');");
 
         //Create a table to store the accounts items
         // Leave empty as user has to create their accounts.
         db.execSQL("CREATE TABLE ACCOUNTS(_id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, \n" +
                 "CategoryID INTEGER , UserNameID INTEGER, PsswrdID INTEGER, QuestionListID INTEGER,\n" +
-                "IconID INTEGER,  IsFavorite INTEGER, , DateCreated INTEGER,\n" +
+                "IconID INTEGER,  IsFavorite INTEGER, DateCreated BIGINT, DateChange BIGINT,\n" +
                 "FOREIGN KEY (CategoryID) REFERENCES CATEGORY(_id),\n" +
                 "FOREIGN KEY (UserNameID) REFERENCES USERNAME(_id),\n" +
                 "FOREIGN KEY (PsswrdID) REFERENCES PSSWRD(_id),\n" +
                 "FOREIGN KEY (QuestionListID) REFERENCES QUESTIONLIST(_id),\n" +
                 "FOREIGN KEY (IconID) REFERENCES ICON(_id));");
+
+        db.execSQL("INSERT INTO USERNAME (Value, DateCreated) VALUES('jlrods',1588167878639);");
+        db.execSQL("INSERT INTO USERNAME (Value, DateCreated) VALUES('jlrods@gmail.com',1588167878640);");
+        db.execSQL("INSERT INTO USERNAME (Value, DateCreated) VALUES('j_rodriguez',1588167878641);");
+        db.execSQL("INSERT INTO USERNAME (Value, DateCreated) VALUES('j_rodriguez@modularauto.ie',1588167878642);");
+
+        db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('Machito88',1588167878639);");
+        db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('JoseLeonardo',1588167878640);");
+        db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('Paracotos12!',1588167878641);");
+        db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('Roraima2020!',1588167878642);");
+
+
+        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'Modular',4,4,4,null,0,0,1588167878642,0);");
+        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'Integro',4,4,3,null,0,0,1588167878642,0);");
+        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'TMS',4,4,2,null,0,0,1588167878642,0);");
+        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'Gmail',4,2,3,null,0,0,1588167878642,0);");
+        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'Facebook',4,2,1,null,0,0,1588167878642,0);");
 
         Log.d("Ext_DBOncreate","Exit onCreate method in AccountsDB class.");
     }//End of onCreate method
@@ -140,6 +157,29 @@ class AccountsDB extends SQLiteOpenHelper {
         }//End of try catch block
     }//End of runQuery method
 
+    //Method to get the list of user names from the DB
+    public Cursor getUserNameList(){
+        return  this.runQuery("SELECT * FROM USERNAME");
+    }
+    //Method to get the list of accounts from the DB
+    public Cursor getAccountsList(){
+
+        return  this.runQuery("SELECT * FROM ACCOUNTS");
+    }
+    //Method to get the list of passwords from the DB
+    public Cursor getPsswrdList(){
+
+        return  this.runQuery("SELECT * FROM PSSWRD");
+    }
+    //Method to get the number of times a specific user name is being used in different accounts as per the DB
+    public int getTimesUsedUserName(int userNameID){
+        return this.runQuery("SELECT * FROM ACCOUNTS WHERE UserNameID = "+userNameID).getCount();
+    }
+    //Method to get the number of times a specific password is being used in different accounts as per the DB
+    public int getTimesUsedPsswrd(int psswrd){
+        return this.runQuery("SELECT * FROM ACCOUNTS WHERE PsswrdID = "+psswrd).getCount();
+    }
+
     //Method to retrieve the list of categories stored on the database
     public ArrayList<Category> getCategoryList(){
         Log.d("Ent_getCategoryList","Enter getCategoryList method in the AccountsDB class.");
@@ -164,6 +204,72 @@ class AccountsDB extends SQLiteOpenHelper {
         Log.d("Ext_getCategoryList","Exit getCategoryList method in the TaskDB class.");
         return list;
     }//End of getGroceryList method
+
+    //Method used to break a string down into multiple pieces when to allow the apostrophe to be part of the string
+    public String includeApostropheEscapeChar(String text){
+        Log.d("ApostEscCharString","Enter includeApostropheEscapeChar method in AccountsDB class.");
+        String textWithEscChar = "";
+        char apostrophe = '\'';
+        //int lastFoundPosition = 0;
+        //Iterate through the string to find the apostrophe and replace it with double apostrophe
+        for(int i=0;i<text.length();i++){
+            char c  = text.charAt(i);
+            if(c == apostrophe){
+                //If it is an apostrophe, include an extra one
+                textWithEscChar += "''";
+            }else{
+                //Otherwise, copy th e current character to new string
+                textWithEscChar+= text.charAt(i);
+            }
+        }
+        Log.d("ApostEscCharString","Exit includeApostropheEscapeChar method in AccountsDB class.");
+        return textWithEscChar;
+    }//End of includeApostropheEscapeChar method
+
+
+    //Method to update AppState in DB
+    public boolean updateAppState(int currentCategory,int currentTab,int showAllAccounts,int isFavoriteFilter,int isSearchFilter, String lastSearchText){
+        Log.d("UpdateState","Enter the updateAppState method in the AccountsDB class.");
+        boolean success = false;
+        Cursor appState;
+        //Declare and instantiate a new database object to handle the database operations
+        SQLiteDatabase db = getWritableDatabase();
+        appState = this.runQuery("SELECT * FROM APPSTATE");
+        //Declare string for the fist part of sql query
+        String updateState ="UPDATE APPSTATE SET ";
+        //Prepare lastSearchTask and lastSearchGrocery text before sql is run --> include escape character for apostrophe
+        if(lastSearchText.contains("'")){
+            lastSearchText = this.includeApostropheEscapeChar(lastSearchText);
+        }//End of if statement
+        //Form all the query fields section
+        String fields = " currentCategoryID = " + currentCategory + ","+
+                " currentTab = " + currentTab+ ","+
+                " showAllAccounts = "+ showAllAccounts + ","+
+                " isFavoriteFilter = "+ isFavoriteFilter + ","+
+                " isSearchFilter = " + isSearchFilter + ","+
+                " lastSearch = '" + lastSearchText+ "'";
+        //String to hold the where part of the query
+        String whereId = " WHERE _id = ";
+        //String to hold the complete sql query
+        String sql = "";
+        //get next app state (only one should be saved)
+        if(appState.moveToNext()){
+            sql = updateState+fields+ whereId+appState.getInt(0);
+        }
+        //Try Catch block to execute the sql command to update corresponding table
+        try{
+            //Run the query and change success to true if no issues
+            db.execSQL(sql);
+            success = true;
+            Log.d("UpdateState","Exit successfully the updateAppState method in the Accounts class.");
+        }catch (Exception e) {
+            //Log the exception message
+            Log.d("UpdateState","Exit the updateAppState method in the Accounts class with exception: "+e.getMessage());
+        }
+        finally{
+            return success;
+        }//End of try and catch block
+    }//End of updateAppState
 
 
     //Method to internally convert a boolean into a int number 1 or  0

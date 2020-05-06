@@ -46,10 +46,10 @@ abstract class StringValue {
 
     //Other methods
     //Method to extract a StringValue object from a cursor object
-    protected ArrayList<Object> extractStrValue(Cursor c){
+    protected static ArrayList<Object> extractStrValue(Cursor c){
         Log.d("Ent_ExtractStrValue","Enter extractStrValue method in the StringValue class.");
         //Initialize local variables
-        ArrayList<Object> attributes = null;
+        ArrayList<Object> attributes = new ArrayList<>();
         int _id;
         String value ="";
         //Retrieve the values from the cursor and assign them appropriately

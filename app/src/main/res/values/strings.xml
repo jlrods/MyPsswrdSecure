@@ -78,8 +78,12 @@
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>
 
+    <!--    Select Logo Activity-->
     <string name="logo_list_header">Pick a logo for your account:</string>
 
+    <!--    User/Password Recyclerviewer elements layout -->
+    <string name="strVal_times_used">Times used:</string>
+    <string name="strVal_date_created">Created on:</string>
 
     <string name="sample_text">4.- The \"+/-\" button allows to toggle between positive and negative numbers and
         vice versa. This button can only be used when the Temperature property has been selected, as transforming
