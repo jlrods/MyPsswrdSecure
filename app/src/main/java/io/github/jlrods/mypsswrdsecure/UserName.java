@@ -10,7 +10,7 @@ import java.util.ArrayList;
 //Class to handle UsenName object definition
 class UserName extends StringValue {
     //Attribute definition
-    private long createDate;
+    protected long dateCreated;
 
     //Method definition
 
@@ -21,7 +21,7 @@ class UserName extends StringValue {
 
     public UserName(int _id, String value){
         super(_id,value);
-        this.createDate = System.currentTimeMillis() ;
+        this.dateCreated = System.currentTimeMillis() ;
     }
 
     //Other methods
@@ -32,21 +32,21 @@ class UserName extends StringValue {
         return "UserName ID: " + this._id +"\nName: " + this.value;
     }
 
-    public long getCreateDate() {
-        return createDate;
+    public long getDateCreated() {
+        return dateCreated;
     }
 
-    public void setCreateDate(long createDate) {
-        this.createDate = createDate;
+    public void setDateCreated(long dateCreated) {
+        this.dateCreated = dateCreated;
     }
 
     //Method to extract an Answer from a cursor object
-    public UserName extractUserName(Cursor c){
+    public static UserName extractUserName(Cursor c){
         Log.d("Ent_ExtractUser","Enter extractUserName method in the UserName class.");
         //Initialize local variables
         UserName userName = null;
         //Call common method to extract basic StringValue object data from a cursor
-        ArrayList<Object> attributes = this.extractStrValue(c);
+        ArrayList<Object> attributes = extractStrValue(c);
         //Create a new Icon object by calling full constructor
         userName = new UserName((int) attributes.get(0), (String) attributes.get(1));
         Log.d("Ext_ExtractUser","Exit extractUserName method in the UserName class.");

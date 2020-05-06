@@ -17,9 +17,7 @@ class IconAdapter extends RecyclerView.Adapter<IconAdapter.ViewHolder> {
 
     private ArrayList<Icon> iconList;
     private View.OnClickListener listener;
-    //int selectedPosition=  RecyclerView.NO_POSITION;
-    protected LayoutInflater inf;
-    protected static SparseBooleanArray itemStateArray= new SparseBooleanArray();
+    private static SparseBooleanArray itemStateArray= new SparseBooleanArray();
     private Context context;
 
     // Pass in the contact array into the constructor

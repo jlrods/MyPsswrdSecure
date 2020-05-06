@@ -7,44 +7,45 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/app_bar_main">
 
+
     <fragment
         android:id="@+id/nav_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:defaultNavHost="true"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:navGraph="@navigation/mobile_navigation">
 
-        <androidx.core.widget.NestedScrollView
-            android:id="@+id/NestedScollView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            app:defaultNavHost="true"
-            app:navGraph="@navigation/mobile_navigation"
-            tools:layout_editor_absoluteX="-16dp"
-            tools:layout_editor_absoluteY="-225dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        <!--        <androidx.core.widget.NestedScrollView-->
+        <!--            android:id="@+id/NestedScollView"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="match_parent"-->
+        <!--            app:layout_behavior="@string/appbar_scrolling_view_behavior"-->
+        <!--            app:defaultNavHost="true"-->
+        <!--            app:navGraph="@navigation/mobile_navigation"-->
+        <!--            tools:layout_editor_absoluteX="-16dp"-->
+        <!--            tools:layout_editor_absoluteY="-225dp">-->
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/sample_text" />
+        <!--            <LinearLayout-->
+        <!--                android:layout_width="match_parent"-->
+        <!--                android:layout_height="match_parent"-->
+        <!--                android:orientation="vertical"-->
+        <!--                app:layout_behavior="@string/appbar_scrolling_view_behavior">-->
 
-            </LinearLayout>
+        <!--                <TextView-->
+        <!--                    android:layout_width="wrap_content"-->
+        <!--                    android:layout_height="wrap_content"-->
+        <!--                    android:text="@string/sample_text" />-->
 
-        </androidx.core.widget.NestedScrollView>
+        <!--            </LinearLayout>-->
+
+        <!--        </androidx.core.widget.NestedScrollView>-->
 
     </fragment>
-
 
 
     <!--

@@ -7,40 +7,66 @@ import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 
-// Class to handle Psswrd object efinition
-class Psswrd extends StringValue{
+// Class to handle Psswrd object definition
+class Psswrd extends UserName{
     //Attribute definition
-    private long createDate;
+    PsswrdStrength strength;// Attribute that handles how strong a password is
     //Method definition
 
     //Constructor
     public Psswrd(){
-        super();
+        this(0,"", PsswrdStrength.WEAK);
     }
 
     public Psswrd(int _id, String value){
-
-        super(_id,value);
-        this.createDate = System.currentTimeMillis() ;
+        this(_id,value, PsswrdStrength.WEAK);
     }
+
+    public Psswrd(int _id, String value, PsswrdStrength strength){
+        super(_id,value);
+        Log.d("PsswrdFullConst","Enter Full Constructor of Psswrd class .");
+        this.strength = strength;
+        Log.d("PsswrdFullConst","Exit Full Constructor of Psswrd class .");
+    }//End of Psswrd full constructor
 
     @NonNull
     @Override
     public String toString() {
         Log.d("Psswrd_ToStr_Ent","Enter Psswrd class ToString method");
-        return "Password ID: " + this._id +"\nValue: " + this.value;
+        return "Password ID: " + this._id +"\nValue: " + this.value+"\nStrength: "+this.strength.toString();
+    }//End of toString method
+
+    public PsswrdStrength getStrength() {
+        return strength;
     }
 
-    //Method to extract a passwrod from a cursor object
-    public Psswrd extractPsswrd(Cursor c){
+    public void setStrength(PsswrdStrength strength) {
+        this.strength = strength;
+    }
+
+    //Method to extract a password from a cursor object
+    public static Psswrd extractPsswrd(Cursor c){
         Log.d("Ent_ExtractPsswrd","Enter extractPsswrd method in the Psswrd class.");
         //Initialize local variables
         Psswrd psswrd = null;
         //Call common method from parent class to extract basic StringValue object data from a cursor
-        ArrayList<Object> attributes = this.extractStrValue(c);
-        //Create a new Icon object by calling full constructor
-        psswrd = new Psswrd((int) attributes.get(0), (String) attributes.get(1));
+        ArrayList<Object> attributes = extractStrValue(c);
+        //Create a new psswrd object by calling full constructor
+        psswrd = new Psswrd((int) attributes.get(0), (String) attributes.get(1), definePsswrdStrength((String) attributes.get(1)));
+
         Log.d("Ext_ExtractPsswrd","Exit extractPsswrd method in the Psswrd class.");
         return psswrd;
     }// End of extractPsswrd method
+
+
+    public static PsswrdStrength definePsswrdStrength(String psswrd){
+        //FIXME: To be upaated with better password strength assessment algorithm
+        if(psswrd.contains("!")){
+            return PsswrdStrength.STRONG;
+        }else if(psswrd.contains("8")){
+            return  PsswrdStrength.MEDIUM;
+        }else{
+            return  PsswrdStrength.WEAK;
+        }
+    }//End of definePsswrdStrength
 }// End of Psswrd class
