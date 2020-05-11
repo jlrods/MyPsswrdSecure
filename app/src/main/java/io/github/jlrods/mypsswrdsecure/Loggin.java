@@ -10,8 +10,10 @@ abstract class Loggin {
 
     //Attributes definition
     protected int _id; //DB unique ID
+    protected String name;
     protected UserName userName;
     protected Psswrd psswrd;
+
 
     // Methods definition
 
@@ -19,20 +21,29 @@ abstract class Loggin {
     protected Loggin(){
         Log.d("LogginDef_Ent","Enter Loggin Default Constructor");
         this._id = 0;
+        this.name="";
         this.userName = null;
         this.psswrd = null;
         Log.d("LogginDef_Ext","Exit Loggin Default Constructor");
     }
 
-    protected Loggin(int _id, UserName userName, Psswrd psswrd){
+    protected Loggin(int _id, String name, UserName userName, Psswrd psswrd){
         Log.d("LogginFull_Ent","Enter Loggin Full Constructor");
         this._id = _id;
+        this.name = name;
         this.userName = userName;
         this.psswrd = psswrd;
         Log.d("LogginFull_Ext","Exit Loggin Full Constructor");
     }
 
     //Getter and setters
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
     protected int get_id() {
         return _id;
     }
@@ -61,15 +72,18 @@ abstract class Loggin {
     protected static ArrayList<Object> extractLoggin(Cursor c){
         Log.d("Ent_ExtractLoggin","Enter extractLoggin method in the Loggin abstract class.");
         //Initialize local variables
-        ArrayList<Object> attributes = null;
+        ArrayList<Object> attributes = new ArrayList<>();
         int _id;
-        String userNameValue ="";
-        String psswrdValue ="";
+        String name="";
+        int userNameValue;
+        int psswrdValue;
         //Retrieve the values from the cursor and assign them appropriately
         _id = c.getInt(0);
-        userNameValue = c.getString(1);
-        psswrdValue = c.getString(2);
+        name = c.getString(1);
+        userNameValue = c.getInt(3);
+        psswrdValue = c.getInt(4);
         attributes.add(_id);
+        attributes.add(name);
         attributes.add(userNameValue);
         attributes.add(psswrdValue);
         //Create a new Icon object by calling full constructor

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 class IconAdapter extends RecyclerView.Adapter<IconAdapter.ViewHolder> {
 
+    //Attribute definition
     private ArrayList<Icon> iconList;
     private View.OnClickListener listener;
     private static SparseBooleanArray itemStateArray= new SparseBooleanArray();

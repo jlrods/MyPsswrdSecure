@@ -30,6 +30,7 @@ class Icon extends StringValue{
     }
 
     //Getters and Setters
+
     public void set_id(int _id) {
         this._id = _id;
     }
@@ -63,13 +64,13 @@ class Icon extends StringValue{
     }
 
     //Other methods
-    public Icon extractIcon(Cursor c){
+    public static Icon extractIcon(Cursor c){
         Log.d("Ent_ExtractIcon","Enter extractIcon method in the Icon class.");
         //Initialize local variables
         Icon icon = null;
         String location ="";
         //Call common method from parent class to extract basic StringValue object data from a cursor
-        ArrayList<Object> attributes = this.extractStrValue(c);
+        ArrayList<Object> attributes = extractStrValue(c);
         location = c.getString(2);
         //Create a new Icon object by calling full constructor
         icon = new Icon((int) attributes.get(0), (String) attributes.get(1), location,false);

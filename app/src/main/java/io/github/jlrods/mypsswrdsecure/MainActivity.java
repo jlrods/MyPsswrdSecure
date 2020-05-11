@@ -2,6 +2,7 @@ package io.github.jlrods.mypsswrdsecure;
 
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,6 +23,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+
 import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -44,7 +47,12 @@ public class MainActivity extends AppCompatActivity {
 
     //private RecyclerView recyclerView;
     //private RecyclerView.LayoutManager layoutManager;
-    private TabLayout tabLayout;
+    private TabLayout tabLayout = null;
+    private int idRes;
+    private static Icon myPsswrdSecureLogo = null;
+    private static AccountsDB accounts = null;
+    private static ArrayList<Category> categoryList = null;
+
 
 
     Cryptographer cryptographer = new Cryptographer();
@@ -69,8 +77,14 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        Resources r = getResources();
+        this.idRes = r.getIdentifier("logo_google","drawable",getPackageName());
+        if(idRes ==0) {
+
+        }
         tabLayout=(TabLayout)findViewById(R.id.tabs);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 //RecyclerView rv = null;
@@ -81,6 +95,8 @@ public class MainActivity extends AppCompatActivity {
                 switch(tab.getPosition()){
                     case 0:
                         //Consider the category selected on drawer menu to run correct sql query
+                        AccountAdapter accountAdapter = new AccountAdapter(getBaseContext(),null);
+                        MainActivity.updateRecyclerViewData(accountAdapter);
                         break;
                     case 1:
                         UserNameAdapter userNameAdapter = new UserNameAdapter(getBaseContext(),null);
@@ -135,6 +151,12 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
+
+        //Create and set default logo for accounts
+        myPsswrdSecureLogo = new Icon(R.mipmap.ic_my_psswrd_secure,"MyPsswrdSecureIcon",String.valueOf(R.mipmap.ic_my_psswrd_secure),false);
+        accounts = new AccountsDB(this);
+        categoryList = accounts.getCategoryList();
     }
 
 
@@ -186,28 +208,52 @@ public class MainActivity extends AppCompatActivity {
         return this.tabLayout.getTabAt(this.tabLayout.getSelectedTabPosition());
     }
 
-    public static void updateRecyclerViewData(RecyclerView.Adapter adpater){
+    public static Icon getMyPsswrdSecureLogo() {
+        return myPsswrdSecureLogo;
+    }
+
+    //Method to return a category by passing in its DB id
+    public static Category getCategoryByID(int _id){
+        Log.d("getCatByID","Enter the getCategoryByID method in the MainActivity class.");
+        Category category = null;
+        boolean found = false;
+        int i =0;
+        while(i<categoryList.size() && !found){
+            if(categoryList.get(i).get_id() == _id){
+                category = categoryList.get(i);
+                found = true;
+                Log.d("getCatByID","A category with ID " +_id+ " has been found in the categoryList object in MainActivity class.");
+            }
+            i++;
+        }// End of while loop
+        Log.d("getCatByID","Exit the getCategoryByID method in the MainActivity class.");
+        return category;
+    }// End of getCategoryID method
+
+    public static void updateRecyclerViewData(RecyclerView.Adapter adapter){
         Log.d("Ent_updateRecViewData","Enter the updateRecyclerViewData method in the MainActivity class.");
         RecyclerView rv = HomeFragment.getRv();
         AccountsDB accounts = HomeFragment.getAccounts();
         Cursor cursor = null;
-        // accounts = new AccountsDB(getBaseContext());
-        //cursor = db.runQuery(sql);
-        //Move to first row of cursor if not empty
-        if(false){
-
+        //Check the class of the adapter passed in as argument
+        if(adapter instanceof AccountAdapter){
+            cursor = accounts.getAccountsList();
+            ((AccountAdapter) adapter).setCursor(cursor);
         }
-        else if(adpater instanceof PsswrdAdapter){
+        else if(adapter instanceof PsswrdAdapter){
             cursor = accounts.getPsswrdList();
-            ((UserNameAdapter) adpater).setCursor(cursor);
+            ((UserNameAdapter) adapter).setCursor(cursor);
         }
-        else if(adpater instanceof UserNameAdapter){
+        else if(adapter instanceof UserNameAdapter){
             cursor = accounts.getUserNameList();
-            ((UserNameAdapter) adpater).setCursor(cursor);
+            ((UserNameAdapter) adapter).setCursor(cursor);
         }
-        cursor.moveToFirst();
-        rv.setAdapter(adpater);
-        adpater.notifyDataSetChanged();
+        //Move to first row of cursor if not empty
+        if (cursor != null){
+            cursor.moveToFirst();
+        }
+        rv.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
         Log.d("Ext_updateRecViewData","Exit the updateRecyclerViewData method in the MainActivity class.");
     }//End of updateRecyclerViewData method
-}
+}//End of MainActivity class.
