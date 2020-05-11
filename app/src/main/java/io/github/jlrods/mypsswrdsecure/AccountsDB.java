@@ -68,7 +68,7 @@ public class AccountsDB extends SQLiteOpenHelper {
 
         //Create table to store new icon/image locations (selected by user)
         // Leave empty as pre populated icons
-        db.execSQL("CREATE TABLE ICON (_id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT,Location TEXT);");
+        db.execSQL("CREATE TABLE ICON (_id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT,Location TEXT, isSelected INTEGER);");
 
         //Create table to store MyPsswrdSecure App Logging data
         db.execSQL("CREATE TABLE APPLOGGIN (_id INTEGER PRIMARY KEY AUTOINCREMENT,UserNameID TEXT, \n" +
@@ -113,22 +113,78 @@ public class AccountsDB extends SQLiteOpenHelper {
                 "FOREIGN KEY (QuestionListID) REFERENCES QUESTIONLIST(_id),\n" +
                 "FOREIGN KEY (IconID) REFERENCES ICON(_id));");
 
+
+
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_aa','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_aerlingus_green','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_aib','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_amazon','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_apple','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_apple_vintange','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_axa','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_booking','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_cpl','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_donedelal','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_dropbox','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_edx','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_eir','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_facebook','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_firefox','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_github','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_glassdoor_green','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_google','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_huawei','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_instagram','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_irish_life','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_irish_life_health','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_linkedin','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_marvin','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_microsoft','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_microsoft_dark','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_netflix','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_netflix_black','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_paypal','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_pinterest','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_ptsb','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_reddit','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_revenue','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_ryanair','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_ryanair_blue','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_samsung','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_small_world','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_sportify_black','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_sportify_fullblack','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_sse_airtricity','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_subway','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_teamviewer','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_three','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_twitter','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_vhi','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_virgin_media','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_vodafone','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_vue','Resources');");
+
+
         db.execSQL("INSERT INTO USERNAME (Value, DateCreated) VALUES('jlrods',1588167878639);");
-        db.execSQL("INSERT INTO USERNAME (Value, DateCreated) VALUES('jlrods@gmail.com',1588167878640);");
-        db.execSQL("INSERT INTO USERNAME (Value, DateCreated) VALUES('j_rodriguez',1588167878641);");
-        db.execSQL("INSERT INTO USERNAME (Value, DateCreated) VALUES('j_rodriguez@modularauto.ie',1588167878642);");
+        db.execSQL("INSERT INTO USERNAME (Value, DateCreated) VALUES('jlrods@gmail.com',1588267878640);");
+        db.execSQL("INSERT INTO USERNAME (Value, DateCreated) VALUES('j_rodriguez',1588367878641);");
+        db.execSQL("INSERT INTO USERNAME (Value, DateCreated) VALUES('j_rodriguez@modularauto.ie',1588467878642);");
 
         db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('Machito88',1588167878639);");
-        db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('JoseLeonardo',1588167878640);");
-        db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('Paracotos12!',1588167878641);");
-        db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('Roraima2020!',1588167878642);");
+        db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('JoseLeonardo',1588267878640);");
+        db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('Paracotos12!',1588367878641);");
+        db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('Roraima2020!',1588467878642);");
+        db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('M;Mach;to88!',1588167878639);");
 
 
-        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'Modular',4,4,4,null,0,0,1588167878642,0);");
-        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'Integro',4,4,3,null,0,0,1588167878642,0);");
-        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'TMS',4,4,2,null,0,0,1588167878642,0);");
-        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'Gmail',4,2,3,null,0,0,1588167878642,0);");
-        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'Facebook',4,2,1,null,0,0,1588167878642,0);");
+
+        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'Modular',4,4,4,null,-1,0,1588567878642,0);");
+        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'Google',4,2,3,null,18,0,1588867878642,0);");
+        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'TMS',4,4,2,null,-1,0,1588767878642,0);");
+        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'Facebook',1,2,1,null,14,0,1588967878642,0);");
+        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'Instagram',1,2,5,null,20,0,1588867878642,0);");
+        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'AA',11,2,5,null,1,0,1588967878642,0);");
+        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'Integro',4,4,3,null,-1,0,1588667878642,0);");
 
         Log.d("Ext_DBOncreate","Exit onCreate method in AccountsDB class.");
     }//End of onCreate method
@@ -140,7 +196,7 @@ public class AccountsDB extends SQLiteOpenHelper {
 
     //Method to create a database object, a cursor, run the sql query and return the result cursor
     public Cursor runQuery(String query){
-        Log.d("Ent_runQuery","Enter runQuery method.");
+        Log.d("Ent_runQuery","Enter runQuery method in the AccountsDB class.");
         try{
             //Initialize cursor variable to be returned
             Cursor cursor = null;
@@ -157,18 +213,23 @@ public class AccountsDB extends SQLiteOpenHelper {
         }//End of try catch block
     }//End of runQuery method
 
+
+    //Methods to query the DB
+
+    //Method to get the list of user names from the DB
+    public Cursor getIconList(){
+        return  this.runQuery("SELECT * FROM ICON");
+    }
     //Method to get the list of user names from the DB
     public Cursor getUserNameList(){
         return  this.runQuery("SELECT * FROM USERNAME");
     }
     //Method to get the list of accounts from the DB
     public Cursor getAccountsList(){
-
         return  this.runQuery("SELECT * FROM ACCOUNTS");
     }
     //Method to get the list of passwords from the DB
     public Cursor getPsswrdList(){
-
         return  this.runQuery("SELECT * FROM PSSWRD");
     }
     //Method to get the number of times a specific user name is being used in different accounts as per the DB
@@ -179,6 +240,46 @@ public class AccountsDB extends SQLiteOpenHelper {
     public int getTimesUsedPsswrd(int psswrd){
         return this.runQuery("SELECT * FROM ACCOUNTS WHERE PsswrdID = "+psswrd).getCount();
     }
+
+    //Method to retrieve a specific Icon from DB by passing in it's ID
+    public Icon getIconByID(int _id){
+        Log.d("getIconByID","Enter the getIconByID method in the AccountsDB class.");
+        Cursor cursor = this.runQuery("SELECT * FROM ICON WHERE _id = "+ _id);
+        if(cursor != null && cursor.getCount() >0){
+            cursor.moveToFirst();
+            Log.d("getIconByID","Exit successfully (icon with id " +_id+ " has been found) the getIconByID method in the AccountsDB class.");
+            return Icon.extractIcon(cursor);
+        }else{
+            Log.d("getIconByID","Exit the getIconByID method in the AccountsDB class without finding the account with id: "+_id);
+            return null;
+        }//End of if else statement
+    }//End of getIconByID method
+
+    public UserName getUserNameByID(int _id){
+        Log.d("getUserNameByID","Enter the getUserNameByID method in the AccountsDB class.");
+        Cursor cursor = this.runQuery("SELECT * FROM USERNAME WHERE _id = "+ _id);
+        if(cursor != null && cursor.getCount() >0){
+            cursor.moveToFirst();
+            Log.d("getUserNameByID","Exit successfully (user name with id " +_id+ " has been found) the getUserNameByID method in the AccountsDB class.");
+            return UserName.extractUserName(cursor);
+        }else{
+            Log.d("getUserNameByID","Exit the getUserNameByID method in the AccountsDB class without finding the account with id: "+_id);
+            return null;
+        }//End of if else statement
+    }//End of getUserNameByID method
+
+    public Psswrd getPsswrdByID(int _id){
+        Log.d("getPsswrdByID","Enter the getPsswrdByID method in the AccountsDB class.");
+        Cursor cursor = this.runQuery("SELECT * FROM PSSWRD WHERE _id = "+ _id);
+        if(cursor != null && cursor.getCount() >0){
+            cursor.moveToFirst();
+            Log.d("getPsswrdByID","Exit successfully (password with id " +_id+ " has been found) the getPsswrdByID method in the AccountsDB class.");
+            return Psswrd.extractPsswrd(cursor);
+        }else{
+            Log.d("getPsswrdByID","Exit the getPsswrdByID method in the AccountsDB class without finding the account with id: "+_id);
+            return null;
+        }//End of if else statement
+    }//End of getPsswrdByID method
 
     //Method to retrieve the list of categories stored on the database
     public ArrayList<Category> getCategoryList(){

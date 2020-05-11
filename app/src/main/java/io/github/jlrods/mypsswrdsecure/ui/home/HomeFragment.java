@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -48,6 +49,8 @@ public class HomeFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         rv = root.findViewById(R.id.layout_rec_view_main);
         this.rv.setLayoutManager(new LinearLayoutManager(getActivity().getBaseContext()));
+        RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(getActivity().getBaseContext(), DividerItemDecoration.VERTICAL);
+        this.rv.addItemDecoration(itemDecoration);
         this.accounts = new AccountsDB(getActivity().getBaseContext());
         Log.d("HomeFragOnCreate","Exit onCreate method in HomeFragment class.");
         return root;

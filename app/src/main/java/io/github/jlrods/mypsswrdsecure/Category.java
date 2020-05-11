@@ -12,28 +12,21 @@ class Category {
 
     //Method definition
     //Constructors
-    public Category(){
-        Log.d("Cat_Def_Ent","Enter Category  DefaultConstructor");
-        this._id = 0;
-        this.name = "";
-        this.icon = null;
-        Log.d("Cat_Def_Ext","Exit Category Default Constructor");
-    }
-
-    public Category(int _id, String name){
-        Log.d("Cat_NoIcon_Ent","Enter Category No Icon Constructor");
-        this._id = _id;
-        this.name = name;
-        this.icon = null;
-        Log.d("Cat_NoIcon_Ext","Enter Category No Icon Constructor");
-    }
-
     public Category(int _id, String name, Icon icon){
-        Log.d("Cat_Full_Ent","Enter Category  No Icon Constructor");
+        Log.d("Cat_Full_Ent","Enter Category  No Icon Constructor in Category class.");
         this._id = _id;
         this.name = name;
         this.icon = icon;
-        Log.d("Cat_Full_Ext","Exit Category Full Constructor");
+        Log.d("Cat_Full_Ext","Exit Category Full Constructor in Category class.");
+    }
+    public Category(){
+        this(-1,"",null);
+        Log.d("Cat_Def_Ent","Enter Category  DefaultConstructor in Category class.");
+    }
+
+    public Category(int _id, String name){
+        this(_id,name,null);
+        Log.d("Cat_NoIcon_Ent","Enter Category No Icon Constructor in Category class.");
     }
 
 

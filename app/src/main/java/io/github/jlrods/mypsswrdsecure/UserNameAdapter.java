@@ -52,7 +52,7 @@ public class UserNameAdapter extends RecyclerView.Adapter<UserNameAdapter.ViewHo
         UserNameAdapter.ViewHolder viewHolder = new UserNameAdapter.ViewHolder(view);
         Log.d("UserNameAdaptVHOnCre","Exit onCreateViewHolder method in the UserNamedAdapter class.");
         return viewHolder;
-    }
+    }//End of onCreateViewHolder method
 
     @Override
     public void onBindViewHolder(@NonNull UserNameAdapter.ViewHolder holder, int position) {
@@ -79,7 +79,6 @@ public class UserNameAdapter extends RecyclerView.Adapter<UserNameAdapter.ViewHo
     }
 
     public Context getContext() {
-
         return context;
     }
 
@@ -88,7 +87,6 @@ public class UserNameAdapter extends RecyclerView.Adapter<UserNameAdapter.ViewHo
     }
 
     public Cursor getCursor() {
-
         return cursor;
     }
 
@@ -108,7 +106,7 @@ public class UserNameAdapter extends RecyclerView.Adapter<UserNameAdapter.ViewHo
 
     //Inner class to inherit from RV ViewHolder class
     protected static class ViewHolder extends RecyclerView.ViewHolder{
-        //Declare UI objects  from the task_element layout to represent them within the logic
+        //Declare UI objects  from the element_string_value layout to represent them within the logic
         ImageView imgIcon;
         TextView tvStrength;
         TextView tvStringValue;
