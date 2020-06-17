@@ -59,8 +59,8 @@
     <string name="account_userName">Nombre de usuario:</string>
     <string name="account_psswrd">Clave:</string>
     <string name="account_secQuestion">Preguntas de seguridad:</string>
-    <string name="account_isFavoriteChecked">Toque la estrella para marcar esta cuesta como Favorita</string>
-    <string name="account_isFavoriteUnchecked">Toque la estrella para desmarcar esta cuesta como Favorita</string>
+    <string name="account_isFavoriteChecked">Toque la estrella para marcar como Favorita</string>
+    <string name="account_isFavoriteUnchecked">Toque la estrella para desmarcar como Favorita</string>
     <string name="account_new">Nuevo</string>
     <string name="account_addQuestion">Agregar</string>
     <string name="account_dateCreated">Fecha de creación:</string>
@@ -69,7 +69,7 @@
     <string name="account_nameHint">Escriba la cuenta aquí</string>
 
     <!--    Security question spinner item-->
-    <string name="account_removeQuestion">Remover pregunta</string>
+    <string name="account_removeQuestion">Remover</string>
     <string name="question_spinner_answer">Resp:</string>
     <string name="account_quest_avilab_spinner_prompt">Añada una pregunta a su lista...</string>
     <string name="account_quest_list_spinner_prompt">No hay preguntas en sy lista aún...</string>

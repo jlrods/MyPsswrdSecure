@@ -57,8 +57,8 @@
     <string name="account_userName">User Name:</string>
     <string name="account_psswrd">Password:</string>
     <string name="account_secQuestion">Security questions:</string>
-    <string name="account_isFavoriteChecked">Click the star to uncheck this account as Favorite</string>
-    <string name="account_isFavoriteUnchecked">Click the star to check this account as Favorite</string>
+    <string name="account_isFavoriteChecked">Click the star to uncheck as Favorite</string>
+    <string name="account_isFavoriteUnchecked">Click the star to check as Favorite</string>
     <string name="account_new">New</string>
     <string name="account_addQuestion">Add to list</string>
     <string name="account_dateCreated">Date created:</string>
@@ -67,7 +67,7 @@
     <string name="account_nameHint">Type the account name</string>
 
     <!--    Security question spinner item-->
-    <string name="account_removeQuestion">Remove question</string>
+    <string name="account_removeQuestion">Remove</string>
     <string name="question_spinner_answer">Answ:</string>
     <string name="account_quest_avilab_spinner_prompt">Add a question to your list...</string>
     <string name="account_quest_list_spinner_prompt">No questions in your list...</string>

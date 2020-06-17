@@ -11,20 +11,20 @@
         <LinearLayout
             android:id="@+id/layoutAccLogo"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="horizontal"
             android:layout_weight="1">
             <LinearLayout
                 android:id="@+id/layoutAccName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:layout_weight="1"
                 android:layout_gravity="center_vertical">
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:orientation="vertical">
+                    android:orientation="horizontal">
                     <ImageView
                         android:id="@+id/imgAccName"
                         android:layout_width="40dp"
@@ -47,7 +47,7 @@
                     android:layout_weight="1"
                     android:ems="10"
                     android:inputType="text"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
                     android:textStyle="bold"
                     android:hint="@string/account_nameHint"
                     android:scrollHorizontally="true"/>
@@ -64,13 +64,12 @@
                 android:layout_marginLeft="5dp"/>
         </LinearLayout>
 
-
         <LinearLayout
             android:id="@+id/layoutCategory"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="horizontal"
-            android:layout_weight="1">
+            android:layout_weight="1.1">
             <ImageView
                 android:id="@+id/imgAccCat"
                 android:layout_width="40dp"
@@ -96,7 +95,7 @@
         <LinearLayout
             android:id="@+id/layoutUserName"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
             android:layout_weight="1">
             <LinearLayout
@@ -105,55 +104,64 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="horizontal">
-                <ImageView
-                    android:id="@+id/imgAccUserName"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_gravity="center"
-                    android:src="@mipmap/ic_account_black_48dp" />
-                <TextView
-                    android:id="@+id/tvAccUserNameTag"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/account_userName"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="center"/>
-                <io.github.jlrods.mypsswrdsecure.NoDefaultSpinner
-                    android:id="@+id/spAccUserName"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:spinnerMode="dialog"/>
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_weight="1">
+                    <ImageView
+                        android:id="@+id/imgAccUserName"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
+                        android:src="@mipmap/ic_account_black_48dp" />
+                    <TextView
+                        android:id="@+id/tvAccUserNameTag"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/account_userName"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center"/>
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/btnAccNewUserName"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/account_new"
+                    android:layout_weight="3"/>
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/subLayout_newUser"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <EditText
-                    android:id="@+id/etAccNewUserName"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_weight="1">
+<!--                <EditText-->
+<!--                    android:id="@+id/etAccNewUserName"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:ems="10"-->
+<!--                    android:inputType="textMultiLine"-->
+<!--                    android:enabled="false"/>-->
+                <io.github.jlrods.mypsswrdsecure.NoDefaultSpinner
+                    android:id="@+id/spAccUserName"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:ems="10"
-                    android:inputType="textMultiLine"
-                    android:enabled="false"/>
-                <Button
-                    android:id="@+id/btnAccNewUserName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="3"
-                    android:text="@string/account_new"/>
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:spinnerMode="dialog"/>
+
             </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/layoutPsswrd"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
             android:layout_weight="1">
             <LinearLayout
@@ -162,63 +170,72 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="horizontal">
-                <ImageView
-                    android:id="@+id/imgAccPsswrd"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_gravity="center"
-                    android:src="@mipmap/ic_pencil_lock_black_48dp" />
-                <TextView
-                    android:id="@+id/tvAccPsswrdTag"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/account_psswrd"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="center"/>
-                <io.github.jlrods.mypsswrdsecure.NoDefaultSpinner
-                    android:id="@+id/spAccPsswrd"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:spinnerMode="dialog"/>
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_weight="1">
+                    <ImageView
+                        android:id="@+id/imgAccPsswrd"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
+                        android:src="@mipmap/ic_pencil_lock_black_48dp" />
+                    <TextView
+                        android:id="@+id/tvAccPsswrdTag"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/account_psswrd"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center"/>
+                </LinearLayout>
+                <Button
+                    android:id="@+id/btnAccNewPsswrd"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/account_new"
+                    android:layout_weight="3"/>
+
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/subLayout_newPsswrd"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <EditText
-                    android:id="@+id/etAccNewPssrd"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_weight="1">
+<!--                <EditText-->
+<!--                    android:id="@+id/etAccNewPssrd"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:ems="10"-->
+<!--                    android:inputType="textMultiLine"-->
+<!--                    android:enabled="false"/>-->
+                <io.github.jlrods.mypsswrdsecure.NoDefaultSpinner
+                    android:id="@+id/spAccPsswrd"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:ems="10"
-                    android:inputType="textMultiLine"
-                    android:enabled="false"/>
-                <Button
-                    android:id="@+id/btnAccNewPsswrd"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="3"
-                    android:text="@string/account_new"/>
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:spinnerMode="dialog"/>
+
             </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/layoutSecQuestion"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
-            android:layout_weight="2">
+            android:layout_weight="0.85">
             <LinearLayout
                 android:id="@+id/subLayout_SecQuestionHeader"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
-                android:layout_weight="1">
+                android:layout_weight="0.9">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -238,11 +255,10 @@
                         android:gravity="center_vertical"
                         android:layout_gravity="center_vertical"/>
                 </LinearLayout>
-
                 <Button
                     android:id="@+id/btnAccRemoveQuestion"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:text="@string/account_removeQuestion"
                     android:layout_weight="3"
                     android:visibility="invisible"
@@ -265,7 +281,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="3"
-                    android:text="New question"
+                    android:text="@string/account_new"
                     android:layout_gravity="center_vertical"/>
             </LinearLayout>
             <LinearLayout
@@ -301,9 +317,9 @@
         <LinearLayout
             android:id="@+id/layoutIsFav"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="horizontal"
-            android:layout_weight="1">
+            android:layout_weight="1.1">
             <ImageView
                 android:id="@+id/imgAccIsFavorite"
                 android:layout_width="40dp"
@@ -316,14 +332,16 @@
                 android:layout_height="wrap_content"
                 android:text="@string/account_isFavoriteUnchecked"
                 android:layout_gravity="center_vertical"
-                android:gravity="center"/>
+                android:gravity="center"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textAlignment="textStart"/>
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/layoutDates"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1.5"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:orientation="horizontal">
             <RelativeLayout
                 android:id="@+id/subLayout_accDateCreated"

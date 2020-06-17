@@ -124,12 +124,12 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
 
         //Initialize User name spinner related variables
         this.spAccUserName = (NoDefaultSpinner) findViewById(R.id.spAccUserName);
-        this.etAccNewUserName = (EditText) findViewById(R.id.etAccNewUserName);
+        //this.etAccNewUserName = (EditText) findViewById(R.id.etAccNewUserName);
         this.btnAccNewUserName = (Button) findViewById(R.id.btnAccNewUserName);
 
         //Initialize Psswrd spinner related variables
         this.spAccPsswrd = (NoDefaultSpinner) findViewById(R.id.spAccPsswrd);
-        this.etAccNewPsswrd = (EditText) findViewById(R.id.etAccNewPssrd);
+        //this.etAccNewPsswrd = (EditText) findViewById(R.id.etAccNewPssrd);
         this.btnAccNewPsswrd = (Button) findViewById(R.id.btnAccNewPsswrd);
 
         //Initialize QuestionList relates variables
@@ -295,7 +295,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             sp.setEnabled(false);
             //Check if spinner type is username or psswrd spinner to setup texts and enable respective buttons
             if(type == USERNAME_SPINNER){
-                this.etAccNewUserName.setHint(etHint);
+                //this.etAccNewUserName.setHint(etHint);
                 this.etAccNewUserName.setEnabled(true);
             }else if(type == PSSWRD_SPINNER){
                 this.etAccNewPsswrd.setHint(etHint);
