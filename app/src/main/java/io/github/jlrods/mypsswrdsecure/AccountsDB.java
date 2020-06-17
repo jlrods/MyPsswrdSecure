@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-
 import java.util.ArrayList;
 
 //Class to manage all DB interaction
@@ -25,14 +24,19 @@ public class AccountsDB extends SQLiteOpenHelper {
         //Create table to store security answers. Leave empty as user has to create their own answers
         db.execSQL("CREATE TABLE ANSWER (_id INTEGER PRIMARY KEY AUTOINCREMENT,Value TEXT);");
 
+        db.execSQL("INSERT INTO ANSWER VALUES(null,'Sasha');");
+        db.execSQL("INSERT INTO ANSWER VALUES(null,'Machito88');");
+        db.execSQL("INSERT INTO ANSWER VALUES(null,'Mamama');");
+        db.execSQL("INSERT INTO ANSWER VALUES(null,'Caracas');");
+
         //Create table to store security questions (linked to Answer ID as Foreign key)"
         db.execSQL("CREATE TABLE QUESTION (_id INTEGER PRIMARY KEY AUTOINCREMENT,Value TEXT,\n" +
                 "AnswerID INTEGER, FOREIGN KEY (AnswerID) REFERENCES ANSWER(_id));");
         //Insert pre-defined suggested security questions in the DB. No answer associated to question yet.
-        db.execSQL("INSERT INTO QUESTION VALUES(null,'petNameQuestion',null);");
-        db.execSQL("INSERT INTO QUESTION VALUES(null,'firstCarQuestion',null);");
-        db.execSQL("INSERT INTO QUESTION VALUES(null,'grannyNameQuestion',null);");
-        db.execSQL("INSERT INTO QUESTION VALUES(null,'placeMarryQuestion',null);");
+        db.execSQL("INSERT INTO QUESTION VALUES(null,'petNameQuestion',1);");
+        db.execSQL("INSERT INTO QUESTION VALUES(null,'firstCarQuestion',2);");
+        db.execSQL("INSERT INTO QUESTION VALUES(null,'grannyNameQuestion',3);");
+        db.execSQL("INSERT INTO QUESTION VALUES(null,'placeMarryQuestion',4);");
         db.execSQL("INSERT INTO QUESTION VALUES(null,'motherNameQuestion',null);");
         db.execSQL("INSERT INTO QUESTION VALUES(null,'placeBirthQuestion',null);");
         db.execSQL("INSERT INTO QUESTION VALUES(null,'phoneNumberQuestion',null);");
@@ -49,7 +53,7 @@ public class AccountsDB extends SQLiteOpenHelper {
                 "FOREIGN KEY (QuestionID3) REFERENCES QUESTION(_id));");
 
         //Create intermediate table to link QuestionListID and QuestionID, this way all the questions in one list
-        // can be populated in one table. This solve QuestionID ambiguity issue.
+        // can be populated in one table. This solves QuestionID ambiguity issue.
         // Leave empty as user has to group their own questions and link them to an account.
         db.execSQL("CREATE TABLE QUESTIONASSIGNMENT (_id INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
                 "QuestionListID INTEGER, QuestionID INTEGER,\n" +
@@ -165,11 +169,28 @@ public class AccountsDB extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_vue','Resources');");
 
 
+        //Test and sample data
+        //Question Lists
+        db.execSQL("INSERT INTO QUESTIONLIST VALUES(null,1,2,3);");
+        db.execSQL("INSERT INTO QUESTIONLIST VALUES(null,4,null,null);");
+        db.execSQL("INSERT INTO QUESTIONLIST VALUES(null,2,3,4);");
+
+        //Question assignment
+        db.execSQL("INSERT INTO QUESTIONASSIGNMENT VALUES(null,1,1);");
+        db.execSQL("INSERT INTO QUESTIONASSIGNMENT VALUES(null,1,2);");
+        db.execSQL("INSERT INTO QUESTIONASSIGNMENT VALUES(null,1,3);");
+        db.execSQL("INSERT INTO QUESTIONASSIGNMENT VALUES(null,2,4);");
+        db.execSQL("INSERT INTO QUESTIONASSIGNMENT VALUES(null,3,2);");
+        db.execSQL("INSERT INTO QUESTIONASSIGNMENT VALUES(null,3,3);");
+        db.execSQL("INSERT INTO QUESTIONASSIGNMENT VALUES(null,3,4);");
+
+        //User names
         db.execSQL("INSERT INTO USERNAME (Value, DateCreated) VALUES('jlrods',1588167878639);");
         db.execSQL("INSERT INTO USERNAME (Value, DateCreated) VALUES('jlrods@gmail.com',1588267878640);");
         db.execSQL("INSERT INTO USERNAME (Value, DateCreated) VALUES('j_rodriguez',1588367878641);");
         db.execSQL("INSERT INTO USERNAME (Value, DateCreated) VALUES('j_rodriguez@modularauto.ie',1588467878642);");
 
+        //Passwords
         db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('Machito88',1588167878639);");
         db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('JoseLeonardo',1588267878640);");
         db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('Paracotos12!',1588367878641);");
@@ -177,14 +198,16 @@ public class AccountsDB extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('M;Mach;to88!',1588167878639);");
 
 
-
-        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'Modular',4,4,4,null,-1,0,1588567878642,0);");
+        //Accounts
+        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'Modular',4,4,4,1,-1,0,1588567878642,0);");
         db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'Google',4,2,3,null,18,0,1588867878642,0);");
-        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'TMS',4,4,2,null,-1,0,1588767878642,0);");
+        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'TMS',4,4,2,2,-1,0,1588767878642,0);");
         db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'Facebook',1,2,1,null,14,0,1588967878642,0);");
         db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'Instagram',1,2,5,null,20,0,1588867878642,0);");
         db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'AA',11,2,5,null,1,0,1588967878642,0);");
-        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'Integro',4,4,3,null,-1,0,1588667878642,0);");
+        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'Integro',4,4,3,3,-1,0,1588667878642,0);");
+
+
 
         Log.d("Ext_DBOncreate","Exit onCreate method in AccountsDB class.");
     }//End of onCreate method
@@ -220,6 +243,10 @@ public class AccountsDB extends SQLiteOpenHelper {
     public Cursor getIconList(){
         return  this.runQuery("SELECT * FROM ICON");
     }
+    //Method to get the list of categories names from the DB
+    public Cursor getCategoryListCursor(){
+        return  this.runQuery("SELECT * FROM CATEGORY");
+    }
     //Method to get the list of user names from the DB
     public Cursor getUserNameList(){
         return  this.runQuery("SELECT * FROM USERNAME");
@@ -244,17 +271,33 @@ public class AccountsDB extends SQLiteOpenHelper {
     //Method to retrieve a specific Icon from DB by passing in it's ID
     public Icon getIconByID(int _id){
         Log.d("getIconByID","Enter the getIconByID method in the AccountsDB class.");
-        Cursor cursor = this.runQuery("SELECT * FROM ICON WHERE _id = "+ _id);
+    Cursor cursor = this.runQuery("SELECT * FROM ICON WHERE _id = "+ _id);
+        if(cursor != null && cursor.getCount() >0){
+        cursor.moveToFirst();
+        Log.d("getIconByID","Exit successfully (icon with id " +_id+ " has been found) the getIconByID method in the AccountsDB class.");
+        return Icon.extractIcon(cursor);
+    }else{
+        Log.d("getIconByID","Exit the getIconByID method in the AccountsDB class without finding the account with id: "+_id);
+        return null;
+    }//End of if else statement
+}//End of getIconByID method
+
+    //Method to retrieve a specific Icon from DB by passing in it's ID
+    public Icon getIconByName(String name){
+        Log.d("getIconByID","Enter the getIconByID method in the AccountsDB class.");
+        Cursor cursor = this.runQuery("SELECT * FROM ICON WHERE Name = '"+ name+"'");
         if(cursor != null && cursor.getCount() >0){
             cursor.moveToFirst();
-            Log.d("getIconByID","Exit successfully (icon with id " +_id+ " has been found) the getIconByID method in the AccountsDB class.");
+            Log.d("getIconByID","Exit successfully (icon with id " +name+ " has been found) the getIconByID method in the AccountsDB class.");
             return Icon.extractIcon(cursor);
         }else{
-            Log.d("getIconByID","Exit the getIconByID method in the AccountsDB class without finding the account with id: "+_id);
+            Log.d("getIconByID","Exit the getIconByID method in the AccountsDB class without finding the account with name: "+name);
             return null;
         }//End of if else statement
     }//End of getIconByID method
 
+
+    //Method to get a specific user name, by passing in its DB _id as an argument
     public UserName getUserNameByID(int _id){
         Log.d("getUserNameByID","Enter the getUserNameByID method in the AccountsDB class.");
         Cursor cursor = this.runQuery("SELECT * FROM USERNAME WHERE _id = "+ _id);
@@ -268,6 +311,7 @@ public class AccountsDB extends SQLiteOpenHelper {
         }//End of if else statement
     }//End of getUserNameByID method
 
+    //Method to get a specific password, by passing in its DB _id as an argument
     public Psswrd getPsswrdByID(int _id){
         Log.d("getPsswrdByID","Enter the getPsswrdByID method in the AccountsDB class.");
         Cursor cursor = this.runQuery("SELECT * FROM PSSWRD WHERE _id = "+ _id);
@@ -306,12 +350,125 @@ public class AccountsDB extends SQLiteOpenHelper {
         return list;
     }//End of getGroceryList method
 
+    //Method to get a specific answer, by passing in its DB _id as an argument
+    public Answer getAnswerByID(int _id){
+        Log.d("getAnswerByID","Enter the getAnswerByID method in the AccountsDB class.");
+        Cursor cursor = this.runQuery("SELECT * FROM ANSWER WHERE _id = "+ _id);
+        if(cursor != null && cursor.getCount() >0){
+            cursor.moveToFirst();
+            Log.d("getAnswerByID","Exit successfully (ANSWER with id " +_id+ " has been found) the getAnswerByID method in the AccountsDB class.");
+            return Answer.extractAnswer(cursor);
+        }else{
+            Log.d("getAnswerByID","Exit the getAnswerByID method in the AccountsDB class without finding the account with id: "+_id);
+            return null;
+        }//End of if else statement
+    }//End of getAnswerByID method
+
+    //Method to get the list of questions list recorded on the DB
+    public ArrayList<QuestionList> getListOfQuestionLists(){
+        Log.d("getListOfQuestionLists","Enter the getListOfQuestionLists method in the AccountsDB class.");
+        //Declare and initialize a list to keep the QuestionList objects
+        ArrayList<QuestionList> listOfQuestionLists = new ArrayList<QuestionList>();
+        //Declare and initialize a cursor to hold data from DB
+        Cursor listOfQuestionsLists = this.runQuery("SELECT * FROM QUESTIONLIST");
+        //Check list of questions available isn't null or empty
+        if(listOfQuestionsLists!= null && listOfQuestionsLists.getCount()>0){
+            //Go through the list
+            while(listOfQuestionsLists.moveToNext()){
+                QuestionList questionList = this.getQuestionListById(listOfQuestionsLists.getInt(0));
+                //If the security question list cursor isn't null or empty then add to array list
+                if(questionList!=null && questionList.getSize()>0){
+                    listOfQuestionLists.add(questionList);
+                }//End of if statement to check list isn't null or empty
+            }//End of while loop to go through the list
+        }//End of if statement to check list of questions available isn't null or empty
+        Log.d("getListOfQuestionLists","Exit the getListOfQuestionLists method in the AccountsDB class.");
+        return listOfQuestionLists;
+    }//End of getListOfQuestionLists method
+
+    //Method to get cursor with list of questions available
+    public Cursor getListQuestionsAvailable(){
+        Log.d("getListOfQuestionLists","Enter the getListOfQuestionLists method in the AccountsDB class.");
+        //Declare and initialize cursor to hold list of questions available from DB
+        Cursor questionsAvailable = this.runQuery("SELECT QUESTION._id, QUESTION.Value AS Q, ANSWER._id AS AnswerID,ANSWER.Value AS Answer FROM\n" +
+                "QUESTION  JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id;");
+        Log.d("getListOfQuestionLists","Exit the getListOfQuestionLists method in the AccountsDB class.");
+        return questionsAvailable;
+    }//End of getListQuestionsAvailable method
+
+    //Method to get a specific question, by passing in its DB _id as an argument
+    public Question getQuestionByID(int _id){
+        Log.d("getQuestionByID","Enter the getQuestionByID method in the AccountsDB class.");
+        Cursor cursor = this.runQuery("SELECT * FROM QUESTION  JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id WHERE QUESTION._id = "+ _id);
+        if(cursor != null && cursor.getCount() >0){
+            cursor.moveToFirst();
+            Log.d("getQuestionByID","Exit successfully (QUESTION with id " +_id+ " has been found) the getQuestionByID method in the AccountsDB class.");
+            return Question.extractQuestion(cursor);
+        }else{
+            Log.d("getQuestionByID","Exit the getQuestionByID method in the AccountsDB class without finding the account with id: "+_id);
+            return null;
+        }//End of if else statement
+    }//End of getQuestionByID method
+
+    //Method to get a question cursor by passing in its DB id as argument
+    public Cursor getQuestionCursorByID(int _id){
+        Log.d("getQuestionListById","Enter the getQuestionListById method in the AccountsDB class.");
+        Cursor question = this.runQuery("SELECT QUESTION._id, QUESTION.Value AS Q, ANSWER._id AS AnswerID,ANSWER.Value AS Answer FROM " +
+                "QUESTION  JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id WHERE QUESTION._id = "+ _id);
+        Log.d("getQuestionListById","Exit the getQuestionListById method in the AccountsDB class.");
+        return question;
+    }//End of getQuestionCursorByID method
+
+    //Method to get a a two question cursor by passing in their DB ids as arguments
+    public Cursor getQuestionCursorByID(int _id1, int _id2){
+        Log.d("getQuestionListById","Enter the getQuestionListById method in the AccountsDB class.");
+        Cursor question = this.runQuery("SELECT QUESTION._id, QUESTION.Value AS Q, ANSWER._id AS AnswerID,ANSWER.Value AS Answer FROM " +
+                "QUESTION  JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id WHERE QUESTION._id = "+ _id1 + " OR QUESTION._id = "+ _id2);
+        Log.d("getQuestionListById","Exit the getQuestionListById method in the AccountsDB class.");
+        return question;
+    }//End of getQuestionCursorByID method
+
+    //Method to get a a three question cursor by passing in their DB ids as arguments
+    public Cursor getQuestionCursorByID(int _id1, int _id2, int _id3){
+        Log.d("getQuestionListById","Enter the getQuestionListById method in the AccountsDB class.");
+        Cursor question = this.runQuery("SELECT QUESTION._id, QUESTION.Value AS Q, ANSWER._id AS AnswerID,ANSWER.Value AS Answer FROM " +
+                "QUESTION  JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id WHERE QUESTION._id = "+ _id1+ " OR QUESTION._id = "+ _id2 +" OR QUESTION._id = "+ _id3);
+        Log.d("getQuestionListById","Exit the getQuestionListById method in the AccountsDB class.");
+        return question;
+    }//End of getQuestionCursorByID method
+
+
+    //Method to get a list of questions, by passing in its DB _id as an argument
+    public QuestionList getQuestionListById(int _id){
+        Log.d("getQuestionListById","Enter the getQuestionListById method in the AccountsDB class.");
+        //Declare and initialize null questionlist object to be returned
+        QuestionList questionList = null;
+        //Declare and initialize cursor to hold question list data from DB
+        Cursor cursor = this.runQuery("SELECT QUESTION._id AS QUESTIONID, \n" +
+                "QUESTION.Value AS Q, QUESTION.AnswerID,ANSWER._id AS ANSWERID,ANSWER.Value AS A FROM\n" +
+                "((QUESTION INNER JOIN QUESTIONASSIGNMENT ON QUESTION._id = QUESTIONASSIGNMENT.QuestionID)\n" +
+                "INNER JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id)\n" +
+                "INNER JOIN QUESTIONLIST ON QUESTIONLIST._id = QUESTIONASSIGNMENT.QuestionListID\n" +
+                "WHERE QUESTIONLIST._id = "+ _id);
+        //Check if cursor returned empty or null
+        if(cursor != null && cursor.getCount() >0){
+            //If not empty, create object from cursor and return
+            questionList = new QuestionList(_id,cursor);
+            Log.d("getQuestionListById","Exit successfully (QUESTION with id " +_id+ " has been found) the getQuestionListById method in the AccountsDB class.");
+            return questionList;
+        }else {
+            Log.d("getQuestionListById", "Exit the getQuestionListById method in the AccountsDB class without finding the account with id: " + _id);
+            //Return empty question list object
+            return questionList;
+        }//End of if else statement to check cursor is not empty
+    }//End of getQuestionListById method
+
+
     //Method used to break a string down into multiple pieces when to allow the apostrophe to be part of the string
     public String includeApostropheEscapeChar(String text){
         Log.d("ApostEscCharString","Enter includeApostropheEscapeChar method in AccountsDB class.");
         String textWithEscChar = "";
         char apostrophe = '\'';
-        //int lastFoundPosition = 0;
         //Iterate through the string to find the apostrophe and replace it with double apostrophe
         for(int i=0;i<text.length();i++){
             char c  = text.charAt(i);
@@ -321,8 +478,8 @@ public class AccountsDB extends SQLiteOpenHelper {
             }else{
                 //Otherwise, copy th e current character to new string
                 textWithEscChar+= text.charAt(i);
-            }
-        }
+            }//End of if else statement to check if current char is equal to the apostrophe char
+        }//End of for loop to iterate through the string
         Log.d("ApostEscCharString","Exit includeApostropheEscapeChar method in AccountsDB class.");
         return textWithEscChar;
     }//End of includeApostropheEscapeChar method
@@ -372,7 +529,6 @@ public class AccountsDB extends SQLiteOpenHelper {
         }//End of try and catch block
     }//End of updateAppState
 
-
     //Method to internally convert a boolean into a int number 1 or  0
     public static int toInt(boolean bool){
         Log.d("Ent_toInt","Enter toInt method in TasksDB class.");
@@ -397,5 +553,4 @@ public class AccountsDB extends SQLiteOpenHelper {
         Log.d("Ext_toBool","Exit toBoolean method in the TaskDB class.");
         return bool;
     }//End of toBoolean method
-
 }// End of AccountsDB Class

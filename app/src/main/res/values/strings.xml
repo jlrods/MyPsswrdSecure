@@ -57,17 +57,23 @@
     <string name="account_userName">User Name:</string>
     <string name="account_psswrd">Password:</string>
     <string name="account_secQuestion">Security questions:</string>
-    <string name="account_isFavorite">Click the star to Mark/Unmark this account as Favorite</string>
+    <string name="account_isFavoriteChecked">Click the star to uncheck this account as Favorite</string>
+    <string name="account_isFavoriteUnchecked">Click the star to check this account as Favorite</string>
     <string name="account_new">New</string>
-    <string name="account_addQuestion">Add</string>
+    <string name="account_addQuestion">Add to list</string>
     <string name="account_dateCreated">Date created:</string>
     <string name="account_changePsswrd">Has to be changed?</string>
     <string name="account_dateChange">Change date:</string>
-    <string name="account_nameHint">Type the account name here...</string>
+    <string name="account_nameHint">Type the account name</string>
 
     <!--    Security question spinner item-->
+    <string name="account_removeQuestion">Remove question</string>
     <string name="question_spinner_answer">Answ:</string>
-
+    <string name="account_quest_avilab_spinner_prompt">Add a question to your list...</string>
+    <string name="account_quest_list_spinner_prompt">No questions in your list...</string>
+    <string name="account_quest_list_spinner_prompt1">Security list has </string>
+    <string name="account_quest_list_spinner_prompt2"> question...</string>
+    <string name="account_quest_list_spinner_prompt3"> questions...</string>
     <!--    Security Question List Activity-->
     <string name="question_list_q1">Question 1:</string>
     <string name="question_list_q2">Question 2:</string>
@@ -84,6 +90,13 @@
     <!--    User/Password Recyclerviewer elements layout -->
     <string name="strVal_times_used">Times used:</string>
     <string name="strVal_date_created">Created on:</string>
+
+
+    <!--    Add/Edit Account Activity-->
+    <string name="addEditAccName">Enter the account name...</string>
+    <string name="selectCatHint">Select a Category...</string>
+    <string name="selectUserHint">Select a User name...</string>
+    <string name="selectPsswrdHint">Select a Password...</string>
 
     <string name="sample_text">4.- The \"+/-\" button allows to toggle between positive and negative numbers and
         vice versa. This button can only be used when the Temperature property has been selected, as transforming

@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private static Icon myPsswrdSecureLogo = null;
     private static AccountsDB accounts = null;
     private static ArrayList<Category> categoryList = null;
+    private static ArrayList<QuestionList> listOfQuestionLists = null;
 
 
 
@@ -69,14 +70,32 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                //Call the correct activity based on tab selection
+                switch(tabLayout.getSelectedTabPosition()){
+                    case 0:
+                        //Call method to throw the AddAccount Activity
+                        throwAddAccountActivity(null);
+                        break;
+                    case 1:
+                        //Call method to throw the AddUserName Activity
+                        break;
+                    case 2:
+                        //Call method to throw the AddPsswrd Activity
+                        break;
+                    default:
+                        break;
+                }//End of switch statement to check current tab selection
+
+
                 //Declare and instantiate a new intent object
-                Intent i= new Intent(MainActivity.this,SelectLogActivity.class);
+                //Intent i= new Intent(MainActivity.this,SelectLogoActivity.class);
                 //Add extras to the intent object, specifically the current category where the add button was pressed from
                 //Start the addTaskActivity class
-                startActivity(i);
+                //startActivity(i);
 
-            }
-        });
+            }//End of on click method implementation
+        });//End of set on click listener method
         Resources r = getResources();
         this.idRes = r.getIdentifier("logo_google","drawable",getPackageName());
         if(idRes ==0) {
@@ -88,10 +107,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 //RecyclerView rv = null;
-                AccountsDB accounts = null;
+                // accounts = null;
                 //Cursor cursor = null;
                 //rv = HomeFragment.getRv();
-                accounts = HomeFragment.getAccounts();
+                //accounts = HomeFragment.getAccounts();
                 switch(tab.getPosition()){
                     case 0:
                         //Consider the category selected on drawer menu to run correct sql query
@@ -156,13 +175,15 @@ public class MainActivity extends AppCompatActivity {
         //Create and set default logo for accounts
         myPsswrdSecureLogo = new Icon(R.mipmap.ic_my_psswrd_secure,"MyPsswrdSecureIcon",String.valueOf(R.mipmap.ic_my_psswrd_secure),false);
         accounts = new AccountsDB(this);
-        categoryList = accounts.getCategoryList();
+        this.categoryList = accounts.getCategoryList();
+        this.currentCategory = categoryList.get(0);
+        //this.listOfQuestionLists = accounts.getListOfQuestionLists();
     }
 
 
     public void testRVLogo(){
         //Declare and instantiate a new intent object
-        Intent i= new Intent(MainActivity.this,SelectLogActivity.class);
+        Intent i= new Intent(MainActivity.this, SelectLogoActivity.class);
         //Add extras to the intent object, specifically the current category where the add button was pressed from
         //Start the addTaskActivity class
         startActivity(i);
@@ -212,6 +233,10 @@ public class MainActivity extends AppCompatActivity {
         return myPsswrdSecureLogo;
     }
 
+    public static ArrayList<QuestionList> getListOfQuestionLists(){
+        return listOfQuestionLists;
+    }
+
     //Method to return a category by passing in its DB id
     public static Category getCategoryByID(int _id){
         Log.d("getCatByID","Enter the getCategoryByID method in the MainActivity class.");
@@ -256,4 +281,17 @@ public class MainActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
         Log.d("Ext_updateRecViewData","Exit the updateRecyclerViewData method in the MainActivity class.");
     }//End of updateRecyclerViewData method
+
+    //Method to throw new AddTaskActivity
+    private void throwAddAccountActivity(View view){
+        Log.d("ThrowAddAcc","Enter throwAddAccountActivity method in the MainActivity class.");
+        //Declare and instantiate a new intent object
+        Intent i= new Intent(MainActivity.this,AddAccountActivity.class);
+        //Add extras to the intent object, specifically the current category where the add button was pressed from
+        i.putExtra("category",this.currentCategory.toString());
+        //i.putExtra("sql",this.getSQLForRecyclerView());
+        //Start the addTaskActivity class
+        startActivity(i);
+        Log.d("ThrowAddAcc","Exit throwAddAccountActivity method in the MainActivity class.");
+    }//End of throwAddTaskActivity method
 }//End of MainActivity class.

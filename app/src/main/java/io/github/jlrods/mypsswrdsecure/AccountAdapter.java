@@ -10,15 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
-
-import java.lang.reflect.Field;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 
 class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHolder>{
@@ -38,7 +31,7 @@ class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHolder>{
             Log.d("AccountAdapt","Exit successfully Full Constructor in AccountAdapter class.  ");
         }catch(Exception e){
             Log.e("Error","Exit Full Constructor in AccountAdapter class with error: "+ e.getMessage());
-        }
+        }//End of try catch block
     }//End of IconAdapter Constructor
 
     @NonNull

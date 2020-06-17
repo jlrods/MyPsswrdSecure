@@ -2,11 +2,7 @@ package io.github.jlrods.mypsswrdsecure;
 
 import android.database.Cursor;
 import android.util.Log;
-
-import androidx.core.content.ContextCompat;
-
 import java.util.ArrayList;
-
 import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
 
 class Account extends Loggin {
@@ -148,6 +144,7 @@ class Account extends Loggin {
        UserName userName = null;
        Psswrd psswrd = null;
        Category category = null;
+       ArrayList<Question> questionList = null;
        Icon icon = null;
        //Declare and initialize variable to retrieve account data from the cursor
        int catID;
@@ -164,20 +161,20 @@ class Account extends Loggin {
        //Get category object by passing in its DB _id
        category = MainActivity.getCategoryByID(catID);
        questionListID = c.getInt(5);
+       if(questionListID > 0){
+           //questionList = accounts.getQuestionListById(questionListID);
+       }
        iconID = c.getInt(6);
        //Get icon object by passing in its DB _id
        icon = accounts.getIconByID(iconID);
        if(icon == null){
            icon = MainActivity.getMyPsswrdSecureLogo();
        }
-        isFavorite = AccountsDB.toBoolean(c.getInt(7));
-        if(questionListID > 0){
-
-        }
-        //Create new account object with data extracted from cursor and objects created to make the account object
-        account = new Account((int) attributes.get(0),(String) attributes.get(1),userName, psswrd,category,null,icon,isFavorite,0);
-        Log.d("Ext_ExtractAccount","Exit extractAccount method in the Account class.");
-        //Return the category object
-        return account;
+       isFavorite = AccountsDB.toBoolean(c.getInt(7));
+       //Create new account object with data extracted from cursor and objects created to make the account object
+       account = new Account((int) attributes.get(0),(String) attributes.get(1),userName, psswrd,category,questionList,icon,isFavorite,0);
+       Log.d("Ext_ExtractAccount","Exit extractAccount method in the Account class.");
+       //Return the category object
+       return account;
     }//End of extractCategory method
 }// End of Account class
