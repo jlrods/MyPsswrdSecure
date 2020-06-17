@@ -17,7 +17,7 @@ class Answer extends StringValue{
     }
 
     public Answer(int _id, String value){
-        super();
+        super(_id, value);
     }
 
     //ToString method
@@ -28,12 +28,12 @@ class Answer extends StringValue{
         return "Answer ID: " + this._id +"\nValue: " + this.value;
     }
     //Method to extract an Answer from a cursor object
-    public Answer extractAnswer(Cursor c){
+    public static Answer extractAnswer(Cursor c){
         Log.d("Ent_ExtractAns","Enter extractAns method in the Answer class.");
         //Initialize local variables
         Answer answer = null;
         //Call common method from parent class to extract basic StringValue object data from a cursor
-        ArrayList<Object> attributes = this.extractStrValue(c);
+        ArrayList<Object> attributes = extractStrValue(c);
         //Create a new Icon object by calling full constructor
         answer = new Answer((int) attributes.get(0), (String) attributes.get(1));
         Log.d("Ext_ExtractAns","Exit extractAns method in the Answer class.");

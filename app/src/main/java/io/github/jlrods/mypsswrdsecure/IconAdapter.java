@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
+import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
+
 class IconAdapter extends RecyclerView.Adapter<IconAdapter.ViewHolder> {
 
     //Attribute definition
@@ -28,19 +30,23 @@ class IconAdapter extends RecyclerView.Adapter<IconAdapter.ViewHolder> {
         iconList = new ArrayList<Icon>();// List to hold all Icon objects created from logos in app sources
         //Extract all the logos from the app resources
         Field[] images = io.github.jlrods.mypsswrdsecure.R.drawable.class.getFields();
+        AccountsDB accounts = HomeFragment.getAccounts();
+        //Cursor cursorIcons = accounts.getIconList();
         try{
             //Iterate through all the drawable files
             for(Field image: images){
                 //Check the drawable file is a logo
                 if(image.getName().startsWith("logo_")){
                     //Add to the list a new Icon object, passing down the R number as _id, name as value and R number as location
-                    iconList.add(new Icon(image.getInt(null),image.getName(),String.valueOf(image.getInt(null)),false));
+                    Icon icon = accounts.getIconByName(image.getName());
+                    icon.set_id(image.getInt(null));
+                    iconList.add(icon);
                 }
             }//End of for each loop
             Log.d("IconAdapt","Exit successfully IconAdapter Full Constructor in Icon Adapter class.  ");
         }catch(Exception e){
             Log.e("Error","Exit IconAdapter Full Constructor in Icon Adapter class with error: "+ e.getMessage());
-        }
+        }//End of try catch block
     }//End of IconAdapter Constructor
 
     @NonNull
@@ -71,10 +77,11 @@ class IconAdapter extends RecyclerView.Adapter<IconAdapter.ViewHolder> {
         if(logo.isSelected){
             //If that is the case set background color to itemSelected colour from Color values file
             tvLogo.setBackgroundColor(ContextCompat.getColor(this.context, R.color.itemSelected));
+            //this.selectedPosition = position;
         }else{
             //Otherwise, set background to white background
             tvLogo.setBackgroundColor(ContextCompat.getColor(this.context, R.color.whiteBackground));
-        }
+        }//End of if else statement to check if logo is selected
         //Put the int boolean pair in the SparseBooleanArray that stores the item selected in the RecyclerViewer object
         this.itemStateArray.put(position,logo.isSelected());
         Log.d("OnBindVH","Exit onBindViewHolder method in IconAdapter class.");
@@ -100,6 +107,7 @@ class IconAdapter extends RecyclerView.Adapter<IconAdapter.ViewHolder> {
         Log.d("IconVHOnClick","Enter IconAdapter setOnItemClickListerner in the IconAdapter class.");
         this.listener = listener;
     }
+
     //Method to update the key value list that keeps record of current state of each icon selection
     public void updateItemIsSelected(int position,boolean isSelected){
         Log.d("updateItemIsSel","Enter updateItemIsSelected method in the IconAdapter class.");
