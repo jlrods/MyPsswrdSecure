@@ -1,417 +1,425 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <LinearLayout
-        android:id="@+id/linLayoutMain"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-        <LinearLayout
-            android:id="@+id/layoutAccLogo"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:layout_weight="1">
-            <LinearLayout
-                android:id="@+id/layoutAccName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_weight="1"
-                android:layout_gravity="center_vertical">
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal">
-                    <ImageView
-                        android:id="@+id/imgAccName"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_gravity="center"
-                        android:src="@mipmap/ic_account_details_black_48dp" />
-                    <TextView
-                        android:id="@+id/tvAccNameTag"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:text="@string/account_name" />
-                </LinearLayout>
-
-
-                <EditText
-                    android:id="@+id/etAccountName"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:ems="10"
-                    android:inputType="text"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                    android:textStyle="bold"
-                    android:hint="@string/account_nameHint"
-                    android:scrollHorizontally="true"/>
-            </LinearLayout>
-
-            <ImageView
-                android:id="@+id/imgAccLogo"
-                android:layout_width="400dp"
-                android:layout_height="?listPreferredItemHeight"
-                android:layout_gravity="center"
-                android:layout_weight="2"
-                android:src="@mipmap/ic_my_psswrd_secure"
-                android:layout_marginRight="5dp"
-                android:layout_marginLeft="5dp"/>
-        </LinearLayout>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorLayoutAccAct"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AddAccountActivity">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <LinearLayout
-            android:id="@+id/layoutCategory"
+            android:id="@+id/linLayoutMain"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:layout_weight="1.1">
-            <ImageView
-                android:id="@+id/imgAccCat"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_gravity="center"
-                android:src="@mipmap/ic_format_list_bulleted_black_48dp" />
-            <TextView
-                android:id="@+id/tvCatTag"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/account_cat"
-                android:layout_gravity="center_vertical"
-                android:gravity="center"/>
-            <io.github.jlrods.mypsswrdsecure.NoDefaultSpinner
-                android:id="@+id/spCategory"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:spinnerMode="dialog"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/layoutUserName"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_weight="1">
+            android:orientation="vertical">
             <LinearLayout
-                android:id="@+id/sublayout_UserName"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="horizontal">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:layout_weight="1">
-                    <ImageView
-                        android:id="@+id/imgAccUserName"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_gravity="center"
-                        android:src="@mipmap/ic_account_black_48dp" />
-                    <TextView
-                        android:id="@+id/tvAccUserNameTag"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/account_userName"
-                        android:layout_gravity="center_vertical"
-                        android:gravity="center"/>
-                </LinearLayout>
-
-                <Button
-                    android:id="@+id/btnAccNewUserName"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_vertical"
-                    android:text="@string/account_new"
-                    android:layout_weight="3"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/subLayout_newUser"
+                android:id="@+id/layoutAccLogo"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
                 android:layout_weight="1">
-<!--                <EditText-->
-<!--                    android:id="@+id/etAccNewUserName"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="match_parent"-->
-<!--                    android:layout_weight="1"-->
-<!--                    android:ems="10"-->
-<!--                    android:inputType="textMultiLine"-->
-<!--                    android:enabled="false"/>-->
-                <io.github.jlrods.mypsswrdsecure.NoDefaultSpinner
-                    android:id="@+id/spAccUserName"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:spinnerMode="dialog"/>
-
-            </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/layoutPsswrd"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_weight="1">
-            <LinearLayout
-                android:id="@+id/subLayout_psswrd"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="horizontal">
                 <LinearLayout
+                    android:id="@+id/layoutAccName"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:layout_weight="1">
-                    <ImageView
-                        android:id="@+id/imgAccPsswrd"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_gravity="center"
-                        android:src="@mipmap/ic_pencil_lock_black_48dp" />
-                    <TextView
-                        android:id="@+id/tvAccPsswrdTag"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/account_psswrd"
-                        android:layout_gravity="center_vertical"
-                        android:gravity="center"/>
-                </LinearLayout>
-                <Button
-                    android:id="@+id/btnAccNewPsswrd"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_vertical"
-                    android:text="@string/account_new"
-                    android:layout_weight="3"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/subLayout_newPsswrd"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:layout_weight="1">
-<!--                <EditText-->
-<!--                    android:id="@+id/etAccNewPssrd"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="match_parent"-->
-<!--                    android:layout_weight="1"-->
-<!--                    android:ems="10"-->
-<!--                    android:inputType="textMultiLine"-->
-<!--                    android:enabled="false"/>-->
-                <io.github.jlrods.mypsswrdsecure.NoDefaultSpinner
-                    android:id="@+id/spAccPsswrd"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:spinnerMode="dialog"/>
-
-            </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/layoutSecQuestion"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_weight="0.85">
-            <LinearLayout
-                android:id="@+id/subLayout_SecQuestionHeader"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:layout_weight="0.9">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
                     android:layout_weight="1"
                     android:layout_gravity="center_vertical">
-                    <ImageView
-                        android:id="@+id/imgAccSecQuestion"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@mipmap/ic_shield_lock_black_48dp"
-                        android:layout_gravity="center_vertical"/>
-                    <TextView
-                        android:id="@+id/tvAccSecQuestionTag"
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:text="@string/account_secQuestion"
-                        android:gravity="center_vertical"
-                        android:layout_gravity="center_vertical"/>
+                        android:orientation="horizontal">
+                        <ImageView
+                            android:id="@+id/imgAccName"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_gravity="center"
+                            android:src="@mipmap/ic_account_details_black_48dp" />
+                        <TextView
+                            android:id="@+id/tvAccNameTag"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:text="@string/account_name" />
+                    </LinearLayout>
+
+
+                    <EditText
+                        android:id="@+id/etAccountName"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:ems="10"
+                        android:inputType="text"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                        android:textStyle="bold"
+                        android:hint="@string/account_nameHint"
+                        android:scrollHorizontally="true"/>
                 </LinearLayout>
-                <Button
-                    android:id="@+id/btnAccRemoveQuestion"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="@string/account_removeQuestion"
-                    android:layout_weight="3"
-                    android:visibility="invisible"
-                    android:layout_gravity="center_vertical"/>
+
+                <ImageView
+                    android:id="@+id/imgAccLogo"
+                    android:layout_width="400dp"
+                    android:layout_height="?listPreferredItemHeight"
+                    android:layout_gravity="center"
+                    android:layout_weight="2"
+                    android:src="@mipmap/ic_my_psswrd_secure"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginLeft="5dp"/>
             </LinearLayout>
+
             <LinearLayout
-                android:id="@+id/subLayout_currentQuestionList"
+                android:id="@+id/layoutCategory"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
-                android:layout_weight="0.75">
-                <io.github.jlrods.mypsswrdsecure.NoDefaultSpinner
-                    android:id="@+id/spAccSecQuestionList"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="1" />
-                <Button
-                    android:id="@+id/btnAccNewSecQuestion"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:text="@string/account_new"
-                    android:layout_gravity="center_vertical"/>
-            </LinearLayout>
-            <LinearLayout
-                android:id="@+id/subLayout_newQuestion"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="0.75">
-<!--                <EditText-->
-<!--                    android:id="@+id/etNewSecQuestion"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="match_parent"-->
-<!--                    android:layout_weight="1"-->
-<!--                    android:ems="10"-->
-<!--                    android:inputType="textMultiLine" />-->
-                <io.github.jlrods.mypsswrdsecure.NoDefaultSpinner
-                    android:id="@+id/spQuestionsAvailable"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="1"
-                    android:gravity="center" />
-                <Button
-                    android:id="@+id/btnAccAddQuestion"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="3"
-                    android:text="@string/account_addQuestion"
-                    android:enabled="false"/>
-            </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/layoutIsFav"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:layout_weight="1.1">
-            <ImageView
-                android:id="@+id/imgAccIsFavorite"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_gravity="center"
-                android:src="@android:drawable/btn_star_big_off" />
-            <TextView
-                android:id="@+id/tvAccIsFavTag"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/account_isFavoriteUnchecked"
-                android:layout_gravity="center_vertical"
-                android:gravity="center"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textAlignment="textStart"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/layoutDates"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-            <RelativeLayout
-                android:id="@+id/subLayout_accDateCreated"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1">
+                android:layout_weight="1.1">
                 <ImageView
-                    android:id="@+id/imgAccDateCreated"
+                    android:id="@+id/imgAccCat"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@mipmap/ic_calendar_black_48dp"
-                    android:layout_alignParentTop="true"/>
+                    android:layout_gravity="center"
+                    android:src="@mipmap/ic_format_list_bulleted_black_48dp" />
                 <TextView
-                    android:id="@+id/tvAccDateCreatedTag"
+                    android:id="@+id/tvCatTag"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignTop="@+id/imgAccDateCreated"
-                    android:layout_toRightOf="@+id/imgAccDateCreated"
-                    android:text="@string/account_dateCreated" />
-                <TextView
-                    android:id="@+id/tvAccDateCreated"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="01/01/2020"
+                    android:text="@string/account_cat"
                     android:layout_gravity="center_vertical"
-                    android:gravity="center"
-                    android:layout_below="@+id/tvAccDateCreatedTag"
-                    android:layout_toRightOf="@+id/imgAccDateCreated"/>
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/subLayout_accDateChangeExt"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
-                <CheckBox
-                    android:id="@+id/cbHasToBeChanged"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/account_changePsswrd"
-                    android:layout_below="@+id/subLayout_accDateChangeInt"/>
-                <RelativeLayout
-                    android:id="@+id/subLayout_accDateChangeInt"
+                    android:gravity="center"/>
+                <io.github.jlrods.mypsswrdsecure.NoDefaultSpinner
+                    android:id="@+id/spCategory"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="gone">
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:spinnerMode="dialog"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutUserName"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_weight="1">
+                <LinearLayout
+                    android:id="@+id/sublayout_UserName"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:layout_weight="1">
+                        <ImageView
+                            android:id="@+id/imgAccUserName"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_gravity="center"
+                            android:src="@mipmap/ic_account_black_48dp" />
+                        <TextView
+                            android:id="@+id/tvAccUserNameTag"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/account_userName"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center"/>
+                    </LinearLayout>
+
+                    <Button
+                        android:id="@+id/btnAccNewUserName"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/account_new"
+                        android:layout_weight="3"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/subLayout_newUser"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_weight="1">
+                    <!--                <EditText-->
+                    <!--                    android:id="@+id/etAccNewUserName"-->
+                    <!--                    android:layout_width="match_parent"-->
+                    <!--                    android:layout_height="match_parent"-->
+                    <!--                    android:layout_weight="1"-->
+                    <!--                    android:ems="10"-->
+                    <!--                    android:inputType="textMultiLine"-->
+                    <!--                    android:enabled="false"/>-->
+                    <io.github.jlrods.mypsswrdsecure.NoDefaultSpinner
+                        android:id="@+id/spAccUserName"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:spinnerMode="dialog"/>
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutPsswrd"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_weight="1">
+                <LinearLayout
+                    android:id="@+id/subLayout_psswrd"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:layout_weight="1">
+                        <ImageView
+                            android:id="@+id/imgAccPsswrd"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_gravity="center"
+                            android:src="@mipmap/ic_pencil_lock_black_48dp" />
+                        <TextView
+                            android:id="@+id/tvAccPsswrdTag"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/account_psswrd"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center"/>
+                    </LinearLayout>
+                    <Button
+                        android:id="@+id/btnAccNewPsswrd"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/account_new"
+                        android:layout_weight="3"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/subLayout_newPsswrd"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_weight="1">
+                    <!--                <EditText-->
+                    <!--                    android:id="@+id/etAccNewPssrd"-->
+                    <!--                    android:layout_width="match_parent"-->
+                    <!--                    android:layout_height="match_parent"-->
+                    <!--                    android:layout_weight="1"-->
+                    <!--                    android:ems="10"-->
+                    <!--                    android:inputType="textMultiLine"-->
+                    <!--                    android:enabled="false"/>-->
+                    <io.github.jlrods.mypsswrdsecure.NoDefaultSpinner
+                        android:id="@+id/spAccPsswrd"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:spinnerMode="dialog"/>
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutSecQuestion"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_weight="0.8">
+                <LinearLayout
+                    android:id="@+id/subLayout_SecQuestionHeader"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_weight="0.9">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:layout_gravity="center_vertical">
+                        <ImageView
+                            android:id="@+id/imgAccSecQuestion"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@mipmap/ic_shield_lock_black_48dp"
+                            android:layout_gravity="center_vertical"/>
+                        <TextView
+                            android:id="@+id/tvAccSecQuestionTag"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="@string/account_secQuestion"
+                            android:gravity="center_vertical"
+                            android:layout_gravity="center_vertical"/>
+                    </LinearLayout>
+                    <Button
+                        android:id="@+id/btnAccRemoveQuestion"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="@string/account_removeQuestion"
+                        android:layout_weight="3"
+                        android:visibility="invisible"
+                        android:layout_gravity="center_vertical"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/subLayout_currentQuestionList"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_weight="0.75">
+                    <io.github.jlrods.mypsswrdsecure.NoDefaultSpinner
+                        android:id="@+id/spAccSecQuestionList"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1" />
+                    <Button
+                        android:id="@+id/btnAccNewSecQuestion"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"
+                        android:text="@string/account_new"
+                        android:layout_gravity="center_vertical"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/subLayout_newQuestion"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.75">
+                    <!--                <EditText-->
+                    <!--                    android:id="@+id/etNewSecQuestion"-->
+                    <!--                    android:layout_width="match_parent"-->
+                    <!--                    android:layout_height="match_parent"-->
+                    <!--                    android:layout_weight="1"-->
+                    <!--                    android:ems="10"-->
+                    <!--                    android:inputType="textMultiLine" />-->
+                    <io.github.jlrods.mypsswrdsecure.NoDefaultSpinner
+                        android:id="@+id/spQuestionsAvailable"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:gravity="center" />
+                    <Button
+                        android:id="@+id/btnAccAddQuestion"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="3"
+                        android:text="@string/account_addQuestion"
+                        android:enabled="false"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutIsFav"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_weight="1.1">
+                <ImageView
+                    android:id="@+id/imgAccIsFavorite"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:src="@android:drawable/btn_star_big_off" />
+                <TextView
+                    android:id="@+id/tvAccIsFavTag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/account_isFavoriteUnchecked"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textAlignment="textStart"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutDates"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1.05"
+                android:orientation="horizontal">
+                <RelativeLayout
+                    android:id="@+id/subLayout_accDateCreated"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
                     <ImageView
-                        android:id="@+id/imgAccDateRenew"
+                        android:id="@+id/imgAccDateCreated"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        android:layout_gravity="center"
                         android:src="@mipmap/ic_calendar_black_48dp"
-                        android:layout_alignParentLeft="true" />
+                        android:layout_alignParentTop="true"/>
                     <TextView
-                        android:id="@+id/tvAccDateRenewTag"
+                        android:id="@+id/tvAccDateCreatedTag"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/account_dateChange"
-                        android:layout_toRightOf="@id/imgAccDateRenew"/>
+                        android:layout_alignTop="@+id/imgAccDateCreated"
+                        android:layout_toRightOf="@+id/imgAccDateCreated"
+                        android:text="@string/account_dateCreated" />
                     <TextView
-                        android:id="@+id/tvAccDateRenewValue"
+                        android:id="@+id/tvAccDateCreated"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_toRightOf="@id/imgAccDateRenew"
-                        android:layout_below="@+id/tvAccDateRenewTag"/>
+                        android:text="01/01/2020"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center"
+                        android:layout_below="@+id/tvAccDateCreatedTag"
+                        android:layout_toRightOf="@+id/imgAccDateCreated"/>
                 </RelativeLayout>
-            </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/subLayout_accDateChangeExt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+                    <CheckBox
+                        android:id="@+id/cbHasToBeChanged"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/account_changePsswrd"
+                        android:layout_below="@+id/subLayout_accDateChangeInt"/>
+                    <RelativeLayout
+                        android:id="@+id/subLayout_accDateChangeInt"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone">
+                        <ImageView
+                            android:id="@+id/imgAccDateRenew"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_gravity="center"
+                            android:src="@mipmap/ic_calendar_black_48dp"
+                            android:layout_alignParentLeft="true" />
+                        <TextView
+                            android:id="@+id/tvAccDateRenewTag"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/account_dateChange"
+                            android:layout_toRightOf="@id/imgAccDateRenew"/>
+                        <TextView
+                            android:id="@+id/tvAccDateRenewValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@id/imgAccDateRenew"
+                            android:layout_below="@+id/tvAccDateRenewTag"/>
+                    </RelativeLayout>
+                </RelativeLayout>
+
+            </LinearLayout>
 
         </LinearLayout>
 
-    </LinearLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

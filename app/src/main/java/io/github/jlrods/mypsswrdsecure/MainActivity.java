@@ -1,6 +1,8 @@
 package io.github.jlrods.mypsswrdsecure;
 
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -8,11 +10,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.Menu;
+import android.widget.EditText;
 import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -294,4 +299,18 @@ public class MainActivity extends AppCompatActivity {
         startActivity(i);
         Log.d("ThrowAddAcc","Exit throwAddAccountActivity method in the MainActivity class.");
     }//End of throwAddTaskActivity method
+
+    //Method to display a generic new Dialog Alert view from any activity.
+    public static AlertDialog.Builder displayAlertDialog(Context context, EditText inputField,String title, String message, String hint){
+        Log.d("displayAlertDialog","Enter displayAlertDialog method in the MainActivity class.");
+        //final EditText inputField = new EditText(context);
+        inputField.setText("");
+        inputField.setHint(hint);
+        Log.d("displayAlertDialog","Enter displayAlertDialog method in the MainActivity class.");
+        return new AlertDialog.Builder(context)
+                .setTitle(title)
+                .setMessage(message)
+                .setView(inputField)
+                .setNegativeButton(R.string.cancel,null);
+    }//End of displayAlertDialog
 }//End of MainActivity class.

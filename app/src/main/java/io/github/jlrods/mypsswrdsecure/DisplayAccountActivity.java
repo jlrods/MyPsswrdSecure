@@ -1,7 +1,10 @@
 package io.github.jlrods.mypsswrdsecure;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -19,9 +22,14 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -64,6 +72,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
     protected ImageView imgAccDateRenew;
     protected TextView tvAccDateRenewTag;
     protected TextView tvAccDateRenewValue;
+    protected CoordinatorLayout coordinatorLayoutAccAct;
 
     //Declare five spinner adapters, one for the category spinner, one for userName, one for password and two for question list spinners
     //And respective cursors to hold data from DB
@@ -101,6 +110,9 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         //Get DB handler cass from the home fragment
         this.accounts = HomeFragment.getAccounts();
 
+        //Initialize layout coordinator required to use Snackbar
+        coordinatorLayoutAccAct = (CoordinatorLayout) findViewById(R.id.coordinatorLayoutAccAct);
+
         //Initialize view objects from layout to have access to them and set different texts and other properties
         //Logo related variables
         this.imgAccLogo = (ImageView) findViewById(R.id.imgAccLogo);
@@ -124,14 +136,23 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
 
         //Initialize User name spinner related variables
         this.spAccUserName = (NoDefaultSpinner) findViewById(R.id.spAccUserName);
-        //this.etAccNewUserName = (EditText) findViewById(R.id.etAccNewUserName);
         this.btnAccNewUserName = (Button) findViewById(R.id.btnAccNewUserName);
+        this.btnAccNewUserName.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                addNewUserName();
+            }
+        });//End of setOnClickListener method
 
         //Initialize Psswrd spinner related variables
         this.spAccPsswrd = (NoDefaultSpinner) findViewById(R.id.spAccPsswrd);
-        //this.etAccNewPsswrd = (EditText) findViewById(R.id.etAccNewPssrd);
         this.btnAccNewPsswrd = (Button) findViewById(R.id.btnAccNewPsswrd);
+        this.btnAccNewPsswrd.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
 
+            }
+        });//End of setOnClickListener method
         //Initialize QuestionList relates variables
         this.btnAccRemoveQuestion = findViewById(R.id.btnAccRemoveQuestion);
         this.btnAccRemoveQuestion.setOnClickListener(new View.OnClickListener() {
@@ -142,6 +163,12 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             }
         });//End of setOnClickListener
         this.btnAccNewSecQuestion = findViewById(R.id.btnAccNewSecQuestion);
+        this.btnAccNewSecQuestion.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+
+            }
+        });//End of setOnClickListener method
         this.spAccSecQuestionList = (NoDefaultSpinner) findViewById(R.id.spAccSecQuestionList);
         this.spAccSecQuestionList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -315,7 +342,41 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         adapter = new SpinnerAdapterQuestion(this,cursor, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER) ;
         sp.setAdapter(adapter);
         Log.d("setUpQuestListSpData","Exit the setUpQuestionListSpinnerData method in the DisplayAccountActivity class.");
-    }//End of setUpQuestionListSpinnerData method
+    }//End of setUpQuestionListSpinnerData
+
+    //Method to add a new userName to the user name dropdown menu
+    protected void addNewUserName(){
+        Log.d("addNewUserName","Enter the addNewUserName method in the DisplayAccountActivity class.");
+        //Declare an instantiate a new editText view to be passed in as parameter for the AlertDialog builder method
+        final EditText inputField = new EditText(this);
+        //Call MainMethod AlertDialog display method
+         androidx.appcompat.app.AlertDialog.Builder alertDialogBuilder = MainActivity.displayAlertDialog(this, inputField,"Add user name","Test","Type user name here...");
+         alertDialogBuilder.setPositiveButton(R.string.dialog_OK, new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog,int whichButton){
+                        //Get user name text from AlertDialog text input field
+                        String userName = inputField.getText().toString().trim();
+                        ////Check the user name is not in the user name list already
+                        Cursor userNameCursor = accounts.getUserNameByName(userName);
+                        if(userNameCursor == null || userNameCursor.getCount() ==0){
+                            //If user name not in the list insert the user name in the DB
+
+                            //Populate the user name spinner with new data set
+
+                            //Move spinner to new user name just inserted
+
+                            //Prompt the user the user name has been added and give option to undo
+                            Snackbar snackbar = Snackbar.make(coordinatorLayoutAccAct, "The user was added", Snackbar.LENGTH_LONG);
+                            snackbar.setAction("Action", null).show();
+                        }else {
+                            //Prompt the user the user name input already exist in the list
+                            Toast.makeText(getBaseContext(), "Sorry, the user name already exist.",Toast.LENGTH_LONG).show();
+                        }//End of if else statement to check user name in DB
+
+                    }//End of Onclick method
+                })
+        .show();
+        Log.d("addNewUserName","Enter the addNewUserName method in the DisplayAccountActivity class.");
+    }//End of addNewUserName
 
     //Method to add a question from question available list to security question list spinner
     protected void addQuestionToSecList(){

@@ -306,9 +306,26 @@ public class AccountsDB extends SQLiteOpenHelper {
             Log.d("getUserNameByID","Exit successfully (user name with id " +_id+ " has been found) the getUserNameByID method in the AccountsDB class.");
             return UserName.extractUserName(cursor);
         }else{
-            Log.d("getUserNameByID","Exit the getUserNameByID method in the AccountsDB class without finding the account with id: "+_id);
+            Log.d("getUserNameByID","Exit the getUserNameByID method in the AccountsDB class without finding the user name with id: "+_id);
             return null;
         }//End of if else statement
+    }//End of getUserNameByID method
+
+    //Method to get a specific user name, by passing in its DB _id as an argument
+    public Cursor getUserNameByName(String userName){
+        Log.d("getUserNameByName","Enter the getUserNameByName method in the AccountsDB class.");
+        if(userName.contains("'")){
+            userName = includeApostropheEscapeChar(userName);
+        }
+        Cursor cursor = this.runQuery("SELECT * FROM USERNAME WHERE Value = '"+ userName+"'");
+        if(cursor != null && cursor.getCount() >0){
+            cursor.moveToFirst();
+            Log.d("getUserNameByName","Exit successfully (user name with value " +userName + " has been found) the getUserNameByID method in the AccountsDB class.");
+
+        }else{
+            Log.d("getUserNameByName","Exit the getUserNameByName method in the AccountsDB class without finding the user name with value: "+userName);
+        }//End of if else statement
+        return cursor;
     }//End of getUserNameByID method
 
     //Method to get a specific password, by passing in its DB _id as an argument

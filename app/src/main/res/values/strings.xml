@@ -83,6 +83,7 @@
     <!--    Menu Icon texts -->
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>
+    <string name="dialog_OK">Ok</string>
 
     <!--    Select Logo Activity-->
     <string name="logo_list_header">Pick a logo for your account:</string>
