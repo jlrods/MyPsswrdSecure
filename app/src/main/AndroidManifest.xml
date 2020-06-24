@@ -27,6 +27,8 @@
             android:label="Add Activity" />
         <activity
             android:name=".SelectLogoActivity" />
+        <activity
+            android:name=".AddQuestionActivity" />
     </application>
 
 </manifest>

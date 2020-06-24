@@ -78,7 +78,7 @@
     <string name="account_quest_list_spinner_prompt3"> preguntas...</string>
 
     <!--    Security Question List Activity-->
-    <string name="question_list_q1">Pregunta 1:</string>
+    <string name="question_list_q1">Pregunta:</string>
     <string name="question_list_q2">Pregunta 2:</string>
     <string name="question_list_q3">Pregunta 3:</string>
     <string name="question_list_answer">Respuesta:</string>
@@ -100,6 +100,10 @@
     <string name="selectCatHint">Seleccione una Categoría...</string>
     <string name="selectUserHint">Seleccione un nombre de Usuario...</string>
     <string name="selectPsswrdHint">Seleccione una Contraseña...</string>
+
+    <!--    AddQuestion Activity    -->
+    <string name="addQuestQuestionHint">Escriba la pregunata nueva aquí...</string>
+    <string name="addQuestAnswerHint">Escriba la respuesta nueva aquí...</string>
 
     <!--    AlertDialog texts-->
     <string name="alertBoxNewUser">Agregar Usuario</string>

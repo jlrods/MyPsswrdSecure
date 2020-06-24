@@ -103,6 +103,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
     boolean isFavorite = false;
     IconAdapter iconAdapter = null;
     int throwSelectLogoActReqCode = 5555;
+    int throwAddQuestionActReqCode = 9876;
     Icon logo = null;
     int selectedPosition = -1;
     String dateFormat = "dd/MMM/yyyy";
@@ -177,7 +178,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         this.btnAccNewSecQuestion.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-
+                addNewQuestion();
             }
         });//End of setOnClickListener method
         this.spAccSecQuestionList = (NoDefaultSpinner) findViewById(R.id.spAccSecQuestionList);
@@ -412,7 +413,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         Log.d("addNewUserName","Exit the addNewUserName method in the DisplayAccountActivity class.");
     }//End of addNewUserName
 
-    //Method to add a new userName to the user name dropdown menu
+    //Method to add a new password to the password dropdown menu
     protected void addNewPsswrd(){
         Log.d("addNewPsswrd","Enter the addNewPsswrd method in the DisplayAccountActivity class.");
         //Declare an instantiate a new editText view to be passed in as parameter for the AlertDialog builder method
@@ -464,7 +465,21 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         })//End of setPositiveButton method
                 .show();//End of AlertDialog builder
         Log.d("addNewPsswrd","Exit the addNewPsswrd method in the DisplayAccountActivity class.");
-    }//End of addNewPsswrd
+    }//End of addNewPsswrd method
+
+    //Method to add a new question to the security question  dropdown menu
+    protected void addNewQuestion(){
+        Log.d("addNewQuestion","Enter the addNewQuestion method in the DisplayAccountActivity class.");
+        //Declare and instantiate a new intent object
+        Intent i= new Intent(this, AddQuestionActivity.class);
+        //Add extras to the intent object, specifically the current category where the add button was pressed from
+        // the current logo data which is sent back if select logo is cancel or updated if new logo has been selected
+        //i.putExtra("selectedImgPosition",selectedPosition);
+        //i.putExtra("selectedImgLocation",logo.getLocation());
+        //Start the addTaskActivity and wait for result
+        startActivityForResult(i,this.throwSelectLogoActReqCode);
+        Log.d("addNewPsswrd","Exit the addNewQuestion method in the DisplayAccountActivity class.");
+    }//End of addNewQuestion method
 
     //Method to add a question from question available list to security question list spinner
     protected void addQuestionToSecList(){
@@ -674,7 +689,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         i.putExtra("selectedImgPosition",selectedPosition);
         i.putExtra("selectedImgLocation",logo.getLocation());
         //Start the addTaskActivity and wait for result
-        startActivityForResult(i,this.throwSelectLogoActReqCode);
+        startActivityForResult(i,this.throwAddQuestionActReqCode);
         Log.d("throwSelectLogoActivity","Exit the throwSelectLogoActivity method in the DisplayAccountActivity class.");
     }//End of throwSelectLogoActivity method
 
@@ -698,6 +713,10 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         }else if(requestCode==this.throwSelectLogoActReqCode && resultCode==RESULT_CANCELED){
             //In the event of receiving a cancel result, no change to be done on the current account, no logo change to be applied
             Log.d("onActivityResult","Received CANCEL result from SelectLogoActivity in the DisplayAccountActivity class.");
+        }else if(requestCode==this.throwAddQuestionActReqCode && resultCode==RESULT_OK){
+
+        }else if(requestCode==this.throwAddQuestionActReqCode && resultCode==RESULT_CANCELED){
+
         }//End of if else statement to check the data comes SelectLogoActivity
         Log.d("onActivityResult","Exit the onActivityResult method in the DisplayAccountActivity class.");
     }//End of onActivityResult method

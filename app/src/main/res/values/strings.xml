@@ -75,7 +75,7 @@
     <string name="account_quest_list_spinner_prompt2"> question...</string>
     <string name="account_quest_list_spinner_prompt3"> questions...</string>
     <!--    Security Question List Activity-->
-    <string name="question_list_q1">Question 1:</string>
+    <string name="question_list_q1">Question:</string>
     <string name="question_list_q2">Question 2:</string>
     <string name="question_list_q3">Question 3:</string>
     <string name="question_list_answer">Answer:</string>
@@ -99,6 +99,9 @@
     <string name="selectUserHint">Select a User name...</string>
     <string name="selectPsswrdHint">Select a Password...</string>
 
+    <!--    AddQuestion Activity    -->
+    <string name="addQuestQuestionHint">Type the new question here...</string>
+    <string name="addQuestAnswerHint">Type the new answer here...</string>
     <!--    AlertDialog texts-->
     <string name="alertBoxNewUser">Add User name</string>
     <string name="alertBoxNewUserMssg">Please, enter a new user name</string>
