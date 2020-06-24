@@ -101,6 +101,26 @@
     <string name="selectUserHint">Seleccione un nombre de Usuario...</string>
     <string name="selectPsswrdHint">Seleccione una Contraseña...</string>
 
+    <!--    AlertDialog texts-->
+    <string name="alertBoxNewUser">Agregar Usuario</string>
+    <string name="alertBoxNewUserMssg">Por favor, introduzca un nuevo usuario</string>
+    <string name="alertBoxNewUserHint">Escriba el usuario aquí...</string>
+    <string name="alertBoxNewPsswrd">Agregar Contraseña</string>
+    <string name="alertBoxNewPsswrdMssg">Por favor, introduzca una nueva contraseña</string>
+    <string name="alertBoxNewPsswrdHint">Escriba la contraseña aquí...</string>
+
+    <!--    Snackbar texts-->
+    <string name="snackBarUndo">UNDO</string>
+    <string name="snackBarUserAdded">El Usuario has sido aregado</string>
+    <string name="snackBarPsswrdAdded">La Contraseña has sido agregada</string>
+    <string name="snackBarQuestionAdded">La pregunta ha sido agregada</string>
+    <string name="snackBarUserNotAdded">Disculpa, el usuario no fue guardado</string>
+    <string name="snackBarUserExists">Disculpa, el usuario ya existe</string>
+    <string name="snackBarPsswrdNotAdded">Disculpa, la contraseña no fue guardada</string>
+    <string name="snackBarPsswrdExists">Disculpa, la contraseña ya existe</string>
+    <string name="snackBarQuestionNotAdded">Disculpa, la pregunta no fue guardada</string>
+    <string name="snackBarQuestionExists">Disculpa, la pregunta ya existe</string>
+
     <string name="sample_text">4.- The \"+/-\" button allows to toggle between positive and negative numbers and
         vice versa. This button can only be used when the Temperature property has been selected, as transforming
         negative magnitudes of weight and volume does not make any sense.Negative sign can be set, even when the

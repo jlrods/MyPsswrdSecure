@@ -9,13 +9,15 @@ import java.util.ArrayList;
 
 //Class to manage all DB interaction
 public class AccountsDB extends SQLiteOpenHelper {
-
+    private static final char apostropheChar = '\'';
+    private static final String apostrophe ="'";
     private Context context;
     //Default constructor
     public AccountsDB(Context context){
         super(context, "Accounts Database",null, 1);
         this.context = context;
     }//End of default constructor
+
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -236,6 +238,183 @@ public class AccountsDB extends SQLiteOpenHelper {
         }//End of try catch block
     }//End of runQuery method
 
+    //Methods to update the DB
+    //Method to update AppState in DB
+    public boolean updateAppState(int currentCategory,int currentTab,int showAllAccounts,int isFavoriteFilter,int isSearchFilter, String lastSearchText){
+        Log.d("UpdateState","Enter the updateAppState method in the AccountsDB class.");
+        boolean success = false;
+        Cursor appState;
+        //Declare and instantiate a new database object to handle the database operations
+        SQLiteDatabase db = getWritableDatabase();
+        appState = this.runQuery("SELECT * FROM APPSTATE");
+        //Declare string for the fist part of sql query
+        String updateState ="UPDATE APPSTATE SET ";
+        //Prepare lastSearchTask and lastSearchGrocery text before sql is run --> include escape character for apostrophe
+        if(lastSearchText.contains(apostrophe)){
+            lastSearchText = this.includeApostropheEscapeChar(lastSearchText);
+        }//End of if statement
+        //Form all the query fields section
+        String fields = " currentCategoryID = " + currentCategory + ","+
+                " currentTab = " + currentTab+ ","+
+                " showAllAccounts = "+ showAllAccounts + ","+
+                " isFavoriteFilter = "+ isFavoriteFilter + ","+
+                " isSearchFilter = " + isSearchFilter + ","+
+                " lastSearch = '" + lastSearchText+ "'";
+        //String to hold the where part of the query
+        String whereId = " WHERE _id = ";
+        //String to hold the complete sql query
+        String sql = "";
+        //get next app state (only one should be saved)
+        if(appState.moveToNext()){
+            sql = updateState+fields+ whereId+appState.getInt(0);
+        }
+        //Try Catch block to execute the sql command to update corresponding table
+        try{
+            //Run the query and change success to true if no issues
+            db.execSQL(sql);
+            success = true;
+            Log.d("UpdateState","Exit successfully the updateAppState method in the Accounts class.");
+        }catch (Exception e) {
+            //Log the exception message
+            Log.d("UpdateState","Exit the updateAppState method in the Accounts class with exception: "+e.getMessage());
+        }
+        finally{
+            return success;
+        }//End of try and catch block
+    }//End of updateAppState
+
+    //Method to add a new item into the database
+    public int addItem(Object item) {
+        Log.d("Ent_addItem","Enter addItem method in TasksDB class.");
+        //Declare and instantiate a new database object to handle the database operations
+        SQLiteDatabase db = getWritableDatabase();
+        //Declare and initialize a query string variables
+        String insertInto = "INSERT INTO ";
+        String values = " VALUES(null, ";
+        String closeBracket =")";
+        String table ="";
+        String fields ="";
+        String itemName ="";
+        String sql = "SELECT MAX(_id) FROM ";
+        //Declare and initialize int variable to hold the item id to be returned. Default value is -1
+        int id =-1;
+        //Declare and initialize variables to be used in the SQL statement (Values a got from task object parameter)
+        String description;
+        int category;
+        //int priority;
+        //int isDone;
+        //int isAppointment;
+        //long dueDate;
+        //int isArchived;
+        //int isSelected;
+        //String notes;
+        long dateCreated;
+        //long dateClosed ;
+        //If else statements to check the class each object is from
+
+        if(item instanceof Category){
+            //if item is a Category object, update the Task table where the id corresponds
+            table = "CATEGORY";
+            itemName = ((Category)item).getName();
+            if(itemName.contains(apostrophe)){
+                itemName = includeApostropheEscapeChar(itemName);
+            }
+            fields="'"+itemName+"'";
+            sql+= table;
+            Log.d("addCategory","Catgory to be added in the addItem method in AccountsDB class.");
+        }else if(item instanceof Psswrd){
+            table = "PSSWRD";
+            itemName = ((Psswrd)item).getValue();
+            if(itemName.contains(apostrophe)){
+                itemName = includeApostropheEscapeChar(itemName);
+            }
+            fields=" '"+itemName+ "',"  + ((Psswrd) item).getDateCreated();
+            sql+=" "+table;
+            Log.d("addGrocery","Grocery to be added in the addItem method in TasksDB class.");
+        }else if(item instanceof UserName ) {
+            itemName = ((UserName)item).getValue();
+            if(itemName.contains(apostrophe)){
+                itemName = includeApostropheEscapeChar(itemName);
+            }
+            table = "USERNAME";
+            fields = " '" + itemName + "'," + ((UserName) item).getDateCreated();
+            sql += table;
+            Log.d("addGroceryType", "GroceryType to be added in the addItem method in AccountsDB class.");
+        }else if(item instanceof Account){
+            table ="ACCOUNTS";
+//            description = ((Task)item).getDescription();
+//            category = ((Task)item).getCategory().getId();
+//            priority = ((Task)item).getPriority().increaseOrdinal();
+//            isDone = toInt(((Task)item).isDone());
+//            isAppointment = toInt(((Task)item).isAppointment());
+//            dueDate = ((Task)item).getDueDate();
+//            isArchived = toInt(((Task)item).isArchived());
+//            isSelected = toInt(((Task)item).isSelected());
+//            notes = ((Task)item).getNotes();
+//            dateCreated = ((Task)item).getDateCreated();
+//            dateClosed = ((Task)item).getDateClosed();
+//            fields = "'"+description+"', "+ category+", "+priority+", "+isDone+", "+isAppointment+", "+
+//                    dueDate+", "+isArchived+", "+isSelected+", '"+notes+"', "+dateCreated+", "+dateClosed;
+//            sql ="SELECT _id FROM TASK WHERE DateCreated = "+ ((Task) item).getDateCreated();
+            Log.d("addTask","Task to be added in the addItem method in TasksDB class.");
+        }//End of if else statements
+        //Execute the sql command to update corresponding table
+        String insertSql = insertInto+table+values+fields+closeBracket;
+        db.execSQL(insertSql);
+        //Declare and instantiate a cursor object to hold the id of task just added into the TASK table
+        Cursor c =db.rawQuery(sql,null);
+        //Check the cursor is not empty and move to next row
+        if (c.moveToNext()){
+            //Make the id equal to the _id field in the database
+            id = c.getInt(0);
+        }//End of if condition
+        //Close both  database and cursor
+        c.close();
+        db.close();
+        Log.d("Ext_addTask","Exit addTask method in TasksDB class.");
+        //Return id of item just added into database
+        return id;
+    }//End of addTask method
+
+    //Method to delete a task within the database
+    public boolean deleteItem(Object item) {
+        Log.d("Ent_deleteItem","Enter deleteItem method in AccountsDB class.");
+        boolean result = false;
+        int id=-1;
+        //Declare and instantiate a new database object to handle the database operations
+        SQLiteDatabase db = getWritableDatabase();
+        //Declare and initialize a query string
+        String deleteFrom = "DELETE FROM ";
+        String whereID =" WHERE _id = ";
+        String table="";
+        if(item instanceof Category){
+            table ="CATEGORY";
+            //Delete all items from TASK table where Category ID = id
+            // db.execSQL(deleteFrom+"TASK WHERE Category = "+ ((Category) item).getId());
+            id = ((Category) item).get_id();
+            Log.d("deleteCATEGORY","CATEGORY to be deleted.");
+        }else if(item instanceof Psswrd){
+            table = "PSSWRD";
+            id = ((Psswrd) item).get_id();
+            Log.d("deletePsswrd","PSSWRD to be deleted.");
+        }else if(item instanceof UserName){
+            table = "USERNAME";
+            //Delete all items from USERNAME table where type id is equal to id
+            id= ((UserName) item).get_id();
+            Log.d("deletUserName","USERNAME to be deleted.");
+        }else if(item instanceof Account){
+            table = "ACCOUNTS";
+            id = ((Account) item).get_id();
+            Log.d("deleteAccount","ACCOUNT to be deleted.");
+        }//End of if else statements
+
+        //Run SQL statement to delete the task with id x from the TASK table
+        db.execSQL(deleteFrom+ table +whereID+ id);
+        db.close();
+        result = true;
+        Log.d("Ext_deleteItem","Exit deleteItem method in AccountsDB class.");
+        return result;
+    }//End of deleteTask method
 
     //Methods to query the DB
 
@@ -314,7 +493,7 @@ public class AccountsDB extends SQLiteOpenHelper {
     //Method to get a specific user name, by passing in its DB _id as an argument
     public Cursor getUserNameByName(String userName){
         Log.d("getUserNameByName","Enter the getUserNameByName method in the AccountsDB class.");
-        if(userName.contains("'")){
+        if(userName.contains(apostrophe)){
             userName = includeApostropheEscapeChar(userName);
         }
         Cursor cursor = this.runQuery("SELECT * FROM USERNAME WHERE Value = '"+ userName+"'");
@@ -341,6 +520,23 @@ public class AccountsDB extends SQLiteOpenHelper {
             return null;
         }//End of if else statement
     }//End of getPsswrdByID method
+
+    //Method to get a specific user name, by passing in its DB _id as an argument
+    public Cursor getPsswrdByName(String psswrd){
+        Log.d("getUserNameByName","Enter the getUserNameByName method in the AccountsDB class.");
+        if(psswrd.contains(apostrophe)){
+            psswrd = includeApostropheEscapeChar(psswrd);
+        }
+        Cursor cursor = this.runQuery("SELECT * FROM PSSWRD WHERE Value = '"+ psswrd+"'");
+        if(cursor != null && cursor.getCount() >0){
+            cursor.moveToFirst();
+            Log.d("getUserNameByName","Exit successfully (user name with value " +psswrd + " has been found) the getUserNameByID method in the AccountsDB class.");
+
+        }else{
+            Log.d("getUserNameByName","Exit the getUserNameByName method in the AccountsDB class without finding the user name with value: "+psswrd);
+        }//End of if else statement
+        return cursor;
+    }//End of getUserNameByID method
 
     //Method to retrieve the list of categories stored on the database
     public ArrayList<Category> getCategoryList(){
@@ -485,11 +681,10 @@ public class AccountsDB extends SQLiteOpenHelper {
     public String includeApostropheEscapeChar(String text){
         Log.d("ApostEscCharString","Enter includeApostropheEscapeChar method in AccountsDB class.");
         String textWithEscChar = "";
-        char apostrophe = '\'';
         //Iterate through the string to find the apostrophe and replace it with double apostrophe
         for(int i=0;i<text.length();i++){
             char c  = text.charAt(i);
-            if(c == apostrophe){
+            if(c == apostropheChar){
                 //If it is an apostrophe, include an extra one
                 textWithEscChar += "''";
             }else{
@@ -502,49 +697,7 @@ public class AccountsDB extends SQLiteOpenHelper {
     }//End of includeApostropheEscapeChar method
 
 
-    //Method to update AppState in DB
-    public boolean updateAppState(int currentCategory,int currentTab,int showAllAccounts,int isFavoriteFilter,int isSearchFilter, String lastSearchText){
-        Log.d("UpdateState","Enter the updateAppState method in the AccountsDB class.");
-        boolean success = false;
-        Cursor appState;
-        //Declare and instantiate a new database object to handle the database operations
-        SQLiteDatabase db = getWritableDatabase();
-        appState = this.runQuery("SELECT * FROM APPSTATE");
-        //Declare string for the fist part of sql query
-        String updateState ="UPDATE APPSTATE SET ";
-        //Prepare lastSearchTask and lastSearchGrocery text before sql is run --> include escape character for apostrophe
-        if(lastSearchText.contains("'")){
-            lastSearchText = this.includeApostropheEscapeChar(lastSearchText);
-        }//End of if statement
-        //Form all the query fields section
-        String fields = " currentCategoryID = " + currentCategory + ","+
-                " currentTab = " + currentTab+ ","+
-                " showAllAccounts = "+ showAllAccounts + ","+
-                " isFavoriteFilter = "+ isFavoriteFilter + ","+
-                " isSearchFilter = " + isSearchFilter + ","+
-                " lastSearch = '" + lastSearchText+ "'";
-        //String to hold the where part of the query
-        String whereId = " WHERE _id = ";
-        //String to hold the complete sql query
-        String sql = "";
-        //get next app state (only one should be saved)
-        if(appState.moveToNext()){
-            sql = updateState+fields+ whereId+appState.getInt(0);
-        }
-        //Try Catch block to execute the sql command to update corresponding table
-        try{
-            //Run the query and change success to true if no issues
-            db.execSQL(sql);
-            success = true;
-            Log.d("UpdateState","Exit successfully the updateAppState method in the Accounts class.");
-        }catch (Exception e) {
-            //Log the exception message
-            Log.d("UpdateState","Exit the updateAppState method in the Accounts class with exception: "+e.getMessage());
-        }
-        finally{
-            return success;
-        }//End of try and catch block
-    }//End of updateAppState
+
 
     //Method to internally convert a boolean into a int number 1 or  0
     public static int toInt(boolean bool){

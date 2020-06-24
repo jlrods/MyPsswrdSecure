@@ -15,14 +15,20 @@ class UserName extends StringValue {
     //Method definition
 
     //Constructor
+    public UserName(int _id, String value, long dateCreated){
+        super(_id,value);
+        this.dateCreated = dateCreated;
+    }
+    public UserName(int _id, String value){
+        this(_id,value, System.currentTimeMillis());
+    }
+    public UserName(String value){
+        this(-1, value);
+    }
     public UserName(){
-        super();
+        this("");
     }
 
-    public UserName(int _id, String value){
-        super(_id,value);
-        this.dateCreated = System.currentTimeMillis() ;
-    }
 
     //Other methods
     @NonNull

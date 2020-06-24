@@ -14,13 +14,9 @@ class Psswrd extends UserName{
     //Method definition
 
     //Constructor
-    public Psswrd(){
-        this(0,"", PsswrdStrength.WEAK);
-    }
 
-    public Psswrd(int _id, String value){
-        this(_id,value, PsswrdStrength.WEAK);
-    }
+
+
 
     public Psswrd(int _id, String value, PsswrdStrength strength){
         super(_id,value);
@@ -28,6 +24,19 @@ class Psswrd extends UserName{
         this.strength = strength;
         Log.d("PsswrdFullConst","Exit Full Constructor of Psswrd class .");
     }//End of Psswrd full constructor
+
+    public Psswrd(int _id, String value){
+
+        this(_id,value, PsswrdStrength.WEAK);
+    }
+
+    public Psswrd(String value){
+        this(-1, value);
+    }
+
+    public Psswrd(){
+        this("");
+    }
 
     @NonNull
     @Override

@@ -10,6 +10,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -43,11 +44,21 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
     //Attribute definition
     //Constants
     //Spinner types constants
-    int CATEGORY_SPINNER = 0;
-    int USERNAME_SPINNER = 1;
-    int PSSWRD_SPINNER = 2;
+    static final int CATEGORY_SPINNER = 0;
+    static final int USERNAME_SPINNER = 1;
+    static final int PSSWRD_SPINNER = 2;
+    static final int QUESTION_SPINNER = 3;
 
+
+    //DB
     AccountsDB accounts;
+
+    //Objects required to build an account
+    Category category = null;
+    UserName userName = null;
+    Psswrd psswrd = null;
+    //int objectType = -1;
+
     //Layout attributes
     protected Bundle extras;
     protected ImageView imgAccLogo;
@@ -81,11 +92,11 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
     Cursor cursorCategory;
     SpinnerAdapter adapterUserName;
     Cursor cursorUserName;
-    SpinnerAdapter adapterPsswrd;
+    //SpinnerAdapter adapterPsswrd;
     Cursor cursorPsswrd;
-    SpinnerAdapter adapterQuestionList;
+    //SpinnerAdapter adapterQuestionList;
     Cursor cursorQuestionList;
-    SpinnerAdapter adapterListOfQuestionsAvailable;
+    //SpinnerAdapter adapterListOfQuestionsAvailable;
     Cursor cursorListOfQuestionsAvailable;
 
     //Other attributes
@@ -141,7 +152,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             @Override
             public void onClick(View v) {
                 addNewUserName();
-            }
+            }//End of onClick method
         });//End of setOnClickListener method
 
         //Initialize Psswrd spinner related variables
@@ -150,8 +161,8 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         this.btnAccNewPsswrd.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-
-            }
+                addNewPsswrd();
+            }//End of onClick method
         });//End of setOnClickListener method
         //Initialize QuestionList relates variables
         this.btnAccRemoveQuestion = findViewById(R.id.btnAccRemoveQuestion);
@@ -262,25 +273,25 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
 
         //Setup the Category spinner and populate with data
         this.cursorCategory = this.accounts.getCategoryListCursor();
-        this.setUpSpinnerData(cursorCategory,adapterCategory,spCategory,CATEGORY_SPINNER);
+        this.setUpSpinnerData(cursorCategory,spCategory,CATEGORY_SPINNER);
         //Setup the UserName spinner and populate with data
         this.cursorUserName = this.accounts.getUserNameList();
-        this.setUpSpinnerData(cursorUserName,adapterUserName,spAccUserName,USERNAME_SPINNER);
+        this.setUpSpinnerData(cursorUserName,spAccUserName,USERNAME_SPINNER);
         //Setup the Psswrd spinner and populate with data
         this.cursorPsswrd = this.accounts.getPsswrdList();
-        this.setUpSpinnerData(cursorPsswrd,adapterPsswrd, spAccPsswrd,PSSWRD_SPINNER);
+        this.setUpSpinnerData(cursorPsswrd, spAccPsswrd,PSSWRD_SPINNER);
         //Setup the Security Question List spinner
         //Use a Dummy cursor to be able to setup prompt. This dummy cursor will held one question item but wont be displayed
         this.cursorQuestionList = accounts.getQuestionCursorByID(1);
         this.spAccSecQuestionList.setPrompt(getBaseContext().getResources().getString(R.string.account_quest_list_spinner_prompt));
-        this.setUpQuestionListSpinnerData(cursorQuestionList,adapterQuestionList,spAccSecQuestionList);
+        this.setUpQuestionListSpinnerData(cursorQuestionList,spAccSecQuestionList);
         //Disable the Security question spinner so user wont be able to see dummy item in spinner
         this.spAccSecQuestionList.setEnabled(false);
 
         //Setup the Questions Available spinner and populate with data
         this.cursorListOfQuestionsAvailable = accounts.getListQuestionsAvailable();
         this.spQuestionsAvailable.setPrompt(getBaseContext().getResources().getString(R.string.account_quest_avilab_spinner_prompt));
-        this.setUpQuestionListSpinnerData(cursorListOfQuestionsAvailable,adapterListOfQuestionsAvailable,spQuestionsAvailable);
+        this.setUpQuestionListSpinnerData(cursorListOfQuestionsAvailable,spQuestionsAvailable);
 
 
         //Initialize the iconAdapter to be able to communicate with SelectLogoAct and find the selected logo in this Activity
@@ -288,24 +299,26 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         Log.d("OnCreateDispAcc","Exit onCreate method in the DisplayAccountActivity abstract class.");
     }//End of onCreate method
 
+
     //Method to set up spinner data by passing in a cursor and the adapter as arguments
-    protected void setUpSpinnerData(Cursor cursor,SpinnerAdapter adapter,Spinner sp,int type){
+    protected void setUpSpinnerData(Cursor cursor,Spinner sp,int type){
+        SpinnerAdapter adapter = null;
         Log.d("setUpSpinnerData","Enter the setUpSpinnerData method in the DisplayAccountActivity class.");
         //Get resources for displying spinner
         String spHint = "";
         String etHint = "";
         Resources res = getResources();
         switch(type){
-            case 0:
+            case CATEGORY_SPINNER:
                 Log.d("setUpSpinnerData","CATEGORY_SPINNER passed in as spinner type in setUpSpinnerData method call  in the DisplayAccountActivity class.");
                 spHint = res.getString(R.string.selectCatHint);
                 break;
-            case 1:
+            case USERNAME_SPINNER:
                 Log.d("setUpSpinnerData","USERNAME_SPINNER passed in as spinner type in setUpSpinnerData method call  in the DisplayAccountActivity class.");
                 spHint = res.getString(R.string.selectUserHint);
                 etHint = res.getString(R.string.selectUserHint);
                 break;
-            case 2:
+            case PSSWRD_SPINNER:
                 Log.d("setUpSpinnerData","PSSWRD_SPINNER passed in as spinner type in setUpSpinnerData method call  in the DisplayAccountActivity class.");
                 spHint = res.getString(R.string.selectPsswrdHint);
                 etHint = res.getString(R.string.selectPsswrdHint);
@@ -337,7 +350,8 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
     }//End of setUpSpinnerData method
 
     //Method to setup question list spinner data
-    protected void setUpQuestionListSpinnerData(Cursor cursor,SpinnerAdapter adapter,Spinner sp){
+    protected void setUpQuestionListSpinnerData(Cursor cursor,Spinner sp){
+        SpinnerAdapterQuestion adapter = null;
         Log.d("setUpQuestListSpData","Enter the setUpQuestionListSpinnerData method in the DisplayAccountActivity class.");
         adapter = new SpinnerAdapterQuestion(this,cursor, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER) ;
         sp.setAdapter(adapter);
@@ -350,33 +364,107 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         //Declare an instantiate a new editText view to be passed in as parameter for the AlertDialog builder method
         final EditText inputField = new EditText(this);
         //Call MainMethod AlertDialog display method
-         androidx.appcompat.app.AlertDialog.Builder alertDialogBuilder = MainActivity.displayAlertDialog(this, inputField,"Add user name","Test","Type user name here...");
+         androidx.appcompat.app.AlertDialog.Builder alertDialogBuilder = MainActivity.displayAlertDialog(this, inputField,
+                 getResources().getString(R.string.alertBoxNewUser),getResources().getString(R.string.alertBoxNewUserMssg),
+                 getResources().getString(R.string.alertBoxNewUserHint));
          alertDialogBuilder.setPositiveButton(R.string.dialog_OK, new DialogInterface.OnClickListener(){
                     public void onClick(DialogInterface dialog,int whichButton){
                         //Get user name text from AlertDialog text input field
-                        String userName = inputField.getText().toString().trim();
-                        ////Check the user name is not in the user name list already
-                        Cursor userNameCursor = accounts.getUserNameByName(userName);
+                        String userNameValue = inputField.getText().toString().trim();
+                        //Check the user name is not in the user name list already
+                        Cursor userNameCursor = accounts.getUserNameByName(userNameValue);
                         if(userNameCursor == null || userNameCursor.getCount() ==0){
-                            //If user name not in the list insert the user name in the DB
-
-                            //Populate the user name spinner with new data set
-
-                            //Move spinner to new user name just inserted
-
-                            //Prompt the user the user name has been added and give option to undo
-                            Snackbar snackbar = Snackbar.make(coordinatorLayoutAccAct, "The user was added", Snackbar.LENGTH_LONG);
-                            snackbar.setAction("Action", null).show();
+                            //If user name not in the list create new user object and store it in global variable used to build the account object
+                            userName = new UserName(userNameValue);
+                            //Call DB method to insert  the user name object into the DB
+                            int userNameID = accounts.addItem(userName);
+                            if(userNameID > 0 ){
+                                //Update the userName object ID
+                                userName.set_id(userNameID);
+                                cursorUserName = accounts.getUserNameList();
+                                //Populate the user name spinner with new data set
+                                setUpSpinnerData(cursorUserName,spAccUserName,USERNAME_SPINNER);
+                                //Move spinner to new user name just inserted
+                                spAccUserName.setSelection(spAccUserName.getAdapter().getCount()-1);
+                                //Prompt the user the user name has been added and give option to undo
+                                Snackbar snackbar = Snackbar.make(coordinatorLayoutAccAct, R.string.snackBarUserAdded, Snackbar.LENGTH_LONG);
+                                snackbar.setAction(R.string.snackBarUndo,new SnackBarClickHandler(userName,userNameCursor,spAccUserName));
+                                snackbar.show();
+                                Log.d("addNewUserName","The user name "+ userName.getValue()+" has been added into the DB through addNewUserName method in the DisplayAccountActivity class.");
+                            }
+                            else {
+                                //Prompt the user the user name input failed to be inserted in the DB
+                               Toast toast = Toast.makeText(getBaseContext(), R.string.snackBarUserNotAdded,Toast.LENGTH_LONG);
+                               toast.setGravity(Gravity.CENTER,0,0);
+                               toast.show();
+                                Log.d("addNewUserName","The user name "+ userName.getValue()+" has NOT been added into the DB through addNewUserName method in the DisplayAccountActivity class, due to DB problem.");
+                            }//End of if else statement to check user name in DB
                         }else {
-                            //Prompt the user the user name input already exist in the list
-                            Toast.makeText(getBaseContext(), "Sorry, the user name already exist.",Toast.LENGTH_LONG).show();
+                            //Prompt the user the user name input already exists in the list
+                            Toast toast = Toast.makeText(getBaseContext(), R.string.snackBarUserExists,Toast.LENGTH_LONG)     ;
+                            toast.setGravity(Gravity.CENTER,0,0);
+                            toast.show();
+                            Log.d("addNewUserName","The user name "+ userNameValue +" already exists in the DB.");
                         }//End of if else statement to check user name in DB
-
                     }//End of Onclick method
-                })
-        .show();
-        Log.d("addNewUserName","Enter the addNewUserName method in the DisplayAccountActivity class.");
+                })//End of setPositiveButton method
+        .show();//End of AlertDialog builder
+        Log.d("addNewUserName","Exit the addNewUserName method in the DisplayAccountActivity class.");
     }//End of addNewUserName
+
+    //Method to add a new userName to the user name dropdown menu
+    protected void addNewPsswrd(){
+        Log.d("addNewPsswrd","Enter the addNewPsswrd method in the DisplayAccountActivity class.");
+        //Declare an instantiate a new editText view to be passed in as parameter for the AlertDialog builder method
+        final EditText inputField = new EditText(this);
+        //Call MainMethod AlertDialog display method
+        androidx.appcompat.app.AlertDialog.Builder alertDialogBuilder = MainActivity.displayAlertDialog(this, inputField,
+                getResources().getString(R.string.alertBoxNewPsswrd),getResources().getString(R.string.alertBoxNewPsswrdMssg),
+                getResources().getString(R.string.alertBoxNewPsswrdHint));
+        alertDialogBuilder.setPositiveButton(R.string.dialog_OK, new DialogInterface.OnClickListener(){
+            public void onClick(DialogInterface dialog,int whichButton){
+                //Get user name text from AlertDialog text input field
+                String psswrdValue = inputField.getText().toString().trim();
+                //Check the user name is not in the user name list already
+                Cursor psswrdCursor = accounts.getPsswrdByName(psswrdValue);
+                if(psswrdCursor == null || psswrdCursor.getCount() == 0){
+                    //If user name not in the list create new user object and store it in global variable used to build the account object
+                    psswrd = new Psswrd(psswrdValue);
+                    //Call DB method to insert  the user name object into the DB
+                    int psswrdID = accounts.addItem(psswrd);
+                    if(psswrdID > 0 ){
+                        //Update the userName object ID
+                        psswrd.set_id(psswrdID);
+                        psswrdCursor = accounts.getPsswrdList();
+                        //Populate the user name spinner with new data set
+                        setUpSpinnerData(psswrdCursor,spAccPsswrd,PSSWRD_SPINNER);
+                        //Move spinner to new user name just inserted
+                        spAccPsswrd.setSelection(spAccPsswrd.getAdapter().getCount()-1);
+                        //Prompt the user the user name has been added and give option to undo
+                        Snackbar snackbar = Snackbar.make(coordinatorLayoutAccAct, R.string.snackBarUserAdded, Snackbar.LENGTH_LONG);
+                        snackbar.setAction(R.string.snackBarUndo,new SnackBarClickHandler(psswrd,psswrdCursor,spAccPsswrd));
+                        snackbar.show();
+                        Log.d("addNewPsswrd","The password "+ psswrd.getValue()+" has been added into the DB through addNewPsswrd method in the DisplayAccountActivity class.");
+                    }
+                    else {
+                        //Prompt the user the user name input failed to be inserted in the DB
+                        Toast toast = Toast.makeText(getBaseContext(), R.string.snackBarPsswrdNotAdded,Toast.LENGTH_LONG);
+                        toast.setGravity(Gravity.CENTER,0,0);
+                        toast.show();
+                        Log.d("addNewPsswrd","The password "+ psswrd.getValue()+" has NOT been added into the DB through addNewPsswrd method in the DisplayAccountActivity class, due to DB problem.");
+                    }//End of if else statement to check user name in DB
+                }else {
+                    //Prompt the user the user name input already exists in the list
+                    Toast toast = Toast.makeText(getBaseContext(), R.string.snackBarPsswrdExists,Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.CENTER,0,0);
+                    toast.show();
+                    Log.d("addNewPsswrd","The password "+ psswrdValue +" already exists in the DB.");
+                }//End of if else statement to check user name in DB
+            }//End of Onclick method
+        })//End of setPositiveButton method
+                .show();//End of AlertDialog builder
+        Log.d("addNewPsswrd","Exit the addNewPsswrd method in the DisplayAccountActivity class.");
+    }//End of addNewPsswrd
 
     //Method to add a question from question available list to security question list spinner
     protected void addQuestionToSecList(){
@@ -445,7 +533,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             //Setup spinner prompt by getting proper text after calling method to get text
             this.spAccSecQuestionList.setPrompt(this.getSecQuestListPrompt(c.getCount()));
             //Setup the spinner data
-            this.setUpQuestionListSpinnerData(c,this.adapterQuestionList,this.spAccSecQuestionList);
+            this.setUpQuestionListSpinnerData(c,this.spAccSecQuestionList);
             this.spAccSecQuestionList.setEnabled(true);
         }//End of if statement to check it's not a repeated question
         Log.d("addQuestionToSecList","Exit the addQuestionToSecList method in the DisplayAccountActivity class.");
@@ -498,7 +586,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             //Setup spinner prompt by getting proper text after calling method to get text
             this.spAccSecQuestionList.setPrompt(getSecQuestListPrompt(c.getCount()));
             //Setup the spinner data
-            this.setUpQuestionListSpinnerData(c,this.adapterQuestionList,this.spAccSecQuestionList);
+            this.setUpQuestionListSpinnerData(c,this.spAccSecQuestionList);
         }else{
             //Use a Dummy cursor again to display spinner prompt
             c = accounts.getQuestionCursorByID(selectedQuestionID);
@@ -677,4 +765,57 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
     }//End of changeDate method
 
     //Getter and setter methods
+
+    //Private and Protected inner classes
+
+    //Class to handle snackbar undo click events
+    protected class SnackBarClickHandler implements View.OnClickListener{
+        //Attributes
+        Object item;
+        Cursor cursor;
+        SpinnerAdapter adapter;
+        NoDefaultSpinner spinner;
+        //Constructor method
+        SnackBarClickHandler(Object item,Cursor cursor, NoDefaultSpinner spinner){
+            Log.d("SnackBarClickHandler","Enter the SnackBarClickHandler constructor method in the SnackBarClickHandler subclass.");
+            this.item = item;
+            this.cursor = cursor;
+            this.spinner = spinner;
+            Log.d("SnackBarClickHandler","Enter the SnackBarClickHandler constructor method in the SnackBarClickHandler subclass.");
+        }//End of constructor method
+
+        @Override
+        //Method to handle click events on snackbar UNDO button
+        public void onClick(View v) {
+            Log.d("SnackBarOnClick","Enter the onClick method method in the SnackBarClickHandler subclass.");
+            int spinnerType;
+            //Call DB method to delete item from DB
+            accounts.deleteItem(item);
+            //Check the type of object passed in to setup variables required to populate the respective spinner correctly
+            if(item instanceof Psswrd){
+                cursor =  accounts.getPsswrdList();
+                spinnerType = PSSWRD_SPINNER;
+                Log.d("SnackBarOnClick","PSSWRD object passed into the onClick method method in the SnackBarClickHandler subclass.");
+            }else if(item instanceof UserName){
+                cursor = accounts.getUserNameList();
+                spinnerType = USERNAME_SPINNER;
+                Log.d("SnackBarOnClick","USERNAME object passed into the onClick method method in the SnackBarClickHandler subclass.");
+            }else if(item instanceof Question){
+                cursor = accounts.getListQuestionsAvailable();
+                spinnerType = QUESTION_SPINNER;
+                Log.d("SnackBarOnClick","QUESTION object passed into the onClick method method in the SnackBarClickHandler subclass.");
+            }else{
+                cursor = null;
+                spinnerType = -1;
+                Log.d("SnackBarOnClick","No object type detected in the onClick method method in the SnackBarClickHandler subclass.");
+            }
+            //Check what type of spinner is to be used and populate the respective spinner with new data set
+            if(spinnerType != QUESTION_SPINNER){
+                setUpSpinnerData(cursor, spinner, spinnerType);
+            }else{
+                setUpQuestionListSpinnerData(cursor,spinner);
+            }
+            Log.d("SnackBarOnClick","Exit the onClick method method in the SnackBarClickHandler subclass.");
+        }//End of onClick method
+    }//End of SnackBarClickHandler subclass
 }//End of DisplayAccountActivity

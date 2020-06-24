@@ -99,6 +99,27 @@
     <string name="selectUserHint">Select a User name...</string>
     <string name="selectPsswrdHint">Select a Password...</string>
 
+    <!--    AlertDialog texts-->
+    <string name="alertBoxNewUser">Add User name</string>
+    <string name="alertBoxNewUserMssg">Please, enter a new user name</string>
+    <string name="alertBoxNewUserHint">Type user name here...</string>
+    <string name="alertBoxNewPsswrd">Add Password</string>
+    <string name="alertBoxNewPsswrdMssg">Please, enter a new password</string>
+    <string name="alertBoxNewPsswrdHint">Type password here...</string>
+
+
+    <!--    Snackbar texts-->
+    <string name="snackBarUndo">UNDO</string>
+    <string name="snackBarUserAdded">The user was added</string>
+    <string name="snackBarPsswrdAdded">The password was added</string>
+    <string name="snackBarQuestionAdded">The question was added</string>
+    <string name="snackBarUserNotAdded">Sorry, the user name was not saved</string>
+    <string name="snackBarUserExists">Sorry, the user name already exists</string>
+    <string name="snackBarPsswrdNotAdded">Sorry, the password was not saved</string>
+    <string name="snackBarPsswrdExists">Sorry, the password already exists</string>
+    <string name="snackBarQuestionNotAdded">Sorry, the question was not saved</string>
+    <string name="snackBarQuestionExists">Sorry, the question already exists</string>
+
     <string name="sample_text">4.- The \"+/-\" button allows to toggle between positive and negative numbers and
         vice versa. This button can only be used when the Temperature property has been selected, as transforming
         negative magnitudes of weight and volume does not make any sense.Negative sign can be set, even when the

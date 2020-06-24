@@ -66,4 +66,5 @@ public class SpinnerAdapter extends CursorAdapter {
         Log.d("Ent_findspItem","Exit  findItemPosition to find sp item by name in SpinnerAdapter class.");
         return position;
     }//End of findItemPosition method
+
 }//End of SpinnerAdapter class
