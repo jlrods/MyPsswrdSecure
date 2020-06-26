@@ -12,12 +12,18 @@ class Answer extends StringValue{
     //Method definition
 
     //Constructor
-    public Answer(){
-        super();
-    }
+
 
     public Answer(int _id, String value){
         super(_id, value);
+    }
+
+    public Answer(String value){
+        this(-1,value);
+    }
+
+    public Answer(){
+        super();
     }
 
     //ToString method

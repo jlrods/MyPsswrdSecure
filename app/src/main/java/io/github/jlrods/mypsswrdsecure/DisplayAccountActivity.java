@@ -305,7 +305,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
     protected void setUpSpinnerData(Cursor cursor,Spinner sp,int type){
         SpinnerAdapter adapter = null;
         Log.d("setUpSpinnerData","Enter the setUpSpinnerData method in the DisplayAccountActivity class.");
-        //Get resources for displying spinner
+        //Get resources for displaying spinner
         String spHint = "";
         String etHint = "";
         Resources res = getResources();
@@ -336,7 +336,6 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             sp.setEnabled(false);
             //Check if spinner type is username or psswrd spinner to setup texts and enable respective buttons
             if(type == USERNAME_SPINNER){
-                //this.etAccNewUserName.setHint(etHint);
                 this.etAccNewUserName.setEnabled(true);
             }else if(type == PSSWRD_SPINNER){
                 this.etAccNewPsswrd.setHint(etHint);
@@ -477,7 +476,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         //i.putExtra("selectedImgPosition",selectedPosition);
         //i.putExtra("selectedImgLocation",logo.getLocation());
         //Start the addTaskActivity and wait for result
-        startActivityForResult(i,this.throwSelectLogoActReqCode);
+        startActivityForResult(i,this.throwAddQuestionActReqCode);
         Log.d("addNewPsswrd","Exit the addNewQuestion method in the DisplayAccountActivity class.");
     }//End of addNewQuestion method
 
@@ -689,7 +688,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         i.putExtra("selectedImgPosition",selectedPosition);
         i.putExtra("selectedImgLocation",logo.getLocation());
         //Start the addTaskActivity and wait for result
-        startActivityForResult(i,this.throwAddQuestionActReqCode);
+        startActivityForResult(i,this.throwSelectLogoActReqCode);
         Log.d("throwSelectLogoActivity","Exit the throwSelectLogoActivity method in the DisplayAccountActivity class.");
     }//End of throwSelectLogoActivity method
 
@@ -714,7 +713,12 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             //In the event of receiving a cancel result, no change to be done on the current account, no logo change to be applied
             Log.d("onActivityResult","Received CANCEL result from SelectLogoActivity in the DisplayAccountActivity class.");
         }else if(requestCode==this.throwAddQuestionActReqCode && resultCode==RESULT_OK){
-
+            //Setup the Questions Available spinner and populate with data
+            this.cursorListOfQuestionsAvailable = accounts.getListQuestionsAvailable();
+            this.spQuestionsAvailable.setPrompt(getBaseContext().getResources().getString(R.string.account_quest_avilab_spinner_prompt));
+            this.setUpQuestionListSpinnerData(cursorListOfQuestionsAvailable,spQuestionsAvailable);
+            this.spQuestionsAvailable.setSelection(spQuestionsAvailable.getAdapter().getCount()-1);
+            this.addQuestionToSecList();
         }else if(requestCode==this.throwAddQuestionActReqCode && resultCode==RESULT_CANCELED){
 
         }//End of if else statement to check the data comes SelectLogoActivity

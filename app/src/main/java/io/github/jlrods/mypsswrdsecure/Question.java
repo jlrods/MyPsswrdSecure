@@ -27,6 +27,10 @@ class Question extends StringValue{
         this.answer = new Answer(_id, answerText);
     }
 
+    public Question(String value, Answer answer){
+        this(-1,value,answer);
+    }
+
     public Question(int _id, String value, Answer answer){
         super(_id,value);
         this.answer = answer;
@@ -59,4 +63,14 @@ class Question extends StringValue{
         Log.d("Ext_ExtractAns","Exit extractQuestion method in the Question class.");
         return question;
     }// End of extractAnswer method
+
+    //Setter and getter methods
+
+    public Answer getAnswer() {
+        return answer;
+    }
+
+    public void setAnswer(Answer answer) {
+        this.answer = answer;
+    }
 }// End of Question class

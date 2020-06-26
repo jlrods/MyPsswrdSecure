@@ -330,7 +330,7 @@ public class AccountsDB extends SQLiteOpenHelper {
             }
             fields=" '"+itemName+ "',"  + ((Psswrd) item).getDateCreated();
             sql+=" "+table;
-            Log.d("addGrocery","Grocery to be added in the addItem method in TasksDB class.");
+            Log.d("addPassword","Password to be added in the addItem method in AccountsDB class.");
         }else if(item instanceof UserName ) {
             itemName = ((UserName)item).getValue();
             if(itemName.contains(apostrophe)){
@@ -339,7 +339,25 @@ public class AccountsDB extends SQLiteOpenHelper {
             table = "USERNAME";
             fields = " '" + itemName + "'," + ((UserName) item).getDateCreated();
             sql += table;
-            Log.d("addGroceryType", "GroceryType to be added in the addItem method in AccountsDB class.");
+            Log.d("addUserName", "User name to be added in the addItem method in AccountsDB class.");
+        }else if(item instanceof Answer){
+            itemName = ((Answer)item).getValue();
+            if(itemName.contains(apostrophe)){
+                itemName = includeApostropheEscapeChar(itemName);
+            }
+            table = "ANSWER";
+            fields =" '"+itemName+"'";
+            sql += table;
+            Log.d("addAnswer", "Answer to be added in the addItem method in AccountsDB class.");
+        }else if(item instanceof Question){
+            itemName = ((Question)item).getValue();
+            if(itemName.contains(apostrophe)){
+                itemName = includeApostropheEscapeChar(itemName);
+            }
+            table = "QUESTION";
+            fields =" '"+itemName+"',"+((Question)item).getAnswer().get_id();
+            sql += table;
+            Log.d("addQuestion", "User name to be added in the addItem method in AccountsDB class.");
         }else if(item instanceof Account){
             table ="ACCOUNTS";
 //            description = ((Task)item).getDescription();
@@ -600,6 +618,17 @@ public class AccountsDB extends SQLiteOpenHelper {
     }//End of getListOfQuestionLists method
 
     //Method to get cursor with list of questions available
+    public Cursor getPreLoadedQuestions(){
+        Log.d("getPreLoadedQuestions","Enter the getPreLoadedQuestions method in the AccountsDB class.");
+        //Declare and initialize cursor to hold list of questions available from DB
+        Cursor preLoadedQuestions = this.runQuery("SELECT QUESTION._id, QUESTION.Value AS Q, ANSWER._id AS AnswerID,ANSWER.Value AS \n" +
+                "Answer FROM QUESTION  LEFT JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id WHERE QUESTION._id <= 10;");
+        Log.d("getPreLoadedQuestions","Exit the getPreLoadedQuestions method in the AccountsDB class.");
+        return preLoadedQuestions;
+    }//End of getListQuestionsAvailable method
+
+
+    //Method to get cursor with list of questions available
     public Cursor getListQuestionsAvailable(){
         Log.d("getListOfQuestionLists","Enter the getListOfQuestionLists method in the AccountsDB class.");
         //Declare and initialize cursor to hold list of questions available from DB
@@ -621,6 +650,22 @@ public class AccountsDB extends SQLiteOpenHelper {
             Log.d("getQuestionByID","Exit the getQuestionByID method in the AccountsDB class without finding the account with id: "+_id);
             return null;
         }//End of if else statement
+    }//End of getQuestionByID method
+
+    //Method to get a specific question, by passing in its DB _id as an argument
+    public Cursor getQuestionByValue(String value){
+        Log.d("getQuestionByValue","Enter the getQuestionByValue method in the AccountsDB class.");
+        if(value.contains(apostrophe)){
+            value = includeApostropheEscapeChar(value);
+        }
+        Cursor cursor = this.runQuery("SELECT * FROM QUESTION WHERE QUESTION.Value = '"+ value+"'");
+        if(cursor != null && cursor.getCount() >0){
+            cursor.moveToFirst();
+            Log.d("getQuestionByValue","Exit successfully (QUESTION with value " +value+ " has been found) the getQuestionByValue method in the AccountsDB class.");
+        }else{
+            Log.d("getQuestionByID","Exit the getQuestionByID method in the AccountsDB class without finding the account with value: "+value);
+        }//End of if else statement
+        return cursor;
     }//End of getQuestionByID method
 
     //Method to get a question cursor by passing in its DB id as argument
