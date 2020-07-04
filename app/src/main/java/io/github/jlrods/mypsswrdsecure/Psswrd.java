@@ -14,10 +14,6 @@ class Psswrd extends UserName{
     //Method definition
 
     //Constructor
-
-
-
-
     public Psswrd(int _id, String value, PsswrdStrength strength){
         super(_id,value);
         Log.d("PsswrdFullConst","Enter Full Constructor of Psswrd class .");

@@ -1,6 +1,7 @@
 package io.github.jlrods.mypsswrdsecure;
 
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -29,6 +30,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+
+import javax.crypto.spec.IvParameterSpec;
 
 import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
 
@@ -61,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    Cryptographer cryptographer = new Cryptographer();
+     private static Cryptographer cryptographer;
 
 
     @Override
@@ -179,11 +182,46 @@ public class MainActivity extends AppCompatActivity {
 
         //Create and set default logo for accounts
         myPsswrdSecureLogo = new Icon(R.mipmap.ic_my_psswrd_secure,"MyPsswrdSecureIcon",String.valueOf(R.mipmap.ic_my_psswrd_secure),false);
+        cryptographer = new Cryptographer();
+        //Dummy encryption to get IV created
+        byte[] testEncrypted = cryptographer.encryptText("DummyEncryption");
+        String test2 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
+//        byte[] joseleoEncrypt = cryptographer.encryptText("joseleo");
+//        String joseleoDecrypt = cryptographer.decryptText(joseleoEncrypt, cryptographer.getIv());
         accounts = new AccountsDB(this);
+//        String test3 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
+        //Save it IV in the APPSTATE Table
+//        ContentValues appStateValues = new ContentValues();
+//        String test4 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
+//        appStateValues.put("_id",accounts.getMaxItemIdInTable("APPSTATE"));
+//        String test5 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
+//        String joseleo2 = cryptographer.decryptText(joseleoEncrypt,cryptographer.getIv());
+//        IvParameterSpec ivFromCrypt = cryptographer.getIv();
+//        String test6 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
+//        byte [] initVector = cryptographer.getIv().getIV();
+//        appStateValues.put("initVector",initVector);
+//        accounts.updateTable("APPSTATE",appStateValues);
+//        String test9 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
+       //accounts.getWritableDatabase().update("APPSTATE",appStateValues,"_id = 1",null);
+
+//        Cursor c = accounts.runQuery("SELECT * FROM APPSTATE WHERE _id = "+appStateValues.getAsInteger("_id"));
+//        c.moveToNext();
+//        int appID = c.getInt(0);
+//        int abc = c.getInt(2);
+//        int abcd = c.getInt(3);
+//        int abcde = c.getInt(4);
+//        int abcdef = c.getInt(5);
+//        String abcdefg = c.getString(6);
+//        byte[] iv = c.getBlob(7);
+//        IvParameterSpec a = new IvParameterSpec(iv);
+//        String test = cryptographer.decryptText(testEncrypted,a);
+//        String test1 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
+
+
         this.categoryList = accounts.getCategoryList();
         this.currentCategory = categoryList.get(0);
         //this.listOfQuestionLists = accounts.getListOfQuestionLists();
-    }
+    }//End of onCreate method
 
 
     public void testRVLogo(){
@@ -313,4 +351,8 @@ public class MainActivity extends AppCompatActivity {
                 .setView(inputField)
                 .setNegativeButton(R.string.cancel,null);
     }//End of displayAlertDialog
+
+    public static Cryptographer getCryptographer(){
+        return cryptographer;
+    }
 }//End of MainActivity class.

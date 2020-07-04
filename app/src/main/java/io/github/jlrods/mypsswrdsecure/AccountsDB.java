@@ -1,21 +1,27 @@
 package io.github.jlrods.mypsswrdsecure;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import java.util.ArrayList;
+import java.util.Calendar;
+
+import javax.crypto.spec.IvParameterSpec;
 
 //Class to manage all DB interaction
 public class AccountsDB extends SQLiteOpenHelper {
     private static final char apostropheChar = '\'';
     private static final String apostrophe ="'";
     private Context context;
+    private Cryptographer cryptographer;
     //Default constructor
     public AccountsDB(Context context){
         super(context, "Accounts Database",null, 1);
         this.context = context;
+        this.cryptographer = MainActivity.getCryptographer();
     }//End of default constructor
 
 
@@ -64,13 +70,13 @@ public class AccountsDB extends SQLiteOpenHelper {
 
         //Create table to store usernames for site loggins
         // Leave empty as user has to create their own user names.
-        db.execSQL("CREATE TABLE USERNAME (_id INTEGER PRIMARY KEY AUTOINCREMENT,Value TEXT, \n" +
-                "DateCreated BIGINT);");
+        db.execSQL("CREATE TABLE USERNAME (_id INTEGER PRIMARY KEY AUTOINCREMENT,Value BLOB, \n" +
+                "DateCreated BIGINT,initVector BLOB);");
 
         //Create table to store passwords for site loggins
         // Leave empty as user has to create their own passwords.
-        db.execSQL("CREATE TABLE PSSWRD (_id INTEGER PRIMARY KEY AUTOINCREMENT,Value TEXT,\n" +
-                "DateCreated BIGINT);");
+        db.execSQL("CREATE TABLE PSSWRD (_id INTEGER PRIMARY KEY AUTOINCREMENT,Value BLOB,\n" +
+                "DateCreated BIGINT, initVector BLOB);");
 
         //Create table to store new icon/image locations (selected by user)
         // Leave empty as pre populated icons
@@ -186,18 +192,121 @@ public class AccountsDB extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO QUESTIONASSIGNMENT VALUES(null,3,3);");
         db.execSQL("INSERT INTO QUESTIONASSIGNMENT VALUES(null,3,4);");
 
-        //User names
-        db.execSQL("INSERT INTO USERNAME (Value, DateCreated) VALUES('jlrods',1588167878639);");
-        db.execSQL("INSERT INTO USERNAME (Value, DateCreated) VALUES('jlrods@gmail.com',1588267878640);");
-        db.execSQL("INSERT INTO USERNAME (Value, DateCreated) VALUES('j_rodriguez',1588367878641);");
-        db.execSQL("INSERT INTO USERNAME (Value, DateCreated) VALUES('j_rodriguez@modularauto.ie',1588467878642);");
+        //Include test data for User names
+        byte[] user1 = cryptographer.encryptText("jlrods");
+        ContentValues values1 = new ContentValues();
+        //values.put("_id",null);
+        values1.put("Value",user1);
+        values1.put("DateCreated", Calendar.getInstance().getTimeInMillis());
+        values1.put("initVector",cryptographer.getIv().getIV());
+        int userID1 = (int) db.insert("USERNAME",null,values1);
 
-        //Passwords
-        db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('Machito88',1588167878639);");
-        db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('JoseLeonardo',1588267878640);");
-        db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('Paracotos12!',1588367878641);");
-        db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('Roraima2020!',1588467878642);");
-        db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('M;Mach;to88!',1588167878639);");
+//        Cursor userRow = db.rawQuery("SELECT * FROM USERNAME WHERE _id = "+userID1,null);
+//        userRow.moveToFirst();
+//        int id = userRow.getInt(0);
+//        long date = userRow.getLong(2);
+//        byte[] encryptedUserName = userRow.getBlob(1);
+//        String user11 = cryptographer.decryptText(encryptedUserName,cryptographer.getIv());
+
+
+
+        byte[] user2 = cryptographer.encryptText("jlrods@gmail.com");
+        ContentValues values2 = new ContentValues();
+        //values.put("_id",null);
+        values2.put("Value",user2);
+        values2.put("DateCreated", Calendar.getInstance().getTimeInMillis());
+        values2.put("initVector",cryptographer.getIv().getIV());
+        int userID2 = (int) db.insert("USERNAME",null,values2);
+        //String user2 = cryptographer.encryptText("jlrods@gmail.com").toString();
+        //db.execSQL("INSERT INTO USERNAME (Value, DateCreated) VALUES('"+user2+"',1588267878640);");
+        byte[] user3 = cryptographer.encryptText("j_rodriguez");
+        ContentValues values3 = new ContentValues();
+        //values.put("_id",null);
+        values3.put("Value",user3);
+        values3.put("DateCreated", Calendar.getInstance().getTimeInMillis());
+        values3.put("initVector",cryptographer.getIv().getIV());
+        int userID3 = (int) db.insert("USERNAME",null,values3);
+        //String user3 = cryptographer.encryptText("j_rodriguez").toString();
+        //db.execSQL("INSERT INTO USERNAME (Value, DateCreated) VALUES('"+user3+"',1588367878641);");
+        byte[]  user4 = cryptographer.encryptText("j_rodriguez@modularauto.ie");
+        ContentValues values4 = new ContentValues();
+        //values.put("_id",null);
+        values4.put("Value",user4);
+        values4.put("DateCreated", Calendar.getInstance().getTimeInMillis());
+        values4.put("initVector",cryptographer.getIv().getIV());
+        int userID4 = (int) db.insert("USERNAME",null,values4);
+        //String user4 = cryptographer.encryptText("j_rodriguez@modularauto.ie").toString();
+        //db.execSQL("INSERT INTO USERNAME (Value, DateCreated) VALUES('"+user4+"',1588467878642);");
+
+        ////Include test data for passwords
+        byte[] psswrd1 = cryptographer.encryptText("Machito88");
+        ContentValues values11 = new ContentValues();
+        //values.put("_id",null);
+        values11.put("Value",psswrd1);
+        values11.put("DateCreated", Calendar.getInstance().getTimeInMillis());
+        values11.put("initVector",cryptographer.getIv().getIV());
+        int psswrdID1 = (int) db.insert("PSSWRD",null,values11);
+        //String psswrd1 = cryptographer.encryptText("Machito88").toString();
+        //db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('"+psswrd1+"',1588167878639);");
+        byte[] psswrd2 = cryptographer.encryptText("JoseLeonardo");
+        ContentValues values12 = new ContentValues();
+        //values.put("_id",null);
+        values12.put("Value",psswrd2);
+        values12.put("DateCreated", Calendar.getInstance().getTimeInMillis());
+        values12.put("initVector",cryptographer.getIv().getIV());
+        int psswrdID2 = (int) db.insert("PSSWRD",null,values12);
+        //String psswrd2 = cryptographer.encryptText("JoseLeonardo").toString();
+        //db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('"+psswrd2+"',1588267878640);");
+        byte[]  psswrd3 = cryptographer.encryptText("Paracotos12!");
+        ContentValues values13 = new ContentValues();
+        //values.put("_id",null);
+        values13.put("Value",psswrd3);
+        values13.put("DateCreated", Calendar.getInstance().getTimeInMillis());
+        values13.put("initVector",cryptographer.getIv().getIV());
+        int psswrdID3 = (int) db.insert("PSSWRD",null,values13);
+        //String psswrd3 = cryptographer.encryptText("Paracotos12!").toString();
+        //db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('"+psswrd3+"',1588367878641);");
+        byte[] psswrd4 = cryptographer.encryptText("Roraima2020!");
+        ContentValues values14 = new ContentValues();
+        //values.put("_id",null);
+        values14.put("Value",psswrd4);
+        values14.put("DateCreated", Calendar.getInstance().getTimeInMillis());
+        values14.put("initVector",cryptographer.getIv().getIV());
+        int psswrdID4 = (int) db.insert("PSSWRD",null,values14);
+        //String psswrd4 = cryptographer.encryptText("Roraima2020!").toString();
+        //db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('"+psswrd4+"',1588467878642);");
+        byte[] psswrd5 = cryptographer.encryptText("M;Mach;to88!");
+        ContentValues values15 = new ContentValues();
+        //values.put("_id",null);
+        values15.put("Value",psswrd5);
+        values15.put("DateCreated", Calendar.getInstance().getTimeInMillis());
+        values15.put("initVector",cryptographer.getIv().getIV());
+        int psswrdID5 = (int) db.insert("PSSWRD",null,values15);
+        //String psswrd5 = cryptographer.encryptText("M;Mach;to88!").toString();
+        //db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('"+psswrd5+"',1588167878639);");
+
+//        Cursor psswrdRow5 = db.rawQuery("SELECT * FROM PSSWRD WHERE _id = "+psswrdID5,null);
+//        psswrdRow5.moveToFirst();
+//        int idPsswrd5 = psswrdRow5.getInt(0);
+//        long datePsswrd5 = psswrdRow5.getLong(2);
+//        byte[] encryptedPsswrd5 = psswrdRow5.getBlob(1);
+//        String psswrd15 = cryptographer.decryptText(encryptedPsswrd5,cryptographer.getIv());
+//
+//        Cursor psswrdRow1 = db.rawQuery("SELECT * FROM PSSWRD WHERE _id = "+psswrdID1,null);
+//        psswrdRow1.moveToFirst();
+//        int idPsswrd1 = psswrdRow1.getInt(0);
+//        long datePsswrd1 = psswrdRow1.getLong(2);
+//        byte[] encryptedPsswrd1 = psswrdRow1.getBlob(1);
+//        byte[] ivPsswrd1 = psswrdRow1.getBlob(3);
+//        String psswrd11 = cryptographer.decryptText(encryptedPsswrd1,new IvParameterSpec(ivPsswrd1));
+//
+//        Cursor userRow3 = db.rawQuery("SELECT * FROM USERNAME WHERE _id = "+userID3,null);
+//        userRow3.moveToFirst();
+//        int idUser3 = userRow3.getInt(0);
+//        long dateUser3 = userRow3.getLong(2);
+//        byte[] encryptedUser3 = userRow3.getBlob(1);
+//        byte[] ivUser3 = userRow3.getBlob(3);
+//        String user13 = cryptographer.decryptText(encryptedUser3,new IvParameterSpec(ivUser3));
 
 
         //Accounts
@@ -222,19 +331,20 @@ public class AccountsDB extends SQLiteOpenHelper {
     //Method to create a database object, a cursor, run the sql query and return the result cursor
     public Cursor runQuery(String query){
         Log.d("Ent_runQuery","Enter runQuery method in the AccountsDB class.");
+        //Get DB object
+        SQLiteDatabase db = getReadableDatabase();
+        //Initialize cursor variable to be returned
+        Cursor cursor = null;
         try{
-            //Initialize cursor variable to be returned
-            Cursor cursor = null;
-            //Get DB object
-            SQLiteDatabase db = getReadableDatabase();
             // Extract cursor by running raw query, the one passed in as parameter
             cursor = db.rawQuery(query,null);
             Log.d("Ext_runQuery","Exit runQuery method successfully.");
-            return cursor;
         } catch (Exception e) {
             e.printStackTrace();
             Log.d("Ext_runQuery","Exit runQuery method with exception: "+e.getMessage()+" .");
-            return null;
+        } finally {
+            //db.close();
+            return cursor;
         }//End of try catch block
     }//End of runQuery method
 
@@ -279,9 +389,50 @@ public class AccountsDB extends SQLiteOpenHelper {
             Log.d("UpdateState","Exit the updateAppState method in the Accounts class with exception: "+e.getMessage());
         }
         finally{
+            db.close();
             return success;
         }//End of try and catch block
     }//End of updateAppState
+
+    public boolean updateTable(String table, ContentValues values){
+        Log.d("updateTable","Enter the updateTable method in the AccountsDB class.");
+        boolean updated = false;
+        int _id = -1;
+        String whereClause = "_id = ";
+        //Declare and instantiate a new database object to handle the database operations
+        SQLiteDatabase db = getWritableDatabase();
+        try{
+            _id = values.getAsInteger("_id");
+            whereClause += _id;
+            db.update(table,values,whereClause,null);
+            updated = true;
+            Log.d("updateTable","Exit successfully the updateTable  method in the Accounts class.");
+        }catch (Exception e){
+            Log.d("updateTable","Exit the updateTable  method in the Accounts class with exception "+e.getMessage());
+        }finally{
+            db.close();
+            return updated;
+        }//End of try catch block
+    }//End of updateAppState overloaded method
+
+    //Method to get latest item inserted in a table
+    public int getMaxItemIdInTable(String table){
+        Log.d("getMaxItemInTable","Enter the getMaxItemInTable method in the AccountsDB class.");
+        int _id =-1;
+        Cursor cursor =null;
+        //SQLiteDatabase db = getReadableDatabase();
+        try{
+            cursor = this.runQuery("SELECT MAX(_id) FROM "+table);
+            if(cursor.moveToNext()){
+                _id = cursor.getInt(0);
+                Log.d("getMaxItemInTable","Exit successfully the getMaxItemInTable method in the AccountsDB class.");
+            }
+        }catch(Exception e){
+            Log.d("getMaxItemInTable","Exit the getMaxItemInTable method in the AccountsDB class with exception: "+e.getMessage());
+        }finally{
+            return _id;
+        }//End of try catch block
+    }//End of getMaxItemIdInTable
 
     //Method to add a new item into the database
     public int addItem(Object item) {
@@ -289,17 +440,17 @@ public class AccountsDB extends SQLiteOpenHelper {
         //Declare and instantiate a new database object to handle the database operations
         SQLiteDatabase db = getWritableDatabase();
         //Declare and initialize a query string variables
-        String insertInto = "INSERT INTO ";
-        String values = " VALUES(null, ";
-        String closeBracket =")";
+//        String insertInto = "INSERT INTO ";
+//        String values = " VALUES(null, ";
+//        String closeBracket =")";
         String table ="";
-        String fields ="";
+        ContentValues fields = new ContentValues();
         String itemName ="";
-        String sql = "SELECT MAX(_id) FROM ";
+        //String sql = "SELECT MAX(_id) FROM ";
         //Declare and initialize int variable to hold the item id to be returned. Default value is -1
         int id =-1;
         //Declare and initialize variables to be used in the SQL statement (Values a got from task object parameter)
-        String description;
+        //String description;
         int category;
         //int priority;
         //int isDone;
@@ -311,6 +462,7 @@ public class AccountsDB extends SQLiteOpenHelper {
         long dateCreated;
         //long dateClosed ;
         //If else statements to check the class each object is from
+        byte[] encryptedUserName = null;
 
         if(item instanceof Category){
             //if item is a Category object, update the Task table where the id corresponds
@@ -319,8 +471,9 @@ public class AccountsDB extends SQLiteOpenHelper {
             if(itemName.contains(apostrophe)){
                 itemName = includeApostropheEscapeChar(itemName);
             }
-            fields="'"+itemName+"'";
-            sql+= table;
+            //fields="'"+itemName+"'";
+            fields.put("Name",itemName);
+            //sql+= table;
             Log.d("addCategory","Catgory to be added in the addItem method in AccountsDB class.");
         }else if(item instanceof Psswrd){
             table = "PSSWRD";
@@ -328,8 +481,10 @@ public class AccountsDB extends SQLiteOpenHelper {
             if(itemName.contains(apostrophe)){
                 itemName = includeApostropheEscapeChar(itemName);
             }
-            fields=" '"+itemName+ "',"  + ((Psswrd) item).getDateCreated();
-            sql+=" "+table;
+            fields.put("Value",itemName);
+            fields.put("DateCreated",((Psswrd) item).getDateCreated());
+            //ields=" '"+itemName+ "',"  + ((Psswrd) item).getDateCreated();
+            //sql+=" "+table;
             Log.d("addPassword","Password to be added in the addItem method in AccountsDB class.");
         }else if(item instanceof UserName ) {
             itemName = ((UserName)item).getValue();
@@ -337,8 +492,11 @@ public class AccountsDB extends SQLiteOpenHelper {
                 itemName = includeApostropheEscapeChar(itemName);
             }
             table = "USERNAME";
-            fields = " '" + itemName + "'," + ((UserName) item).getDateCreated();
-            sql += table;
+            encryptedUserName = cryptographer.encryptText(itemName);
+            fields.put("Value",encryptedUserName);
+            fields.put("DateCreated",((UserName) item).getDateCreated());
+            //fields = " '" + itemName + "'," + ((UserName) item).getDateCreated();
+            //sql += table;
             Log.d("addUserName", "User name to be added in the addItem method in AccountsDB class.");
         }else if(item instanceof Answer){
             itemName = ((Answer)item).getValue();
@@ -346,8 +504,9 @@ public class AccountsDB extends SQLiteOpenHelper {
                 itemName = includeApostropheEscapeChar(itemName);
             }
             table = "ANSWER";
-            fields =" '"+itemName+"'";
-            sql += table;
+            fields.put("Value",itemName);
+            //fields =" '"+itemName+"'";
+            //sql += table;
             Log.d("addAnswer", "Answer to be added in the addItem method in AccountsDB class.");
         }else if(item instanceof Question){
             itemName = ((Question)item).getValue();
@@ -355,8 +514,10 @@ public class AccountsDB extends SQLiteOpenHelper {
                 itemName = includeApostropheEscapeChar(itemName);
             }
             table = "QUESTION";
-            fields =" '"+itemName+"',"+((Question)item).getAnswer().get_id();
-            sql += table;
+            fields.put("Value",itemName);
+            fields.put("AnswerID",((Question) item).getAnswer().get_id());
+            //fields =" '"+itemName+"',"+((Question)item).getAnswer().get_id();
+            //sql += table;
             Log.d("addQuestion", "User name to be added in the addItem method in AccountsDB class.");
         }else if(item instanceof Account){
             table ="ACCOUNTS";
@@ -376,18 +537,21 @@ public class AccountsDB extends SQLiteOpenHelper {
 //            sql ="SELECT _id FROM TASK WHERE DateCreated = "+ ((Task) item).getDateCreated();
             Log.d("addTask","Task to be added in the addItem method in TasksDB class.");
         }//End of if else statements
+
+        id = (int) db.insert(table,null,fields);
+
         //Execute the sql command to update corresponding table
-        String insertSql = insertInto+table+values+fields+closeBracket;
-        db.execSQL(insertSql);
+//        String insertSql = insertInto+table+values+fields+closeBracket;
+//        db.execSQL(insertSql);
         //Declare and instantiate a cursor object to hold the id of task just added into the TASK table
-        Cursor c =db.rawQuery(sql,null);
-        //Check the cursor is not empty and move to next row
-        if (c.moveToNext()){
-            //Make the id equal to the _id field in the database
-            id = c.getInt(0);
-        }//End of if condition
-        //Close both  database and cursor
-        c.close();
+//        Cursor c =db.rawQuery(sql,null);
+//        //Check the cursor is not empty and move to next row
+//        if (c.moveToNext()){
+//            //Make the id equal to the _id field in the database
+//            id = c.getInt(0);
+//        }//End of if condition
+//        //Close both  database and cursor
+//        c.close();
         db.close();
         Log.d("Ext_addTask","Exit addTask method in TasksDB class.");
         //Return id of item just added into database
@@ -506,6 +670,20 @@ public class AccountsDB extends SQLiteOpenHelper {
             Log.d("getUserNameByID","Exit the getUserNameByID method in the AccountsDB class without finding the user name with id: "+_id);
             return null;
         }//End of if else statement
+    }//End of getUserNameByID method
+
+    //Method to get a specific user name, by passing in its DB _id as an argument
+    public Cursor getUserNameCursorByID(int _id){
+        Log.d("getUserNameByID","Enter the getUserNameByID method in the AccountsDB class.");
+        Cursor cursor = this.runQuery("SELECT * FROM USERNAME WHERE _id = "+ _id);
+        if(cursor != null && cursor.getCount() >0){
+            cursor.moveToFirst();
+            Log.d("getUserNameByID","Exit successfully (user name with id " +_id+ " has been found) the getUserNameByID method in the AccountsDB class.");
+        }else{
+            Log.d("getUserNameByID","Exit the getUserNameByID method in the AccountsDB class without finding the user name with id: "+_id);
+
+        }//End of if else statement
+        return cursor;
     }//End of getUserNameByID method
 
     //Method to get a specific user name, by passing in its DB _id as an argument

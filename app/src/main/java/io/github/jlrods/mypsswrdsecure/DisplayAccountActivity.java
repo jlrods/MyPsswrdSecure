@@ -52,6 +52,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
 
     //DB
     AccountsDB accounts;
+    private static Cryptographer cryptographer;
 
     //Objects required to build an account
     Category category = null;
@@ -121,6 +122,8 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         //extras = getIntent().getExtras();
         //Get DB handler cass from the home fragment
         this.accounts = HomeFragment.getAccounts();
+
+        cryptographer = MainActivity.getCryptographer();
 
         //Initialize layout coordinator required to use Snackbar
         coordinatorLayoutAccAct = (CoordinatorLayout) findViewById(R.id.coordinatorLayoutAccAct);
@@ -313,16 +316,22 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             case CATEGORY_SPINNER:
                 Log.d("setUpSpinnerData","CATEGORY_SPINNER passed in as spinner type in setUpSpinnerData method call  in the DisplayAccountActivity class.");
                 spHint = res.getString(R.string.selectCatHint);
+                //Create new spinner adapter object
+                adapter = new SpinnerAdapter(this,cursor, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER) ;
                 break;
             case USERNAME_SPINNER:
                 Log.d("setUpSpinnerData","USERNAME_SPINNER passed in as spinner type in setUpSpinnerData method call  in the DisplayAccountActivity class.");
                 spHint = res.getString(R.string.selectUserHint);
                 etHint = res.getString(R.string.selectUserHint);
+                //Create new spinner adapter object
+                adapter = new SpinnerAdapterEncrypted(this,cursor, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER) ;
                 break;
             case PSSWRD_SPINNER:
                 Log.d("setUpSpinnerData","PSSWRD_SPINNER passed in as spinner type in setUpSpinnerData method call  in the DisplayAccountActivity class.");
                 spHint = res.getString(R.string.selectPsswrdHint);
                 etHint = res.getString(R.string.selectPsswrdHint);
+                //Create new spinner adapter object
+                adapter = new SpinnerAdapterEncrypted(this,cursor, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER) ;
                 break;
             default:
                 spHint = "";
@@ -335,15 +344,15 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             //Disable the spinner if cursor has no data
             sp.setEnabled(false);
             //Check if spinner type is username or psswrd spinner to setup texts and enable respective buttons
-            if(type == USERNAME_SPINNER){
-                this.etAccNewUserName.setEnabled(true);
-            }else if(type == PSSWRD_SPINNER){
-                this.etAccNewPsswrd.setHint(etHint);
-                this.etAccNewPsswrd.setEnabled(true);
-            }//End of if else statement to check the spinner type
+//            if(type == USERNAME_SPINNER){
+//                this.etAccNewUserName.setEnabled(true);
+//            }else if(type == PSSWRD_SPINNER){
+//                this.etAccNewPsswrd.setHint(etHint);
+//                this.etAccNewPsswrd.setEnabled(true);
+//            }//End of if else statement to check the spinner type
         }// End of if else statement to check cursor isn't null or empty
-        //Create new spinner adapter object
-        adapter = new SpinnerAdapter(this,cursor, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER) ;
+
+        //adapter = new SpinnerAdapter(this,cursor, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER) ;
         //Set the adapter for the Category spinner
         sp.setAdapter(adapter);
         Log.d("setUpSpinnerData","Exit the setUpSpinnerData method in the DisplayAccountActivity class.");
@@ -370,7 +379,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
          alertDialogBuilder.setPositiveButton(R.string.dialog_OK, new DialogInterface.OnClickListener(){
                     public void onClick(DialogInterface dialog,int whichButton){
                         //Get user name text from AlertDialog text input field
-                        String userNameValue = inputField.getText().toString().trim();
+                        String userNameValue = cryptographer.encryptText(inputField.getText().toString().trim()).toString();
                         //Check the user name is not in the user name list already
                         Cursor userNameCursor = accounts.getUserNameByName(userNameValue);
                         if(userNameCursor == null || userNameCursor.getCount() ==0){

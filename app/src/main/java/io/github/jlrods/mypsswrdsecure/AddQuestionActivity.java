@@ -97,15 +97,14 @@ public class AddQuestionActivity extends AppCompatActivity {
                     toast.setGravity(Gravity.CENTER,0,0);
                     toast.show();
                 }
-
                 intent.putExtra("answerID",this.answer.get_id());
                 intent.putExtra("questionID",this.question.get_id());
                 setResult(RESULT_OK, intent);
                 Log.d("onOptionsItemSelected","Save option selected on onOptionsItemSelected method in AddQuestionActivity class.");
                 break;
             case R.id.select_logo_cancel:
-//                //Set activity result as cancelled so DisplayAccActivity can decide what to do if this is the case
-//                setResult(RESULT_CANCELED, intent);
+               //Set activity result as cancelled so DisplayAccActivity can decide what to do if this is the case
+                setResult(RESULT_CANCELED, intent);
                 Log.d("onOptionsItemSelected","Cancel option selected on onOptionsItemSelected method in AddQuestionActivity class.");
                 break;
         }//End of switch statement

@@ -17,9 +17,11 @@ import androidx.core.content.ContextCompat;
 
 //Class to handle the adapter objects to link spinners UI and data
 public class SpinnerAdapter extends CursorAdapter {
+    protected static Cryptographer cryptographer;
     //Adapter constructor method
     public SpinnerAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
+        cryptographer = MainActivity.getCryptographer();
         Log.d("Adapter_Constructor","Leaves SpinnerAdapter constructor.");
     }//End of constructor method
 
@@ -44,7 +46,8 @@ public class SpinnerAdapter extends CursorAdapter {
             tvItem.setText(context.getString(textID));
         }else{
             //In the case of not being a resource, print the text retrieved from DB
-            tvItem.setText(stringName);
+            //tvItem.setText(stringName);
+            tvItem.setText(cryptographer.decryptText(stringName.getBytes(),cryptographer.getIv()));
         }//End of if else statement
 
         Log.d("Ent_bindView","Exit bindView method to populate spinners in SpinnerAdapter class.");

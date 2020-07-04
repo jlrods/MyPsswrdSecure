@@ -7,6 +7,8 @@ import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 
+import javax.crypto.spec.IvParameterSpec;
+
 //Class to handle UsenName object definition
 class UserName extends StringValue {
     //Attribute definition
@@ -18,6 +20,7 @@ class UserName extends StringValue {
     public UserName(int _id, String value, long dateCreated){
         super(_id,value);
         this.dateCreated = dateCreated;
+
     }
     public UserName(int _id, String value){
         this(_id,value, System.currentTimeMillis());
@@ -58,4 +61,13 @@ class UserName extends StringValue {
         Log.d("Ext_ExtractUser","Exit extractUserName method in the UserName class.");
         return userName;
     }// End of extractPsswrd method
+
+//    //Method to encrypt sensible data before sending it to DB
+//    protected byte[] encryptData(String data){
+//        return this.cryptographer.encryptText(data);
+//    }
+//    //Method to decrypt sensible data when retrieving encrypted data from DB
+//    protected String decryptData(byte[] encryptedText, IvParameterSpec initVector){
+//        return this.cryptographer.decryptText(encryptedText,initVector);
+//    }
 }// End of user Class
