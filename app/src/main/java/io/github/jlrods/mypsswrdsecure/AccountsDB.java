@@ -30,7 +30,7 @@ public class AccountsDB extends SQLiteOpenHelper {
         Log.d("Ent_DBOncreate","Enter onCreate method in AccountsDB class.");
 
         //Create table to store security answers. Leave empty as user has to create their own answers
-        db.execSQL("CREATE TABLE ANSWER (_id INTEGER PRIMARY KEY AUTOINCREMENT,Value TEXT);");
+        db.execSQL("CREATE TABLE ANSWER (_id INTEGER PRIMARY KEY AUTOINCREMENT,Value BLOB);");
 
         db.execSQL("INSERT INTO ANSWER VALUES(null,'Sasha');");
         db.execSQL("INSERT INTO ANSWER VALUES(null,'Machito88');");
@@ -446,6 +446,7 @@ public class AccountsDB extends SQLiteOpenHelper {
         String table ="";
         ContentValues fields = new ContentValues();
         String itemName ="";
+        byte[] itemNameEcrypted = null;
         //String sql = "SELECT MAX(_id) FROM ";
         //Declare and initialize int variable to hold the item id to be returned. Default value is -1
         int id =-1;
@@ -477,29 +478,31 @@ public class AccountsDB extends SQLiteOpenHelper {
             Log.d("addCategory","Catgory to be added in the addItem method in AccountsDB class.");
         }else if(item instanceof Psswrd){
             table = "PSSWRD";
-            itemName = ((Psswrd)item).getValue();
-            if(itemName.contains(apostrophe)){
-                itemName = includeApostropheEscapeChar(itemName);
-            }
-            fields.put("Value",itemName);
+            itemNameEcrypted = ((Psswrd)item).getValue();
+//            if(itemName.contains(apostrophe)){
+//                itemName = includeApostropheEscapeChar(itemName);
+//            }
+            fields.put("Value",itemNameEcrypted);
             fields.put("DateCreated",((Psswrd) item).getDateCreated());
+            fields.put("initVector",((Psswrd) item).getIv());
             //ields=" '"+itemName+ "',"  + ((Psswrd) item).getDateCreated();
             //sql+=" "+table;
             Log.d("addPassword","Password to be added in the addItem method in AccountsDB class.");
         }else if(item instanceof UserName ) {
-            itemName = ((UserName)item).getValue();
-            if(itemName.contains(apostrophe)){
-                itemName = includeApostropheEscapeChar(itemName);
-            }
+            itemNameEcrypted = ((UserName)item).getValue();
+//            if(itemName.contains(apostrophe)){
+//                itemName = includeApostropheEscapeChar(itemName);
+//            }
             table = "USERNAME";
-            encryptedUserName = cryptographer.encryptText(itemName);
-            fields.put("Value",encryptedUserName);
+            encryptedUserName = ((UserName) item).getValue();
+            fields.put("Value",itemNameEcrypted);
             fields.put("DateCreated",((UserName) item).getDateCreated());
+            fields.put("initVector",((UserName) item).getIv());
             //fields = " '" + itemName + "'," + ((UserName) item).getDateCreated();
             //sql += table;
             Log.d("addUserName", "User name to be added in the addItem method in AccountsDB class.");
         }else if(item instanceof Answer){
-            itemName = ((Answer)item).getValue();
+            //itemName = ((Answer)item).getValue();
             if(itemName.contains(apostrophe)){
                 itemName = includeApostropheEscapeChar(itemName);
             }
@@ -509,7 +512,7 @@ public class AccountsDB extends SQLiteOpenHelper {
             //sql += table;
             Log.d("addAnswer", "Answer to be added in the addItem method in AccountsDB class.");
         }else if(item instanceof Question){
-            itemName = ((Question)item).getValue();
+            //itemName = ((Question)item).getValue();
             if(itemName.contains(apostrophe)){
                 itemName = includeApostropheEscapeChar(itemName);
             }
@@ -689,19 +692,50 @@ public class AccountsDB extends SQLiteOpenHelper {
     //Method to get a specific user name, by passing in its DB _id as an argument
     public Cursor getUserNameByName(String userName){
         Log.d("getUserNameByName","Enter the getUserNameByName method in the AccountsDB class.");
-        if(userName.contains(apostrophe)){
-            userName = includeApostropheEscapeChar(userName);
-        }
-        Cursor cursor = this.runQuery("SELECT * FROM USERNAME WHERE Value = '"+ userName+"'");
-        if(cursor != null && cursor.getCount() >0){
-            cursor.moveToFirst();
-            Log.d("getUserNameByName","Exit successfully (user name with value " +userName + " has been found) the getUserNameByID method in the AccountsDB class.");
+//        if(userName.contains(apostrophe)){
+//            userName = includeApostropheEscapeChar(userName);
+//        }
 
+        //Declare and initialize a boolean flag to inform the name was found
+        boolean found = false;
+        String userNameDecrypted = "";
+        //Get all data from USERNAME table
+        Cursor userNameCursor = this.runQuery("SELECT * FROM USERNAME");
+        //Iterate through it, decrypt user name values and compare against value passed in as parameter
+        while(!found && userNameCursor.moveToNext()){
+            //Decrypt the user name value coming form DB
+            userNameDecrypted = cryptographer.decryptText(userNameCursor.getBlob(1),new IvParameterSpec(userNameCursor.getBlob(3)));
+            //Compare the decrypted user name user name being looked for
+            if(userName.trim().equals(userNameDecrypted.trim())){
+                found = true;
+            }//End of if statement to compare user names
+        }//End of while loop to iterate through list of user names
+        //Make ajustments to return proper value based on the found boolean flag
+        if(found){
+            Log.d("getUserNameByName","Exit successfully (user name with value " +userName + " has been found) the getUserNameByID method in the AccountsDB class.");
         }else{
+            userNameCursor = null;
             Log.d("getUserNameByName","Exit the getUserNameByName method in the AccountsDB class without finding the user name with value: "+userName);
         }//End of if else statement
-        return cursor;
+        return userNameCursor;
     }//End of getUserNameByID method
+
+//    //Method to get a specific user name, by passing in its DB _id as an argument
+//    public Cursor getUserNameByName(String userName){
+//        Log.d("getUserNameByName","Enter the getUserNameByName method in the AccountsDB class.");
+//        if(userName.contains(apostrophe)){
+//            userName = includeApostropheEscapeChar(userName);
+//        }
+//        Cursor cursor = this.runQuery("SELECT * FROM USERNAME WHERE Value = '"+ userName+"'");
+//        if(cursor != null && cursor.getCount() >0){
+//            cursor.moveToFirst();
+//            Log.d("getUserNameByName","Exit successfully (user name with value " +userName + " has been found) the getUserNameByID method in the AccountsDB class.");
+//
+//        }else{
+//            Log.d("getUserNameByName","Exit the getUserNameByName method in the AccountsDB class without finding the user name with value: "+userName);
+//        }//End of if else statement
+//        return cursor;
+//    }//End of getUserNameByID method
 
     //Method to get a specific password, by passing in its DB _id as an argument
     public Psswrd getPsswrdByID(int _id){
@@ -720,19 +754,45 @@ public class AccountsDB extends SQLiteOpenHelper {
     //Method to get a specific user name, by passing in its DB _id as an argument
     public Cursor getPsswrdByName(String psswrd){
         Log.d("getUserNameByName","Enter the getUserNameByName method in the AccountsDB class.");
-        if(psswrd.contains(apostrophe)){
-            psswrd = includeApostropheEscapeChar(psswrd);
-        }
-        Cursor cursor = this.runQuery("SELECT * FROM PSSWRD WHERE Value = '"+ psswrd+"'");
-        if(cursor != null && cursor.getCount() >0){
-            cursor.moveToFirst();
-            Log.d("getUserNameByName","Exit successfully (user name with value " +psswrd + " has been found) the getUserNameByID method in the AccountsDB class.");
-
+        //Declare and initialize a boolean flag to inform the name was found
+        boolean found = false;
+        String psswrdDecrypted = "";
+        //Get all data from PSSWRD table
+        Cursor psswrdCursor = this.runQuery("SELECT * FROM PSSWRD");
+        //Iterate through it, decrypt user name values and compare against value passed in as parameter
+        while(!found && psswrdCursor.moveToNext()){
+            //Decrypt the user name value coming form DB
+            psswrdDecrypted = cryptographer.decryptText(psswrdCursor.getBlob(1),new IvParameterSpec(psswrdCursor.getBlob(3)));
+            //Compare the decrypted user name user name being looked for
+            if(psswrd.trim().equals(psswrdDecrypted.trim())){
+                found = true;
+            }//End of if statement to compare user names
+        }//End of while loop to iterate through list of user names
+        if(found){
+            Log.d("getPsswrdByName","Exit successfully (password with value " +psswrd + " has been found) the getPsswrdByName method in the AccountsDB class.");
         }else{
-            Log.d("getUserNameByName","Exit the getUserNameByName method in the AccountsDB class without finding the user name with value: "+psswrd);
+            psswrdCursor = null;
+            Log.d("getPsswrdByName","Exit the getPsswrdByName method in the AccountsDB class without finding the password with value: "+psswrd);
         }//End of if else statement
-        return cursor;
+        return psswrdCursor;
     }//End of getUserNameByID method
+
+//    //Method to get a specific user name, by passing in its DB _id as an argument
+//    public Cursor getPsswrdByName(String psswrd){
+//        Log.d("getUserNameByName","Enter the getUserNameByName method in the AccountsDB class.");
+//        if(psswrd.contains(apostrophe)){
+//            psswrd = includeApostropheEscapeChar(psswrd);
+//        }
+//        Cursor cursor = this.runQuery("SELECT * FROM PSSWRD WHERE Value = '"+ psswrd+"'");
+//        if(cursor != null && cursor.getCount() >0){
+//            cursor.moveToFirst();
+//            Log.d("getUserNameByName","Exit successfully (user name with value " +psswrd + " has been found) the getUserNameByID method in the AccountsDB class.");
+//
+//        }else{
+//            Log.d("getUserNameByName","Exit the getUserNameByName method in the AccountsDB class without finding the user name with value: "+psswrd);
+//        }//End of if else statement
+//        return cursor;
+//    }//End of getUserNameByID method
 
     //Method to retrieve the list of categories stored on the database
     public ArrayList<Category> getCategoryList(){

@@ -10,6 +10,8 @@ import androidx.annotation.NonNull;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.crypto.spec.IvParameterSpec;
+
 public class PsswrdAdapter extends UserNameAdapter {
     public PsswrdAdapter(Context context, Cursor cursor) {
         super(context, cursor);
@@ -27,7 +29,7 @@ public class PsswrdAdapter extends UserNameAdapter {
         holder.tvStrength.setVisibility(View.VISIBLE);
         holder.tvStrength.setText(psswrd.getStrength().toString());
         holder.imgIcon.setImageResource(R.mipmap.ic_pencil_lock_black_48dp);
-        holder.tvStringValue.setText(psswrd.getValue());
+        holder.tvStringValue.setText(cryptographer.decryptText(psswrd.getValue(),new IvParameterSpec(psswrd.getIv())));
         Date date = new Date(psswrd.getDateCreated());
         SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy");
         holder.tvDateCreated.setText(format.format(date));

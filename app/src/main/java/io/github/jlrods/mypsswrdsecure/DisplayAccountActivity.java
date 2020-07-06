@@ -89,9 +89,9 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
     //Declare five spinner adapters, one for the category spinner, one for userName, one for password and two for question list spinners
     //And respective cursors to hold data from DB
     protected int spCategoryPosition;
-    SpinnerAdapter adapterCategory;
+    //SpinnerAdapter adapterCategory;
     Cursor cursorCategory;
-    SpinnerAdapter adapterUserName;
+    //SpinnerAdapter adapterUserName;
     Cursor cursorUserName;
     //SpinnerAdapter adapterPsswrd;
     Cursor cursorPsswrd;
@@ -379,12 +379,15 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
          alertDialogBuilder.setPositiveButton(R.string.dialog_OK, new DialogInterface.OnClickListener(){
                     public void onClick(DialogInterface dialog,int whichButton){
                         //Get user name text from AlertDialog text input field
-                        String userNameValue = cryptographer.encryptText(inputField.getText().toString().trim()).toString();
+                        String userNameValue = inputField.getText().toString().trim();
+                        byte[] userNameValueEncrypted;
                         //Check the user name is not in the user name list already
                         Cursor userNameCursor = accounts.getUserNameByName(userNameValue);
                         if(userNameCursor == null || userNameCursor.getCount() ==0){
+                            //Encrypt the user name
+                            userNameValueEncrypted = cryptographer.encryptText(userNameValue);
                             //If user name not in the list create new user object and store it in global variable used to build the account object
-                            userName = new UserName(userNameValue);
+                            userName = new UserName(userNameValueEncrypted,cryptographer.getIv().getIV());
                             //Call DB method to insert  the user name object into the DB
                             int userNameID = accounts.addItem(userName);
                             if(userNameID > 0 ){
@@ -434,11 +437,14 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             public void onClick(DialogInterface dialog,int whichButton){
                 //Get user name text from AlertDialog text input field
                 String psswrdValue = inputField.getText().toString().trim();
+                byte[] psswrdValueEncrypted;
                 //Check the user name is not in the user name list already
                 Cursor psswrdCursor = accounts.getPsswrdByName(psswrdValue);
                 if(psswrdCursor == null || psswrdCursor.getCount() == 0){
+                    //Encrypt the psswrd
+                    psswrdValueEncrypted = cryptographer.encryptText(psswrdValue);
                     //If user name not in the list create new user object and store it in global variable used to build the account object
-                    psswrd = new Psswrd(psswrdValue);
+                    psswrd = new Psswrd(psswrdValueEncrypted,cryptographer.getIv().getIV());
                     //Call DB method to insert  the user name object into the DB
                     int psswrdID = accounts.addItem(psswrd);
                     if(psswrdID > 0 ){

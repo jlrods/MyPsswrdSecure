@@ -23,6 +23,8 @@ public class AddQuestionActivity extends AppCompatActivity {
     private EditText etAnswer;
     //DB
     private AccountsDB accounts;
+    //Cryptographer object
+    Cryptographer cryptographer = MainActivity.getCryptographer();
 
     private Cursor cursorQuestion = null;
     private Cursor cursorAnswer = null;
@@ -69,7 +71,9 @@ public class AddQuestionActivity extends AppCompatActivity {
             case R.id.select_logo_save:
                 Log.d("onOptionsItemSelected","The save button was selected by user in AddQuestionActivity class.");
                 //Create question and answer objects
-                answer = new Answer(this.etAnswer.getText().toString().trim());
+                String answerValue = this.etAnswer.getText().toString().trim();
+                byte[] answerValueEncrypted =  cryptographer.encryptText(answerValue);
+                answer = new Answer(answerValueEncrypted,cryptographer.getIv().getIV());
                 question = new Question(this.etQuestion.getText().toString().trim(),answer);
                 //Check the question isn't in the DB already
                 //Check the question isn't one of the pre-loaded questions

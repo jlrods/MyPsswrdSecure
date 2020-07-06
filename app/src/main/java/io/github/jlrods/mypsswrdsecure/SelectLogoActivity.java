@@ -43,7 +43,7 @@ public class SelectLogoActivity extends AppCompatActivity {
                 int adapterPosition = rvLogos.getChildAdapterPosition(v);
                 // Check if Icon object in the retrieved position has attribute isSelected set to
                 // true or false to revert to toggle the selection state
-                if(iconAdapter.getIconList().get(adapterPosition).isSelected){
+                if(iconAdapter.getIconList().get(adapterPosition).isSelected()){
                     //If that's the case, set it to false
                     iconAdapter.getIconList().get(adapterPosition).setSelected(false);
                 }else{

@@ -14,12 +14,13 @@ class Answer extends StringValue{
     //Constructor
 
 
-    public Answer(int _id, String value){
-        super(_id, value);
+    public Answer(int _id, byte[] value, byte[] iv){
+        super(_id, value, iv);
+        Log.d("QuestionFullConst","Exit Question Full Constructor");
     }
 
-    public Answer(String value){
-        this(-1,value);
+    public Answer(byte[] value, byte[] iv){
+        this(-1,value, iv);
     }
 
     public Answer(){
@@ -41,7 +42,7 @@ class Answer extends StringValue{
         //Call common method from parent class to extract basic StringValue object data from a cursor
         ArrayList<Object> attributes = extractStrValue(c);
         //Create a new Icon object by calling full constructor
-        answer = new Answer((int) attributes.get(0), (String) attributes.get(1));
+        answer = new Answer((int) attributes.get(0), (byte[]) attributes.get(1),(byte[]) attributes.get(2));
         Log.d("Ext_ExtractAns","Exit extractAns method in the Answer class.");
         return answer;
     }// End of extractAnswer method

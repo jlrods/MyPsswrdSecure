@@ -9,30 +9,32 @@ import java.util.ArrayList;
 abstract class StringValue {
     //Attribute definition
     protected int _id;
-    protected String value;
+    protected byte[] value;
+    protected byte[] iv;
     //Method definition
 
     //Constructors
-    public StringValue(){
-        Log.d("StrVal_Def_Ent","Enter StringValue Default Constructor");
-        this._id = 0;
-        this.value = "";
-        Log.d("StrVal_Def_Ext","Exit StringValue  Default Constructor");
-    }
-
-    public StringValue(int _id, String value){
+    //Full constructor
+    public StringValue(int _id, byte[] value, byte[] iv){
         Log.d("StrVal_Full_Ent","Enter StringValue Full Constructor");
         this._id = _id;
         this.value = value;
+        this.iv = iv;
         Log.d("StrVal_Full_Ext","Exit StringValue  Full Constructor");
     }
+
+    public StringValue(){
+        this(-1,null,null);
+        Log.d("StrVal_Def_Ext","Exit StringValue  Default Constructor");
+    }
+
 
     //Setter and Getter methods
     public int get_id() {
         return _id;
     }
 
-    public String getValue() {
+    public byte[] getValue() {
         return value;
     }
 
@@ -40,8 +42,16 @@ abstract class StringValue {
         this._id = _id;
     }
 
-    public void setValue(String value) {
+    public void setValue(byte[] value) {
         this.value = value;
+    }
+
+    public byte[] getIv() {
+        return iv;
+    }
+
+    public void setIv(byte[] iv) {
+        this.iv = iv;
     }
 
     //Other methods
@@ -51,12 +61,15 @@ abstract class StringValue {
         //Initialize local variables
         ArrayList<Object> attributes = new ArrayList<>();
         int _id;
-        String value ="";
+        byte[] value =null;
+        byte[] iv = null;
         //Retrieve the values from the cursor and assign them appropriately
         _id = c.getInt(0);
-        value = c.getString(1);
+        value = c.getBlob(1);
+        iv = c.getBlob(3);
         attributes.add(_id);
         attributes.add(value);
+        attributes.add(iv);
         //Create a new Icon object by calling full constructor
         Log.d("Ext_ExtractStrValue","Exit extractStrValue method in the StringValue class.");
         return attributes;

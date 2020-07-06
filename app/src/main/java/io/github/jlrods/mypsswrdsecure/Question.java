@@ -10,31 +10,43 @@ import java.util.ArrayList;
 import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
 
 // Class to handle Question object definition
-class Question extends StringValue{
+class Question{
     //Attribute definition
+    private int _id;
+    private String value;
     private Answer answer;
 
     //Method definition
 
     //Additional Constructor
-    public Question(){
-        super();
-        this.answer = null;
+    public Question(int _id, String value,Answer answer){
+        Log.d("QuestionFullConst","Enter Question Full Constructor");
+        this._id = _id;
+        this.value = value;
+        this.answer = answer;
+        Log.d("QuestionFullConst","Exit Question Full Constructor");
     }
 
-    public Question(int _id, String value, int AnswerID,String answerText){
-        super(_id,value);
-        this.answer = new Answer(_id, answerText);
+    public Question(int _id, String value,int AnswerID,byte[] answerText,byte[] answerIV){
+        this(_id,value,new Answer(_id, answerText,answerIV));
+        Log.d("QuestionConst1","Exit Question Constructor 4 arguments");
     }
 
     public Question(String value, Answer answer){
         this(-1,value,answer);
+        Log.d("UserNameConst2","Exit Question Constructor 2 arguments");
     }
 
-    public Question(int _id, String value, Answer answer){
-        super(_id,value);
-        this.answer = answer;
+    public Question(String value,int AnswerID,byte[] answerText, byte[] answerIV){
+        this(value,new Answer(AnswerID, answerText,answerIV));
+        Log.d("QuestionConst3","Exit Question Constructor 3 arguments");
     }
+
+    public Question(){
+        this("",null);
+        Log.d("QuestionConst4","Exit Question Constructor no arguments");
+    }
+
     //
     @NonNull
     @Override
@@ -53,18 +65,34 @@ class Question extends StringValue{
         int _id;
         String value ="";
         Answer answer = null;
-        //Call common method from parent class to extract basic StringValue object data from a cursor
-        ArrayList<Object> attributes = extractStrValue(c);
+        _id = c.getInt(0);
+        value = c.getString(1);
         //Create a new Answer object by calling full constructor
-        //answer = accounts.getAnswerByID(c.getInt(2));
-        answer = new Answer(c.getInt(2),c.getString(4));
+        answer = new Answer(c.getInt(2),c.getBlob(4),c.getBlob(5));
         //Create new Question by using full constructor
-        question = new Question((int) attributes.get(0),(String) attributes.get(1),answer);
+        question = new Question(_id,value,answer);
         Log.d("Ext_ExtractAns","Exit extractQuestion method in the Question class.");
         return question;
     }// End of extractAnswer method
 
     //Setter and getter methods
+
+
+    public int get_id() {
+        return _id;
+    }
+
+    public void set_id(int _id) {
+        this._id = _id;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
 
     public Answer getAnswer() {
         return answer;
