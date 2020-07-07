@@ -30,12 +30,42 @@ public class AccountsDB extends SQLiteOpenHelper {
         Log.d("Ent_DBOncreate","Enter onCreate method in AccountsDB class.");
 
         //Create table to store security answers. Leave empty as user has to create their own answers
-        db.execSQL("CREATE TABLE ANSWER (_id INTEGER PRIMARY KEY AUTOINCREMENT,Value BLOB);");
+        db.execSQL("CREATE TABLE ANSWER (_id INTEGER PRIMARY KEY AUTOINCREMENT,Value BLOB, initVector BLOB);");
 
-        db.execSQL("INSERT INTO ANSWER VALUES(null,'Sasha');");
-        db.execSQL("INSERT INTO ANSWER VALUES(null,'Machito88');");
-        db.execSQL("INSERT INTO ANSWER VALUES(null,'Mamama');");
-        db.execSQL("INSERT INTO ANSWER VALUES(null,'Caracas');");
+        //Include test data for Answers
+        byte[] answer1 = cryptographer.encryptText("Sasha");
+        ContentValues answerValues1 = new ContentValues();
+        //values.put("_id",null);
+        answerValues1.put("Value",answer1);
+        answerValues1.put("initVector",cryptographer.getIv().getIV());
+        int answerID1 = (int) db.insert("ANSWER",null,answerValues1);
+
+        //db.execSQL("INSERT INTO ANSWER VALUES(null,'Sasha');");
+
+        byte[] answer2 = cryptographer.encryptText("Machito88");
+        ContentValues answerValues2 = new ContentValues();
+        //values.put("_id",null);
+        answerValues2.put("Value",answer2);
+        answerValues2.put("initVector",cryptographer.getIv().getIV());
+        int answerID2 = (int) db.insert("ANSWER",null,answerValues2);
+        //db.execSQL("INSERT INTO ANSWER VALUES(null,'Machito88');");
+
+        byte[] answer3 = cryptographer.encryptText("Mamama");
+        ContentValues answerValues3 = new ContentValues();
+        //values.put("_id",null);
+        answerValues3.put("Value",answer3);
+        answerValues3.put("initVector",cryptographer.getIv().getIV());
+        int answerID3 = (int) db.insert("ANSWER",null,answerValues3);
+
+        //db.execSQL("INSERT INTO ANSWER VALUES(null,'Mamama');");
+
+        byte[] answer4 = cryptographer.encryptText("Caracas");
+        ContentValues answerValues4 = new ContentValues();
+        //values.put("_id",null);
+        answerValues4.put("Value",answer4);
+        answerValues4.put("initVector",cryptographer.getIv().getIV());
+        int answerID4 = (int) db.insert("ANSWER",null,answerValues4);
+        //db.execSQL("INSERT INTO ANSWER VALUES(null,'Caracas');");
 
         //Create table to store security questions (linked to Answer ID as Foreign key)"
         db.execSQL("CREATE TABLE QUESTION (_id INTEGER PRIMARY KEY AUTOINCREMENT,Value TEXT,\n" +
@@ -507,12 +537,13 @@ public class AccountsDB extends SQLiteOpenHelper {
                 itemName = includeApostropheEscapeChar(itemName);
             }
             table = "ANSWER";
-            fields.put("Value",itemName);
+            fields.put("Value",((Answer) item).getValue());
+            fields.put("initVector",((Answer) item).getIv());
             //fields =" '"+itemName+"'";
             //sql += table;
             Log.d("addAnswer", "Answer to be added in the addItem method in AccountsDB class.");
         }else if(item instanceof Question){
-            //itemName = ((Question)item).getValue();
+            itemName = ((Question)item).getValue();
             if(itemName.contains(apostrophe)){
                 itemName = includeApostropheEscapeChar(itemName);
             }
@@ -860,7 +891,7 @@ public class AccountsDB extends SQLiteOpenHelper {
         Log.d("getPreLoadedQuestions","Enter the getPreLoadedQuestions method in the AccountsDB class.");
         //Declare and initialize cursor to hold list of questions available from DB
         Cursor preLoadedQuestions = this.runQuery("SELECT QUESTION._id, QUESTION.Value AS Q, ANSWER._id AS AnswerID,ANSWER.Value AS \n" +
-                "Answer FROM QUESTION  LEFT JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id WHERE QUESTION._id <= 10;");
+                "Answer, ANSWER.initVector AS initVector FROM QUESTION LEFT JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id WHERE QUESTION._id <= 10;");
         Log.d("getPreLoadedQuestions","Exit the getPreLoadedQuestions method in the AccountsDB class.");
         return preLoadedQuestions;
     }//End of getListQuestionsAvailable method
@@ -870,8 +901,8 @@ public class AccountsDB extends SQLiteOpenHelper {
     public Cursor getListQuestionsAvailable(){
         Log.d("getListOfQuestionLists","Enter the getListOfQuestionLists method in the AccountsDB class.");
         //Declare and initialize cursor to hold list of questions available from DB
-        Cursor questionsAvailable = this.runQuery("SELECT QUESTION._id, QUESTION.Value AS Q, ANSWER._id AS AnswerID,ANSWER.Value AS Answer FROM\n" +
-                "QUESTION  JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id;");
+        Cursor questionsAvailable = this.runQuery("SELECT QUESTION._id, QUESTION.Value AS Q, ANSWER._id AS AnswerID,ANSWER.Value AS Answer," +
+                "ANSWER.initVector AS initVector FROM QUESTION JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id;");
         Log.d("getListOfQuestionLists","Exit the getListOfQuestionLists method in the AccountsDB class.");
         return questionsAvailable;
     }//End of getListQuestionsAvailable method
@@ -909,8 +940,9 @@ public class AccountsDB extends SQLiteOpenHelper {
     //Method to get a question cursor by passing in its DB id as argument
     public Cursor getQuestionCursorByID(int _id){
         Log.d("getQuestionListById","Enter the getQuestionListById method in the AccountsDB class.");
-        Cursor question = this.runQuery("SELECT QUESTION._id, QUESTION.Value AS Q, ANSWER._id AS AnswerID,ANSWER.Value AS Answer FROM " +
-                "QUESTION  JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id WHERE QUESTION._id = "+ _id);
+        Cursor question = this.runQuery("SELECT QUESTION._id, QUESTION.Value AS Q, ANSWER._id AS AnswerID,ANSWER.Value AS Answer, " +
+                "ANSWER.initVector AS initVector FROM QUESTION  " +
+                "JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id WHERE QUESTION._id = "+ _id);
         Log.d("getQuestionListById","Exit the getQuestionListById method in the AccountsDB class.");
         return question;
     }//End of getQuestionCursorByID method
@@ -918,8 +950,9 @@ public class AccountsDB extends SQLiteOpenHelper {
     //Method to get a a two question cursor by passing in their DB ids as arguments
     public Cursor getQuestionCursorByID(int _id1, int _id2){
         Log.d("getQuestionListById","Enter the getQuestionListById method in the AccountsDB class.");
-        Cursor question = this.runQuery("SELECT QUESTION._id, QUESTION.Value AS Q, ANSWER._id AS AnswerID,ANSWER.Value AS Answer FROM " +
-                "QUESTION  JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id WHERE QUESTION._id = "+ _id1 + " OR QUESTION._id = "+ _id2);
+        Cursor question = this.runQuery("SELECT QUESTION._id, QUESTION.Value AS Q, ANSWER._id AS AnswerID,ANSWER.Value AS Answer," +
+                "ANSWER.initVector AS initVector FROM QUESTION" +
+                " JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id WHERE QUESTION._id = "+ _id1 + " OR QUESTION._id = "+ _id2);
         Log.d("getQuestionListById","Exit the getQuestionListById method in the AccountsDB class.");
         return question;
     }//End of getQuestionCursorByID method
@@ -927,8 +960,9 @@ public class AccountsDB extends SQLiteOpenHelper {
     //Method to get a a three question cursor by passing in their DB ids as arguments
     public Cursor getQuestionCursorByID(int _id1, int _id2, int _id3){
         Log.d("getQuestionListById","Enter the getQuestionListById method in the AccountsDB class.");
-        Cursor question = this.runQuery("SELECT QUESTION._id, QUESTION.Value AS Q, ANSWER._id AS AnswerID,ANSWER.Value AS Answer FROM " +
-                "QUESTION  JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id WHERE QUESTION._id = "+ _id1+ " OR QUESTION._id = "+ _id2 +" OR QUESTION._id = "+ _id3);
+        Cursor question = this.runQuery("SELECT QUESTION._id, QUESTION.Value AS Q, ANSWER._id AS AnswerID,ANSWER.Value AS Answer, " +
+                "ANSWER.initVector AS initVector FROM QUESTION " +
+                "JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id WHERE QUESTION._id = "+ _id1+ " OR QUESTION._id = "+ _id2 +" OR QUESTION._id = "+ _id3);
         Log.d("getQuestionListById","Exit the getQuestionListById method in the AccountsDB class.");
         return question;
     }//End of getQuestionCursorByID method
@@ -941,7 +975,8 @@ public class AccountsDB extends SQLiteOpenHelper {
         QuestionList questionList = null;
         //Declare and initialize cursor to hold question list data from DB
         Cursor cursor = this.runQuery("SELECT QUESTION._id AS QUESTIONID, \n" +
-                "QUESTION.Value AS Q, QUESTION.AnswerID,ANSWER._id AS ANSWERID,ANSWER.Value AS A FROM\n" +
+                "QUESTION.Value AS Q, QUESTION.AnswerID,ANSWER._id AS ANSWERID,ANSWER.Value AS A, " +
+                "ANSWER.initVector AS initVector FROM\n" +
                 "((QUESTION INNER JOIN QUESTIONASSIGNMENT ON QUESTION._id = QUESTIONASSIGNMENT.QuestionID)\n" +
                 "INNER JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id)\n" +
                 "INNER JOIN QUESTIONLIST ON QUESTIONLIST._id = QUESTIONASSIGNMENT.QuestionListID\n" +

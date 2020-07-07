@@ -66,10 +66,10 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
     protected EditText etAccountName;
     protected NoDefaultSpinner spCategory;
     protected NoDefaultSpinner spAccUserName;
-    protected EditText etAccNewUserName;
+    //protected EditText etAccNewUserName;
     protected Button btnAccNewUserName;
     protected NoDefaultSpinner spAccPsswrd;
-    protected EditText etAccNewPsswrd;
+    //protected EditText etAccNewPsswrd;
     protected Button btnAccNewPsswrd;
     protected NoDefaultSpinner spAccSecQuestionList;
     protected NoDefaultSpinner spQuestionsAvailable;
@@ -203,7 +203,12 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 //Enable the add question button
-                btnAccAddQuestion.setEnabled(true);
+                if(spAccSecQuestionList.getAdapter().getCount()<3){
+                    btnAccAddQuestion.setEnabled(true);
+                }else{
+                    btnAccAddQuestion.setEnabled(false);
+                }
+
             }
 
             @Override

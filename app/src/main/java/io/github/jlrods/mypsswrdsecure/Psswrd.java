@@ -75,7 +75,7 @@ class Psswrd extends UserName{
 
 
     public static PsswrdStrength definePsswrdStrength(String psswrd){
-        //FIXME: To be upaated with better password strength assessment algorithm
+        //FIXME: To be updated with better password strength assessment algorithm
         if(psswrd.contains("!")){
             return PsswrdStrength.STRONG;
         }else if(psswrd.contains("8")){
