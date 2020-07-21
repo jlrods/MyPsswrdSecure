@@ -96,6 +96,7 @@ public class SelectLogoActivity extends AppCompatActivity {
         //Check the id of item selected in menu
         switch (item.getItemId()) {
             case R.id.select_logo_save:
+                intent.putExtra("selectedImgID",this.selectedIcon.get_id());
                 intent.putExtra("selectedImgLocation",this.selectedIcon.getLocation());
                 intent.putExtra("selectedImgPosition",this.selectedPosition);
                 setResult(RESULT_OK, intent);

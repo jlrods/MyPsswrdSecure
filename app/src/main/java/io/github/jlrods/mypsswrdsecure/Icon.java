@@ -12,24 +12,38 @@ class Icon {
     private String name;
     private String location; // File system location (URI)
     private boolean isSelected; // Bool flat to determine if icon has been selected on RecyclerView
+    private int resourceID;
 
     //Method definition
 
     //Constructors
-    public Icon(int _id, String name, String location,boolean isSelected){
+    public Icon(int _id, String name, String location,boolean isSelected, int resourceID){
 
         Log.d("Icon_Full_Ent","Enter Icon Full Constructor");
         this._id = _id;
         this.name = name;
         this.location = location;
         this.isSelected = isSelected;
+        this.resourceID = resourceID;
         Log.d("Icon_Full_Ext","Exit Icon Full Constructor");
     }
     public Icon(){
-        this(-1,"","",false);
+        this(-1,"","",false,-1);
         Log.d("Icon_Full_Ext","Exit Icon Constructor with no arguments");
     }
 
+    public int getResourceID() {
+        return resourceID;
+    }
+
+    public void setResourceID(int resourceID) {
+        this.resourceID = resourceID;
+    }
+
+    public Icon(int _id, String name, String location, boolean isSelected){
+        this(_id,name,location,isSelected,-1);
+        Log.d("Icon_Full_Ext","Exit Icon Constructor with no arguments");
+    }
 
     //Getters and Setters
 

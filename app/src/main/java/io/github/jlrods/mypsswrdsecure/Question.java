@@ -58,8 +58,6 @@ class Question{
     //Method to extract an Answer from a cursor object
     public static Question extractQuestion(Cursor c){
         Log.d("Ent_ExtractQst","Enter extractQuestion method in the Question class.");
-        //Declare and initialize a db manager class to run sql queries
-        //AccountsDB accounts = HomeFragment.getAccounts();
         //Initialize local variables
         Question question = null;
         int _id;
@@ -68,7 +66,7 @@ class Question{
         _id = c.getInt(0);
         value = c.getString(1);
         //Create a new Answer object by calling full constructor
-        answer = new Answer(c.getInt(2),c.getBlob(4),c.getBlob(5));
+        answer = new Answer(c.getInt(2),c.getBlob(3),c.getBlob(4));
         //Create new Question by using full constructor
         question = new Question(_id,value,answer);
         Log.d("Ext_ExtractAns","Exit extractQuestion method in the Question class.");

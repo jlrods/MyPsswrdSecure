@@ -100,6 +100,12 @@
     <string name="selectCatHint">Seleccione una Categoría...</string>
     <string name="selectUserHint">Seleccione un nombre de Usuario...</string>
     <string name="selectPsswrdHint">Seleccione una Contraseña...</string>
+    <string name="accountEmptyName">Lo siento, no ha introducino un nombre para la cuenta nueva</string>
+    <string name="accountNameInUse">Lo siento, el nombre de la cuenta que introdujo ya está en uso</string>
+    <string name="accountRenewDateInPast">Lo siento, la fecha de renovacion de la contraseña es invalida. La fecha debe ser en el futuro</string>
+    <string name="accountNoCatSelected">Los siento, no ha seleccionado una categoria en el menu despegable</string>
+    <string name="accountNoUserSelected">Los siento, no ha seleccionado un nombre de usuario en el menu despegable</string>
+    <string name="accountNoPsswrdSelected">Los siento, no ha seleccionado una contraseña en el menu despegable</string>
 
     <!--    AddQuestion Activity    -->
     <string name="addQuestQuestionHint">Escriba la pregunata nueva aquí...</string>

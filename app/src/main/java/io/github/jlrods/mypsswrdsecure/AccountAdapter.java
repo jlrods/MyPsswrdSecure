@@ -3,6 +3,7 @@ package io.github.jlrods.mypsswrdsecure;
 import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.os.Build;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -11,10 +12,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 
-class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHolder>{
+public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHolder>{
     //Attribute definition
     private View.OnClickListener listener;
     private static SparseBooleanArray itemStateArray= new SparseBooleanArray();
@@ -49,6 +51,7 @@ class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHolder>{
         return viewHolder;
     }//End of onCreateViewHolder method
 
+
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Log.d("AccountOnBindVH","Enter onBindViewHolder method in AccountAdapter class.");
@@ -63,7 +66,7 @@ class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHolder>{
             //Extract all the logos from the app resources
             int idRes;
             Resources r = context.getResources();
-            idRes = r.getIdentifier(account.getIcon().getName(),"drawable",context.getOpPackageName());
+            idRes = r.getIdentifier(account.getIcon().getName(),"drawable",context.getPackageName());
             holder.imgIcon.setImageResource(idRes);
         }//FIXME: Here there will be another possibility: The icon comes  from URI in phone
         holder.tvAccountName.setText(account.getName());

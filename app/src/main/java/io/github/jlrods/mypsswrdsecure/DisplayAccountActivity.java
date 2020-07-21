@@ -1,9 +1,6 @@
 package io.github.jlrods.mypsswrdsecure;
 
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.DatePickerDialog.OnDateSetListener;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -11,6 +8,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -28,7 +26,6 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.content.ContextCompat;
 
 import com.google.android.material.snackbar.Snackbar;
 
@@ -51,7 +48,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
 
 
     //DB
-    AccountsDB accounts;
+    AccountsDB accountsDB;
     private static Cryptographer cryptographer;
 
     //Objects required to build an account
@@ -107,7 +104,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
     int throwAddQuestionActReqCode = 9876;
     Icon logo = null;
     int selectedPosition = -1;
-    String dateFormat = "dd/MMM/yyyy";
+
 
 
     //Method definition
@@ -121,7 +118,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         //Extract extra data from Bundle object
         //extras = getIntent().getExtras();
         //Get DB handler cass from the home fragment
-        this.accounts = HomeFragment.getAccounts();
+        this.accountsDB = HomeFragment.getAccountsDB();
 
         cryptographer = MainActivity.getCryptographer();
 
@@ -281,24 +278,24 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         });
 
         //Setup the Category spinner and populate with data
-        this.cursorCategory = this.accounts.getCategoryListCursor();
+        this.cursorCategory = this.accountsDB.getCategoryListCursor();
         this.setUpSpinnerData(cursorCategory,spCategory,CATEGORY_SPINNER);
         //Setup the UserName spinner and populate with data
-        this.cursorUserName = this.accounts.getUserNameList();
+        this.cursorUserName = this.accountsDB.getUserNameList();
         this.setUpSpinnerData(cursorUserName,spAccUserName,USERNAME_SPINNER);
         //Setup the Psswrd spinner and populate with data
-        this.cursorPsswrd = this.accounts.getPsswrdList();
+        this.cursorPsswrd = this.accountsDB.getPsswrdList();
         this.setUpSpinnerData(cursorPsswrd, spAccPsswrd,PSSWRD_SPINNER);
         //Setup the Security Question List spinner
         //Use a Dummy cursor to be able to setup prompt. This dummy cursor will held one question item but wont be displayed
-        this.cursorQuestionList = accounts.getQuestionCursorByID(1);
+        this.cursorQuestionList = accountsDB.getQuestionCursorByID(1);
         this.spAccSecQuestionList.setPrompt(getBaseContext().getResources().getString(R.string.account_quest_list_spinner_prompt));
         this.setUpQuestionListSpinnerData(cursorQuestionList,spAccSecQuestionList);
         //Disable the Security question spinner so user wont be able to see dummy item in spinner
         this.spAccSecQuestionList.setEnabled(false);
 
         //Setup the Questions Available spinner and populate with data
-        this.cursorListOfQuestionsAvailable = accounts.getListQuestionsAvailable();
+        this.cursorListOfQuestionsAvailable = accountsDB.getListQuestionsAvailable();
         this.spQuestionsAvailable.setPrompt(getBaseContext().getResources().getString(R.string.account_quest_avilab_spinner_prompt));
         this.setUpQuestionListSpinnerData(cursorListOfQuestionsAvailable,spQuestionsAvailable);
 
@@ -307,6 +304,17 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         this.iconAdapter = new IconAdapter(this);
         Log.d("OnCreateDispAcc","Exit onCreate method in the DisplayAccountActivity abstract class.");
     }//End of onCreate method
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        Log.d("onCreateOptionsMenu","Enter onCreateOptionsMenu method in the DisplayAccountActivity abstract class.");
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.activity_select_logo, menu);
+        Log.d("onCreateOptionsMenu","Enter onCreateOptionsMenu method in the DisplayAccountActivity abstract class.");
+        return true;
+    }//End of onCreateOptionsMenu method
+
 
 
     //Method to set up spinner data by passing in a cursor and the adapter as arguments
@@ -387,18 +395,18 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
                         String userNameValue = inputField.getText().toString().trim();
                         byte[] userNameValueEncrypted;
                         //Check the user name is not in the user name list already
-                        Cursor userNameCursor = accounts.getUserNameByName(userNameValue);
+                        Cursor userNameCursor = accountsDB.getUserNameByName(userNameValue);
                         if(userNameCursor == null || userNameCursor.getCount() ==0){
                             //Encrypt the user name
                             userNameValueEncrypted = cryptographer.encryptText(userNameValue);
                             //If user name not in the list create new user object and store it in global variable used to build the account object
                             userName = new UserName(userNameValueEncrypted,cryptographer.getIv().getIV());
                             //Call DB method to insert  the user name object into the DB
-                            int userNameID = accounts.addItem(userName);
+                            int userNameID = accountsDB.addItem(userName);
                             if(userNameID > 0 ){
                                 //Update the userName object ID
                                 userName.set_id(userNameID);
-                                cursorUserName = accounts.getUserNameList();
+                                cursorUserName = accountsDB.getUserNameList();
                                 //Populate the user name spinner with new data set
                                 setUpSpinnerData(cursorUserName,spAccUserName,USERNAME_SPINNER);
                                 //Move spinner to new user name just inserted
@@ -444,18 +452,18 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
                 String psswrdValue = inputField.getText().toString().trim();
                 byte[] psswrdValueEncrypted;
                 //Check the user name is not in the user name list already
-                Cursor psswrdCursor = accounts.getPsswrdByName(psswrdValue);
+                Cursor psswrdCursor = accountsDB.getPsswrdByName(psswrdValue);
                 if(psswrdCursor == null || psswrdCursor.getCount() == 0){
                     //Encrypt the psswrd
                     psswrdValueEncrypted = cryptographer.encryptText(psswrdValue);
                     //If user name not in the list create new user object and store it in global variable used to build the account object
                     psswrd = new Psswrd(psswrdValueEncrypted,cryptographer.getIv().getIV());
                     //Call DB method to insert  the user name object into the DB
-                    int psswrdID = accounts.addItem(psswrd);
+                    int psswrdID = accountsDB.addItem(psswrd);
                     if(psswrdID > 0 ){
                         //Update the userName object ID
                         psswrd.set_id(psswrdID);
-                        psswrdCursor = accounts.getPsswrdList();
+                        psswrdCursor = accountsDB.getPsswrdList();
                         //Populate the user name spinner with new data set
                         setUpSpinnerData(psswrdCursor,spAccPsswrd,PSSWRD_SPINNER);
                         //Move spinner to new user name just inserted
@@ -520,7 +528,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             case 0:
                 Log.d("addQuestionToSecList","No questions in the Security Question list while adding a question on addQuestionToSecList method in the DisplayAccountActivity class.");
                 //Use new cursor to get question for that specific DB _id
-                c = accounts.getQuestionCursorByID(selectedQuestionID);
+                c = accountsDB.getQuestionCursorByID(selectedQuestionID);
                 break;
                 // 1 Question in the security question list
             case 1:
@@ -530,7 +538,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
                 int _id1 = (int) this.spAccSecQuestionList.getAdapter().getItemId(0);
                 //Check the question in the security question list is not the same selected form question available list spinner
                 if(_id1 != selectedQuestionID){
-                    c = accounts.getQuestionCursorByID(_id1,selectedQuestionID);
+                    c = accountsDB.getQuestionCursorByID(_id1,selectedQuestionID);
                 }else{
                     //In case it is, set the boolean flag for repeated question to true
                     repeatedQuestion = true;
@@ -545,7 +553,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
                 int _id2 = (int) this.spAccSecQuestionList.getAdapter().getItemId(1);
                 //Check the questions in the security question list is not the same selected form question available list spinner
                 if(_id1 != selectedQuestionID && _id2 != selectedQuestionID){
-                    c = accounts.getQuestionCursorByID(_id1,_id2,selectedQuestionID);
+                    c = accountsDB.getQuestionCursorByID(_id1,_id2,selectedQuestionID);
                     //When list reaches it max number disable the questions available spinner and Add question button
                     this.spQuestionsAvailable.setEnabled(false);
                     this.btnAccAddQuestion.setEnabled(false);
@@ -595,7 +603,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
                 //Call method to get not selected question DB id
                 int _id1 = (int) this.getNewQuestionList(selectedQuestionID).get(0);
                 //Initialize cursor with the only question left in the spinner
-                c = accounts.getQuestionCursorByID(_id1);
+                c = accountsDB.getQuestionCursorByID(_id1);
                 break;
             case 3:
                 Log.d("removeQuestFromSecList","3 questions in the Security Question list while removing a question on removeQuestFromSecList method in the DisplayAccountActivity class.");
@@ -603,7 +611,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
                 _id1 = (int) this.getNewQuestionList(selectedQuestionID).get(0);
                 int _id2 = (int) this.getNewQuestionList(selectedQuestionID).get(1);
                 //Populate cursor with two questions left in the spinner
-                c = accounts.getQuestionCursorByID(_id1,_id2);
+                c = accountsDB.getQuestionCursorByID(_id1,_id2);
                 //Enable the questions available spinner, the add question button and the new question button
                 //As the max number of question isn't reached any longer
                 this.spQuestionsAvailable.setEnabled(true);
@@ -623,7 +631,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             this.setUpQuestionListSpinnerData(c,this.spAccSecQuestionList);
         }else{
             //Use a Dummy cursor again to display spinner prompt
-            c = accounts.getQuestionCursorByID(selectedQuestionID);
+            c = accountsDB.getQuestionCursorByID(selectedQuestionID);
             this.spAccSecQuestionList.setPrompt(getResources().getString(R.string.account_quest_list_spinner_prompt));
             //setup new adapter for the security question list spinner, with a null cursor so it doesn't display any question
             this.spAccSecQuestionList.setAdapter(new SpinnerAdapterQuestion(this,c, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER));
@@ -725,7 +733,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
                 this.selectedPosition = data.getExtras().getInt("selectedImgPosition");
                         //iconAdapter.getIconList().get().get_id();
                 this.logo = iconAdapter.getIconList().get(this.selectedPosition);
-                this.imgAccLogo.setImageResource(this.logo.get_id());
+                this.imgAccLogo.setImageResource(this.logo.getResourceID());
             }else if(data.getExtras().getString("selectedImgLocation").equals(String.valueOf(R.mipmap.ic_my_psswrd_secure))){
                 this.imgAccLogo.setImageResource(R.mipmap.ic_my_psswrd_secure);
             }//End of if else statement to check if logo comes from app resources
@@ -734,7 +742,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             Log.d("onActivityResult","Received CANCEL result from SelectLogoActivity in the DisplayAccountActivity class.");
         }else if(requestCode==this.throwAddQuestionActReqCode && resultCode==RESULT_OK){
             //Setup the Questions Available spinner and populate with data
-            this.cursorListOfQuestionsAvailable = accounts.getListQuestionsAvailable();
+            this.cursorListOfQuestionsAvailable = accountsDB.getListQuestionsAvailable();
             this.spQuestionsAvailable.setPrompt(getBaseContext().getResources().getString(R.string.account_quest_avilab_spinner_prompt));
             this.setUpQuestionListSpinnerData(cursorListOfQuestionsAvailable,spQuestionsAvailable);
             this.spQuestionsAvailable.setSelection(spQuestionsAvailable.getAdapter().getCount()-1);
@@ -760,7 +768,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
     protected String getDateString(Calendar calendar){
         Log.d("Ent_getDateStr","Enter the getDateString method in the DisplayTaskActivity abstract class.");
         //Declare and instantiate a new DateFormat object to display date in current format (This format may change based on the app settings)
-        SimpleDateFormat format = new SimpleDateFormat(dateFormat);
+        SimpleDateFormat format = new SimpleDateFormat(MainActivity.getDateFormat());
         //Declare and instantiate a new date object, using the date set in calendar. Get the time in millisecs
         Date date = new Date(calendar.getTimeInMillis());
         Log.d("Ext_getDateStr","Exit the getDateString method in the DisplayTaskActivity abstract class.");
@@ -786,7 +794,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             dialogBox.setArguments(args);
         }else{
             //Otherwise, declare and instantiate a new DateFormat object to define the date format
-            SimpleDateFormat format = new SimpleDateFormat(dateFormat);
+            SimpleDateFormat format = new SimpleDateFormat(MainActivity.getDateFormat());
             //Declare a new date object
             Date date;
             //Use try catch block to try to read date from date  text field
@@ -820,37 +828,37 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         NoDefaultSpinner spinner;
         //Constructor method
         SnackBarClickHandler(Object item,Cursor cursor, NoDefaultSpinner spinner){
-            Log.d("SnackBarClickHandler","Enter the SnackBarClickHandler constructor method in the SnackBarClickHandler subclass.");
+            Log.d("SnackBarClickHandler","Enter the SnackBarClickHandler constructor method in the SnackBarClickHandler subclass from DisplayTaskActivity abstract class.");
             this.item = item;
             this.cursor = cursor;
             this.spinner = spinner;
-            Log.d("SnackBarClickHandler","Enter the SnackBarClickHandler constructor method in the SnackBarClickHandler subclass.");
+            Log.d("SnackBarClickHandler","Enter the SnackBarClickHandler constructor method in the SnackBarClickHandler subclass from DisplayTaskActivity abstract class.");
         }//End of constructor method
 
         @Override
         //Method to handle click events on snackbar UNDO button
         public void onClick(View v) {
-            Log.d("SnackBarOnClick","Enter the onClick method method in the SnackBarClickHandler subclass.");
+            Log.d("SnackBarOnClick","Enter the onClick method method in the SnackBarClickHandler subclass from DisplayTaskActivity abstract class.");
             int spinnerType;
             //Call DB method to delete item from DB
-            accounts.deleteItem(item);
+            accountsDB.deleteItem(item);
             //Check the type of object passed in to setup variables required to populate the respective spinner correctly
             if(item instanceof Psswrd){
-                cursor =  accounts.getPsswrdList();
+                cursor =  accountsDB.getPsswrdList();
                 spinnerType = PSSWRD_SPINNER;
-                Log.d("SnackBarOnClick","PSSWRD object passed into the onClick method method in the SnackBarClickHandler subclass.");
+                Log.d("SnackBarOnClick","PSSWRD object passed into the onClick method method in the SnackBarClickHandler subclass from DisplayTaskActivity abstract class.");
             }else if(item instanceof UserName){
-                cursor = accounts.getUserNameList();
+                cursor = accountsDB.getUserNameList();
                 spinnerType = USERNAME_SPINNER;
-                Log.d("SnackBarOnClick","USERNAME object passed into the onClick method method in the SnackBarClickHandler subclass.");
+                Log.d("SnackBarOnClick","USERNAME object passed into the onClick method method in the SnackBarClickHandler subclass form DisplayTaskActivity abstract class.");
             }else if(item instanceof Question){
-                cursor = accounts.getListQuestionsAvailable();
+                cursor = accountsDB.getListQuestionsAvailable();
                 spinnerType = QUESTION_SPINNER;
-                Log.d("SnackBarOnClick","QUESTION object passed into the onClick method method in the SnackBarClickHandler subclass.");
+                Log.d("SnackBarOnClick","QUESTION object passed into the onClick method method in the SnackBarClickHandler subclass from DisplayTaskActivity abstract class.");
             }else{
                 cursor = null;
                 spinnerType = -1;
-                Log.d("SnackBarOnClick","No object type detected in the onClick method method in the SnackBarClickHandler subclass.");
+                Log.d("SnackBarOnClick","No object type detected in the onClick method method in the SnackBarClickHandler subclass from DisplayTaskActivity abstract class.");
             }
             //Check what type of spinner is to be used and populate the respective spinner with new data set
             if(spinnerType != QUESTION_SPINNER){
@@ -858,7 +866,151 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             }else{
                 setUpQuestionListSpinnerData(cursor,spinner);
             }
-            Log.d("SnackBarOnClick","Exit the onClick method method in the SnackBarClickHandler subclass.");
+            Log.d("SnackBarOnClick","Exit the onClick method method in the SnackBarClickHandler subclass from DisplayTaskActivity abstract class.");
         }//End of onClick method
     }//End of SnackBarClickHandler subclass
-}//End of DisplayAccountActivity
+
+    protected Account getItemFromUIData(){
+        Log.d("getItemFromUIData","Enter the getItemFromUIData method method in the DisplayTaskActivity abstract class.");
+        //Declare and initialize account object to be returned
+        Account account = null;
+        //Declare and initialize variables to be used to construct different objects that will be used to create new account object
+        String accountName = "";
+        Category category = null;
+        UserName userName = null;
+        Psswrd psswrd = null;
+        QuestionList securityQuestionList = null;
+        long psswrdChangeDate = 0;
+        //Start extracting data from UI
+        accountName = this.etAccountName.getText().toString();
+        //@FIXME check if including apostrophe esc char is required when using insert android method
+//        if(accountName.contains(""/)){
+//            accountName = accounts.includeApostropheEscapeChar(accountName);
+//        }
+        category = accountsDB.getCategoryByID((int) this.spCategory.getSelectedItemId());
+        userName = accountsDB.getUserNameByID((int) this.spAccUserName.getSelectedItemId());
+        psswrd = accountsDB.getPsswrdByID((int) this.spAccPsswrd.getSelectedItemId());
+        securityQuestionList = this.extractQuestionsFromSpinner(spAccSecQuestionList);
+        //Check the security question list isn't empty
+        if(securityQuestionList != null){
+            //Insert the question list in the DB so the DB _id is retrieved and can be passed in to insert the new account later on
+            securityQuestionList.set_id(accountsDB.addItem(securityQuestionList));
+        }
+        if(this.cbHasToBeChanged.isChecked() && psswrdChangeDate > 0){
+            psswrdChangeDate = this.getPsswrdRenewDate();
+            //Once all required objects have been created, the account object can be created
+            account = new Account(accountName,userName,psswrd,category,securityQuestionList,this.logo,this.isFavorite,psswrdChangeDate);
+        }else{
+            account = new Account(accountName,userName,psswrd,category,securityQuestionList,this.logo,this.isFavorite);
+        }
+        Log.d("getItemFromUIData","Exit the getItemFromUIData method  in the DisplayTaskActivity abstract class.");
+        return account;
+    }//End of getItemFromUIData method
+
+    //Method to get all the appointment date details coming from date and hour text views
+    protected long getPsswrdRenewDate(){
+        Log.d("Ent_getAppointmentDate","Enter the getAppointmentDate method in the DisplayActivity abstract class.");
+        //Declare and initialize a new calendar with current time
+        Calendar calendar = Calendar.getInstance();
+        //Declare a new date object
+        Date date;
+        //Check if date text view is empty
+        if(this.tvAccDateRenewValue.getText().equals("")){
+            //if that is the case, add an argument to hold the current time in millisecs
+            //date = Calendar.getInstance().getTime();
+            date = null;
+        }else{
+            //Otherwise, declare and instantiate a new DateFormat object to define the date format
+            SimpleDateFormat format = new SimpleDateFormat(MainActivity.getDateFormat());
+            //Use try catch block to try to read date from date  text field
+            try {
+                //set the date to be the one parsed from the text in the tvDate view
+                date = format.parse(tvAccDateRenewValue.getText().toString());
+            } catch (ParseException e) {
+                //if an error comes up when parsing the expression, create a new date with current time
+                date = new Date();
+                //Print trace error message
+                e.printStackTrace();
+            }//End of try catch block
+        }//End of if else statement to check the tvDate text is empty or not
+        if(date != null){
+            //Set date recorded in text view into the calendar object
+            calendar.setTime(date);
+            //Initialize the date object with date and time extracted from text views
+            Log.d("Ext_getAppointmentDate","Exit successfully the getAppointmentDate method returning a renew date in the DisplayActivity abstract class.");
+            return date.getTime();
+        }else{
+            Log.d("Ext_getAppointmentDate","Exit successfully the getAppointmentDate method returning 0 as no renew date entered in the DisplayActivity abstract class.");
+            return 0;
+        }//End of if else state to check the date isn't null
+    }//End of getAppointmentDate method
+
+
+    //Method to check password renew date is valid
+    protected boolean isValidRenewDate(long renewDate){
+        Log.d("isValidRenewDate","Enter the isValidRenewDate method in the DisplayActivity abstract class.");
+        boolean isValid = false;
+        if(this.cbHasToBeChanged.isChecked()){
+            if(renewDate > System.currentTimeMillis()){
+                isValid = true;
+                Log.d("isValidRenewDate","Exit with valid date the isValidRenewDate method in the DisplayActivity abstract class.");
+            }else{
+                Log.d("isValidRenewDate","Exit with invalid date the isValidRenewDate method in the DisplayActivity abstract class.");
+            }//End of if else statement to check the check box is ticked
+        }else{
+            //If checkbox not ticked, check the value of data is zero to make it valid
+            if(renewDate == 0){
+                isValid = true;
+                Log.d("isValidRenewDate","Exit with valid date (0) the isValidRenewDate method in the DisplayActivity abstract class.");
+            }
+            Log.d("isValidRenewDate","Exit with invalid date the isValidRenewDate method in the DisplayActivity abstract class.");
+        }//End of if else statement to check checkbox is ticked
+        return isValid;
+    }//End of isValidRenewDate
+
+    //Method to extract security questions from the dropdown menu and store them in a QuestionList object
+    protected QuestionList extractQuestionsFromSpinner(NoDefaultSpinner sp){
+        Log.d("XtrctQuestFromSpinner","Enter the extractQuestionsFromSpinner method in the DisplayActivity abstract class.");
+        //Declare and initialize object to be returned by method
+        QuestionList questionList = null;
+        android.widget.SpinnerAdapter adapter = sp.getAdapter();
+        ArrayList questionIDs = new ArrayList<>();
+        Cursor cursorQuestionList = null;
+        if(sp.isEnabled()){
+            for(int i=0;i<adapter.getCount();i++){
+                questionIDs.add((int)adapter.getItemId(i));
+            }
+            switch(questionIDs.size()){
+                case 1:
+                    int id1 = (int) questionIDs.get(0);
+                    cursorQuestionList = accountsDB.getQuestionCursorByID(id1);
+                    Log.d("XtrctQuestFromSpinner","1 question in Security question list in extractQuestionsFromSpinner method in the DisplayActivity abstract class.");
+                    break;
+                case 2:
+                    id1 = (int) questionIDs.get(0);
+                    int id2 = (int) questionIDs.get(1);
+                    cursorQuestionList = accountsDB.getQuestionCursorByID(id1,(int) id2);
+                    Log.d("XtrctQuestFromSpinner","2 questions in Security question list in extractQuestionsFromSpinner method in the DisplayActivity abstract class.");
+                    break;
+                case 3:
+                    id1 = (int) questionIDs.get(0);
+                    id2 = (int) questionIDs.get(1);
+                    int id3 = (int) questionIDs.get(2);
+                    cursorQuestionList = accountsDB.getQuestionCursorByID(id1,id2,id3);
+                    Log.d("XtrctQuestFromSpinner","3 questions in Security question list in extractQuestionsFromSpinner method in the DisplayActivity abstract class.");
+                    break;
+            }//End of switch statement
+        }//If disabled, means no security question in list
+
+        if(cursorQuestionList != null && cursorQuestionList.getCount() > 0){
+            questionList = new QuestionList();
+            while(cursorQuestionList.moveToNext()){
+               Question question = Question.extractQuestion(cursorQuestionList);
+               questionList.addQuestion(question);
+           }//End of while loop to go through the question list cursor
+        }//End of if statement that checks cursor isn't empty or null
+        Log.d("XtrctQuestFromSpinner","Enter the extractQuestionsFromSpinner method in the DisplayActivity abstract class.");
+        return questionList;
+    }//End of extractQuestionsFromSpinner method
+
+}//End of AddAccountActivity

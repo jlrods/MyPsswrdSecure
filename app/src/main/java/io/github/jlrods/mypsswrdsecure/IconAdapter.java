@@ -30,16 +30,17 @@ class IconAdapter extends RecyclerView.Adapter<IconAdapter.ViewHolder> {
         iconList = new ArrayList<Icon>();// List to hold all Icon objects created from logos in app sources
         //Extract all the logos from the app resources
         Field[] images = io.github.jlrods.mypsswrdsecure.R.drawable.class.getFields();
-        AccountsDB accounts = HomeFragment.getAccounts();
-        //Cursor cursorIcons = accounts.getIconList();
+        AccountsDB accountsDB = HomeFragment.getAccountsDB();
+        //Cursor cursorIcons = accountsDB.getIconList();
         try{
             //Iterate through all the drawable files
             for(Field image: images){
                 //Check the drawable file is a logo
                 if(image.getName().startsWith("logo_")){
                     //Add to the list a new Icon object, passing down the R number as _id, name as value and R number as location
-                    Icon icon = accounts.getIconByName(image.getName());
-                    icon.set_id(image.getInt(null));
+                    Icon icon = accountsDB.getIconByName(image.getName());
+                    //icon.set_id(image.getInt(null));
+                    icon.setResourceID(image.getInt(null));
                     iconList.add(icon);
                 }
             }//End of for each loop
@@ -72,7 +73,7 @@ class IconAdapter extends RecyclerView.Adapter<IconAdapter.ViewHolder> {
         // Set item views based on your views and data model
         ImageView tvLogo = holder.icon;
         //Set image resource file by passing in the resource number, which was stored in the _id attribute
-        tvLogo.setImageResource(logo.get_id());
+        tvLogo.setImageResource(logo.getResourceID());
         //Check if the logo isSelected attribute is true
         if(logo.isSelected()){
             //If that is the case set background color to itemSelected colour from Color values file

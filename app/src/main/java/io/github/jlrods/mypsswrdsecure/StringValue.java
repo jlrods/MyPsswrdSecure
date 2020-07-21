@@ -66,7 +66,7 @@ abstract class StringValue {
         //Retrieve the values from the cursor and assign them appropriately
         _id = c.getInt(0);
         value = c.getBlob(1);
-        iv = c.getBlob(3);
+        iv = c.getBlob(2);
         attributes.add(_id);
         attributes.add(value);
         attributes.add(iv);

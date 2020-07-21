@@ -3,6 +3,7 @@ package io.github.jlrods.mypsswrdsecure;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -11,9 +12,8 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-
-import java.lang.reflect.Field;
 
 import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
 
@@ -22,7 +22,7 @@ public class AddQuestionActivity extends AppCompatActivity {
     private EditText etQuestion;
     private EditText etAnswer;
     //DB
-    private AccountsDB accounts;
+    private AccountsDB accountsDB;
     //Cryptographer object
     Cryptographer cryptographer = MainActivity.getCryptographer();
 
@@ -40,20 +40,20 @@ public class AddQuestionActivity extends AppCompatActivity {
         Log.d("OnCreateAddQuest","Enter onCreate method in the AddQuestionActivity abstract class.");
         //Set layout for this activity
         setContentView(R.layout.activity_add_question);
-        this.accounts = HomeFragment.getAccounts();
+        this.accountsDB = HomeFragment.getAccountsDB();
         //Extract extra data from Bundle object
         //extras = getIntent().getExtras();
         this.etQuestion = (EditText) findViewById(R.id.etQuestion);
         this.etAnswer = (EditText) findViewById(R.id.etAnswer);
-        Log.d("OnCreateAddQuest","Exit onCreate method in the AddQuestionActivity abstract class.");
+        Log.d("OnCreateAddQuest","Exit onCreate method in the AddQuestionActivity class.");
     }//End of onCreate method
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        Log.d("onCreateOptionsMenu","Enter onCreateOptionsMenu method in the AddQuestionActivity abstract class.");
+        Log.d("onCreateOptionsMenu","Enter onCreateOptionsMenu method in the AddQuestionActivity class.");
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.activity_select_logo, menu);
-        Log.d("onCreateOptionsMenu","Enter onCreateOptionsMenu method in the AddQuestionActivity abstract class.");
+        Log.d("onCreateOptionsMenu","Enter onCreateOptionsMenu method in the AddQuestionActivity class.");
         return true;
     }//End of onCreateOptionsMenu method
 
@@ -78,25 +78,25 @@ public class AddQuestionActivity extends AppCompatActivity {
                 //Check the question isn't in the DB already
                 //Check the question isn't one of the pre-loaded questions
                 if(!isQuestionPreLoaded(question)){
-                    cursorQuestion = accounts.getQuestionByValue(question.getValue());
+                    cursorQuestion = accountsDB.getQuestionByValue(question.getValue());
                     if(cursorQuestion == null  || cursorQuestion.getCount() == 0){
                         //If question isn't in the DB, insert the answer in the DB, then insert then insert the question
-                        answerID = accounts.addItem(answer);
+                        answerID = accountsDB.addItem(answer);
                         if(answerID > 0){
                             answer.set_id(answerID);
                         }
-                        questionID = accounts.addItem(question);
+                        questionID = accountsDB.addItem(question);
                         if(questionID > 0){
                             question.set_id(questionID);
                         }
                     }else{
                         //Otherwise prompt the user the question already exists
-                        Toast toast = Toast.makeText(this,R.string.snackBarQuestionExists,Toast.LENGTH_LONG);
-                        toast.setGravity(Gravity.CENTER,0,0);
-                        toast.show();
+                        //@FIXME: use MainActivity displayToast method instead
+                        MainActivity.displayToast(this,getResources().getString(R.string.snackBarQuestionExists),Toast.LENGTH_LONG,Gravity.CENTER);
                     }
                 }else{
                     //Otherwise prompt the user the question already exists
+                    //@FIXME: use MainActivity displayToast method instead
                     Toast toast = Toast.makeText(this,R.string.snackBarQuestionExists,Toast.LENGTH_LONG);
                     toast.setGravity(Gravity.CENTER,0,0);
                     toast.show();
@@ -121,14 +121,14 @@ public class AddQuestionActivity extends AppCompatActivity {
         Log.d("isQuestionPreLoaded","Enter the isQuestionPreLoaded method in AddQuestionActivity class.");
         //Declare and instantiate variables to look for the questions
         Resources res = getResources();// Used to get preloaded sting data
-        Cursor preLoadedQuestions = accounts.getPreLoadedQuestions(); // list of preloaded questions (stored with id in the DB and not the string value)
+        Cursor preLoadedQuestions = accountsDB.getPreLoadedQuestions(); // list of preloaded questions (stored with id in the DB and not the string value)
         //Booloean flag to be returned by method
         boolean isPreloaded = false;
         //While loop to iterate through the list of preloaded qestions and check their text against parameter value
         while(!isPreloaded && preLoadedQuestions.moveToNext()){
             if(question.getValue().toLowerCase().trim().equals(
                     res.getString(res.getIdentifier(preLoadedQuestions.getString(1),
-                            "string",getBaseContext().getOpPackageName())).toLowerCase().trim())){
+                            "string",getBaseContext().getPackageName())).toLowerCase().trim())){
                 isPreloaded = true;
                 Log.d("isQuestionPreLoaded","The question has been found as preloaded quesiton in the AddQuestionActivity class.");
             }

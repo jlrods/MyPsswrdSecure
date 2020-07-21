@@ -18,7 +18,7 @@ class UserName extends StringValue {
     //Method definition
 
     //Constructor
-    public UserName(int _id, byte[] value, long dateCreated,byte[] iv){
+    public UserName(int _id, byte[] value, byte[] iv, long dateCreated){
         super(_id,value,iv);
         Log.d("UserNameFullConst","Enter UserName Full Constructor");
         this.dateCreated = dateCreated;
@@ -26,7 +26,7 @@ class UserName extends StringValue {
         Log.d("UserNameFullConst","Exit UserName Full Constructor");
     }
     public UserName(int _id, byte[] value, byte[] iv){
-        this(_id,value, System.currentTimeMillis(), iv);
+        this(_id,value, iv, System.currentTimeMillis());
         Log.d("UserNameConst2","Enter UserName Constructor 3 arguments");
     }
 

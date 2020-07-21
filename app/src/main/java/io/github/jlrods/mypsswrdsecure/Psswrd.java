@@ -15,8 +15,8 @@ class Psswrd extends UserName{
     //Method definition
 
     //Constructor
-    public Psswrd(int _id, byte[] value,long dateCreated , byte[] iv,PsswrdStrength strength){
-        super(_id,value,dateCreated,iv);
+    public Psswrd(int _id, byte[] value, byte[] iv,long dateCreated ,PsswrdStrength strength){
+        super(_id,value,iv,dateCreated);
         Log.d("PsswrdFullConst","Enter Full Constructor of Psswrd class.");
         this.strength = strength;
         Log.d("PsswrdFullConst","Exit Full Constructor of Psswrd class.");
@@ -67,7 +67,7 @@ class Psswrd extends UserName{
         //Call common method from parent class to extract basic StringValue object data from a cursor
         ArrayList<Object> attributes = extractStrValue(c);
         //Create a new psswrd object by calling full constructor
-        psswrd = new Psswrd((int) attributes.get(0), (byte[]) attributes.get(1), (byte[]) attributes.get(2),PsswrdStrength.VERY_STRONG);
+        psswrd = new Psswrd((int) attributes.get(0), (byte[]) attributes.get(1), (byte[]) attributes.get(2),c.getInt(3),PsswrdStrength.VERY_STRONG);
 
         Log.d("Ext_ExtractPsswrd","Exit extractPsswrd method in the Psswrd class.");
         return psswrd;

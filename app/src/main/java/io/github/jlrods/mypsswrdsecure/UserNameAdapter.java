@@ -61,7 +61,7 @@ public class UserNameAdapter extends RecyclerView.Adapter<UserNameAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull UserNameAdapter.ViewHolder holder, int position) {
         Log.d("UsrNameOnBindVH","Enter onBindViewHolder method in UserNameAdapter class.");
-        AccountsDB accounts = new AccountsDB(getContext());
+        AccountsDB accountsDB = new AccountsDB(getContext());
         //Move current cursor to position passed in as parameter
         this.cursor.moveToPosition(position);
         //Extract the data from cursor to create a new User or Password
@@ -72,7 +72,7 @@ public class UserNameAdapter extends RecyclerView.Adapter<UserNameAdapter.ViewHo
         Date date = new Date(userName.getDateCreated());
         SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy");
         holder.tvDateCreated.setText(format.format(date));
-        int timesUsed = accounts.getTimesUsedUserName(userName.get_id());
+        int timesUsed = accountsDB.getTimesUsedUserName(userName.get_id());
         holder.tvTimesUsed.setText(String.valueOf(timesUsed));
         Log.d("UsrNameOnBindVH","Exit onBindViewHolder method in UserNameAdapter class.");
     }//End of onBindViewHolder method

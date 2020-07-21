@@ -6,17 +6,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import io.github.jlrods.mypsswrdsecure.AccountAdapter;
 import io.github.jlrods.mypsswrdsecure.AccountsDB;
 import io.github.jlrods.mypsswrdsecure.MainActivity;
 import io.github.jlrods.mypsswrdsecure.PsswrdAdapter;
@@ -27,7 +24,7 @@ public class HomeFragment extends Fragment {
 
     //Attribute declaration
     //private HomeViewModel homeViewModel;
-    private static AccountsDB accounts; // Object to manage all DB actions
+    private static AccountsDB accountsDB; // Object to manage all DB actions
     private static RecyclerView rv=null; // RV object to populate data on the Fragment
 
     //Method declaration
@@ -45,13 +42,15 @@ public class HomeFragment extends Fragment {
         //
 
         //homeViewModel =
-                //ViewModelProviders.of(this).get(HomeViewModel.class);
+        //ViewModelProviders.of(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         rv = root.findViewById(R.id.layout_rec_view_main);
         this.rv.setLayoutManager(new LinearLayoutManager(getActivity().getBaseContext()));
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(getActivity().getBaseContext(), DividerItemDecoration.VERTICAL);
         this.rv.addItemDecoration(itemDecoration);
-        this.accounts = new AccountsDB(getActivity().getBaseContext());
+        this.accountsDB = new AccountsDB(getActivity().getBaseContext());
+        AccountAdapter accountAdapter = new AccountAdapter(getActivity().getBaseContext(),null);
+        MainActivity.updateRecyclerViewData(accountAdapter);
         Log.d("HomeFragOnCreate","Exit onCreate method in HomeFragment class.");
         return root;
     }//End of onCreateView method
@@ -65,12 +64,12 @@ public class HomeFragment extends Fragment {
         this.rv = rv;
     }
 
-    public static AccountsDB getAccounts() {
-        return accounts;
+    public static AccountsDB getAccountsDB() {
+        return accountsDB;
     }
 
     public void setAccounts(AccountsDB accounts) {
-        this.accounts = accounts;
+        this.accountsDB = accounts;
     }
 
     //Other methods
@@ -88,7 +87,7 @@ public class HomeFragment extends Fragment {
     }
 
     public void displayPsswrds(){
-        this.accounts = new AccountsDB(getActivity().getBaseContext());
+        this.accountsDB = new AccountsDB(getActivity().getBaseContext());
         Cursor cursor = this.getAccountsList();
         //Move to first row of cursor if not empty
         cursor.moveToFirst();
@@ -101,26 +100,26 @@ public class HomeFragment extends Fragment {
     //Method to get the list of user names from the DB
     public Cursor getUserNameList(){
         Log.d("HomeFragOnCreate","Call getUserNameList method in HomeFragment class.");
-        return  this.accounts.getUserNameList();
+        return  this.accountsDB.getUserNameList();
     }
     //Method to get the list of accounts from the DB
     public Cursor getAccountsList(){
         Log.d("HomeFragOnCreate","Call getAccountsList method in HomeFragment class.");
-        return  this.accounts.getAccountsList();
+        return  this.accountsDB.getAccountsList();
     }
     //Method to get the list of passwords from the DB
     public Cursor getPsswrdList(){
         Log.d("HomeFragOnCreate","Call getPsswrdList method in HomeFragment class.");
-        return  this.accounts.getPsswrdList();
+        return  this.accountsDB.getPsswrdList();
     }
     //Method to get the number of times a specific user name is being used in different accounts as per the DB
     public int getTimesUsedUserName(int userNameID){
         Log.d("HomeFragOnCreate","Call getPsswrdList method in HomeFragment class.");
-        return this.accounts.getTimesUsedUserName(userNameID);
+        return this.accountsDB.getTimesUsedUserName(userNameID);
     }
     //Method to get the number of times a specific password is being used in different accounts as per the DB
     public int getTimesPsswrd(int psswrd){
         Log.d("HomeFragOnCreate","Call getPsswrdList method in HomeFragment class.");
-        return this.accounts.getTimesUsedUserName(psswrd);
+        return this.accountsDB.getTimesUsedUserName(psswrd);
     }
 }//End of HomeFragment class

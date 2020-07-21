@@ -1,14 +1,13 @@
 package io.github.jlrods.mypsswrdsecure;
 
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.Menu;
 import android.widget.EditText;
@@ -18,6 +17,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.navigation.NavController;
@@ -30,8 +30,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-
-import javax.crypto.spec.IvParameterSpec;
 
 import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
 
@@ -53,18 +51,21 @@ public class MainActivity extends AppCompatActivity {
     //private RecyclerView rv = null;
     //private AccountsDB accounts = null;
 
-    //private RecyclerView recyclerView;
+    private RecyclerView recyclerView = null;
     //private RecyclerView.LayoutManager layoutManager;
     private TabLayout tabLayout = null;
     private int idRes;
     private static Icon myPsswrdSecureLogo = null;
-    private static AccountsDB accounts = null;
+    private static AccountsDB accountsDB = null;
     private static ArrayList<Category> categoryList = null;
     private static ArrayList<QuestionList> listOfQuestionLists = null;
 
 
+    private static String dateFormat = "dd/MMM/yyyy";
 
      private static Cryptographer cryptographer;
+
+     private int throwAddAccountActReqCode = 5566;
 
 
     @Override
@@ -135,10 +136,10 @@ public class MainActivity extends AppCompatActivity {
                         break;
                 }// End of switch statement
                 currentTab = tab.getPosition();
-                boolean appStateUpdated = accounts.updateAppState(-1,tab.getPosition(),accounts.toInt(showAllAccounts) ,accounts.toInt(isFavoriteFilter),accounts.toInt(isSearchFilter),"HelloWorld'BaBay");
+                boolean appStateUpdated = accountsDB.updateAppState(-1,tab.getPosition(), accountsDB.toInt(showAllAccounts) , accountsDB.toInt(isFavoriteFilter), accountsDB.toInt(isSearchFilter),"HelloWorld'BaBay");
 
                 if(appStateUpdated){
-                    Cursor c = accounts.runQuery("SELECT * FROM APPSTATE");
+                    Cursor c = accountsDB.runQuery("SELECT * FROM APPSTATE");
                     c.moveToFirst();
                     int cat = c.getInt(1);
                     int tabP = c.getInt(2);
@@ -188,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
         String test2 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
 //        byte[] joseleoEncrypt = cryptographer.encryptText("joseleo");
 //        String joseleoDecrypt = cryptographer.decryptText(joseleoEncrypt, cryptographer.getIv());
-        accounts = new AccountsDB(this);
+        accountsDB = new AccountsDB(this);
 //        String test3 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
         //Save it IV in the APPSTATE Table
 //        ContentValues appStateValues = new ContentValues();
@@ -218,9 +219,13 @@ public class MainActivity extends AppCompatActivity {
 //        String test1 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
 
 
-        this.categoryList = accounts.getCategoryList();
+        this.categoryList = accountsDB.getCategoryList();
         this.currentCategory = categoryList.get(0);
         //this.listOfQuestionLists = accounts.getListOfQuestionLists();
+
+        //Consider the category selected on drawer menu to run correct sql query
+        //Cursor accountListCursor = accountsDB.getAccountsList();
+
     }//End of onCreate method
 
 
@@ -301,19 +306,19 @@ public class MainActivity extends AppCompatActivity {
     public static void updateRecyclerViewData(RecyclerView.Adapter adapter){
         Log.d("Ent_updateRecViewData","Enter the updateRecyclerViewData method in the MainActivity class.");
         RecyclerView rv = HomeFragment.getRv();
-        AccountsDB accounts = HomeFragment.getAccounts();
+        AccountsDB accountsDB = HomeFragment.getAccountsDB();
         Cursor cursor = null;
         //Check the class of the adapter passed in as argument
         if(adapter instanceof AccountAdapter){
-            cursor = accounts.getAccountsList();
+            cursor = accountsDB.getAccountsList();
             ((AccountAdapter) adapter).setCursor(cursor);
         }
         else if(adapter instanceof PsswrdAdapter){
-            cursor = accounts.getPsswrdList();
+            cursor = accountsDB.getPsswrdList();
             ((UserNameAdapter) adapter).setCursor(cursor);
         }
         else if(adapter instanceof UserNameAdapter){
-            cursor = accounts.getUserNameList();
+            cursor = accountsDB.getUserNameList();
             ((UserNameAdapter) adapter).setCursor(cursor);
         }
         //Move to first row of cursor if not empty
@@ -334,9 +339,36 @@ public class MainActivity extends AppCompatActivity {
         i.putExtra("category",this.currentCategory.toString());
         //i.putExtra("sql",this.getSQLForRecyclerView());
         //Start the addTaskActivity class
-        startActivity(i);
+        startActivityForResult(i,throwAddAccountActReqCode);
         Log.d("ThrowAddAcc","Exit throwAddAccountActivity method in the MainActivity class.");
     }//End of throwAddTaskActivity method
+
+    //Method to receive and handle data coming from other activities such as: SelectLogoActivity,
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d("onActivityResult","Enter the onActivityResult method in the DisplayAccountActivity class.");
+        if (requestCode==this.throwAddAccountActReqCode && resultCode==RESULT_OK) {
+            Log.d("onActivityResult","Received GOOD result from AddAccountActivity (received by MainActivity).");
+            //Update RV data set
+            //Consider the category selected on drawer menu to run correct sql query
+            //@FIXME: Investigate--> What's best option? notify adapter about data set change or set up new adapter with method created??
+            recyclerView = HomeFragment.getRv();
+            ((AccountAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getAccountsList());
+            recyclerView.getAdapter().notifyDataSetChanged();
+            //AccountAdapter accountAdapter = new AccountAdapter(getBaseContext(),null);
+            //updateRecyclerViewData(accountAdapter);
+            //Move to new account position
+            recyclerView.getLayoutManager().scrollToPosition(recyclerView.getAdapter().getItemCount()-1);
+            //Display Toast to confirm the account has been added
+            displayToast(this,""+data.getExtras().getString("accountName"),Toast.LENGTH_LONG,Gravity.CENTER);
+        }else if(requestCode==this.throwAddAccountActReqCode && resultCode==RESULT_CANCELED){
+            //Display the current list of Accounts
+            AccountAdapter accountAdapter = new AccountAdapter(getBaseContext(),null);
+            updateRecyclerViewData(accountAdapter);
+        }//End of if else statement to check the data comes SelectLogoActivity
+        Log.d("onActivityResult","Exit the onActivityResult method in the DisplayAccountActivity class.");
+    }//End of onActivityResult method
 
     //Method to display a generic new Dialog Alert view from any activity.
     public static AlertDialog.Builder displayAlertDialog(Context context, EditText inputField,String title, String message, String hint){
@@ -354,5 +386,14 @@ public class MainActivity extends AppCompatActivity {
 
     public static Cryptographer getCryptographer(){
         return cryptographer;
+    }
+    public static String getDateFormat(){
+        return dateFormat;
+    }
+
+    public static void displayToast(Context context,String text, int toastLength,int gravity){
+        Toast toast = Toast.makeText(context,text,toastLength);
+        toast.setGravity(gravity,0,0);
+        toast.show();
     }
 }//End of MainActivity class.

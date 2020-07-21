@@ -20,7 +20,7 @@ public class PsswrdAdapter extends UserNameAdapter {
     @Override
     public void onBindViewHolder(@NonNull UserNameAdapter.ViewHolder holder, int position) {
         Log.d("PsswrdOnBindVH","Enter onBindViewHolder method in PsswrdAdapter class.");
-        AccountsDB accounts = new AccountsDB(getContext());
+        AccountsDB accountsDB = new AccountsDB(getContext());
         //Move current cursor to position passed in as parameter
         cursor.moveToPosition(position);
         //super.onBindViewHolder(holder,position);
@@ -33,7 +33,7 @@ public class PsswrdAdapter extends UserNameAdapter {
         Date date = new Date(psswrd.getDateCreated());
         SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy");
         holder.tvDateCreated.setText(format.format(date));
-        int timesUsed = accounts.getTimesUsedPsswrd(psswrd.get_id());
+        int timesUsed = accountsDB.getTimesUsedPsswrd(psswrd.get_id());
         holder.tvTimesUsed.setText(String.valueOf(timesUsed));
         Log.d("PsswrdOnBindVH","Exit onBindViewHolder method in PsswrdAdapter class.");
     }//End of onBindViewHolder method

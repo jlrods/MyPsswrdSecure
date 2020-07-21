@@ -98,6 +98,13 @@
     <string name="selectCatHint">Select a Category...</string>
     <string name="selectUserHint">Select a User name...</string>
     <string name="selectPsswrdHint">Select a Password...</string>
+    <string name="accountEmptyName">Sorry, no account name entered in the Name field</string>
+    <string name="accountNameInUse">Sorry, the account name entered is already in use</string>
+    <string name="accountRenewDateInPast">Sorry, invalid password renew date. The date must be in the future</string>
+    <string name="accountNoCatSelected">Sorry, no category has been selected from the drop down menu</string>
+    <string name="accountNoUserSelected">Sorry, no user name has been selected from the drop down menu</string>
+    <string name="accountNoPsswrdSelected">Sorry, no password has been selected from the drop down menu</string>
+
 
     <!--    AddQuestion Activity    -->
     <string name="addQuestQuestionHint">Type the new question here...</string>
