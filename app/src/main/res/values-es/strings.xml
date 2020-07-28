@@ -48,9 +48,10 @@
     <!--    TabBar Menu texts-->
     <string name="about">Acerca...</string>
     <string name="action_search">Buscar</string>
-    <string name="action_accounts">Cuentas</string>
-    <string name="action_userNames">Usuarios</string>
-    <string name="action_psswrds">Claves</string>
+    <string name="action_accounts">List de Cuentas</string>
+    <string name="action_userNames">Nombres de Usuario</string>
+    <string name="action_psswrds">Lista de Contraseñas</string>
+    <string name="action_secQuestions">Preguntas de seguridad</string>
 
     <!--    Add account layout icons-->
     <string name="account_logo">Logo</string>

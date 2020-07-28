@@ -53,13 +53,30 @@
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textStyle="bold"
                         android:hint="@string/account_nameHint"/>
-                    <CheckBox
-                        android:id="@+id/cbHasToBeChanged"
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/subLayout_isFavorite"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:id="@+id/imgAccIsFavorite"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@android:drawable/btn_star_big_off"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerVertical="true" />
+                    <TextView
+                        android:id="@+id/tvAccIsFavTag"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/account_changePsswrd"
-                        android:layout_alignParentTop="true"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Small"/>
+                        android:text="@string/account_isFavoriteUnchecked"
+                        android:layout_toRightOf="@+id/imgAccIsFavorite"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                        android:layout_centerVertical="true"/>
                 </LinearLayout>
 
             </LinearLayout>
@@ -97,30 +114,14 @@
                         android:gravity="center"
                         android:spinnerMode="dialog"/>
                 </LinearLayout>
-
-                <RelativeLayout
-                    android:id="@+id/subLayout_isFavorite"
+                <CheckBox
+                    android:id="@+id/cbHasToBeChanged"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1.4"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="center_vertical">
-                    <ImageView
-                        android:id="@+id/imgAccIsFavorite"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:src="@android:drawable/btn_star_big_off"
-                        android:layout_alignParentTop="true"
-                        android:layout_centerVertical="true"/>
-                    <TextView
-                        android:id="@+id/tvAccIsFavTag"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/account_isFavoriteUnchecked"
-                        android:layout_toRightOf="@+id/imgAccIsFavorite"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                        android:layout_centerVertical="true"/>
-                </RelativeLayout>
+                    android:layout_height="wrap_content"
+                    android:text="@string/account_changePsswrd"
+                    android:layout_alignParentTop="true"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:layout_weight="3"/>
             </LinearLayout>
 
             <LinearLayout
@@ -177,38 +178,43 @@
                         android:text="@string/account_new"
                         android:textAppearance="@style/TextAppearance.AppCompat.Small"/>
                 </LinearLayout>
-
                 <RelativeLayout
-                    android:id="@+id/layoutAccDateCreated"
+                    android:id="@+id/subLayout_blankSpace3"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1">
-                    <ImageView
-                        android:id="@+id/imgAccDateCreated"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@mipmap/ic_calendar_black_48dp"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentBottom="true"
-                        android:layout_marginBottom="20dp"/>
-                    <TextView
-                        android:id="@+id/tvAccDateCreatedTag"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_toRightOf="@+id/imgAccDateCreated"
-                        android:layout_alignTop="@+id/imgAccDateCreated"
-                        android:text="@string/account_dateCreated"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Small"/>
-                    <TextView
-                        android:id="@+id/tvAccDateCreated"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="01/Jun/2020"
-                        android:layout_toRightOf="@+id/imgAccDateCreated"
-                        android:layout_below="@+id/tvAccDateCreatedTag"
-                        android:layout_marginTop="-5dp"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Small"/>
+                    <RelativeLayout
+                        android:id="@+id/subLayout_accDateChangeInt"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:visibility="gone">
+                        <ImageView
+                            android:id="@+id/imgAccDateRenew"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@mipmap/ic_calendar_black_48dp"
+                            android:layout_alignParentLeft="true"
+                            />
+                        <TextView
+                            android:id="@+id/tvAccDateRenewTag"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@id/imgAccDateRenew"
+                            android:layout_alignTop="@id/imgAccDateRenew"
+                            android:text="@string/account_dateChange"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small"/>
+
+                        <TextView
+                            android:id="@+id/tvAccDateRenewValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/tvAccDateRenewTag"
+                            android:layout_marginTop="-5dp"
+                            android:layout_toRightOf="@+id/imgAccDateRenew"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+                    </RelativeLayout>
                 </RelativeLayout>
+
             </LinearLayout>
 
             <LinearLayout
@@ -251,19 +257,6 @@
                             android:gravity="center"
                             android:spinnerMode="dialog"/>
                     </LinearLayout>
-                    <!--                <LinearLayout-->
-                    <!--                    android:layout_width="match_parent"-->
-                    <!--                    android:layout_height="match_parent"-->
-                    <!--                    android:orientation="horizontal"-->
-                    <!--                    android:layout_weight="1">-->
-                    <!--                    <EditText-->
-                    <!--                        android:id="@+id/etnewPssrd"-->
-                    <!--                        android:layout_width="match_parent"-->
-                    <!--                        android:layout_height="match_parent"-->
-                    <!--                        android:ems="10"-->
-                    <!--                        android:inputType="textMultiLine"-->
-                    <!--                        android:enabled="false"/>-->
-                    <!--                </LinearLayout>-->
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -279,40 +272,35 @@
                         android:textAppearance="@style/TextAppearance.AppCompat.Small"/>
                 </LinearLayout>
                 <RelativeLayout
-                    android:id="@+id/subLayout_blankSpace3"
+                    android:id="@+id/layoutAccDateCreated"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1">
-                    <RelativeLayout
-                        android:id="@+id/subLayout_accDateChangeInt"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:visibility="gone">
-                        <ImageView
-                            android:id="@+id/imgAccDateRenew"
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@mipmap/ic_calendar_black_48dp"
-                            android:layout_alignParentLeft="true"
-                            />
-                        <TextView
-                            android:id="@+id/tvAccDateRenewTag"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_toRightOf="@id/imgAccDateRenew"
-                            android:layout_alignTop="@id/imgAccDateRenew"
-                            android:text="@string/account_dateChange"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Small"/>
-
-                        <TextView
-                            android:id="@+id/tvAccDateRenewValue"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@id/tvAccDateRenewTag"
-                            android:layout_marginTop="-5dp"
-                            android:layout_toRightOf="@+id/imgAccDateRenew"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
-                    </RelativeLayout>
+                    <ImageView
+                        android:id="@+id/imgAccDateCreated"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@mipmap/ic_calendar_black_48dp"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginBottom="20dp"/>
+                    <TextView
+                        android:id="@+id/tvAccDateCreatedTag"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@+id/imgAccDateCreated"
+                        android:layout_alignTop="@+id/imgAccDateCreated"
+                        android:text="@string/account_dateCreated"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"/>
+                    <TextView
+                        android:id="@+id/tvAccDateCreated"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="01/Jun/2020"
+                        android:layout_toRightOf="@+id/imgAccDateCreated"
+                        android:layout_below="@+id/tvAccDateCreatedTag"
+                        android:layout_marginTop="-5dp"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"/>
                 </RelativeLayout>
             </LinearLayout>
 
@@ -376,11 +364,26 @@
                 android:orientation="horizontal"
                 android:layout_weight="0.8">
                 <LinearLayout
+                    android:id="@+id/subLayout_blankSpace2"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:layout_weight="0.55">
-
+                    android:layout_weight="1.5">
+                    <ImageView
+                        android:id="@+id/imgAccLogo"
+                        android:layout_width="match_parent"
+                        android:layout_height="?listPreferredItemHeight"
+                        android:layout_gravity="center"
+                        android:src="@mipmap/ic_my_psswrd_secure"
+                        android:layout_margin="5dp"
+                        android:padding="5dp"
+                        android:layout_weight="3" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_weight="1">
 
                     <LinearLayout
                         android:id="@+id/subLayout_newQuestion"
@@ -400,7 +403,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:layout_weight="1.1">
+                    android:layout_weight="1.5">
 
                     <Button
                         android:id="@+id/btnAccNewSecQuestion"
@@ -420,31 +423,6 @@
                         android:enabled="false"
                         android:textAppearance="@style/TextAppearance.AppCompat.Small"/>
                 </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/subLayout_blankSpace2"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:layout_weight="1">
-                    <ImageView
-                        android:id="@+id/imgAccLogo"
-                        android:layout_width="match_parent"
-                        android:layout_height="?listPreferredItemHeight"
-                        android:layout_gravity="center"
-                        android:src="@mipmap/ic_my_psswrd_secure"
-                        android:layout_margin="5dp"
-                        android:padding="5dp"
-                        android:layout_weight="3" />
-                    <!--                <LinearLayout-->
-                    <!--                    android:id="@+id/subLayout_Psswrd_DateChange"-->
-                    <!--                    android:layout_width="match_parent"-->
-                    <!--                    android:layout_height="wrap_content"-->
-                    <!--                    android:orientation="vertical">-->
-
-                    <!--                </LinearLayout>-->
-                </LinearLayout>
-
             </LinearLayout>
 
         </LinearLayout>

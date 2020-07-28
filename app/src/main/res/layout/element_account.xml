@@ -5,38 +5,46 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/layout_account_element"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
+        android:orientation="horizontal"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/imgAccElemLogo"
-            android:layout_width="110dp"
+            android:layout_width="match_parent"
             android:layout_height="?listPreferredItemHeight"
             android:layout_alignParentLeft="true"
-            android:src="@mipmap/ic_my_psswrd_secure"/>
+            android:src="@mipmap/ic_my_psswrd_secure"
+            android:layout_weight="1"/>
 
         <TextView
             android:id="@+id/tvAccElmName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:layout_toRightOf="@+id/imgAccElemLogo"
-            android:text="This is a long test account_name" />
+            android:text="This is a long test account_name"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textStyle="bold"
+            android:layout_weight="0.5"/>
 
         <ImageView
             android:id="@+id/imgFavoriteStar"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
-            android:src="@android:drawable/btn_star_big_off" />
+            android:src="@android:drawable/btn_star_big_off"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:layout_gravity="center_vertical"/>
 
-    </RelativeLayout>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

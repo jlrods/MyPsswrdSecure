@@ -47,8 +47,9 @@
     <string name="about">About...</string>
     <string name="action_search">Search</string>
     <string name="action_accounts">Accounts</string>
-    <string name="action_userNames">User Names</string>
-    <string name="action_psswrds">Passwords</string>
+    <string name="action_userNames">User Name List</string>
+    <string name="action_psswrds">Passwords List</string>
+    <string name="action_secQuestions">Security Question List</string>
 
     <!--    Add account layout icons-->
     <string name="account_logo">Logo</string>

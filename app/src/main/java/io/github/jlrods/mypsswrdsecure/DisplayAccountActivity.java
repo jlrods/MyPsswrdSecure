@@ -287,23 +287,30 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         this.cursorPsswrd = this.accountsDB.getPsswrdList();
         this.setUpSpinnerData(cursorPsswrd, spAccPsswrd,PSSWRD_SPINNER);
         //Setup the Security Question List spinner
-        //Use a Dummy cursor to be able to setup prompt. This dummy cursor will held one question item but wont be displayed
+        //Call method to configure security question list spinner. Use a Dummy cursor to be able to setup prompt.
+        //This dummy cursor will held one question item but wont be displayed
+        this.initSecQuestionListSpinner();
+        //Call method to setup the Questions Available spinner and populate with data
+        this.initQuesitonAvailableListSpinner();
+        //Initialize the iconAdapter to be able to communicate with SelectLogoAct and find the selected logo in this Activity
+        this.iconAdapter = new IconAdapter(this);
+        Log.d("OnCreateDispAcc","Exit onCreate method in the DisplayAccountActivity abstract class.");
+    }//End of onCreate method
+
+    //Method to setup dummy cursor for security question spinner when initializing it
+    protected void initSecQuestionListSpinner(){
         this.cursorQuestionList = accountsDB.getQuestionCursorByID(1);
         this.spAccSecQuestionList.setPrompt(getBaseContext().getResources().getString(R.string.account_quest_list_spinner_prompt));
         this.setUpQuestionListSpinnerData(cursorQuestionList,spAccSecQuestionList);
         //Disable the Security question spinner so user wont be able to see dummy item in spinner
         this.spAccSecQuestionList.setEnabled(false);
+    }
 
-        //Setup the Questions Available spinner and populate with data
+    protected void initQuesitonAvailableListSpinner(){
         this.cursorListOfQuestionsAvailable = accountsDB.getListQuestionsAvailable();
         this.spQuestionsAvailable.setPrompt(getBaseContext().getResources().getString(R.string.account_quest_avilab_spinner_prompt));
         this.setUpQuestionListSpinnerData(cursorListOfQuestionsAvailable,spQuestionsAvailable);
-
-
-        //Initialize the iconAdapter to be able to communicate with SelectLogoAct and find the selected logo in this Activity
-        this.iconAdapter = new IconAdapter(this);
-        Log.d("OnCreateDispAcc","Exit onCreate method in the DisplayAccountActivity abstract class.");
-    }//End of onCreate method
+    }
 
 
     @Override
@@ -377,6 +384,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         Log.d("setUpQuestListSpData","Enter the setUpQuestionListSpinnerData method in the DisplayAccountActivity class.");
         adapter = new SpinnerAdapterQuestion(this,cursor, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER) ;
         sp.setAdapter(adapter);
+        sp.setEnabled(true);
         Log.d("setUpQuestListSpData","Exit the setUpQuestionListSpinnerData method in the DisplayAccountActivity class.");
     }//End of setUpQuestionListSpinnerData
 
@@ -576,7 +584,6 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             this.spAccSecQuestionList.setPrompt(this.getSecQuestListPrompt(c.getCount()));
             //Setup the spinner data
             this.setUpQuestionListSpinnerData(c,this.spAccSecQuestionList);
-            this.spAccSecQuestionList.setEnabled(true);
         }//End of if statement to check it's not a repeated question
         Log.d("addQuestionToSecList","Exit the addQuestionToSecList method in the DisplayAccountActivity class.");
     }//End of addQuestionToSecList method
@@ -728,7 +735,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         if (requestCode==this.throwSelectLogoActReqCode && resultCode==RESULT_OK) {
             Log.d("onActivityResult","Received GOOD result from SelectLogoActivity in the DisplayAccountActivity class.");
             //Check icon location
-            if(data.getExtras().getString("selectedImgLocation").equals("Resources")){
+            if(data.getExtras().getString("selectedImgLocation").equals(MainActivity.getRESOURCES())){
                 //this.imgAccLogo.setImageResource(data.getExtras().getInt("selectedImgID"));
                 this.selectedPosition = data.getExtras().getInt("selectedImgPosition");
                         //iconAdapter.getIconList().get().get_id();

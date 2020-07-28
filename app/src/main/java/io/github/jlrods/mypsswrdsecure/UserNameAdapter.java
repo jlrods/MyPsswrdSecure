@@ -20,7 +20,7 @@ import javax.crypto.spec.IvParameterSpec;
 
 import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
 
-public class UserNameAdapter extends RecyclerView.Adapter<UserNameAdapter.ViewHolder>  {
+public class UserNameAdapter extends RecyclerView.Adapter<UserNameAdapter.ViewHolder> {
 
     //Attribute definition
     protected Context context;
@@ -57,6 +57,7 @@ public class UserNameAdapter extends RecyclerView.Adapter<UserNameAdapter.ViewHo
         Log.d("UserNameAdaptVHOnCre","Exit onCreateViewHolder method in the UserNamedAdapter class.");
         return viewHolder;
     }//End of onCreateViewHolder method
+
 
     @Override
     public void onBindViewHolder(@NonNull UserNameAdapter.ViewHolder holder, int position) {
@@ -116,6 +117,7 @@ public class UserNameAdapter extends RecyclerView.Adapter<UserNameAdapter.ViewHo
         TextView tvStringValue;
         TextView tvTimesUsed;
         TextView tvDateCreated;
+        TextView tvDateCreatedTag;
         //Define the ViewHolder constructor
         ViewHolder(View itemView) {
             //Call super constructor method
@@ -128,6 +130,7 @@ public class UserNameAdapter extends RecyclerView.Adapter<UserNameAdapter.ViewHo
             this.tvStringValue = (TextView) itemView.findViewById(R.id.tvStringValue);
             this.tvTimesUsed = (TextView) itemView.findViewById(R.id.tvStrValTimesUsed);
             this.tvDateCreated = (TextView) itemView.findViewById(R.id.tvStrValDate);
+            this.tvDateCreatedTag = (TextView) itemView.findViewById(R.id.tvStrValDateTag);
             Log.d("UserNameVHCreator","Exit ViewHolder constructor in the UserNameAdapter class.");
         }//End of ViewHolder
     }//End of ViewHolder inner class

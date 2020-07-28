@@ -302,16 +302,16 @@ public class AccountsDB extends SQLiteOpenHelper {
         values15.put("DateCreated", Calendar.getInstance().getTimeInMillis());
         values15.put("initVector",cryptographer.getIv().getIV());
         int psswrdID5 = (int) db.insert("PSSWRD",null,values15);
-        //String psswrd5 = cryptographer.encryptText("M;Mach;to88!").toString();
-        //db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('"+psswrd5+"',1588167878639);");
+//        String psswrd5 = cryptographer.encryptText("M;Mach;to88!").toString();
+//        db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('"+psswrd5+"',1588167878639);");
 
 //        Cursor psswrdRow5 = db.rawQuery("SELECT * FROM PSSWRD WHERE _id = "+psswrdID5,null);
 //        psswrdRow5.moveToFirst();
 //        int idPsswrd5 = psswrdRow5.getInt(0);
-//        long datePsswrd5 = psswrdRow5.getLong(2);
+//        long datePsswrd5 = psswrdRow5.getLong(3);
 //        byte[] encryptedPsswrd5 = psswrdRow5.getBlob(1);
 //        String psswrd15 = cryptographer.decryptText(encryptedPsswrd5,cryptographer.getIv());
-//
+
 //        Cursor psswrdRow1 = db.rawQuery("SELECT * FROM PSSWRD WHERE _id = "+psswrdID1,null);
 //        psswrdRow1.moveToFirst();
 //        int idPsswrd1 = psswrdRow1.getInt(0);
@@ -490,44 +490,39 @@ public class AccountsDB extends SQLiteOpenHelper {
             fields.put("Value",itemNameEcrypted);
             fields.put("DateCreated",((UserName) item).getDateCreated());
             fields.put("initVector",((UserName) item).getIv());
-            //fields = " '" + itemName + "'," + ((UserName) item).getDateCreated();
-            //sql += table;
             Log.d("addUserName", "User name to be added in the addItem method in AccountsDB class.");
         }else if(item instanceof Answer){
             table = "ANSWER";
             fields.put("Value",((Answer) item).getValue());
             fields.put("initVector",((Answer) item).getIv());
-            //fields =" '"+itemName+"'";
-            //sql += table;
             Log.d("addAnswer", "Answer to be added in the addItem method in AccountsDB class.");
         }else if(item instanceof Question){
             itemName = ((Question)item).getValue();
             table = "QUESTION";
             fields.put("Value",itemName);
             fields.put("AnswerID",((Question) item).getAnswer().get_id());
-            //fields =" '"+itemName+"',"+((Question)item).getAnswer().get_id();
-            //sql += table;
             Log.d("addQuestion", "User name to be added in the addItem method in AccountsDB class.");
         }else if(item instanceof QuestionList){
             QuestionList questionList = (QuestionList) item;
             table = "QUESTIONLIST";
             for(int i=0;i< questionList.getSize();i++){
                 fields.put("QuestionID"+(i+1),questionList.getQuestions().get(i).get_id());
-            }
+            }//End of for loop to add all question ids in the quesiton list
         }else if(item instanceof Account){
             table ="ACCOUNTS";
             Account account = (Account) item;
-            //itemName = ((Account) item).getName();
             fields.put("Name",account.getName());
             fields.put("CategoryID",account.getCategory().get_id());
             fields.put("UserNameID",account.getUserName().get_id());
             fields.put("PsswrdID",account.getPsswrd().get_id());
+            //Check if security question list is being used for this account
             if(account.getQuestionList() != null && account.getQuestionList().getSize()>0){
                 fields.put("QuestionListID",account.getQuestionList().get_id());
             }
             fields.put("IconID",account.getIcon().get_id());
             fields.put("IsFavorite",account.isFavorite());
             fields.put("DateCreated",account.getDateCreated());
+            //A password renew date is always given,either an actual long number or 0 if not required
             fields.put("DateChange",account.getDateChange());
             Log.d("addTask","Task to be added in the addItem method in TasksDB class.");
         }//End of if else statements
@@ -664,9 +659,15 @@ public class AccountsDB extends SQLiteOpenHelper {
     }
 
     //Method to get the number of times a specific password is being used in different accounts as per the DB
-    public int getTimesUsedPsswrd(int psswrd){
-        return this.runQuery("SELECT * FROM ACCOUNTS WHERE PsswrdID = "+psswrd).getCount();
+    public int getTimesUsedPsswrd(int psswrdID){
+        return this.runQuery("SELECT * FROM ACCOUNTS WHERE PsswrdID = "+psswrdID).getCount();
     }
+
+    //Method to get the number of times a specific password is being used in different accounts as per the DB
+    public int getTimesUsedQuestion(int questionID){
+        return this.runQuery("SELECT * FROM QUESTIONASSIGNMENT WHERE QUESTIONASSIGNMENT.QuestionID = "+questionID).getCount();
+    }
+
 
     //Method to retrieve a specific Icon from DB by passing in it's ID
     public Icon getIconByID(int _id){

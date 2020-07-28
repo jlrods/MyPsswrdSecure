@@ -28,6 +28,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
+
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
@@ -62,6 +64,10 @@ public class MainActivity extends AppCompatActivity {
 
 
     private static String dateFormat = "dd/MMM/yyyy";
+
+
+
+    private static String RESOURCES = "Resources";
 
      private static Cryptographer cryptographer;
 
@@ -133,6 +139,10 @@ public class MainActivity extends AppCompatActivity {
                     case 2:
                         PsswrdAdapter psswrdAdapter = new PsswrdAdapter(getBaseContext(),null);
                         MainActivity.updateRecyclerViewData(psswrdAdapter);
+                        break;
+                    case 3:
+                        SecurityQuestionAdapter secQuestionAdapter = new SecurityQuestionAdapter(getBaseContext(),null);
+                        MainActivity.updateRecyclerViewData(secQuestionAdapter);
                         break;
                 }// End of switch statement
                 currentTab = tab.getPosition();
@@ -312,12 +322,13 @@ public class MainActivity extends AppCompatActivity {
         if(adapter instanceof AccountAdapter){
             cursor = accountsDB.getAccountsList();
             ((AccountAdapter) adapter).setCursor(cursor);
-        }
-        else if(adapter instanceof PsswrdAdapter){
+        }else if(adapter instanceof PsswrdAdapter){
             cursor = accountsDB.getPsswrdList();
-            ((UserNameAdapter) adapter).setCursor(cursor);
-        }
-        else if(adapter instanceof UserNameAdapter){
+            ((PsswrdAdapter) adapter).setCursor(cursor);
+        }else if(adapter instanceof SecurityQuestionAdapter){
+            cursor = accountsDB.getListQuestionsAvailable();
+            ((SecurityQuestionAdapter) adapter).setCursor(cursor);
+        }else if(adapter instanceof UserNameAdapter){
             cursor = accountsDB.getUserNameList();
             ((UserNameAdapter) adapter).setCursor(cursor);
         }
@@ -389,6 +400,10 @@ public class MainActivity extends AppCompatActivity {
     }
     public static String getDateFormat(){
         return dateFormat;
+    }
+
+    public static String getRESOURCES() {
+        return RESOURCES;
     }
 
     public static void displayToast(Context context,String text, int toastLength,int gravity){
