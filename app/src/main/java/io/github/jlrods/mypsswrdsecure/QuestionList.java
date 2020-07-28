@@ -24,14 +24,21 @@ class QuestionList {
         questions.add(q3);
     }
     public QuestionList(){
-        this(-1,null,null,null);
+        this._id = -1;
+        this.questions = new ArrayList<Question>();
     }
 
+
     public QuestionList(int _id,Question q1){
-        this(_id,q1,null,null);
+        this._id = _id;
+        this.questions = new ArrayList<Question>();
+        questions.add(q1);
     }
     public QuestionList(int _id,Question q1, Question q2){
-        this(_id,q1,q2,null);
+        this._id = _id;
+        this.questions = new ArrayList<Question>();
+        questions.add(q1);
+        questions.add(q2);
     }
 
     public QuestionList(int _id,Cursor qList){

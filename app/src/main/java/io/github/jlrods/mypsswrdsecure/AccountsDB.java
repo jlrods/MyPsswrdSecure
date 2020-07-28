@@ -1,33 +1,71 @@
 package io.github.jlrods.mypsswrdsecure;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import java.util.ArrayList;
+import java.util.Calendar;
+
+import javax.crypto.spec.IvParameterSpec;
 
 //Class to manage all DB interaction
 public class AccountsDB extends SQLiteOpenHelper {
-
+    private static final char apostropheChar = '\'';
+    private static final String apostrophe ="'";
     private Context context;
+    private Cryptographer cryptographer;
     //Default constructor
     public AccountsDB(Context context){
         super(context, "Accounts Database",null, 1);
         this.context = context;
+        this.cryptographer = MainActivity.getCryptographer();
     }//End of default constructor
+
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         Log.d("Ent_DBOncreate","Enter onCreate method in AccountsDB class.");
 
         //Create table to store security answers. Leave empty as user has to create their own answers
-        db.execSQL("CREATE TABLE ANSWER (_id INTEGER PRIMARY KEY AUTOINCREMENT,Value TEXT);");
+        db.execSQL("CREATE TABLE ANSWER (_id INTEGER PRIMARY KEY AUTOINCREMENT,Value BLOB, initVector BLOB);");
 
-        db.execSQL("INSERT INTO ANSWER VALUES(null,'Sasha');");
-        db.execSQL("INSERT INTO ANSWER VALUES(null,'Machito88');");
-        db.execSQL("INSERT INTO ANSWER VALUES(null,'Mamama');");
-        db.execSQL("INSERT INTO ANSWER VALUES(null,'Caracas');");
+        //Include test data for Answers
+        byte[] answer1 = cryptographer.encryptText("Sasha");
+        ContentValues answerValues1 = new ContentValues();
+        //values.put("_id",null);
+        answerValues1.put("Value",answer1);
+        answerValues1.put("initVector",cryptographer.getIv().getIV());
+        int answerID1 = (int) db.insert("ANSWER",null,answerValues1);
+
+        //db.execSQL("INSERT INTO ANSWER VALUES(null,'Sasha');");
+
+        byte[] answer2 = cryptographer.encryptText("Machito88");
+        ContentValues answerValues2 = new ContentValues();
+        //values.put("_id",null);
+        answerValues2.put("Value",answer2);
+        answerValues2.put("initVector",cryptographer.getIv().getIV());
+        int answerID2 = (int) db.insert("ANSWER",null,answerValues2);
+        //db.execSQL("INSERT INTO ANSWER VALUES(null,'Machito88');");
+
+        byte[] answer3 = cryptographer.encryptText("Mamama");
+        ContentValues answerValues3 = new ContentValues();
+        //values.put("_id",null);
+        answerValues3.put("Value",answer3);
+        answerValues3.put("initVector",cryptographer.getIv().getIV());
+        int answerID3 = (int) db.insert("ANSWER",null,answerValues3);
+
+        //db.execSQL("INSERT INTO ANSWER VALUES(null,'Mamama');");
+
+        byte[] answer4 = cryptographer.encryptText("Caracas");
+        ContentValues answerValues4 = new ContentValues();
+        //values.put("_id",null);
+        answerValues4.put("Value",answer4);
+        answerValues4.put("initVector",cryptographer.getIv().getIV());
+        int answerID4 = (int) db.insert("ANSWER",null,answerValues4);
+        //db.execSQL("INSERT INTO ANSWER VALUES(null,'Caracas');");
 
         //Create table to store security questions (linked to Answer ID as Foreign key)"
         db.execSQL("CREATE TABLE QUESTION (_id INTEGER PRIMARY KEY AUTOINCREMENT,Value TEXT,\n" +
@@ -62,13 +100,13 @@ public class AccountsDB extends SQLiteOpenHelper {
 
         //Create table to store usernames for site loggins
         // Leave empty as user has to create their own user names.
-        db.execSQL("CREATE TABLE USERNAME (_id INTEGER PRIMARY KEY AUTOINCREMENT,Value TEXT, \n" +
-                "DateCreated BIGINT);");
+        db.execSQL("CREATE TABLE USERNAME (_id INTEGER PRIMARY KEY AUTOINCREMENT,Value BLOB, \n" +
+                "initVector BLOB, DateCreated BIGINT);");
 
         //Create table to store passwords for site loggins
         // Leave empty as user has to create their own passwords.
-        db.execSQL("CREATE TABLE PSSWRD (_id INTEGER PRIMARY KEY AUTOINCREMENT,Value TEXT,\n" +
-                "DateCreated BIGINT);");
+        db.execSQL("CREATE TABLE PSSWRD (_id INTEGER PRIMARY KEY AUTOINCREMENT,Value BLOB,\n" +
+                "initVector BLOB, DateCreated BIGINT);");
 
         //Create table to store new icon/image locations (selected by user)
         // Leave empty as pre populated icons
@@ -184,18 +222,111 @@ public class AccountsDB extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO QUESTIONASSIGNMENT VALUES(null,3,3);");
         db.execSQL("INSERT INTO QUESTIONASSIGNMENT VALUES(null,3,4);");
 
-        //User names
-        db.execSQL("INSERT INTO USERNAME (Value, DateCreated) VALUES('jlrods',1588167878639);");
-        db.execSQL("INSERT INTO USERNAME (Value, DateCreated) VALUES('jlrods@gmail.com',1588267878640);");
-        db.execSQL("INSERT INTO USERNAME (Value, DateCreated) VALUES('j_rodriguez',1588367878641);");
-        db.execSQL("INSERT INTO USERNAME (Value, DateCreated) VALUES('j_rodriguez@modularauto.ie',1588467878642);");
+        //Include test data for User names
+        byte[] user1 = cryptographer.encryptText("jlrods");
+        ContentValues values1 = new ContentValues();
+        values1.put("Value",user1);
+        values1.put("DateCreated", Calendar.getInstance().getTimeInMillis());
+        values1.put("initVector",cryptographer.getIv().getIV());
+        int userID1 = (int) db.insert("USERNAME",null,values1);
 
-        //Passwords
-        db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('Machito88',1588167878639);");
-        db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('JoseLeonardo',1588267878640);");
-        db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('Paracotos12!',1588367878641);");
-        db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('Roraima2020!',1588467878642);");
-        db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('M;Mach;to88!',1588167878639);");
+        byte[] user2 = cryptographer.encryptText("jlrods@gmail.com");
+        ContentValues values2 = new ContentValues();
+        //values.put("_id",null);
+        values2.put("Value",user2);
+        values2.put("DateCreated", Calendar.getInstance().getTimeInMillis());
+        values2.put("initVector",cryptographer.getIv().getIV());
+        int userID2 = (int) db.insert("USERNAME",null,values2);
+        //String user2 = cryptographer.encryptText("jlrods@gmail.com").toString();
+        //db.execSQL("INSERT INTO USERNAME (Value, DateCreated) VALUES('"+user2+"',1588267878640);");
+        byte[] user3 = cryptographer.encryptText("j_rodriguez");
+        ContentValues values3 = new ContentValues();
+        //values.put("_id",null);
+        values3.put("Value",user3);
+        values3.put("DateCreated", Calendar.getInstance().getTimeInMillis());
+        values3.put("initVector",cryptographer.getIv().getIV());
+        int userID3 = (int) db.insert("USERNAME",null,values3);
+        //String user3 = cryptographer.encryptText("j_rodriguez").toString();
+        //db.execSQL("INSERT INTO USERNAME (Value, DateCreated) VALUES('"+user3+"',1588367878641);");
+        byte[]  user4 = cryptographer.encryptText("j_rodriguez@modularauto.ie");
+        ContentValues values4 = new ContentValues();
+        //values.put("_id",null);
+        values4.put("Value",user4);
+        values4.put("DateCreated", Calendar.getInstance().getTimeInMillis());
+        values4.put("initVector",cryptographer.getIv().getIV());
+        int userID4 = (int) db.insert("USERNAME",null,values4);
+        //String user4 = cryptographer.encryptText("j_rodriguez@modularauto.ie").toString();
+        //db.execSQL("INSERT INTO USERNAME (Value, DateCreated) VALUES('"+user4+"',1588467878642);");
+
+        ////Include test data for passwords
+        byte[] psswrd1 = cryptographer.encryptText("Machito88");
+        ContentValues values11 = new ContentValues();
+        //values.put("_id",null);
+        values11.put("Value",psswrd1);
+        values11.put("DateCreated", Calendar.getInstance().getTimeInMillis());
+        values11.put("initVector",cryptographer.getIv().getIV());
+        int psswrdID1 = (int) db.insert("PSSWRD",null,values11);
+        //String psswrd1 = cryptographer.encryptText("Machito88").toString();
+        //db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('"+psswrd1+"',1588167878639);");
+        byte[] psswrd2 = cryptographer.encryptText("JoseLeonardo");
+        ContentValues values12 = new ContentValues();
+        //values.put("_id",null);
+        values12.put("Value",psswrd2);
+        values12.put("DateCreated", Calendar.getInstance().getTimeInMillis());
+        values12.put("initVector",cryptographer.getIv().getIV());
+        int psswrdID2 = (int) db.insert("PSSWRD",null,values12);
+        //String psswrd2 = cryptographer.encryptText("JoseLeonardo").toString();
+        //db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('"+psswrd2+"',1588267878640);");
+        byte[]  psswrd3 = cryptographer.encryptText("Paracotos12!");
+        ContentValues values13 = new ContentValues();
+        //values.put("_id",null);
+        values13.put("Value",psswrd3);
+        values13.put("DateCreated", Calendar.getInstance().getTimeInMillis());
+        values13.put("initVector",cryptographer.getIv().getIV());
+        int psswrdID3 = (int) db.insert("PSSWRD",null,values13);
+        //String psswrd3 = cryptographer.encryptText("Paracotos12!").toString();
+        //db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('"+psswrd3+"',1588367878641);");
+        byte[] psswrd4 = cryptographer.encryptText("Roraima2020!");
+        ContentValues values14 = new ContentValues();
+        //values.put("_id",null);
+        values14.put("Value",psswrd4);
+        values14.put("DateCreated", Calendar.getInstance().getTimeInMillis());
+        values14.put("initVector",cryptographer.getIv().getIV());
+        int psswrdID4 = (int) db.insert("PSSWRD",null,values14);
+        //String psswrd4 = cryptographer.encryptText("Roraima2020!").toString();
+        //db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('"+psswrd4+"',1588467878642);");
+        byte[] psswrd5 = cryptographer.encryptText("M;Mach;to88!");
+        ContentValues values15 = new ContentValues();
+        //values.put("_id",null);
+        values15.put("Value",psswrd5);
+        values15.put("DateCreated", Calendar.getInstance().getTimeInMillis());
+        values15.put("initVector",cryptographer.getIv().getIV());
+        int psswrdID5 = (int) db.insert("PSSWRD",null,values15);
+//        String psswrd5 = cryptographer.encryptText("M;Mach;to88!").toString();
+//        db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('"+psswrd5+"',1588167878639);");
+
+//        Cursor psswrdRow5 = db.rawQuery("SELECT * FROM PSSWRD WHERE _id = "+psswrdID5,null);
+//        psswrdRow5.moveToFirst();
+//        int idPsswrd5 = psswrdRow5.getInt(0);
+//        long datePsswrd5 = psswrdRow5.getLong(3);
+//        byte[] encryptedPsswrd5 = psswrdRow5.getBlob(1);
+//        String psswrd15 = cryptographer.decryptText(encryptedPsswrd5,cryptographer.getIv());
+
+//        Cursor psswrdRow1 = db.rawQuery("SELECT * FROM PSSWRD WHERE _id = "+psswrdID1,null);
+//        psswrdRow1.moveToFirst();
+//        int idPsswrd1 = psswrdRow1.getInt(0);
+//        long datePsswrd1 = psswrdRow1.getLong(2);
+//        byte[] encryptedPsswrd1 = psswrdRow1.getBlob(1);
+//        byte[] ivPsswrd1 = psswrdRow1.getBlob(3);
+//        String psswrd11 = cryptographer.decryptText(encryptedPsswrd1,new IvParameterSpec(ivPsswrd1));
+//
+//        Cursor userRow3 = db.rawQuery("SELECT * FROM USERNAME WHERE _id = "+userID3,null);
+//        userRow3.moveToFirst();
+//        int idUser3 = userRow3.getInt(0);
+//        long dateUser3 = userRow3.getLong(2);
+//        byte[] encryptedUser3 = userRow3.getBlob(1);
+//        byte[] ivUser3 = userRow3.getBlob(3);
+//        String user13 = cryptographer.decryptText(encryptedUser3,new IvParameterSpec(ivUser3));
 
 
         //Accounts
@@ -220,22 +351,242 @@ public class AccountsDB extends SQLiteOpenHelper {
     //Method to create a database object, a cursor, run the sql query and return the result cursor
     public Cursor runQuery(String query){
         Log.d("Ent_runQuery","Enter runQuery method in the AccountsDB class.");
+        //Get DB object
+        SQLiteDatabase db = getReadableDatabase();
+        //Initialize cursor variable to be returned
+        Cursor cursor = null;
         try{
-            //Initialize cursor variable to be returned
-            Cursor cursor = null;
-            //Get DB object
-            SQLiteDatabase db = getReadableDatabase();
             // Extract cursor by running raw query, the one passed in as parameter
             cursor = db.rawQuery(query,null);
             Log.d("Ext_runQuery","Exit runQuery method successfully.");
-            return cursor;
         } catch (Exception e) {
             e.printStackTrace();
             Log.d("Ext_runQuery","Exit runQuery method with exception: "+e.getMessage()+" .");
-            return null;
+        } finally {
+            //db.close();
+            return cursor;
         }//End of try catch block
     }//End of runQuery method
 
+    //Methods to update the DB
+    //Method to update AppState in DB
+    public boolean updateAppState(int currentCategory,int currentTab,int showAllAccounts,int isFavoriteFilter,int isSearchFilter, String lastSearchText){
+        Log.d("UpdateState","Enter the updateAppState method in the AccountsDB class.");
+        boolean success = false;
+        Cursor appState;
+        //Declare and instantiate a new database object to handle the database operations
+        SQLiteDatabase db = getWritableDatabase();
+        appState = this.runQuery("SELECT * FROM APPSTATE");
+        //Declare string for the fist part of sql query
+        String updateState ="UPDATE APPSTATE SET ";
+        //Prepare lastSearchTask and lastSearchGrocery text before sql is run --> include escape character for apostrophe
+        if(lastSearchText.contains(apostrophe)){
+            lastSearchText = this.includeApostropheEscapeChar(lastSearchText);
+        }//End of if statement
+        //Form all the query fields section
+        String fields = " currentCategoryID = " + currentCategory + ","+
+                " currentTab = " + currentTab+ ","+
+                " showAllAccounts = "+ showAllAccounts + ","+
+                " isFavoriteFilter = "+ isFavoriteFilter + ","+
+                " isSearchFilter = " + isSearchFilter + ","+
+                " lastSearch = '" + lastSearchText+ "'";
+        //String to hold the where part of the query
+        String whereId = " WHERE _id = ";
+        //String to hold the complete sql query
+        String sql = "";
+        //get next app state (only one should be saved)
+        if(appState.moveToNext()){
+            sql = updateState+fields+ whereId+appState.getInt(0);
+        }
+        //Try Catch block to execute the sql command to update corresponding table
+        try{
+            //Run the query and change success to true if no issues
+            db.execSQL(sql);
+            success = true;
+            Log.d("UpdateState","Exit successfully the updateAppState method in the Accounts class.");
+        }catch (Exception e) {
+            //Log the exception message
+            Log.d("UpdateState","Exit the updateAppState method in the Accounts class with exception: "+e.getMessage());
+        }
+        finally{
+            db.close();
+            return success;
+        }//End of try and catch block
+    }//End of updateAppState
+
+    public boolean updateTable(String table, ContentValues values){
+        Log.d("updateTable","Enter the updateTable method in the AccountsDB class.");
+        boolean updated = false;
+        int _id = -1;
+        String whereClause = "_id = ";
+        //Declare and instantiate a new database object to handle the database operations
+        SQLiteDatabase db = getWritableDatabase();
+        try{
+            _id = values.getAsInteger("_id");
+            whereClause += _id;
+            db.update(table,values,whereClause,null);
+            updated = true;
+            Log.d("updateTable","Exit successfully the updateTable  method in the Accounts class.");
+        }catch (Exception e){
+            Log.d("updateTable","Exit the updateTable  method in the Accounts class with exception "+e.getMessage());
+        }finally{
+            db.close();
+            return updated;
+        }//End of try catch block
+    }//End of updateAppState overloaded method
+
+    //Method to get latest item inserted in a table
+    public int getMaxItemIdInTable(String table){
+        Log.d("getMaxItemInTable","Enter the getMaxItemInTable method in the AccountsDB class.");
+        int _id =-1;
+        Cursor cursor =null;
+        //SQLiteDatabase db = getReadableDatabase();
+        try{
+            cursor = this.runQuery("SELECT MAX(_id) FROM "+table);
+            if(cursor.moveToNext()){
+                _id = cursor.getInt(0);
+                Log.d("getMaxItemInTable","Exit successfully the getMaxItemInTable method in the AccountsDB class.");
+            }
+        }catch(Exception e){
+            Log.d("getMaxItemInTable","Exit the getMaxItemInTable method in the AccountsDB class with exception: "+e.getMessage());
+        }finally{
+            return _id;
+        }//End of try catch block
+    }//End of getMaxItemIdInTable
+
+    //Method to add a new item into the database
+    public int addItem(Object item) {
+        Log.d("Ent_addItem","Enter addItem method in TasksDB class.");
+        //Declare and instantiate a new database object to handle the database operations
+        SQLiteDatabase db = getWritableDatabase();
+        //Declare and initialize a query string variables
+        String table ="";
+        ContentValues fields = new ContentValues();
+        String itemName ="";
+        byte[] itemNameEcrypted = null;
+        //Declare and initialize int variable to hold the item id to be returned. Default value is -1
+        int id =-1;
+        //Declare and initialize variables to be used in the insert statement (Values got from account object parameter)
+        //String description;
+        int category;
+        long dateCreated;
+
+        if(item instanceof Category){
+            //if item is a Category object, update the Task table where the id corresponds
+            table = "CATEGORY";
+            itemName = ((Category)item).getName();
+            fields.put("Name",itemName);
+            Log.d("addCategory","Catgory to be added in the addItem method in AccountsDB class.");
+        }else if(item instanceof Psswrd){
+            table = "PSSWRD";
+            itemNameEcrypted = ((Psswrd)item).getValue();
+            fields.put("Value",itemNameEcrypted);
+            fields.put("DateCreated",((Psswrd) item).getDateCreated());
+            fields.put("initVector",((Psswrd) item).getIv());
+            Log.d("addPassword","Password to be added in the addItem method in AccountsDB class.");
+        }else if(item instanceof UserName ) {
+            itemNameEcrypted = ((UserName)item).getValue();
+            table = "USERNAME";
+            fields.put("Value",itemNameEcrypted);
+            fields.put("DateCreated",((UserName) item).getDateCreated());
+            fields.put("initVector",((UserName) item).getIv());
+            Log.d("addUserName", "User name to be added in the addItem method in AccountsDB class.");
+        }else if(item instanceof Answer){
+            table = "ANSWER";
+            fields.put("Value",((Answer) item).getValue());
+            fields.put("initVector",((Answer) item).getIv());
+            Log.d("addAnswer", "Answer to be added in the addItem method in AccountsDB class.");
+        }else if(item instanceof Question){
+            itemName = ((Question)item).getValue();
+            table = "QUESTION";
+            fields.put("Value",itemName);
+            fields.put("AnswerID",((Question) item).getAnswer().get_id());
+            Log.d("addQuestion", "User name to be added in the addItem method in AccountsDB class.");
+        }else if(item instanceof QuestionList){
+            QuestionList questionList = (QuestionList) item;
+            table = "QUESTIONLIST";
+            for(int i=0;i< questionList.getSize();i++){
+                fields.put("QuestionID"+(i+1),questionList.getQuestions().get(i).get_id());
+            }//End of for loop to add all question ids in the quesiton list
+        }else if(item instanceof Account){
+            table ="ACCOUNTS";
+            Account account = (Account) item;
+            fields.put("Name",account.getName());
+            fields.put("CategoryID",account.getCategory().get_id());
+            fields.put("UserNameID",account.getUserName().get_id());
+            fields.put("PsswrdID",account.getPsswrd().get_id());
+            //Check if security question list is being used for this account
+            if(account.getQuestionList() != null && account.getQuestionList().getSize()>0){
+                fields.put("QuestionListID",account.getQuestionList().get_id());
+            }
+            fields.put("IconID",account.getIcon().get_id());
+            fields.put("IsFavorite",account.isFavorite());
+            fields.put("DateCreated",account.getDateCreated());
+            //A password renew date is always given,either an actual long number or 0 if not required
+            fields.put("DateChange",account.getDateChange());
+            Log.d("addTask","Task to be added in the addItem method in TasksDB class.");
+        }//End of if else statements
+        id = (int) db.insert(table,null,fields);
+        //Final insertion for question assignment in case the item just inserted was QuestionList object
+        if(item instanceof QuestionList){
+            //Check the returned id is valid
+            if(id > 0){
+                QuestionList questionList = (QuestionList) item;
+                //Insert in the DB the question assignment items for the just added list
+                for(int i=0;i<questionList.getSize();i++){
+                    table = "QUESTIONASSIGNMENT";
+                    fields = new ContentValues();
+                    fields.put("QuestionListID",id);
+                    fields.put("QuestionID",(questionList.getQuestions().get(i).get_id()));
+                    db.insert(table,null,fields);
+                }//End of for loop
+            }//End of if statement to check the id is valid
+        }//End of if statement to check the item type
+        db.close();
+        Log.d("Ext_addTask","Exit addTask method in TasksDB class.");
+        //Return id of item just added into database
+        return id;
+    }//End of addTask method
+
+    //Method to delete a task within the database
+    public boolean deleteItem(Object item) {
+        Log.d("Ent_deleteItem","Enter deleteItem method in AccountsDB class.");
+        boolean result = false;
+        int id=-1;
+        //Declare and instantiate a new database object to handle the database operations
+        SQLiteDatabase db = getWritableDatabase();
+        //Declare and initialize a query string
+        String deleteFrom = "DELETE FROM ";
+        String whereID =" WHERE _id = ";
+        String table="";
+        if(item instanceof Category){
+            table ="CATEGORY";
+            //Delete all items from TASK table where Category ID = id
+            // db.execSQL(deleteFrom+"TASK WHERE Category = "+ ((Category) item).getId());
+            id = ((Category) item).get_id();
+            Log.d("deleteCATEGORY","CATEGORY to be deleted.");
+        }else if(item instanceof Psswrd){
+            table = "PSSWRD";
+            id = ((Psswrd) item).get_id();
+            Log.d("deletePsswrd","PSSWRD to be deleted.");
+        }else if(item instanceof UserName){
+            table = "USERNAME";
+            //Delete all items from USERNAME table where type id is equal to id
+            id= ((UserName) item).get_id();
+            Log.d("deletUserName","USERNAME to be deleted.");
+        }else if(item instanceof Account){
+            table = "ACCOUNTS";
+            id = ((Account) item).get_id();
+            Log.d("deleteAccount","ACCOUNT to be deleted.");
+        }//End of if else statements
+
+        //Run SQL statement to delete the task with id x from the TASK table
+        db.execSQL(deleteFrom+ table +whereID+ id);
+        db.close();
+        result = true;
+        Log.d("Ext_deleteItem","Exit deleteItem method in AccountsDB class.");
+        return result;
+    }//End of deleteTask method
 
     //Methods to query the DB
 
@@ -243,30 +594,80 @@ public class AccountsDB extends SQLiteOpenHelper {
     public Cursor getIconList(){
         return  this.runQuery("SELECT * FROM ICON");
     }
+
+    //Method to get a specific Category, by passing in its DB _id as an argument
+    public Category getCategoryByID(int _id){
+        Log.d("getCategoryByID","Enter the getCategoryByID method in the AccountsDB class.");
+        Cursor cursor = this.runQuery("SELECT * FROM CATEGORY WHERE _id = "+ _id);
+        if(cursor != null && cursor.getCount() >0){
+            cursor.moveToFirst();
+            Log.d("getCategoryByID","Exit successfully (category with id " +_id+ " has been found) the getCategoryByID method in the AccountsDB class.");
+            return Category.extractCategory(cursor);
+        }else{
+            Log.d("getCategoryByID","Exit the getCategoryByID method in the AccountsDB class without finding the category with id: "+_id);
+            return null;
+        }//End of if else statement
+    }//End of getUserNameByID method
+
     //Method to get the list of categories names from the DB
     public Cursor getCategoryListCursor(){
         return  this.runQuery("SELECT * FROM CATEGORY");
     }
+
     //Method to get the list of user names from the DB
     public Cursor getUserNameList(){
         return  this.runQuery("SELECT * FROM USERNAME");
     }
+
+    //Method to get a specific Category, by passing in its DB _id as an argument
+    public Account getAccountByID(int _id){
+        Log.d("getAccountByID","Enter the getAccountByID method in the AccountsDB class.");
+        Cursor cursor = this.runQuery("SELECT * FROM ACCOUNTS WHERE _id = "+ _id);
+        if(cursor != null && cursor.getCount() >0){
+            cursor.moveToFirst();
+            Log.d("getAccountByID","Exit successfully (account with id " +_id+ " has been found) the getAccountByID method in the AccountsDB class.");
+            return Account.extractAccount(cursor);
+        }else{
+            Log.d("getAccountByID","Exit the getAccountByID method in the AccountsDB class without finding the category with id: "+_id);
+            return null;
+        }//End of if else statement
+    }//End of getAccountByID method
+
+    //Method to get a specific Category, by passing in its DB _id as an argument
+    public Cursor getAccountCursorByName(String accountName){
+        Log.d("getAccountCursorByName","Enter the getAccountCursorByName method in the AccountsDB class.");
+        Cursor cursor = this.runQuery("SELECT * FROM ACCOUNTS WHERE lower(ACCOUNTS.Name) = '"
+                + accountName.toLowerCase() + "'");
+        if(cursor != null && cursor.getCount() >0){
+            cursor.moveToFirst();
+            Log.d("getAccountCursorByName","Exit successfully (account with name " +accountName+ " has been found) the getAccountCursorByName method in the AccountsDB class.");
+            return cursor;
+        }else{
+            Log.d("getAccountCursorByName","Exit the getAccountCursorByName method in the AccountsDB class without finding the account with name: "+accountName);
+            return null;
+        }//End of if else statement
+    }//End of getAccountByName method
+
     //Method to get the list of accounts from the DB
     public Cursor getAccountsList(){
         return  this.runQuery("SELECT * FROM ACCOUNTS");
     }
-    //Method to get the list of passwords from the DB
-    public Cursor getPsswrdList(){
-        return  this.runQuery("SELECT * FROM PSSWRD");
-    }
+
     //Method to get the number of times a specific user name is being used in different accounts as per the DB
     public int getTimesUsedUserName(int userNameID){
         return this.runQuery("SELECT * FROM ACCOUNTS WHERE UserNameID = "+userNameID).getCount();
     }
+
     //Method to get the number of times a specific password is being used in different accounts as per the DB
-    public int getTimesUsedPsswrd(int psswrd){
-        return this.runQuery("SELECT * FROM ACCOUNTS WHERE PsswrdID = "+psswrd).getCount();
+    public int getTimesUsedPsswrd(int psswrdID){
+        return this.runQuery("SELECT * FROM ACCOUNTS WHERE PsswrdID = "+psswrdID).getCount();
     }
+
+    //Method to get the number of times a specific password is being used in different accounts as per the DB
+    public int getTimesUsedQuestion(int questionID){
+        return this.runQuery("SELECT * FROM QUESTIONASSIGNMENT WHERE QUESTIONASSIGNMENT.QuestionID = "+questionID).getCount();
+    }
+
 
     //Method to retrieve a specific Icon from DB by passing in it's ID
     public Icon getIconByID(int _id){
@@ -306,10 +707,72 @@ public class AccountsDB extends SQLiteOpenHelper {
             Log.d("getUserNameByID","Exit successfully (user name with id " +_id+ " has been found) the getUserNameByID method in the AccountsDB class.");
             return UserName.extractUserName(cursor);
         }else{
-            Log.d("getUserNameByID","Exit the getUserNameByID method in the AccountsDB class without finding the account with id: "+_id);
+            Log.d("getUserNameByID","Exit the getUserNameByID method in the AccountsDB class without finding the user name with id: "+_id);
             return null;
         }//End of if else statement
     }//End of getUserNameByID method
+
+    //Method to get a specific user name, by passing in its DB _id as an argument
+    public Cursor getUserNameCursorByID(int _id){
+        Log.d("getUserNameByID","Enter the getUserNameByID method in the AccountsDB class.");
+        Cursor cursor = this.runQuery("SELECT * FROM USERNAME WHERE _id = "+ _id);
+        if(cursor != null && cursor.getCount() >0){
+            cursor.moveToFirst();
+            Log.d("getUserNameByID","Exit successfully (user name with id " +_id+ " has been found) the getUserNameByID method in the AccountsDB class.");
+        }else{
+            Log.d("getUserNameByID","Exit the getUserNameByID method in the AccountsDB class without finding the user name with id: "+_id);
+
+        }//End of if else statement
+        return cursor;
+    }//End of getUserNameByID method
+
+    //Method to get a specific user name, by passing in its DB _id as an argument
+    public Cursor getUserNameByName(String userName){
+        Log.d("getUserNameByName","Enter the getUserNameByName method in the AccountsDB class.");
+//        if(userName.contains(apostrophe)){
+//            userName = includeApostropheEscapeChar(userName);
+//        }
+
+        //Declare and initialize a boolean flag to inform the name was found
+        boolean found = false;
+        String userNameDecrypted = "";
+        //Get all data from USERNAME table
+        Cursor userNameCursor = this.runQuery("SELECT * FROM USERNAME");
+        //Iterate through it, decrypt user name values and compare against value passed in as parameter
+        while(!found && userNameCursor.moveToNext()){
+            //Decrypt the user name value coming form DB
+            userNameDecrypted = cryptographer.decryptText(userNameCursor.getBlob(1),new IvParameterSpec(userNameCursor.getBlob(2)));
+            //Compare the decrypted user name user name being looked for
+            if(userName.trim().equals(userNameDecrypted.trim())){
+                found = true;
+            }//End of if statement to compare user names
+        }//End of while loop to iterate through list of user names
+        //Make ajustments to return proper value based on the found boolean flag
+        if(found){
+            Log.d("getUserNameByName","Exit successfully (user name with value " +userName + " has been found) the getUserNameByID method in the AccountsDB class.");
+        }else{
+            userNameCursor = null;
+            Log.d("getUserNameByName","Exit the getUserNameByName method in the AccountsDB class without finding the user name with value: "+userName);
+        }//End of if else statement
+        return userNameCursor;
+    }//End of getUserNameByID method
+
+//    //Method to get a specific user name, by passing in its DB _id as an argument
+//    public Cursor getUserNameByName(String userName){
+//        Log.d("getUserNameByName","Enter the getUserNameByName method in the AccountsDB class.");
+//        if(userName.contains(apostrophe)){
+//            userName = includeApostropheEscapeChar(userName);
+//        }
+//        Cursor cursor = this.runQuery("SELECT * FROM USERNAME WHERE Value = '"+ userName+"'");
+//        if(cursor != null && cursor.getCount() >0){
+//            cursor.moveToFirst();
+//            Log.d("getUserNameByName","Exit successfully (user name with value " +userName + " has been found) the getUserNameByID method in the AccountsDB class.");
+//
+//        }else{
+//            Log.d("getUserNameByName","Exit the getUserNameByName method in the AccountsDB class without finding the user name with value: "+userName);
+//        }//End of if else statement
+//        return cursor;
+//    }//End of getUserNameByID method
 
     //Method to get a specific password, by passing in its DB _id as an argument
     public Psswrd getPsswrdByID(int _id){
@@ -324,6 +787,54 @@ public class AccountsDB extends SQLiteOpenHelper {
             return null;
         }//End of if else statement
     }//End of getPsswrdByID method
+
+    //Method to get a specific user name, by passing in its DB _id as an argument
+    public Cursor getPsswrdByName(String psswrd){
+        Log.d("getUserNameByName","Enter the getUserNameByName method in the AccountsDB class.");
+        //Declare and initialize a boolean flag to inform the name was found
+        boolean found = false;
+        String psswrdDecrypted = "";
+        //Get all data from PSSWRD table
+        Cursor psswrdCursor = this.runQuery("SELECT * FROM PSSWRD");
+        //Iterate through it, decrypt user name values and compare against value passed in as parameter
+        while(!found && psswrdCursor.moveToNext()){
+            //Decrypt the user name value coming form DB
+            psswrdDecrypted = cryptographer.decryptText(psswrdCursor.getBlob(1),new IvParameterSpec(psswrdCursor.getBlob(2)));
+            //Compare the decrypted user name user name being looked for
+            if(psswrd.trim().equals(psswrdDecrypted.trim())){
+                found = true;
+            }//End of if statement to compare user names
+        }//End of while loop to iterate through list of user names
+        if(found){
+            Log.d("getPsswrdByName","Exit successfully (password with value " +psswrd + " has been found) the getPsswrdByName method in the AccountsDB class.");
+        }else{
+            psswrdCursor = null;
+            Log.d("getPsswrdByName","Exit the getPsswrdByName method in the AccountsDB class without finding the password with value: "+psswrd);
+        }//End of if else statement
+        return psswrdCursor;
+    }//End of getUserNameByID method
+
+    //Method to get the list of passwords from the DB
+    public Cursor getPsswrdList(){
+        return  this.runQuery("SELECT * FROM PSSWRD");
+    }
+
+//    //Method to get a specific user name, by passing in its DB _id as an argument
+//    public Cursor getPsswrdByName(String psswrd){
+//        Log.d("getUserNameByName","Enter the getUserNameByName method in the AccountsDB class.");
+//        if(psswrd.contains(apostrophe)){
+//            psswrd = includeApostropheEscapeChar(psswrd);
+//        }
+//        Cursor cursor = this.runQuery("SELECT * FROM PSSWRD WHERE Value = '"+ psswrd+"'");
+//        if(cursor != null && cursor.getCount() >0){
+//            cursor.moveToFirst();
+//            Log.d("getUserNameByName","Exit successfully (user name with value " +psswrd + " has been found) the getUserNameByID method in the AccountsDB class.");
+//
+//        }else{
+//            Log.d("getUserNameByName","Exit the getUserNameByName method in the AccountsDB class without finding the user name with value: "+psswrd);
+//        }//End of if else statement
+//        return cursor;
+//    }//End of getUserNameByID method
 
     //Method to retrieve the list of categories stored on the database
     public ArrayList<Category> getCategoryList(){
@@ -387,11 +898,22 @@ public class AccountsDB extends SQLiteOpenHelper {
     }//End of getListOfQuestionLists method
 
     //Method to get cursor with list of questions available
+    public Cursor getPreLoadedQuestions(){
+        Log.d("getPreLoadedQuestions","Enter the getPreLoadedQuestions method in the AccountsDB class.");
+        //Declare and initialize cursor to hold list of questions available from DB
+        Cursor preLoadedQuestions = this.runQuery("SELECT QUESTION._id, QUESTION.Value AS Q, ANSWER._id AS AnswerID,ANSWER.Value AS \n" +
+                "Answer, ANSWER.initVector AS initVector FROM QUESTION LEFT JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id WHERE QUESTION._id <= 10;");
+        Log.d("getPreLoadedQuestions","Exit the getPreLoadedQuestions method in the AccountsDB class.");
+        return preLoadedQuestions;
+    }//End of getListQuestionsAvailable method
+
+
+    //Method to get cursor with list of questions available
     public Cursor getListQuestionsAvailable(){
         Log.d("getListOfQuestionLists","Enter the getListOfQuestionLists method in the AccountsDB class.");
         //Declare and initialize cursor to hold list of questions available from DB
-        Cursor questionsAvailable = this.runQuery("SELECT QUESTION._id, QUESTION.Value AS Q, ANSWER._id AS AnswerID,ANSWER.Value AS Answer FROM\n" +
-                "QUESTION  JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id;");
+        Cursor questionsAvailable = this.runQuery("SELECT QUESTION._id, QUESTION.Value AS Q, ANSWER._id AS AnswerID,ANSWER.Value AS Answer," +
+                "ANSWER.initVector AS initVector FROM QUESTION JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id;");
         Log.d("getListOfQuestionLists","Exit the getListOfQuestionLists method in the AccountsDB class.");
         return questionsAvailable;
     }//End of getListQuestionsAvailable method
@@ -410,30 +932,49 @@ public class AccountsDB extends SQLiteOpenHelper {
         }//End of if else statement
     }//End of getQuestionByID method
 
+    //Method to get a specific question, by passing in its DB _id as an argument
+    public Cursor getQuestionByValue(String value){
+        Log.d("getQuestionByValue","Enter the getQuestionByValue method in the AccountsDB class.");
+        if(value.contains(apostrophe)){
+            value = includeApostropheEscapeChar(value);
+        }
+        Cursor cursor = this.runQuery("SELECT * FROM QUESTION WHERE QUESTION.Value = '"+ value+"'");
+        if(cursor != null && cursor.getCount() >0){
+            cursor.moveToFirst();
+            Log.d("getQuestionByValue","Exit successfully (QUESTION with value " +value+ " has been found) the getQuestionByValue method in the AccountsDB class.");
+        }else{
+            Log.d("getQuestionByID","Exit the getQuestionByID method in the AccountsDB class without finding the account with value: "+value);
+        }//End of if else statement
+        return cursor;
+    }//End of getQuestionByID method
+
     //Method to get a question cursor by passing in its DB id as argument
     public Cursor getQuestionCursorByID(int _id){
-        Log.d("getQuestionListById","Enter the getQuestionListById method in the AccountsDB class.");
-        Cursor question = this.runQuery("SELECT QUESTION._id, QUESTION.Value AS Q, ANSWER._id AS AnswerID,ANSWER.Value AS Answer FROM " +
-                "QUESTION  JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id WHERE QUESTION._id = "+ _id);
-        Log.d("getQuestionListById","Exit the getQuestionListById method in the AccountsDB class.");
+        Log.d("getQuestionCursorByID0","Enter the getQuestionCursorByID method in the AccountsDB class.");
+        Cursor question = this.runQuery("SELECT QUESTION._id, QUESTION.Value AS Q, ANSWER._id AS AnswerID,ANSWER.Value AS Answer, " +
+                "ANSWER.initVector AS initVector FROM QUESTION  " +
+                "JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id WHERE QUESTION._id = "+ _id);
+        Log.d("getQuestionCursorByID0","Exit the getQuestionCursorByID method in the AccountsDB class.");
         return question;
     }//End of getQuestionCursorByID method
 
     //Method to get a a two question cursor by passing in their DB ids as arguments
     public Cursor getQuestionCursorByID(int _id1, int _id2){
-        Log.d("getQuestionListById","Enter the getQuestionListById method in the AccountsDB class.");
-        Cursor question = this.runQuery("SELECT QUESTION._id, QUESTION.Value AS Q, ANSWER._id AS AnswerID,ANSWER.Value AS Answer FROM " +
-                "QUESTION  JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id WHERE QUESTION._id = "+ _id1 + " OR QUESTION._id = "+ _id2);
-        Log.d("getQuestionListById","Exit the getQuestionListById method in the AccountsDB class.");
+        Log.d("getQuestionCursorByID1","Enter the overloaded getQuestionCursorByID method in the AccountsDB class.");
+        Cursor question = this.runQuery("SELECT QUESTION._id, QUESTION.Value AS Q, ANSWER._id AS AnswerID,ANSWER.Value AS Answer," +
+                "ANSWER.initVector AS initVector FROM QUESTION" +
+                " JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id WHERE QUESTION._id = "+ _id1 + " OR QUESTION._id = "+ _id2);
+        Log.d("getQuestionCursorByID1","Exit the overloaded getQuestionCursorByID method in the AccountsDB class.");
         return question;
     }//End of getQuestionCursorByID method
 
     //Method to get a a three question cursor by passing in their DB ids as arguments
     public Cursor getQuestionCursorByID(int _id1, int _id2, int _id3){
-        Log.d("getQuestionListById","Enter the getQuestionListById method in the AccountsDB class.");
-        Cursor question = this.runQuery("SELECT QUESTION._id, QUESTION.Value AS Q, ANSWER._id AS AnswerID,ANSWER.Value AS Answer FROM " +
-                "QUESTION  JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id WHERE QUESTION._id = "+ _id1+ " OR QUESTION._id = "+ _id2 +" OR QUESTION._id = "+ _id3);
-        Log.d("getQuestionListById","Exit the getQuestionListById method in the AccountsDB class.");
+        Log.d("getQuestionCursorByID2","Enter the overloaded getQuestionCursorByID method in the AccountsDB class.");
+        Cursor question = this.runQuery("SELECT QUESTION._id, QUESTION.Value AS Q, ANSWER._id AS AnswerID,ANSWER.Value AS Answer, " +
+                "ANSWER.initVector AS initVector FROM QUESTION " +
+                "JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id WHERE QUESTION._id = "+ _id1+ " OR QUESTION._id = "+ _id2 +" OR QUESTION._id = "+ _id3);
+        Log.d("getQuestionCursorByID2","Exit the overloaded getQuestionCursorByID method in the AccountsDB class.");
         return question;
     }//End of getQuestionCursorByID method
 
@@ -444,8 +985,8 @@ public class AccountsDB extends SQLiteOpenHelper {
         //Declare and initialize null questionlist object to be returned
         QuestionList questionList = null;
         //Declare and initialize cursor to hold question list data from DB
-        Cursor cursor = this.runQuery("SELECT QUESTION._id AS QUESTIONID, \n" +
-                "QUESTION.Value AS Q, QUESTION.AnswerID,ANSWER._id AS ANSWERID,ANSWER.Value AS A FROM\n" +
+        Cursor cursor = this.runQuery("SELECT QUESTION._id, QUESTION.Value AS Q, ANSWER._id AS AnswerID," +
+                "ANSWER.Value AS Answer, ANSWER.initVector AS initVector FROM\n" +
                 "((QUESTION INNER JOIN QUESTIONASSIGNMENT ON QUESTION._id = QUESTIONASSIGNMENT.QuestionID)\n" +
                 "INNER JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id)\n" +
                 "INNER JOIN QUESTIONLIST ON QUESTIONLIST._id = QUESTIONASSIGNMENT.QuestionListID\n" +
@@ -468,11 +1009,10 @@ public class AccountsDB extends SQLiteOpenHelper {
     public String includeApostropheEscapeChar(String text){
         Log.d("ApostEscCharString","Enter includeApostropheEscapeChar method in AccountsDB class.");
         String textWithEscChar = "";
-        char apostrophe = '\'';
         //Iterate through the string to find the apostrophe and replace it with double apostrophe
         for(int i=0;i<text.length();i++){
             char c  = text.charAt(i);
-            if(c == apostrophe){
+            if(c == apostropheChar){
                 //If it is an apostrophe, include an extra one
                 textWithEscChar += "''";
             }else{
@@ -483,51 +1023,6 @@ public class AccountsDB extends SQLiteOpenHelper {
         Log.d("ApostEscCharString","Exit includeApostropheEscapeChar method in AccountsDB class.");
         return textWithEscChar;
     }//End of includeApostropheEscapeChar method
-
-
-    //Method to update AppState in DB
-    public boolean updateAppState(int currentCategory,int currentTab,int showAllAccounts,int isFavoriteFilter,int isSearchFilter, String lastSearchText){
-        Log.d("UpdateState","Enter the updateAppState method in the AccountsDB class.");
-        boolean success = false;
-        Cursor appState;
-        //Declare and instantiate a new database object to handle the database operations
-        SQLiteDatabase db = getWritableDatabase();
-        appState = this.runQuery("SELECT * FROM APPSTATE");
-        //Declare string for the fist part of sql query
-        String updateState ="UPDATE APPSTATE SET ";
-        //Prepare lastSearchTask and lastSearchGrocery text before sql is run --> include escape character for apostrophe
-        if(lastSearchText.contains("'")){
-            lastSearchText = this.includeApostropheEscapeChar(lastSearchText);
-        }//End of if statement
-        //Form all the query fields section
-        String fields = " currentCategoryID = " + currentCategory + ","+
-                " currentTab = " + currentTab+ ","+
-                " showAllAccounts = "+ showAllAccounts + ","+
-                " isFavoriteFilter = "+ isFavoriteFilter + ","+
-                " isSearchFilter = " + isSearchFilter + ","+
-                " lastSearch = '" + lastSearchText+ "'";
-        //String to hold the where part of the query
-        String whereId = " WHERE _id = ";
-        //String to hold the complete sql query
-        String sql = "";
-        //get next app state (only one should be saved)
-        if(appState.moveToNext()){
-            sql = updateState+fields+ whereId+appState.getInt(0);
-        }
-        //Try Catch block to execute the sql command to update corresponding table
-        try{
-            //Run the query and change success to true if no issues
-            db.execSQL(sql);
-            success = true;
-            Log.d("UpdateState","Exit successfully the updateAppState method in the Accounts class.");
-        }catch (Exception e) {
-            //Log the exception message
-            Log.d("UpdateState","Exit the updateAppState method in the Accounts class with exception: "+e.getMessage());
-        }
-        finally{
-            return success;
-        }//End of try and catch block
-    }//End of updateAppState
 
     //Method to internally convert a boolean into a int number 1 or  0
     public static int toInt(boolean bool){

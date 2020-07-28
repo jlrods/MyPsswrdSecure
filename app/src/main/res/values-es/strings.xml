@@ -48,9 +48,10 @@
     <!--    TabBar Menu texts-->
     <string name="about">Acerca...</string>
     <string name="action_search">Buscar</string>
-    <string name="action_accounts">Cuentas</string>
-    <string name="action_userNames">Usuarios</string>
-    <string name="action_psswrds">Claves</string>
+    <string name="action_accounts">List de Cuentas</string>
+    <string name="action_userNames">Nombres de Usuario</string>
+    <string name="action_psswrds">Lista de Contraseñas</string>
+    <string name="action_secQuestions">Preguntas de seguridad</string>
 
     <!--    Add account layout icons-->
     <string name="account_logo">Logo</string>
@@ -59,8 +60,8 @@
     <string name="account_userName">Nombre de usuario:</string>
     <string name="account_psswrd">Clave:</string>
     <string name="account_secQuestion">Preguntas de seguridad:</string>
-    <string name="account_isFavoriteChecked">Toque la estrella para marcar esta cuesta como Favorita</string>
-    <string name="account_isFavoriteUnchecked">Toque la estrella para desmarcar esta cuesta como Favorita</string>
+    <string name="account_isFavoriteChecked">Toque la estrella para marcar como Favorita</string>
+    <string name="account_isFavoriteUnchecked">Toque la estrella para desmarcar como Favorita</string>
     <string name="account_new">Nuevo</string>
     <string name="account_addQuestion">Agregar</string>
     <string name="account_dateCreated">Fecha de creación:</string>
@@ -69,7 +70,7 @@
     <string name="account_nameHint">Escriba la cuenta aquí</string>
 
     <!--    Security question spinner item-->
-    <string name="account_removeQuestion">Remover pregunta</string>
+    <string name="account_removeQuestion">Remover</string>
     <string name="question_spinner_answer">Resp:</string>
     <string name="account_quest_avilab_spinner_prompt">Añada una pregunta a su lista...</string>
     <string name="account_quest_list_spinner_prompt">No hay preguntas en sy lista aún...</string>
@@ -78,7 +79,7 @@
     <string name="account_quest_list_spinner_prompt3"> preguntas...</string>
 
     <!--    Security Question List Activity-->
-    <string name="question_list_q1">Pregunta 1:</string>
+    <string name="question_list_q1">Pregunta:</string>
     <string name="question_list_q2">Pregunta 2:</string>
     <string name="question_list_q3">Pregunta 3:</string>
     <string name="question_list_answer">Respuesta:</string>
@@ -86,6 +87,7 @@
     <!--    Menu Icon texts -->
     <string name="cancel">Cancelar</string>
     <string name="save">Guardar</string>
+    <string name="dialog_OK">Ok</string>
 
     <!--    Select Logo Activity-->
     <string name="logo_list_header">Elija un logo para su cuenta:</string>
@@ -99,6 +101,36 @@
     <string name="selectCatHint">Seleccione una Categoría...</string>
     <string name="selectUserHint">Seleccione un nombre de Usuario...</string>
     <string name="selectPsswrdHint">Seleccione una Contraseña...</string>
+    <string name="accountEmptyName">Lo siento, no ha introducino un nombre para la cuenta nueva</string>
+    <string name="accountNameInUse">Lo siento, el nombre de la cuenta que introdujo ya está en uso</string>
+    <string name="accountRenewDateInPast">Lo siento, la fecha de renovacion de la contraseña es invalida. La fecha debe ser en el futuro</string>
+    <string name="accountNoCatSelected">Los siento, no ha seleccionado una categoria en el menu despegable</string>
+    <string name="accountNoUserSelected">Los siento, no ha seleccionado un nombre de usuario en el menu despegable</string>
+    <string name="accountNoPsswrdSelected">Los siento, no ha seleccionado una contraseña en el menu despegable</string>
+
+    <!--    AddQuestion Activity    -->
+    <string name="addQuestQuestionHint">Escriba la pregunata nueva aquí...</string>
+    <string name="addQuestAnswerHint">Escriba la respuesta nueva aquí...</string>
+
+    <!--    AlertDialog texts-->
+    <string name="alertBoxNewUser">Agregar Usuario</string>
+    <string name="alertBoxNewUserMssg">Por favor, introduzca un nuevo usuario</string>
+    <string name="alertBoxNewUserHint">Escriba el usuario aquí...</string>
+    <string name="alertBoxNewPsswrd">Agregar Contraseña</string>
+    <string name="alertBoxNewPsswrdMssg">Por favor, introduzca una nueva contraseña</string>
+    <string name="alertBoxNewPsswrdHint">Escriba la contraseña aquí...</string>
+
+    <!--    Snackbar texts-->
+    <string name="snackBarUndo">UNDO</string>
+    <string name="snackBarUserAdded">El Usuario has sido aregado</string>
+    <string name="snackBarPsswrdAdded">La Contraseña has sido agregada</string>
+    <string name="snackBarQuestionAdded">La pregunta ha sido agregada</string>
+    <string name="snackBarUserNotAdded">Disculpa, el usuario no fue guardado</string>
+    <string name="snackBarUserExists">Disculpa, el usuario ya existe</string>
+    <string name="snackBarPsswrdNotAdded">Disculpa, la contraseña no fue guardada</string>
+    <string name="snackBarPsswrdExists">Disculpa, la contraseña ya existe</string>
+    <string name="snackBarQuestionNotAdded">Disculpa, la pregunta no fue guardada</string>
+    <string name="snackBarQuestionExists">Disculpa, la pregunta ya existe</string>
 
     <string name="sample_text">4.- The \"+/-\" button allows to toggle between positive and negative numbers and
         vice versa. This button can only be used when the Temperature property has been selected, as transforming

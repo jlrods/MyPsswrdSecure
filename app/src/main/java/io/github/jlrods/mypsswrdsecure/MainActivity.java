@@ -1,18 +1,24 @@
 package io.github.jlrods.mypsswrdsecure;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.Menu;
+import android.widget.EditText;
 import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -22,6 +28,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
+
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
@@ -45,18 +53,25 @@ public class MainActivity extends AppCompatActivity {
     //private RecyclerView rv = null;
     //private AccountsDB accounts = null;
 
-    //private RecyclerView recyclerView;
+    private RecyclerView recyclerView = null;
     //private RecyclerView.LayoutManager layoutManager;
     private TabLayout tabLayout = null;
     private int idRes;
     private static Icon myPsswrdSecureLogo = null;
-    private static AccountsDB accounts = null;
+    private static AccountsDB accountsDB = null;
     private static ArrayList<Category> categoryList = null;
     private static ArrayList<QuestionList> listOfQuestionLists = null;
 
 
+    private static String dateFormat = "dd/MMM/yyyy";
 
-    Cryptographer cryptographer = new Cryptographer();
+
+
+    private static String RESOURCES = "Resources";
+
+     private static Cryptographer cryptographer;
+
+     private int throwAddAccountActReqCode = 5566;
 
 
     @Override
@@ -125,12 +140,16 @@ public class MainActivity extends AppCompatActivity {
                         PsswrdAdapter psswrdAdapter = new PsswrdAdapter(getBaseContext(),null);
                         MainActivity.updateRecyclerViewData(psswrdAdapter);
                         break;
+                    case 3:
+                        SecurityQuestionAdapter secQuestionAdapter = new SecurityQuestionAdapter(getBaseContext(),null);
+                        MainActivity.updateRecyclerViewData(secQuestionAdapter);
+                        break;
                 }// End of switch statement
                 currentTab = tab.getPosition();
-                boolean appStateUpdated = accounts.updateAppState(-1,tab.getPosition(),accounts.toInt(showAllAccounts) ,accounts.toInt(isFavoriteFilter),accounts.toInt(isSearchFilter),"HelloWorld'BaBay");
+                boolean appStateUpdated = accountsDB.updateAppState(-1,tab.getPosition(), accountsDB.toInt(showAllAccounts) , accountsDB.toInt(isFavoriteFilter), accountsDB.toInt(isSearchFilter),"HelloWorld'BaBay");
 
                 if(appStateUpdated){
-                    Cursor c = accounts.runQuery("SELECT * FROM APPSTATE");
+                    Cursor c = accountsDB.runQuery("SELECT * FROM APPSTATE");
                     c.moveToFirst();
                     int cat = c.getInt(1);
                     int tabP = c.getInt(2);
@@ -174,11 +193,50 @@ public class MainActivity extends AppCompatActivity {
 
         //Create and set default logo for accounts
         myPsswrdSecureLogo = new Icon(R.mipmap.ic_my_psswrd_secure,"MyPsswrdSecureIcon",String.valueOf(R.mipmap.ic_my_psswrd_secure),false);
-        accounts = new AccountsDB(this);
-        this.categoryList = accounts.getCategoryList();
+        cryptographer = new Cryptographer();
+        //Dummy encryption to get IV created
+        byte[] testEncrypted = cryptographer.encryptText("DummyEncryption");
+        String test2 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
+//        byte[] joseleoEncrypt = cryptographer.encryptText("joseleo");
+//        String joseleoDecrypt = cryptographer.decryptText(joseleoEncrypt, cryptographer.getIv());
+        accountsDB = new AccountsDB(this);
+//        String test3 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
+        //Save it IV in the APPSTATE Table
+//        ContentValues appStateValues = new ContentValues();
+//        String test4 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
+//        appStateValues.put("_id",accounts.getMaxItemIdInTable("APPSTATE"));
+//        String test5 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
+//        String joseleo2 = cryptographer.decryptText(joseleoEncrypt,cryptographer.getIv());
+//        IvParameterSpec ivFromCrypt = cryptographer.getIv();
+//        String test6 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
+//        byte [] initVector = cryptographer.getIv().getIV();
+//        appStateValues.put("initVector",initVector);
+//        accounts.updateTable("APPSTATE",appStateValues);
+//        String test9 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
+       //accounts.getWritableDatabase().update("APPSTATE",appStateValues,"_id = 1",null);
+
+//        Cursor c = accounts.runQuery("SELECT * FROM APPSTATE WHERE _id = "+appStateValues.getAsInteger("_id"));
+//        c.moveToNext();
+//        int appID = c.getInt(0);
+//        int abc = c.getInt(2);
+//        int abcd = c.getInt(3);
+//        int abcde = c.getInt(4);
+//        int abcdef = c.getInt(5);
+//        String abcdefg = c.getString(6);
+//        byte[] iv = c.getBlob(7);
+//        IvParameterSpec a = new IvParameterSpec(iv);
+//        String test = cryptographer.decryptText(testEncrypted,a);
+//        String test1 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
+
+
+        this.categoryList = accountsDB.getCategoryList();
         this.currentCategory = categoryList.get(0);
         //this.listOfQuestionLists = accounts.getListOfQuestionLists();
-    }
+
+        //Consider the category selected on drawer menu to run correct sql query
+        //Cursor accountListCursor = accountsDB.getAccountsList();
+
+    }//End of onCreate method
 
 
     public void testRVLogo(){
@@ -258,19 +316,20 @@ public class MainActivity extends AppCompatActivity {
     public static void updateRecyclerViewData(RecyclerView.Adapter adapter){
         Log.d("Ent_updateRecViewData","Enter the updateRecyclerViewData method in the MainActivity class.");
         RecyclerView rv = HomeFragment.getRv();
-        AccountsDB accounts = HomeFragment.getAccounts();
+        AccountsDB accountsDB = HomeFragment.getAccountsDB();
         Cursor cursor = null;
         //Check the class of the adapter passed in as argument
         if(adapter instanceof AccountAdapter){
-            cursor = accounts.getAccountsList();
+            cursor = accountsDB.getAccountsList();
             ((AccountAdapter) adapter).setCursor(cursor);
-        }
-        else if(adapter instanceof PsswrdAdapter){
-            cursor = accounts.getPsswrdList();
-            ((UserNameAdapter) adapter).setCursor(cursor);
-        }
-        else if(adapter instanceof UserNameAdapter){
-            cursor = accounts.getUserNameList();
+        }else if(adapter instanceof PsswrdAdapter){
+            cursor = accountsDB.getPsswrdList();
+            ((PsswrdAdapter) adapter).setCursor(cursor);
+        }else if(adapter instanceof SecurityQuestionAdapter){
+            cursor = accountsDB.getListQuestionsAvailable();
+            ((SecurityQuestionAdapter) adapter).setCursor(cursor);
+        }else if(adapter instanceof UserNameAdapter){
+            cursor = accountsDB.getUserNameList();
             ((UserNameAdapter) adapter).setCursor(cursor);
         }
         //Move to first row of cursor if not empty
@@ -291,7 +350,65 @@ public class MainActivity extends AppCompatActivity {
         i.putExtra("category",this.currentCategory.toString());
         //i.putExtra("sql",this.getSQLForRecyclerView());
         //Start the addTaskActivity class
-        startActivity(i);
+        startActivityForResult(i,throwAddAccountActReqCode);
         Log.d("ThrowAddAcc","Exit throwAddAccountActivity method in the MainActivity class.");
     }//End of throwAddTaskActivity method
+
+    //Method to receive and handle data coming from other activities such as: SelectLogoActivity,
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d("onActivityResult","Enter the onActivityResult method in the DisplayAccountActivity class.");
+        if (requestCode==this.throwAddAccountActReqCode && resultCode==RESULT_OK) {
+            Log.d("onActivityResult","Received GOOD result from AddAccountActivity (received by MainActivity).");
+            //Update RV data set
+            //Consider the category selected on drawer menu to run correct sql query
+            //@FIXME: Investigate--> What's best option? notify adapter about data set change or set up new adapter with method created??
+            recyclerView = HomeFragment.getRv();
+            ((AccountAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getAccountsList());
+            recyclerView.getAdapter().notifyDataSetChanged();
+            //AccountAdapter accountAdapter = new AccountAdapter(getBaseContext(),null);
+            //updateRecyclerViewData(accountAdapter);
+            //Move to new account position
+            recyclerView.getLayoutManager().scrollToPosition(recyclerView.getAdapter().getItemCount()-1);
+            //Display Toast to confirm the account has been added
+            displayToast(this,""+data.getExtras().getString("accountName"),Toast.LENGTH_LONG,Gravity.CENTER);
+        }else if(requestCode==this.throwAddAccountActReqCode && resultCode==RESULT_CANCELED){
+            //Display the current list of Accounts
+            AccountAdapter accountAdapter = new AccountAdapter(getBaseContext(),null);
+            updateRecyclerViewData(accountAdapter);
+        }//End of if else statement to check the data comes SelectLogoActivity
+        Log.d("onActivityResult","Exit the onActivityResult method in the DisplayAccountActivity class.");
+    }//End of onActivityResult method
+
+    //Method to display a generic new Dialog Alert view from any activity.
+    public static AlertDialog.Builder displayAlertDialog(Context context, EditText inputField,String title, String message, String hint){
+        Log.d("displayAlertDialog","Enter displayAlertDialog method in the MainActivity class.");
+        //final EditText inputField = new EditText(context);
+        inputField.setText("");
+        inputField.setHint(hint);
+        Log.d("displayAlertDialog","Enter displayAlertDialog method in the MainActivity class.");
+        return new AlertDialog.Builder(context)
+                .setTitle(title)
+                .setMessage(message)
+                .setView(inputField)
+                .setNegativeButton(R.string.cancel,null);
+    }//End of displayAlertDialog
+
+    public static Cryptographer getCryptographer(){
+        return cryptographer;
+    }
+    public static String getDateFormat(){
+        return dateFormat;
+    }
+
+    public static String getRESOURCES() {
+        return RESOURCES;
+    }
+
+    public static void displayToast(Context context,String text, int toastLength,int gravity){
+        Toast toast = Toast.makeText(context,text,toastLength);
+        toast.setGravity(gravity,0,0);
+        toast.show();
+    }
 }//End of MainActivity class.

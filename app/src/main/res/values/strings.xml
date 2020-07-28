@@ -47,8 +47,9 @@
     <string name="about">About...</string>
     <string name="action_search">Search</string>
     <string name="action_accounts">Accounts</string>
-    <string name="action_userNames">User Names</string>
-    <string name="action_psswrds">Passwords</string>
+    <string name="action_userNames">User Name List</string>
+    <string name="action_psswrds">Passwords List</string>
+    <string name="action_secQuestions">Security Question List</string>
 
     <!--    Add account layout icons-->
     <string name="account_logo">Logo</string>
@@ -57,8 +58,8 @@
     <string name="account_userName">User Name:</string>
     <string name="account_psswrd">Password:</string>
     <string name="account_secQuestion">Security questions:</string>
-    <string name="account_isFavoriteChecked">Click the star to uncheck this account as Favorite</string>
-    <string name="account_isFavoriteUnchecked">Click the star to check this account as Favorite</string>
+    <string name="account_isFavoriteChecked">Click the star to uncheck as Favorite</string>
+    <string name="account_isFavoriteUnchecked">Click the star to check as Favorite</string>
     <string name="account_new">New</string>
     <string name="account_addQuestion">Add to list</string>
     <string name="account_dateCreated">Date created:</string>
@@ -67,7 +68,7 @@
     <string name="account_nameHint">Type the account name</string>
 
     <!--    Security question spinner item-->
-    <string name="account_removeQuestion">Remove question</string>
+    <string name="account_removeQuestion">Remove</string>
     <string name="question_spinner_answer">Answ:</string>
     <string name="account_quest_avilab_spinner_prompt">Add a question to your list...</string>
     <string name="account_quest_list_spinner_prompt">No questions in your list...</string>
@@ -75,7 +76,7 @@
     <string name="account_quest_list_spinner_prompt2"> question...</string>
     <string name="account_quest_list_spinner_prompt3"> questions...</string>
     <!--    Security Question List Activity-->
-    <string name="question_list_q1">Question 1:</string>
+    <string name="question_list_q1">Question:</string>
     <string name="question_list_q2">Question 2:</string>
     <string name="question_list_q3">Question 3:</string>
     <string name="question_list_answer">Answer:</string>
@@ -83,6 +84,7 @@
     <!--    Menu Icon texts -->
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>
+    <string name="dialog_OK">Ok</string>
 
     <!--    Select Logo Activity-->
     <string name="logo_list_header">Pick a logo for your account:</string>
@@ -97,6 +99,37 @@
     <string name="selectCatHint">Select a Category...</string>
     <string name="selectUserHint">Select a User name...</string>
     <string name="selectPsswrdHint">Select a Password...</string>
+    <string name="accountEmptyName">Sorry, no account name entered in the Name field</string>
+    <string name="accountNameInUse">Sorry, the account name entered is already in use</string>
+    <string name="accountRenewDateInPast">Sorry, invalid password renew date. The date must be in the future</string>
+    <string name="accountNoCatSelected">Sorry, no category has been selected from the drop down menu</string>
+    <string name="accountNoUserSelected">Sorry, no user name has been selected from the drop down menu</string>
+    <string name="accountNoPsswrdSelected">Sorry, no password has been selected from the drop down menu</string>
+
+
+    <!--    AddQuestion Activity    -->
+    <string name="addQuestQuestionHint">Type the new question here...</string>
+    <string name="addQuestAnswerHint">Type the new answer here...</string>
+    <!--    AlertDialog texts-->
+    <string name="alertBoxNewUser">Add User name</string>
+    <string name="alertBoxNewUserMssg">Please, enter a new user name</string>
+    <string name="alertBoxNewUserHint">Type user name here...</string>
+    <string name="alertBoxNewPsswrd">Add Password</string>
+    <string name="alertBoxNewPsswrdMssg">Please, enter a new password</string>
+    <string name="alertBoxNewPsswrdHint">Type password here...</string>
+
+
+    <!--    Snackbar texts-->
+    <string name="snackBarUndo">UNDO</string>
+    <string name="snackBarUserAdded">The user was added</string>
+    <string name="snackBarPsswrdAdded">The password was added</string>
+    <string name="snackBarQuestionAdded">The question was added</string>
+    <string name="snackBarUserNotAdded">Sorry, the user name was not saved</string>
+    <string name="snackBarUserExists">Sorry, the user name already exists</string>
+    <string name="snackBarPsswrdNotAdded">Sorry, the password was not saved</string>
+    <string name="snackBarPsswrdExists">Sorry, the password already exists</string>
+    <string name="snackBarQuestionNotAdded">Sorry, the question was not saved</string>
+    <string name="snackBarQuestionExists">Sorry, the question already exists</string>
 
     <string name="sample_text">4.- The \"+/-\" button allows to toggle between positive and negative numbers and
         vice versa. This button can only be used when the Temperature property has been selected, as transforming

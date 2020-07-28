@@ -43,7 +43,7 @@ public class SelectLogoActivity extends AppCompatActivity {
                 int adapterPosition = rvLogos.getChildAdapterPosition(v);
                 // Check if Icon object in the retrieved position has attribute isSelected set to
                 // true or false to revert to toggle the selection state
-                if(iconAdapter.getIconList().get(adapterPosition).isSelected){
+                if(iconAdapter.getIconList().get(adapterPosition).isSelected()){
                     //If that's the case, set it to false
                     iconAdapter.getIconList().get(adapterPosition).setSelected(false);
                 }else{
@@ -96,6 +96,7 @@ public class SelectLogoActivity extends AppCompatActivity {
         //Check the id of item selected in menu
         switch (item.getItemId()) {
             case R.id.select_logo_save:
+                intent.putExtra("selectedImgID",this.selectedIcon.get_id());
                 intent.putExtra("selectedImgLocation",this.selectedIcon.getLocation());
                 intent.putExtra("selectedImgPosition",this.selectedPosition);
                 setResult(RESULT_OK, intent);

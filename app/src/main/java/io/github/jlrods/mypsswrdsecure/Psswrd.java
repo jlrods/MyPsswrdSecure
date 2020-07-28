@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.solver.widgets.ConstraintAnchor;
 
 import java.util.ArrayList;
 
@@ -14,20 +15,34 @@ class Psswrd extends UserName{
     //Method definition
 
     //Constructor
-    public Psswrd(){
-        this(0,"", PsswrdStrength.WEAK);
-    }
-
-    public Psswrd(int _id, String value){
-        this(_id,value, PsswrdStrength.WEAK);
-    }
-
-    public Psswrd(int _id, String value, PsswrdStrength strength){
-        super(_id,value);
-        Log.d("PsswrdFullConst","Enter Full Constructor of Psswrd class .");
+    public Psswrd(int _id, byte[] value, byte[] iv,long dateCreated ,PsswrdStrength strength){
+        super(_id,value,iv,dateCreated);
+        Log.d("PsswrdFullConst","Enter Full Constructor of Psswrd class.");
         this.strength = strength;
-        Log.d("PsswrdFullConst","Exit Full Constructor of Psswrd class .");
+        Log.d("PsswrdFullConst","Exit Full Constructor of Psswrd class.");
     }//End of Psswrd full constructor
+
+    public Psswrd(int _id, byte[] value , byte[] iv,PsswrdStrength strength){
+        super (_id,value,iv);
+        this.strength = strength;
+        Log.d("PsswrdConst","Exit Constructor of Psswrd class with 4 arguments.");
+    }//End of Psswrd full constructor
+
+    public Psswrd(int _id, byte[] value,byte[] iv){
+        super(_id,value,iv);
+        this.strength = PsswrdStrength.WEAK;
+        Log.d("PsswrdConst2","Exit Constructor of Psswrd class with 3 arguments.");
+    }
+
+    public Psswrd(byte[] value, byte[] iv){
+        this(-1, value,iv);
+        Log.d("PsswrdConst3","Exit Constructor of Psswrd class with 2 arguments.");
+    }
+
+    public Psswrd(){
+        this(-1,null,null);
+        Log.d("PsswrdConst4","Exit Constructor of Psswrd class with no arguments.");
+    }
 
     @NonNull
     @Override
@@ -52,7 +67,7 @@ class Psswrd extends UserName{
         //Call common method from parent class to extract basic StringValue object data from a cursor
         ArrayList<Object> attributes = extractStrValue(c);
         //Create a new psswrd object by calling full constructor
-        psswrd = new Psswrd((int) attributes.get(0), (String) attributes.get(1), definePsswrdStrength((String) attributes.get(1)));
+        psswrd = new Psswrd((int) attributes.get(0), (byte[]) attributes.get(1), (byte[]) attributes.get(2),c.getInt(3),PsswrdStrength.VERY_STRONG);
 
         Log.d("Ext_ExtractPsswrd","Exit extractPsswrd method in the Psswrd class.");
         return psswrd;
@@ -60,7 +75,7 @@ class Psswrd extends UserName{
 
 
     public static PsswrdStrength definePsswrdStrength(String psswrd){
-        //FIXME: To be upaated with better password strength assessment algorithm
+        //FIXME: To be updated with better password strength assessment algorithm
         if(psswrd.contains("!")){
             return PsswrdStrength.STRONG;
         }else if(psswrd.contains("8")){

@@ -16,14 +16,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.crypto.spec.IvParameterSpec;
+
 import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
 
-public class UserNameAdapter extends RecyclerView.Adapter<UserNameAdapter.ViewHolder>  {
+public class UserNameAdapter extends RecyclerView.Adapter<UserNameAdapter.ViewHolder> {
 
     //Attribute definition
     protected Context context;
     protected Cursor cursor;// List to hold all User or Password data coming from the database
     protected View.OnClickListener listener; // Click listener to take actions when item is clicked on Rec Viewer
+    protected Cryptographer cryptographer;
     protected static SparseBooleanArray itemStateArray= new SparseBooleanArray();
 
     // Pass in the contact array into the constructor
@@ -31,6 +34,7 @@ public class UserNameAdapter extends RecyclerView.Adapter<UserNameAdapter.ViewHo
         Log.d("UserNameAdapt","Enter Full Constructor in UserNameAdapter class.");
         this.context = context;
         this.cursor = cursor;
+        this.cryptographer = MainActivity.getCryptographer();
         //Extract all the user/password from the app resources
         try{
             Log.d("UserNameAdapt","Exit successfully Full Constructor in UserNameAdapter class.  ");
@@ -54,21 +58,22 @@ public class UserNameAdapter extends RecyclerView.Adapter<UserNameAdapter.ViewHo
         return viewHolder;
     }//End of onCreateViewHolder method
 
+
     @Override
     public void onBindViewHolder(@NonNull UserNameAdapter.ViewHolder holder, int position) {
         Log.d("UsrNameOnBindVH","Enter onBindViewHolder method in UserNameAdapter class.");
-        AccountsDB accounts = new AccountsDB(getContext());
+        AccountsDB accountsDB = new AccountsDB(getContext());
         //Move current cursor to position passed in as parameter
         this.cursor.moveToPosition(position);
         //Extract the data from cursor to create a new User or Password
         UserName userName = UserName.extractUserName(this.cursor);
         //holder.tvStrength.setVisibility(View.GONE);
         holder.imgIcon.setImageResource(R.mipmap.ic_account_black_48dp);
-        holder.tvStringValue.setText(userName.getValue());
+        holder.tvStringValue.setText(cryptographer.decryptText(userName.getValue(),new IvParameterSpec(userName.getIv())));
         Date date = new Date(userName.getDateCreated());
         SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy");
         holder.tvDateCreated.setText(format.format(date));
-        int timesUsed = accounts.getTimesUsedUserName(userName.get_id());
+        int timesUsed = accountsDB.getTimesUsedUserName(userName.get_id());
         holder.tvTimesUsed.setText(String.valueOf(timesUsed));
         Log.d("UsrNameOnBindVH","Exit onBindViewHolder method in UserNameAdapter class.");
     }//End of onBindViewHolder method
@@ -112,6 +117,7 @@ public class UserNameAdapter extends RecyclerView.Adapter<UserNameAdapter.ViewHo
         TextView tvStringValue;
         TextView tvTimesUsed;
         TextView tvDateCreated;
+        TextView tvDateCreatedTag;
         //Define the ViewHolder constructor
         ViewHolder(View itemView) {
             //Call super constructor method
@@ -124,6 +130,7 @@ public class UserNameAdapter extends RecyclerView.Adapter<UserNameAdapter.ViewHo
             this.tvStringValue = (TextView) itemView.findViewById(R.id.tvStringValue);
             this.tvTimesUsed = (TextView) itemView.findViewById(R.id.tvStrValTimesUsed);
             this.tvDateCreated = (TextView) itemView.findViewById(R.id.tvStrValDate);
+            this.tvDateCreatedTag = (TextView) itemView.findViewById(R.id.tvStrValDateTag);
             Log.d("UserNameVHCreator","Exit ViewHolder constructor in the UserNameAdapter class.");
         }//End of ViewHolder
     }//End of ViewHolder inner class

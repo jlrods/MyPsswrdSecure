@@ -16,10 +16,14 @@ import androidx.core.content.ContextCompat;
  */
 
 //Class to handle the adapter objects to link spinners UI and data
-public class SpinnerAdapter extends CursorAdapter {
+public class SpinnerAdapter extends CursorAdapter implements android.widget.SpinnerAdapter {
+    protected static Cryptographer cryptographer;
+    protected Cursor c;
     //Adapter constructor method
     public SpinnerAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
+        this.c = c;
+        cryptographer = MainActivity.getCryptographer();
         Log.d("Adapter_Constructor","Leaves SpinnerAdapter constructor.");
     }//End of constructor method
 
@@ -38,13 +42,14 @@ public class SpinnerAdapter extends CursorAdapter {
         //Declare and instantiate a String to hold the name by extracting data from cursor (Column 1 will hold the name attribute)
         String stringName= cursor.getString(1);
         //Declare and instantiate an int to hold the string id from resources
-        int textID = context.getResources().getIdentifier(stringName,"string",context.getOpPackageName());
+        int textID = context.getResources().getIdentifier(stringName,"string",context.getPackageName());
         //If textID is 0, means it's not stored in the app resources
         if(textID > 0){
             tvItem.setText(context.getString(textID));
         }else{
             //In the case of not being a resource, print the text retrieved from DB
-            tvItem.setText(stringName);
+            //tvItem.setText(stringName);
+            tvItem.setText(cryptographer.decryptText(stringName.getBytes(),cryptographer.getIv()));
         }//End of if else statement
 
         Log.d("Ent_bindView","Exit bindView method to populate spinners in SpinnerAdapter class.");
@@ -66,4 +71,12 @@ public class SpinnerAdapter extends CursorAdapter {
         Log.d("Ent_findspItem","Exit  findItemPosition to find sp item by name in SpinnerAdapter class.");
         return position;
     }//End of findItemPosition method
+
+    public Cursor getCursor() {
+        return c;
+    }
+
+    public void setCursor(Cursor c) {
+        this.c = c;
+    }
 }//End of SpinnerAdapter class
