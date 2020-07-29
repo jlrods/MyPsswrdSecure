@@ -22,43 +22,38 @@
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabs"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="?android:attr/listPreferredItemHeight"
-            app:tabGravity="fill"
-            app:tabMode="scrollable"
-            app:layout_scrollFlags="scroll|enterAlways|snap">
+            android:layout_gravity="center_horizontal"
+            app:tabMode="scrollable">
 
             <com.google.android.material.tabs.TabItem
                 android:id="@+id/TabItem1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:icon="@mipmap/ic_account_details_white_48dp"
-                android:text="@string/action_accounts"
-                />
+                android:text="@string/action_accounts" />
 
             <com.google.android.material.tabs.TabItem
                 android:id="@+id/TabItem2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:icon="@mipmap/ic_account_group_white_48dp"
-                android:text="@string/action_userNames"
-                />
+                android:text="@string/action_userNames" />
 
             <com.google.android.material.tabs.TabItem
                 android:id="@+id/TabItem3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:icon="@mipmap/ic_lock_outline_white_48dp"
-                android:text="@string/action_psswrds"
-                />
+                android:text="@string/action_psswrds" />
 
             <com.google.android.material.tabs.TabItem
                 android:id="@+id/TabItem4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:icon="@mipmap/ic_shield_lock_white_48dp"
-                android:text="@string/action_secQuestions"
-                />
+                android:text="@string/action_secQuestions" />
         </com.google.android.material.tabs.TabLayout>
 
     </com.google.android.material.appbar.AppBarLayout>

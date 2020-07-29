@@ -16,7 +16,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -27,12 +26,10 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
-
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-
 import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -53,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     //private RecyclerView rv = null;
     //private AccountsDB accounts = null;
 
-    private RecyclerView recyclerView = null;
+    //private RecyclerView recyclerView = null;
     //private RecyclerView.LayoutManager layoutManager;
     private TabLayout tabLayout = null;
     private int idRes;
@@ -72,6 +69,9 @@ public class MainActivity extends AppCompatActivity {
      private static Cryptographer cryptographer;
 
      private int throwAddAccountActReqCode = 5566;
+     private static int throwAddQuestionActReqCode = 9876;
+     private int throwAddUserNameActReqCode = 5744;
+     private int throwAddPsswrdActReqCode = 9732;
 
 
     @Override
@@ -94,12 +94,17 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case 1:
                         //Call method to throw the AddUserName Activity
+                        throwAddUserNameActivity(null);
                         break;
                     case 2:
                         //Call method to throw the AddPsswrd Activity
+                        throwAddPsswrdActivity(null);
                         break;
                     default:
+                        //Call method to throw the AddQuestion Activity
+                        throwAddQuestionActivity(null);
                         break;
+
                 }//End of switch statement to check current tab selection
 
 
@@ -160,8 +165,7 @@ public class MainActivity extends AppCompatActivity {
                     Snackbar snackbar = Snackbar.make(coordinatorLayout, search, Snackbar.LENGTH_LONG);
                     snackbar.setAction("Action", null).show();
                 }else{
-//                    Snackbar snackbar = Snackbar.make(null, new String(encrypted), Snackbar.LENGTH_LONG);
-//                    snackbar.setAction("Action", null).show();
+                    //@FIXME: Define action in case the app fail to update state
                 }//End of if else statement
             }//End of onTabSelected
 
@@ -174,9 +178,7 @@ public class MainActivity extends AppCompatActivity {
             public void onTabReselected(TabLayout.Tab tab) {
 
             }
-        });
-
-
+        });// End of addOnTabSelectedListener method for tabLayout
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -287,13 +289,7 @@ public class MainActivity extends AppCompatActivity {
         return this.tabLayout.getTabAt(this.tabLayout.getSelectedTabPosition());
     }
 
-    public static Icon getMyPsswrdSecureLogo() {
-        return myPsswrdSecureLogo;
-    }
 
-    public static ArrayList<QuestionList> getListOfQuestionLists(){
-        return listOfQuestionLists;
-    }
 
     //Method to return a category by passing in its DB id
     public static Category getCategoryByID(int _id){
@@ -326,7 +322,7 @@ public class MainActivity extends AppCompatActivity {
             cursor = accountsDB.getPsswrdList();
             ((PsswrdAdapter) adapter).setCursor(cursor);
         }else if(adapter instanceof SecurityQuestionAdapter){
-            cursor = accountsDB.getListQuestionsAvailable();
+            cursor = accountsDB.getListQuestionsAvailableNoAnsw();
             ((SecurityQuestionAdapter) adapter).setCursor(cursor);
         }else if(adapter instanceof UserNameAdapter){
             cursor = accountsDB.getUserNameList();
@@ -352,34 +348,105 @@ public class MainActivity extends AppCompatActivity {
         //Start the addTaskActivity class
         startActivityForResult(i,throwAddAccountActReqCode);
         Log.d("ThrowAddAcc","Exit throwAddAccountActivity method in the MainActivity class.");
-    }//End of throwAddTaskActivity method
+    }//End of throwAddTaskActivity
+
+    //Method to throw new AddTaskActivity
+    private void throwAddUserNameActivity(View view){
+        Log.d("ThrowAddUser","Enter throwAddUserNameActivity method in the MainActivity class.");
+        //Declare and instantiate a new intent object
+        Intent i= new Intent(MainActivity.this, AddUserNameActivity.class );
+        //Start the AddItemActivity class
+        startActivityForResult(i,throwAddUserNameActReqCode);
+        Log.d("ThrowAddUser","Exit throwAddUserNameActivity method in the MainActivity class.");
+    }//End of throwAddTaskActivity
+
+    private void throwAddPsswrdActivity(View view){
+        Log.d("ThrowAddPsswrd","Enter throwAddPsswrdActivity method in the MainActivity class.");
+        //Declare and instantiate a new intent object
+        Intent i= new Intent(MainActivity.this, AddPsswrdActivity.class );
+        //Start the AddItemActivity class
+        startActivityForResult(i,throwAddPsswrdActReqCode);
+        Log.d("ThrowAddPsswrd","Exit throwAddPsswrdActivity method in the MainActivity class.");
+    }//End of throwAddTaskActivity
+
+    private void throwAddQuestionActivity(View view){
+        Log.d("ThrowAddQuest","Enter throwAddQuestionActivity method in the MainActivity class.");
+        //Declare and instantiate a new intent object
+        Intent i= new Intent(MainActivity.this,AddQuestionActivity.class);
+        //Start the addTaskActivity class
+        startActivityForResult(i,throwAddQuestionActReqCode);
+        Log.d("ThrowAddQuest","Exit throwAddQuestionActivity method in the MainActivity class.");
+    }//End of throwAddTaskActivity
 
     //Method to receive and handle data coming from other activities such as: SelectLogoActivity,
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d("onActivityResult","Enter the onActivityResult method in the DisplayAccountActivity class.");
-        if (requestCode==this.throwAddAccountActReqCode && resultCode==RESULT_OK) {
+        //Check if result comes from AddAccountActivity
+        String toastText = "";
+        //Flag to display Toast and update RV
+        boolean goodResultDelivered = false;
+        RecyclerView recyclerView = HomeFragment.getRv();
+        RecyclerView.Adapter adapter = null;
+        int itemsInRv = 6;
+        if (requestCode==this.throwAddAccountActReqCode && resultCode == RESULT_OK) {
             Log.d("onActivityResult","Received GOOD result from AddAccountActivity (received by MainActivity).");
             //Update RV data set
             //Consider the category selected on drawer menu to run correct sql query
             //@FIXME: Investigate--> What's best option? notify adapter about data set change or set up new adapter with method created??
-            recyclerView = HomeFragment.getRv();
-            ((AccountAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getAccountsList());
-            recyclerView.getAdapter().notifyDataSetChanged();
             //AccountAdapter accountAdapter = new AccountAdapter(getBaseContext(),null);
             //updateRecyclerViewData(accountAdapter);
+            ((AccountAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getAccountsList());
+            //Define text to display Toast to confirm the account has been added
+            //Set variable to display Toast
+            goodResultDelivered = true;
+            toastText = data.getExtras().getString("accountName ")+ getResources().getString(R.string.accountAdded);
+        }else if(requestCode==this.throwAddAccountActReqCode && resultCode == RESULT_CANCELED){
+            Log.d("onActivityResult","Received BAD result from AddAccountActivity (received by MainActivity).");
+            //Check if result comes from AddAccountActivity
+        }else if(requestCode== throwAddUserNameActReqCode && resultCode == RESULT_OK){
+            Log.d("onActivityResult","Received GOOD result from AddUserNameActivity (received by MainActivity).");
+            ((UserNameAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getUserNameList());
+            //Set variable to display Toast
+            goodResultDelivered = true;
+            //Define text to display Toast to confirm the account has been added
+            toastText = getResources().getString(R.string.userNameAdded);
+            itemsInRv = 5;
+        }else if(requestCode== throwAddUserNameActReqCode && resultCode == RESULT_CANCELED){
+            Log.d("onActivityResult","Received BAD result from AddUserNameActivity (received by MainActivity).");
+        }else if(requestCode== throwAddPsswrdActReqCode && resultCode == RESULT_OK){
+            Log.d("onActivityResult","Received GOOD result from AddPsswrdActivity (received by MainActivity).");
+            ((PsswrdAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getPsswrdList());
+            //Set variable to display Toast
+            goodResultDelivered = true;
+            //Define text to display Toast to confirm the account has been added
+            toastText = getResources().getString(R.string.psswrdAdded);
+            itemsInRv = 4;
+        }else if(requestCode== throwAddPsswrdActReqCode && resultCode == RESULT_CANCELED){
+            Log.d("onActivityResult","Received BAD result from AddPsswrdActivity (received by MainActivity).");
+        }else if(requestCode== throwAddQuestionActReqCode && resultCode == RESULT_OK){
+            Log.d("onActivityResult","Received GOOD result from AddAccountActivity (received by MainActivity).");
+            ((SecurityQuestionAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getListQuestionsAvailableNoAnsw());
+            //Set variable to display Toast
+            goodResultDelivered = true;
+            //Define text to display Toast to confirm the account has been added
+            toastText = getResources().getString(R.string.questionAdded);
+            itemsInRv = 6;
+        }else if(requestCode== throwAddQuestionActReqCode && resultCode == RESULT_CANCELED){
+            Log.d("onActivityResult","Received BAD result from AddQuestionActivity (received by MainActivity).");
+        }//End of if else statement chain to check activity results
+        //Check if toast would be displayed
+        if(goodResultDelivered){
+            recyclerView.getAdapter().notifyDataSetChanged();
             //Move to new account position
-            recyclerView.getLayoutManager().scrollToPosition(recyclerView.getAdapter().getItemCount()-1);
             //Display Toast to confirm the account has been added
-            displayToast(this,""+data.getExtras().getString("accountName"),Toast.LENGTH_LONG,Gravity.CENTER);
-        }else if(requestCode==this.throwAddAccountActReqCode && resultCode==RESULT_CANCELED){
-            //Display the current list of Accounts
-            AccountAdapter accountAdapter = new AccountAdapter(getBaseContext(),null);
-            updateRecyclerViewData(accountAdapter);
-        }//End of if else statement to check the data comes SelectLogoActivity
+            displayToast(this,toastText,Toast.LENGTH_LONG, Gravity.CENTER);
+        }//End of if statement to check good result was delivered
+        //End of if else statement to check the data comes from one of the thrown activities
         Log.d("onActivityResult","Exit the onActivityResult method in the DisplayAccountActivity class.");
     }//End of onActivityResult method
+
 
     //Method to display a generic new Dialog Alert view from any activity.
     public static AlertDialog.Builder displayAlertDialog(Context context, EditText inputField,String title, String message, String hint){
@@ -406,9 +473,23 @@ public class MainActivity extends AppCompatActivity {
         return RESOURCES;
     }
 
+    public static Icon getMyPsswrdSecureLogo() {
+        return myPsswrdSecureLogo;
+    }
+
+    public static ArrayList<QuestionList> getListOfQuestionLists(){
+        return listOfQuestionLists;
+    }
+
+    public static int getThrowAddQuestionActReqCode() {
+        return throwAddQuestionActReqCode;
+    }
+
     public static void displayToast(Context context,String text, int toastLength,int gravity){
+        Log.d("displayToast","Enter displayToast method in the MainActivity class.");
         Toast toast = Toast.makeText(context,text,toastLength);
         toast.setGravity(gravity,0,0);
         toast.show();
-    }
+        Log.d("displayToast","Exit displayToast method in the MainActivity class.");
+    }//End of displayToast method
 }//End of MainActivity class.

@@ -46,29 +46,29 @@
     <!--    TabBar Menu texts-->
     <string name="about">About...</string>
     <string name="action_search">Search</string>
-    <string name="action_accounts">Accounts</string>
-    <string name="action_userNames">User Name List</string>
-    <string name="action_psswrds">Passwords List</string>
-    <string name="action_secQuestions">Security Question List</string>
+    <string name="action_accounts">Account</string>
+    <string name="action_userNames">User name</string>
+    <string name="action_psswrds">Password</string>
+    <string name="action_secQuestions">Security questions</string>
 
     <!--    Add account layout icons-->
     <string name="account_logo">Logo</string>
     <string name="account_name">Name:</string>
     <string name="account_cat">Category:</string>
-    <string name="account_userName">User Name:</string>
+    <string name="account_userName">User name:</string>
     <string name="account_psswrd">Password:</string>
     <string name="account_secQuestion">Security questions:</string>
-    <string name="account_isFavoriteChecked">Click the star to uncheck as Favorite</string>
-    <string name="account_isFavoriteUnchecked">Click the star to check as Favorite</string>
+    <string name="account_isFavoriteChecked">Uncheck as favorite</string>
+    <string name="account_isFavoriteUnchecked">Check as favorite</string>
     <string name="account_new">New</string>
     <string name="account_addQuestion">Add to list</string>
     <string name="account_dateCreated">Date created:</string>
-    <string name="account_changePsswrd">Has to be changed?</string>
+    <string name="account_changePsswrd">Needs update?</string>
     <string name="account_dateChange">Change date:</string>
     <string name="account_nameHint">Type the account name</string>
 
     <!--    Security question spinner item-->
-    <string name="account_removeQuestion">Remove</string>
+    <string name="account_removeQuestion">Delete</string>
     <string name="question_spinner_answer">Answ:</string>
     <string name="account_quest_avilab_spinner_prompt">Add a question to your list...</string>
     <string name="account_quest_list_spinner_prompt">No questions in your list...</string>
@@ -105,18 +105,33 @@
     <string name="accountNoCatSelected">Sorry, no category has been selected from the drop down menu</string>
     <string name="accountNoUserSelected">Sorry, no user name has been selected from the drop down menu</string>
     <string name="accountNoPsswrdSelected">Sorry, no password has been selected from the drop down menu</string>
+    <string name="accountAdded"> account has been added to your list!</string>
 
+
+    <!--    AddUserName Activity-->
+    <string name="userNameAdded">New user name added successfully!</string>
+    <string name="userNameNotEntered">Sorry, no user name entered in the input field</string>
+
+    <!--    AddPsswrd Activity-->
+    <string name="psswrdAdded">New password added successfully!</string>
+    <string name="psswrdNotEntered">Sorry, no password entered in the input field</string>
 
     <!--    AddQuestion Activity    -->
+    <string name="addQuestQuestionTag">Security question</string>
     <string name="addQuestQuestionHint">Type the new question here...</string>
     <string name="addQuestAnswerHint">Type the new answer here...</string>
+    <string name="questionAdded">New question added successfully!</string>
+    <string name="questionNotEntered">Sorry, no question entered in the input field</string>
+    <string name="answerNotEntered">Sorry, no answer entered in the input field</string>
+
     <!--    AlertDialog texts-->
-    <string name="alertBoxNewUser">Add User name</string>
+    <string name="alertBoxNewUser">Add user name</string>
     <string name="alertBoxNewUserMssg">Please, enter a new user name</string>
     <string name="alertBoxNewUserHint">Type user name here...</string>
-    <string name="alertBoxNewPsswrd">Add Password</string>
+    <string name="alertBoxNewPsswrd">Add password</string>
     <string name="alertBoxNewPsswrdMssg">Please, enter a new password</string>
     <string name="alertBoxNewPsswrdHint">Type password here...</string>
+
 
 
     <!--    Snackbar texts-->
@@ -130,36 +145,4 @@
     <string name="snackBarPsswrdExists">Sorry, the password already exists</string>
     <string name="snackBarQuestionNotAdded">Sorry, the question was not saved</string>
     <string name="snackBarQuestionExists">Sorry, the question already exists</string>
-
-    <string name="sample_text">4.- The \"+/-\" button allows to toggle between positive and negative numbers and
-        vice versa. This button can only be used when the Temperature property has been selected, as transforming
-        negative magnitudes of weight and volume does not make any sense.Negative sign can be set, even when the
-        input box is empty and has no numerical value yet. Negative values are only possible for Celsius and Fahrenheit scales,
-        since Kelvin is an absolute scale, which minimum point is zero. Minimum valid values for Celsius and Fahrenheit
-        are -273.15°C and -456.67°F, respectively.
-    4.- The \"+/-\" button allows to toggle between positive and negative numbers and
-        vice versa. This button can only be used when the Temperature property has been selected, as transforming
-        negative magnitudes of weight and volume does not make any sense.Negative sign can be set, even when the
-        input box is empty and has no numerical value yet. Negative values are only possible for Celsius and Fahrenheit scales,
-        since Kelvin is an absolute scale, which minimum point is zero. Minimum valid values for Celsius and Fahrenheit
-        are -273.15°C and -456.67°F, respectively.
-    4.- The \"+/-\" button allows to toggle between positive and negative numbers and
-        vice versa. This button can only be used when the Temperature property has been selected, as transforming
-        negative magnitudes of weight and volume does not make any sense.Negative sign can be set, even when the
-        input box is empty and has no numerical value yet. Negative values are only possible for Celsius and Fahrenheit scales,
-        since Kelvin is an absolute scale, which minimum point is zero. Minimum valid values for Celsius and Fahrenheit
-        are -273.15°C and -456.67°F, respectively.
-    4.- The \"+/-\" button allows to toggle between positive and negative numbers and
-        vice versa. This button can only be used when the Temperature property has been selected, as transforming
-        negative magnitudes of weight and volume does not make any sense.Negative sign can be set, even when the
-        input box is empty and has no numerical value yet. Negative values are only possible for Celsius and Fahrenheit scales,
-        since Kelvin is an absolute scale, which minimum point is zero. Minimum valid values for Celsius and Fahrenheit
-        are -273.15°C and -456.67°F, respectively.
-    4.- The \"+/-\" button allows to toggle between positive and negative numbers and
-        vice versa. This button can only be used when the Temperature property has been selected, as transforming
-        negative magnitudes of weight and volume does not make any sense.Negative sign can be set, even when the
-        input box is empty and has no numerical value yet. Negative values are only possible for Celsius and Fahrenheit scales,
-        since Kelvin is an absolute scale, which minimum point is zero. Minimum valid values for Celsius and Fahrenheit
-        are -273.15°C and -456.67°F, respectively.</string>
-
 </resources>

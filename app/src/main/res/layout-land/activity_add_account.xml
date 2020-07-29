@@ -46,11 +46,11 @@
                     <EditText
                         android:id="@+id/etAccountName"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:ems="20"
                         android:inputType="text"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
                         android:textStyle="bold"
                         android:hint="@string/account_nameHint"/>
                 </LinearLayout>

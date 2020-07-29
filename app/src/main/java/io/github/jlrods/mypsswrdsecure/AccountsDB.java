@@ -918,6 +918,16 @@ public class AccountsDB extends SQLiteOpenHelper {
         return questionsAvailable;
     }//End of getListQuestionsAvailable method
 
+    //Method to get cursor with list of questions available
+    public Cursor getListQuestionsAvailableNoAnsw(){
+        Log.d("getListOfQuestionLists","Enter the getListQuestionsAvailableNoAnsw method in the AccountsDB class.");
+        //Declare and initialize cursor to hold list of questions available from DB
+        Cursor questionsAvailable = this.runQuery("SELECT QUESTION._id, QUESTION.Value AS Q, ANSWER._id AS AnswerID,ANSWER.Value AS Answer," +
+                "ANSWER.initVector AS initVector FROM QUESTION LEFT JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id;");
+        Log.d("getListOfQuestionLists","Exit the getListQuestionsAvailableNoAnsw method in the AccountsDB class.");
+        return questionsAvailable;
+    }//End of getListQuestionsAvailable method
+
     //Method to get a specific question, by passing in its DB _id as an argument
     public Question getQuestionByID(int _id){
         Log.d("getQuestionByID","Enter the getQuestionByID method in the AccountsDB class.");

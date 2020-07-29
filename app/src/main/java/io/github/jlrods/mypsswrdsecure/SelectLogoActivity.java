@@ -82,7 +82,7 @@ public class SelectLogoActivity extends AppCompatActivity {
     //Method to inflate the menu into the addTaskActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_select_logo, menu);
+        getMenuInflater().inflate(R.menu.activity_menu_save_cancel, menu);
         return true;
     }// Find fe OnCreateOptionsMenu
 

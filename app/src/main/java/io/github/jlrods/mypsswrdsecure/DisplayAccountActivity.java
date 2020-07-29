@@ -22,13 +22,10 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-
 import com.google.android.material.snackbar.Snackbar;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -101,7 +98,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
     boolean isFavorite = false;
     IconAdapter iconAdapter = null;
     int throwSelectLogoActReqCode = 5555;
-    int throwAddQuestionActReqCode = 9876;
+
     Icon logo = null;
     int selectedPosition = -1;
 
@@ -317,7 +314,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.d("onCreateOptionsMenu","Enter onCreateOptionsMenu method in the DisplayAccountActivity abstract class.");
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.activity_select_logo, menu);
+        getMenuInflater().inflate(R.menu.activity_menu_save_cancel, menu);
         Log.d("onCreateOptionsMenu","Enter onCreateOptionsMenu method in the DisplayAccountActivity abstract class.");
         return true;
     }//End of onCreateOptionsMenu method
@@ -512,7 +509,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         //i.putExtra("selectedImgPosition",selectedPosition);
         //i.putExtra("selectedImgLocation",logo.getLocation());
         //Start the addTaskActivity and wait for result
-        startActivityForResult(i,this.throwAddQuestionActReqCode);
+        startActivityForResult(i,MainActivity.getThrowAddQuestionActReqCode());
         Log.d("addNewPsswrd","Exit the addNewQuestion method in the DisplayAccountActivity class.");
     }//End of addNewQuestion method
 
@@ -747,14 +744,14 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         }else if(requestCode==this.throwSelectLogoActReqCode && resultCode==RESULT_CANCELED){
             //In the event of receiving a cancel result, no change to be done on the current account, no logo change to be applied
             Log.d("onActivityResult","Received CANCEL result from SelectLogoActivity in the DisplayAccountActivity class.");
-        }else if(requestCode==this.throwAddQuestionActReqCode && resultCode==RESULT_OK){
+        }else if(requestCode== MainActivity.getThrowAddQuestionActReqCode() && resultCode==RESULT_OK){
             //Setup the Questions Available spinner and populate with data
             this.cursorListOfQuestionsAvailable = accountsDB.getListQuestionsAvailable();
             this.spQuestionsAvailable.setPrompt(getBaseContext().getResources().getString(R.string.account_quest_avilab_spinner_prompt));
             this.setUpQuestionListSpinnerData(cursorListOfQuestionsAvailable,spQuestionsAvailable);
             this.spQuestionsAvailable.setSelection(spQuestionsAvailable.getAdapter().getCount()-1);
             this.addQuestionToSecList();
-        }else if(requestCode==this.throwAddQuestionActReqCode && resultCode==RESULT_CANCELED){
+        }else if(requestCode== MainActivity.getThrowAddQuestionActReqCode() && resultCode==RESULT_CANCELED){
 
         }//End of if else statement to check the data comes SelectLogoActivity
         Log.d("onActivityResult","Exit the onActivityResult method in the DisplayAccountActivity class.");
