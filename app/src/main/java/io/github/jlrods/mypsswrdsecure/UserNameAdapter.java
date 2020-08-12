@@ -2,21 +2,26 @@ package io.github.jlrods.mypsswrdsecure;
 
 import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.util.Log;
 import android.util.SparseBooleanArray;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 import javax.crypto.spec.IvParameterSpec;
 
-import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
+import static androidx.core.app.ActivityCompat.startActivityForResult;
+
 
 public class UserNameAdapter extends RecyclerView.Adapter<UserNameAdapter.ViewHolder> {
 
@@ -25,6 +30,7 @@ public class UserNameAdapter extends RecyclerView.Adapter<UserNameAdapter.ViewHo
     protected Cursor cursor;// List to hold all User or Password data coming from the database
     protected View.OnClickListener listener; // Click listener to take actions when item is clicked on Rec Viewer
     protected Cryptographer cryptographer;
+    //protected AdapterView.OnItemClickListener onItemClickListener;
     protected static SparseBooleanArray itemStateArray= new SparseBooleanArray();
 
     // Pass in the contact array into the constructor
@@ -38,7 +44,7 @@ public class UserNameAdapter extends RecyclerView.Adapter<UserNameAdapter.ViewHo
             Log.d("UserNameAdapt","Exit successfully Full Constructor in UserNameAdapter class.  ");
         }catch(Exception e){
             Log.e("Error","Exit Full Constructor in UserNameAdapter class with error: "+ e.getMessage());
-        }
+        }//End of try catch block
     }//End of IconAdapter Constructor
 
     @NonNull
@@ -49,7 +55,7 @@ public class UserNameAdapter extends RecyclerView.Adapter<UserNameAdapter.ViewHo
         LayoutInflater inflater = LayoutInflater.from(context);
         // Inflate the custom layout
         View view = inflater.inflate(R.layout.element_string_value,parent,false);
-        view.setOnClickListener(listener);
+        view.setOnClickListener(this.listener);
         // Return a new holder instance
         UserNameAdapter.ViewHolder viewHolder = new UserNameAdapter.ViewHolder(view);
         Log.d("UserNameAdaptVHOnCre","Exit onCreateViewHolder method in the UserNamedAdapter class.");
@@ -97,15 +103,12 @@ public class UserNameAdapter extends RecyclerView.Adapter<UserNameAdapter.ViewHo
         this.cursor = cursor;
     }
 
-    public View.OnClickListener getListener() {
-        return listener;
-    }
-
     // Define the method that allows the parent activity or fragment to define the listener
-    public void setOnItemClickListener(View.OnClickListener listener) {
-        Log.d("UserAdapterVHOnClick","Enter setOnItemClickListener in the UserNameAdapter class.");
-        this.listener = listener;
-    }
+    public void setOnClickListener(View.OnClickListener listener) {
+        Log.d("UserAdapterVHOnClick","Enter setOnClickListener in the UserNameAdapter class.");
+        this.listener= listener;
+    }//End of setOnItemClickListener
+
 
     //Inner class to inherit from RV ViewHolder class
     protected static class ViewHolder extends RecyclerView.ViewHolder{

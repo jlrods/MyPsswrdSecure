@@ -9,7 +9,7 @@ import android.widget.Toast;
 
 public class AddUserNameActivity extends AddItemActivity{
     //Attributes to be used while saving the new question
-    private UserName userName = null;
+    protected UserName userName = null;
 
     //Method definition
     @Override
@@ -51,7 +51,7 @@ public class AddUserNameActivity extends AddItemActivity{
                         if(userNameID > 0 ){
                             //Update the userName object ID and prepare data to exit activity
                             this.userName.set_id(userNameID);
-                            intent.putExtra("answerID",this.userName.get_id());
+                            intent.putExtra("userNameID",this.userName.get_id());
                             setResult(RESULT_OK, intent);
                             finish();
                             Log.d("onOptionsItemSelected","The user name "+ userNameValue +" has been added into the DB through addNewUserName method in the AddUserNameActivity class.");

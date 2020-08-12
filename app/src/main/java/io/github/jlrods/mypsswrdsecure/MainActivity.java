@@ -72,6 +72,20 @@ public class MainActivity extends AppCompatActivity {
      private static int throwAddQuestionActReqCode = 9876;
      private int throwAddUserNameActReqCode = 5744;
      private int throwAddPsswrdActReqCode = 9732;
+     private int throwEditUserNameActReqCode = 4475;
+
+     //DB Table names
+    private static final String USERNAME_TABLE = "USERNAME";
+    private static final String PSSWRD_TABLE = "PSSWRD";
+    private static final String QUESTION_TABLE = "QUESTION";
+    private static final String ANSWER_TABLE = "ANSWER";
+    private static final String QUESTIONLIST_TABLE = "QUESTIONLIST";
+    private static final String QUESTIONASSIGNMENT_TABLE = "QUESTIONASSIGNMENT";
+    private static final String ICON_TABLE = "ICON";
+    private static final String APPLOGGIN_TABLE = "APPLOGGIN";
+    private static final String CATEGORY_TABLE = "CATEGORY";
+    private static final String APPSTATE_TABLE = "APPSTATE";
+    private static final String ACCOUNTS_TABLE = "ACCOUNTS";
 
 
     @Override
@@ -90,19 +104,19 @@ public class MainActivity extends AppCompatActivity {
                 switch(tabLayout.getSelectedTabPosition()){
                     case 0:
                         //Call method to throw the AddAccount Activity
-                        throwAddAccountActivity(null);
+                        throwAddAccountActivity();
                         break;
                     case 1:
                         //Call method to throw the AddUserName Activity
-                        throwAddUserNameActivity(null);
+                        throwAddUserNameActivity();
                         break;
                     case 2:
                         //Call method to throw the AddPsswrd Activity
-                        throwAddPsswrdActivity(null);
+                        throwAddPsswrdActivity();
                         break;
                     default:
                         //Call method to throw the AddQuestion Activity
-                        throwAddQuestionActivity(null);
+                        throwAddQuestionActivity();
                         break;
 
                 }//End of switch statement to check current tab selection
@@ -138,7 +152,15 @@ public class MainActivity extends AppCompatActivity {
                         MainActivity.updateRecyclerViewData(accountAdapter);
                         break;
                     case 1:
+                        //Create rv adapter for the user name tab
                         UserNameAdapter userNameAdapter = new UserNameAdapter(getBaseContext(),null);
+                        //Setup the onclick even listener
+                        userNameAdapter.setOnClickListener(new View.OnClickListener(){
+                            @Override
+                            public void onClick(View v) {
+                                throwEditUserNameActivity(v);
+                            }//End of onClick method
+                        });//End of setOnClickListener
                         MainActivity.updateRecyclerViewData(userNameAdapter);
                         break;
                     case 2:
@@ -338,7 +360,7 @@ public class MainActivity extends AppCompatActivity {
     }//End of updateRecyclerViewData method
 
     //Method to throw new AddTaskActivity
-    private void throwAddAccountActivity(View view){
+    private void throwAddAccountActivity(){
         Log.d("ThrowAddAcc","Enter throwAddAccountActivity method in the MainActivity class.");
         //Declare and instantiate a new intent object
         Intent i= new Intent(MainActivity.this,AddAccountActivity.class);
@@ -351,7 +373,7 @@ public class MainActivity extends AppCompatActivity {
     }//End of throwAddTaskActivity
 
     //Method to throw new AddTaskActivity
-    private void throwAddUserNameActivity(View view){
+    private void throwAddUserNameActivity(){
         Log.d("ThrowAddUser","Enter throwAddUserNameActivity method in the MainActivity class.");
         //Declare and instantiate a new intent object
         Intent i= new Intent(MainActivity.this, AddUserNameActivity.class );
@@ -360,7 +382,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d("ThrowAddUser","Exit throwAddUserNameActivity method in the MainActivity class.");
     }//End of throwAddTaskActivity
 
-    private void throwAddPsswrdActivity(View view){
+    private void throwAddPsswrdActivity(){
         Log.d("ThrowAddPsswrd","Enter throwAddPsswrdActivity method in the MainActivity class.");
         //Declare and instantiate a new intent object
         Intent i= new Intent(MainActivity.this, AddPsswrdActivity.class );
@@ -369,13 +391,35 @@ public class MainActivity extends AppCompatActivity {
         Log.d("ThrowAddPsswrd","Exit throwAddPsswrdActivity method in the MainActivity class.");
     }//End of throwAddTaskActivity
 
-    private void throwAddQuestionActivity(View view){
+    private void throwAddQuestionActivity(){
         Log.d("ThrowAddQuest","Enter throwAddQuestionActivity method in the MainActivity class.");
         //Declare and instantiate a new intent object
         Intent i= new Intent(MainActivity.this,AddQuestionActivity.class);
         //Start the addTaskActivity class
         startActivityForResult(i,throwAddQuestionActReqCode);
         Log.d("ThrowAddQuest","Exit throwAddQuestionActivity method in the MainActivity class.");
+    }//End of throwAddTaskActivity
+
+    //Method to throw new AddTaskActivity
+    private void throwEditUserNameActivity(View v){
+        Log.d("ThrowAddUser","Enter throwAddUserNameActivity method in the MainActivity class.");
+        //rv
+        RecyclerView rv = HomeFragment.getRv();
+        //Get the item position in the adapter
+        int itemposition = rv.getChildAdapterPosition(v);
+        //move the cursor to the task position in the adapter
+        Cursor cursor = ((UserNameAdapter)rv.getAdapter()).getCursor();
+        cursor.moveToPosition(itemposition);
+        //Extract the task object from the cursor row
+        UserName userName = UserName.extractUserName(cursor);
+        //Declare and instantiate a new intent object
+        Intent i= new Intent(MainActivity.this, EditUserNameActivity.class );
+        //Add extras to the intent object, specifically the current category where the add button was pressed from
+        //i.putExtra("category",this.currentCategory.toString());
+        i.putExtra("_id",userName.get_id());
+        //Start the AddItemActivity class
+        startActivityForResult(i,this.throwEditUserNameActReqCode);
+        Log.d("ThrowAddUser","Exit throwAddUserNameActivity method in the MainActivity class.");
     }//End of throwAddTaskActivity
 
     //Method to receive and handle data coming from other activities such as: SelectLogoActivity,
@@ -389,8 +433,7 @@ public class MainActivity extends AppCompatActivity {
         boolean goodResultDelivered = false;
         RecyclerView recyclerView = HomeFragment.getRv();
         RecyclerView.Adapter adapter = null;
-        int itemsInRv = 6;
-        if (requestCode==this.throwAddAccountActReqCode && resultCode == RESULT_OK) {
+        if (requestCode ==this.throwAddAccountActReqCode && resultCode == RESULT_OK) {
             Log.d("onActivityResult","Received GOOD result from AddAccountActivity (received by MainActivity).");
             //Update RV data set
             //Consider the category selected on drawer menu to run correct sql query
@@ -402,39 +445,45 @@ public class MainActivity extends AppCompatActivity {
             //Set variable to display Toast
             goodResultDelivered = true;
             toastText = data.getExtras().getString("accountName ")+ getResources().getString(R.string.accountAdded);
-        }else if(requestCode==this.throwAddAccountActReqCode && resultCode == RESULT_CANCELED){
+        }else if(requestCode ==this.throwAddAccountActReqCode && resultCode == RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from AddAccountActivity (received by MainActivity).");
             //Check if result comes from AddAccountActivity
-        }else if(requestCode== throwAddUserNameActReqCode && resultCode == RESULT_OK){
+        }else if(requestCode == throwAddUserNameActReqCode && resultCode == RESULT_OK){
             Log.d("onActivityResult","Received GOOD result from AddUserNameActivity (received by MainActivity).");
             ((UserNameAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getUserNameList());
             //Set variable to display Toast
             goodResultDelivered = true;
             //Define text to display Toast to confirm the account has been added
             toastText = getResources().getString(R.string.userNameAdded);
-            itemsInRv = 5;
-        }else if(requestCode== throwAddUserNameActReqCode && resultCode == RESULT_CANCELED){
+        }else if(requestCode == throwAddUserNameActReqCode && resultCode == RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from AddUserNameActivity (received by MainActivity).");
-        }else if(requestCode== throwAddPsswrdActReqCode && resultCode == RESULT_OK){
+        }else if(requestCode == throwAddPsswrdActReqCode && resultCode == RESULT_OK){
             Log.d("onActivityResult","Received GOOD result from AddPsswrdActivity (received by MainActivity).");
             ((PsswrdAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getPsswrdList());
             //Set variable to display Toast
             goodResultDelivered = true;
             //Define text to display Toast to confirm the account has been added
             toastText = getResources().getString(R.string.psswrdAdded);
-            itemsInRv = 4;
-        }else if(requestCode== throwAddPsswrdActReqCode && resultCode == RESULT_CANCELED){
+        }else if(requestCode == throwAddPsswrdActReqCode && resultCode == RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from AddPsswrdActivity (received by MainActivity).");
-        }else if(requestCode== throwAddQuestionActReqCode && resultCode == RESULT_OK){
+        }else if(requestCode == throwAddQuestionActReqCode && resultCode == RESULT_OK){
             Log.d("onActivityResult","Received GOOD result from AddAccountActivity (received by MainActivity).");
             ((SecurityQuestionAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getListQuestionsAvailableNoAnsw());
             //Set variable to display Toast
             goodResultDelivered = true;
             //Define text to display Toast to confirm the account has been added
             toastText = getResources().getString(R.string.questionAdded);
-            itemsInRv = 6;
-        }else if(requestCode== throwAddQuestionActReqCode && resultCode == RESULT_CANCELED){
+        }else if(requestCode == throwAddQuestionActReqCode && resultCode == RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from AddQuestionActivity (received by MainActivity).");
+        }else if(requestCode == throwEditUserNameActReqCode && resultCode == RESULT_OK){
+            Log.d("onActivityResult","Received GOOD result from EditUserNameActivity (received by MainActivity).");
+            ((UserNameAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getUserNameList());
+            //Set variable to display Toast
+            goodResultDelivered = true;
+            //Define text to display Toast to confirm the account has been added
+            toastText = getResources().getString(R.string.userNameUpdated);
+        }else if(requestCode == throwEditUserNameActReqCode && resultCode == RESULT_CANCELED){
+            Log.d("onActivityResult","Received BAD result from EditUserNameActivity (received by MainActivity).");
         }//End of if else statement chain to check activity results
         //Check if toast would be displayed
         if(goodResultDelivered){
@@ -485,7 +534,55 @@ public class MainActivity extends AppCompatActivity {
         return throwAddQuestionActReqCode;
     }
 
-    public static void displayToast(Context context,String text, int toastLength,int gravity){
+    public int getThrowEditUserNameActReqCode() {
+        return throwEditUserNameActReqCode;
+    }
+
+    public static String getUsernameTable() {
+        return USERNAME_TABLE;
+    }
+
+    public static String getPsswrdTable() {
+        return PSSWRD_TABLE;
+    }
+
+    public static String getQuestionTable() {
+        return QUESTION_TABLE;
+    }
+
+    public static String getAnswerTable() {
+        return ANSWER_TABLE;
+    }
+
+    public static String getQuestionlistTable() {
+        return QUESTIONLIST_TABLE;
+    }
+
+    public static String getQuestionassignmentTable() {
+        return QUESTIONASSIGNMENT_TABLE;
+    }
+
+    public static String getIconTable() {
+        return ICON_TABLE;
+    }
+
+    public static String getApplogginTable() {
+        return APPLOGGIN_TABLE;
+    }
+
+    public static String getCategoryTable() {
+        return CATEGORY_TABLE;
+    }
+
+    public static String getAppstateTable() {
+        return APPSTATE_TABLE;
+    }
+
+    public static String getAccountsTable() {
+        return ACCOUNTS_TABLE;
+    }
+
+    public static void displayToast(Context context, String text, int toastLength, int gravity){
         Log.d("displayToast","Enter displayToast method in the MainActivity class.");
         Toast toast = Toast.makeText(context,text,toastLength);
         toast.setGravity(gravity,0,0);

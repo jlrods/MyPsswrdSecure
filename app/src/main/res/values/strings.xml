@@ -112,6 +112,11 @@
     <string name="userNameAdded">New user name added successfully!</string>
     <string name="userNameNotEntered">Sorry, no user name entered in the input field</string>
 
+    <!--    EditUserName Activity   -->
+    <string name="userNameNotChanged">Sorry, the user name value has been not changed</string>
+    <string name="userNameUpdated">The user name has bee updated</string>
+
+
     <!--    AddPsswrd Activity-->
     <string name="psswrdAdded">New password added successfully!</string>
     <string name="psswrdNotEntered">Sorry, no password entered in the input field</string>
@@ -131,6 +136,8 @@
     <string name="alertBoxNewPsswrd">Add password</string>
     <string name="alertBoxNewPsswrdMssg">Please, enter a new password</string>
     <string name="alertBoxNewPsswrdHint">Type password here...</string>
+
+
 
 
 

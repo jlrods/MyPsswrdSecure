@@ -113,6 +113,10 @@
     <string name="userNameAdded">Nuevo usuario agregado stisfactoriamente!</string>
     <string name="userNameNotEntered">Lo siento, no ha introducino un nombre de usuario</string>
 
+    <!--    EditUserName Activity   -->
+    <string name="userNameNotChanged">Lo siento, el nombre de usuario no ha sido cambiado</string>
+    <string name="userNameUpdated">El nombre de usuarion has sido actualizado</string>
+
     <!--    AddPsswrd Activity-->
     <string name="psswrdAdded">New password added successfully!</string>
     <string name="psswrdNotEntered">Lo siento, no ha introducino una contraseña</string>
