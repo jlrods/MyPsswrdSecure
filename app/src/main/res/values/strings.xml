@@ -114,12 +114,16 @@
 
     <!--    EditUserName Activity   -->
     <string name="userNameNotChanged">Sorry, the user name value has been not changed</string>
-    <string name="userNameUpdated">The user name has bee updated</string>
+    <string name="userNameUpdated">The user name has been updated</string>
 
 
     <!--    AddPsswrd Activity-->
     <string name="psswrdAdded">New password added successfully!</string>
     <string name="psswrdNotEntered">Sorry, no password entered in the input field</string>
+
+    <!--    EditUserName Activity   -->
+    <string name="psswrdNotChanged">Sorry, the password value has been not changed</string>
+    <string name="psswrdUpdated">The password has been updated</string>
 
     <!--    AddQuestion Activity    -->
     <string name="addQuestQuestionTag">Security question</string>

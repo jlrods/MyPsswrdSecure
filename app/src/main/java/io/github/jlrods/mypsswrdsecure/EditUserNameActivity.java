@@ -11,18 +11,17 @@ import android.widget.Toast;
 import javax.crypto.spec.IvParameterSpec;
 
 public class EditUserNameActivity extends AddUserNameActivity {
-    //Extract extra data from Bundle object
-    private Bundle extras = null;
+    //Attribute definition
+    private Bundle extras;
     //Method definition
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("OnCreateAddQuest","Enter onCreate method in the EditUserNameActivity class.");
-        //Get extras from previous activity
         this.extras = getIntent().getExtras();
         //Extract user name by passing in the _id attribute stored in the extras
         this.userName = UserName.extractUserName(this.accountsDB.getUserNameCursorByID(this.extras.getInt("_id")));
-        //Set the edit text field with the user name value after decription
+        //Set the edit text field with the user name value after decryption
         this.etNewItemField.setText(this.cryptographer.decryptText(userName.getValue(),new IvParameterSpec(userName.getIv())));
         Log.d("OnCreateAddQuest","Exit onCreate method in the EditUserNameActivity class.");
     }//End of onCreate method
@@ -55,6 +54,7 @@ public class EditUserNameActivity extends AddUserNameActivity {
                             if(this.accountsDB.updateTable(MainActivity.getUsernameTable(),values)){
                                 //Go back to previous activity
                                 intent.putExtra("userNameID",this.userName.get_id());
+                                result = true;
                                 setResult(RESULT_OK, intent);
                                 finish();
                                 Log.d("onOptionsItemSelected","The user name "+ userNameValue +" has been added into the DB through addNewUserName method in the AddUserNameActivity class.");

@@ -789,6 +789,20 @@ public class AccountsDB extends SQLiteOpenHelper {
     }//End of getPsswrdByID method
 
     //Method to get a specific user name, by passing in its DB _id as an argument
+    public Cursor getPsswrdCursorByID(int _id){
+        Log.d("getPsswrdCursorByID","Enter the getPsswrdCursorByID method in the AccountsDB class.");
+        Cursor cursor = this.runQuery("SELECT * FROM PSSWRD WHERE _id = "+ _id);
+        if(cursor != null && cursor.getCount() >0){
+            cursor.moveToFirst();
+            Log.d("getPsswrdCursorByID","Exit successfully (password with id " +_id+ " has been found) the getPsswrdCursorByID method in the AccountsDB class.");
+        }else{
+            Log.d("getPsswrdCursorByID","Exit the getUserNameByID method in the AccountsDB class without finding the password with id: "+_id);
+
+        }//End of if else statement
+        return cursor;
+    }//End of getUserNameByID method
+
+    //Method to get a specific user name, by passing in its DB _id as an argument
     public Cursor getPsswrdByName(String psswrd){
         Log.d("getUserNameByName","Enter the getUserNameByName method in the AccountsDB class.");
         //Declare and initialize a boolean flag to inform the name was found

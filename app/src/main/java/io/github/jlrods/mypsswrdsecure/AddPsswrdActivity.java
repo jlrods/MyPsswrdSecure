@@ -9,7 +9,7 @@ import android.widget.Toast;
 
 public class AddPsswrdActivity extends AddItemActivity {
     //Attributes to be used while saving the new question
-    private Psswrd psswrd = null;
+    protected Psswrd psswrd = null;
     //Method definition
 
     @Override

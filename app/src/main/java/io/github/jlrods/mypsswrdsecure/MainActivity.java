@@ -66,13 +66,14 @@ public class MainActivity extends AppCompatActivity {
 
     private static String RESOURCES = "Resources";
 
-     private static Cryptographer cryptographer;
+    private static Cryptographer cryptographer;
 
-     private int throwAddAccountActReqCode = 5566;
-     private static int throwAddQuestionActReqCode = 9876;
-     private int throwAddUserNameActReqCode = 5744;
-     private int throwAddPsswrdActReqCode = 9732;
-     private int throwEditUserNameActReqCode = 4475;
+    private int throwAddAccountActReqCode = 5566;
+    private static int throwAddQuestionActReqCode = 9876;
+    private int throwAddUserNameActReqCode = 5744;
+    private int throwAddPsswrdActReqCode = 9732;
+    private int throwEditUserNameActReqCode = 4475;
+    private int throwEditPsswrdActReqCode = 6542;
 
      //DB Table names
     private static final String USERNAME_TABLE = "USERNAME";
@@ -165,6 +166,13 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case 2:
                         PsswrdAdapter psswrdAdapter = new PsswrdAdapter(getBaseContext(),null);
+                        //Setup the onclick even listener
+                        psswrdAdapter.setOnClickListener(new View.OnClickListener(){
+                            @Override
+                            public void onClick(View v) {
+                                throwEditPsswrdActivity(v);
+                            }//End of onClick method
+                        });//End of setOnClickListener
                         MainActivity.updateRecyclerViewData(psswrdAdapter);
                         break;
                     case 3:
@@ -402,14 +410,14 @@ public class MainActivity extends AppCompatActivity {
 
     //Method to throw new AddTaskActivity
     private void throwEditUserNameActivity(View v){
-        Log.d("ThrowAddUser","Enter throwAddUserNameActivity method in the MainActivity class.");
+        Log.d("ThrowEditUser","Enter throwEditUserNameActivity method in the MainActivity class.");
         //rv
         RecyclerView rv = HomeFragment.getRv();
         //Get the item position in the adapter
-        int itemposition = rv.getChildAdapterPosition(v);
+        int itemPosition = rv.getChildAdapterPosition(v);
         //move the cursor to the task position in the adapter
         Cursor cursor = ((UserNameAdapter)rv.getAdapter()).getCursor();
-        cursor.moveToPosition(itemposition);
+        cursor.moveToPosition(itemPosition);
         //Extract the task object from the cursor row
         UserName userName = UserName.extractUserName(cursor);
         //Declare and instantiate a new intent object
@@ -419,7 +427,29 @@ public class MainActivity extends AppCompatActivity {
         i.putExtra("_id",userName.get_id());
         //Start the AddItemActivity class
         startActivityForResult(i,this.throwEditUserNameActReqCode);
-        Log.d("ThrowAddUser","Exit throwAddUserNameActivity method in the MainActivity class.");
+        Log.d("ThrowEditUser","Exit throwEditUserNameActivity method in the MainActivity class.");
+    }//End of throwAddTaskActivity
+
+    //Method to throw new AddTaskActivity
+    private void throwEditPsswrdActivity(View v){
+        Log.d("ThrowEditPss","Enter throwEditPsswrdActivity method in the MainActivity class.");
+        //rv
+        RecyclerView rv = HomeFragment.getRv();
+        //Get the item position in the adapter
+        int itemPosition = rv.getChildAdapterPosition(v);
+        //move the cursor to the task position in the adapter
+        Cursor cursor = ((PsswrdAdapter)rv.getAdapter()).getCursor();
+        cursor.moveToPosition(itemPosition);
+        //Extract the task object from the cursor row
+        Psswrd psswrd = Psswrd.extractPsswrd(cursor);
+        //Declare and instantiate a new intent object
+        Intent i= new Intent(MainActivity.this, EditPsswrdActivity.class );
+        //Add extras to the intent object, specifically the current category where the add button was pressed from
+        //i.putExtra("category",this.currentCategory.toString());
+        i.putExtra("_id",psswrd.get_id());
+        //Start the AddItemActivity class
+        startActivityForResult(i,this.throwEditPsswrdActReqCode);
+        Log.d("ThrowAddUser","Exit throwEditPsswrdActivity method in the MainActivity class.");
     }//End of throwAddTaskActivity
 
     //Method to receive and handle data coming from other activities such as: SelectLogoActivity,
@@ -484,7 +514,17 @@ public class MainActivity extends AppCompatActivity {
             toastText = getResources().getString(R.string.userNameUpdated);
         }else if(requestCode == throwEditUserNameActReqCode && resultCode == RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from EditUserNameActivity (received by MainActivity).");
+        }else if(requestCode == throwEditPsswrdActReqCode && resultCode == RESULT_OK){
+            Log.d("onActivityResult","Received GOOD result from EditUserNameActivity (received by MainActivity).");
+            ((PsswrdAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getPsswrdList());
+            //Set variable to display Toast
+            goodResultDelivered = true;
+            //Define text to display Toast to confirm the account has been added
+            toastText = getResources().getString(R.string.psswrdUpdated);
+        }else if(requestCode == throwEditPsswrdActReqCode && resultCode == RESULT_CANCELED){
+            Log.d("onActivityResult","Received BAD result from EditUserNameActivity (received by MainActivity).");
         }//End of if else statement chain to check activity results
+
         //Check if toast would be displayed
         if(goodResultDelivered){
             recyclerView.getAdapter().notifyDataSetChanged();

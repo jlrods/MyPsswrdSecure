@@ -36,6 +36,8 @@
             android:name=".AddPsswrdActivity" />
         <activity
             android:name=".EditUserNameActivity" />
+        <activity
+            android:name=".EditPsswrdActivity" />
     </application>
 
 </manifest>
