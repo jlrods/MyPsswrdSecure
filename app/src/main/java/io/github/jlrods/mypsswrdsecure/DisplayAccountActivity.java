@@ -823,7 +823,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
 
     //Private and Protected inner classes
 
-    //Class to handle snackbar undo click events
+    //Inner Class to handle snackbar undo click events
     protected class SnackBarClickHandler implements View.OnClickListener{
         //Attributes
         Object item;

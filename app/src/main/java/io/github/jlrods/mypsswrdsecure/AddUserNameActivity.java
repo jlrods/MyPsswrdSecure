@@ -38,41 +38,29 @@ public class AddUserNameActivity extends AddItemActivity{
                 String userNameValue = this.etNewItemField.getText().toString().trim();
                 byte[] userNameValueEncrypted =  null;
                 //Check the userName isn't empty
-                if(this.isFieldNotEmpty(this.etNewItemField)){
-                    //Check the userName isn't in the DB already
-                    this.cursor = accountsDB.getUserNameByName(userNameValue);
-                    if(this.cursor == null || this.cursor.getCount() ==0){
-                        //Encrypt the user name
-                        userNameValueEncrypted = this.cryptographer.encryptText(userNameValue);
-                        //If user name not in the list create new user object and store it in global variable used to build the account object
-                        this.userName = new UserName(userNameValueEncrypted,this.cryptographer.getIv().getIV());
-                        //Call DB method to insert  the user name object into the DB
-                        userNameID = this.accountsDB.addItem(this.userName);
-                        if(userNameID > 0 ){
-                            //Update the userName object ID and prepare data to exit activity
-                            this.userName.set_id(userNameID);
-                            intent.putExtra("userNameID",this.userName.get_id());
-                            setResult(RESULT_OK, intent);
-                            finish();
-                            Log.d("onOptionsItemSelected","The user name "+ userNameValue +" has been added into the DB through addNewUserName method in the AddUserNameActivity class.");
-                        }else{
-                            //Prompt the user the user name input failed to be inserted in the DB
-                            MainActivity.displayToast(this,getResources().getString(R.string.snackBarUserNotAdded),Toast.LENGTH_LONG,Gravity.CENTER);
-                            //Set activity result as cancelled so caller activity can decide what to do if this is the case
-                            setResult(RESULT_CANCELED, intent);
-                            finish();
-                            Log.d("onOptionsItemSelected","The user name "+ userNameValue +" has NOT been added into the DB through onOptionsItemSelected method in the AddUserNameActivity class, due to DB problem.");
-                        }//End of if else statement to check user name was saved in DB
-                    }//End of if else statement to check user name isn't in the DB
-                    else {
-                        //Prompt the user the user name input already exists in the list
-                        MainActivity.displayToast(this,getResources().getString(R.string.snackBarUserExists),Toast.LENGTH_LONG,Gravity.CENTER);
-                        Log.d("onOptionsItemSelected","The user name "+ userNameValue +" already exists in the DB.");
-                    }//End of if else statement to check user name in DB
-                }else{
-                    //Display toast to prompt user the input field is empty
-                    MainActivity.displayToast(this,getResources().getString(R.string.userNameNotEntered),Toast.LENGTH_LONG,Gravity.CENTER);
-                }//End of if else statement to check input field isn't empty
+                if(this.isDataValid(1)){
+                    //Encrypt the user name
+                    userNameValueEncrypted = this.cryptographer.encryptText(userNameValue);
+                    //If user name not in the list create new user object and store it in global variable used to build the account object
+                    this.userName = new UserName(userNameValueEncrypted,this.cryptographer.getIv().getIV());
+                    //Call DB method to insert  the user name object into the DB
+                    userNameID = this.accountsDB.addItem(this.userName);
+                    if(userNameID > 0 ){
+                        //Update the userName object ID and prepare data to exit activity
+                        this.userName.set_id(userNameID);
+                        intent.putExtra("userNameID",this.userName.get_id());
+                        setResult(RESULT_OK, intent);
+                        finish();
+                        Log.d("onOptionsItemSelected","The user name "+ userNameValue +" has been added into the DB through addNewUserName method in the AddUserNameActivity class.");
+                    }else{
+                        //Prompt the user the user name input failed to be inserted in the DB
+                        MainActivity.displayToast(this,getResources().getString(R.string.snackBarUserNotAdded),Toast.LENGTH_LONG,Gravity.CENTER);
+                        //Set activity result as cancelled so caller activity can decide what to do if this is the case
+                        setResult(RESULT_CANCELED, intent);
+                        finish();
+                        Log.d("onOptionsItemSelected","The user name "+ userNameValue +" has NOT been added into the DB through onOptionsItemSelected method in the AddUserNameActivity class, due to DB problem.");
+                    }//End of if else statement to check user name was saved in DB
+                }//End of if statement that check UI data is valid
                 break;
             case R.id.select_logo_cancel:
                 //Set activity result as cancelled so caller activity can decide what to do if this is the case
