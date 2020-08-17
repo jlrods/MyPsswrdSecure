@@ -121,9 +121,11 @@
     <string name="psswrdAdded">New password added successfully!</string>
     <string name="psswrdNotEntered">Sorry, no password entered in the input field</string>
 
-    <!--    EditUserName Activity   -->
+    <!--    EditPsswrd Activity   -->
     <string name="psswrdNotChanged">Sorry, the password value has been not changed</string>
     <string name="psswrdUpdated">The password has been updated</string>
+
+
 
     <!--    AddQuestion Activity    -->
     <string name="addQuestQuestionTag">Security question</string>
@@ -132,6 +134,11 @@
     <string name="questionAdded">New question added successfully!</string>
     <string name="questionNotEntered">Sorry, no question entered in the input field</string>
     <string name="answerNotEntered">Sorry, no answer entered in the input field</string>
+
+    <!--    EditQuestion Activity-->
+    <string name="answerNoTChanged">Sorry, the answer value has been not changed</string>
+    <string name="questionAnswerNoTChanged">Sorry, at least one value must be changed (question or answer)</string>
+    <string name="questionUpdated">The question has been updated</string>
 
     <!--    AlertDialog texts-->
     <string name="alertBoxNewUser">Add user name</string>

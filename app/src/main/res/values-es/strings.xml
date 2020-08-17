@@ -122,7 +122,7 @@
     <string name="psswrdNotEntered">Lo siento, no ha introducino una contraseña</string>
 
     <!--    EditUserName Activity   -->
-    <string name="psswrdNotChanged">Lo siento, la contrasseña no ha sido cambiado</string>
+    <string name="psswrdNotChanged">Lo siento, la contrasseña no ha sido cambiada</string>
     <string name="psswrdUpdated">La contrasseña  ha sido actualizada</string>
 
     <!--    AddQuestion Activity    -->
@@ -132,6 +132,11 @@
     <string name="questionAdded">Nueva pregunta agregada satisfactoriamente!</string>
     <string name="questionNotEntered">Lo siento, no ha introducino la pregunta</string>
     <string name="answerNotEntered">Lo siento, no ha introducino la respuesta</string>
+
+    <!--    EditQuestion Activity-->
+    <string name="answerNoTChanged">Lo siento, la respuesta no ha sido cambiada</string>
+    <string name="questionAnswerNoTChanged">Lo siento, al menos un valor debe ser cambiado (pregunta or respuesta)</string>
+    <string name="questionUpdated">La pregunta ha sido actualizada</string>
 
     <!--    AlertDialog texts-->
     <string name="alertBoxNewUser">Agregar Usuario</string>

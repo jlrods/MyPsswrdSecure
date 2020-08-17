@@ -17,13 +17,13 @@ public class EditUserNameActivity extends AddUserNameActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("OnCreateAddQuest","Enter onCreate method in the EditUserNameActivity class.");
+        Log.d("OnCreateEditUser","Enter onCreate method in the EditUserNameActivity class.");
         this.extras = getIntent().getExtras();
         //Extract user name by passing in the _id attribute stored in the extras
         this.userName = UserName.extractUserName(this.accountsDB.getUserNameCursorByID(this.extras.getInt("_id")));
         //Set the edit text field with the user name value after decryption
         this.etNewItemField.setText(this.cryptographer.decryptText(userName.getValue(),new IvParameterSpec(userName.getIv())));
-        Log.d("OnCreateAddQuest","Exit onCreate method in the EditUserNameActivity class.");
+        Log.d("OnCreateEditUser","Exit onCreate method in the EditUserNameActivity class.");
     }//End of onCreate method
 
     // Method to check the menu item selected and execute the corresponding actions

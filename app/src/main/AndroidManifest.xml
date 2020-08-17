@@ -38,6 +38,8 @@
             android:name=".EditUserNameActivity" />
         <activity
             android:name=".EditPsswrdActivity" />
+        <activity
+            android:name=".EditQuestionActivity" />
     </application>
 
 </manifest>

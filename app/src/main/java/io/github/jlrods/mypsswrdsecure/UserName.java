@@ -13,7 +13,6 @@ import javax.crypto.spec.IvParameterSpec;
 class UserName extends StringValue {
     //Attribute definition
     protected long dateCreated;
-    protected static Cryptographer cryptographer;
 
     //Method definition
 
@@ -22,7 +21,6 @@ class UserName extends StringValue {
         super(_id,value,iv);
         Log.d("UserNameFullConst","Enter UserName Full Constructor");
         this.dateCreated = dateCreated;
-        cryptographer = MainActivity.getCryptographer();
         Log.d("UserNameFullConst","Exit UserName Full Constructor");
     }
     public UserName(int _id, byte[] value, byte[] iv){
@@ -70,13 +68,4 @@ class UserName extends StringValue {
         Log.d("Ext_ExtractUser","Exit extractUserName method in the UserName class.");
         return userName;
     }// End of extractPsswrd method
-
-//    //Method to encrypt sensible data before sending it to DB
-//    protected byte[] encryptData(String data){
-//        return this.cryptographer.encryptText(data);
-//    }
-//    //Method to decrypt sensible data when retrieving encrypted data from DB
-//    protected String decryptData(byte[] encryptedText, IvParameterSpec initVector){
-//        return this.cryptographer.decryptText(encryptedText,initVector);
-//    }
 }// End of user Class

@@ -720,8 +720,8 @@ public class AccountsDB extends SQLiteOpenHelper {
             cursor.moveToFirst();
             Log.d("getUserNameByID","Exit successfully (user name with id " +_id+ " has been found) the getUserNameByID method in the AccountsDB class.");
         }else{
+            cursor = null;
             Log.d("getUserNameByID","Exit the getUserNameByID method in the AccountsDB class without finding the user name with id: "+_id);
-
         }//End of if else statement
         return cursor;
     }//End of getUserNameByID method
@@ -796,8 +796,8 @@ public class AccountsDB extends SQLiteOpenHelper {
             cursor.moveToFirst();
             Log.d("getPsswrdCursorByID","Exit successfully (password with id " +_id+ " has been found) the getPsswrdCursorByID method in the AccountsDB class.");
         }else{
+            cursor = null;
             Log.d("getPsswrdCursorByID","Exit the getUserNameByID method in the AccountsDB class without finding the password with id: "+_id);
-
         }//End of if else statement
         return cursor;
     }//End of getUserNameByID method
@@ -945,7 +945,10 @@ public class AccountsDB extends SQLiteOpenHelper {
     //Method to get a specific question, by passing in its DB _id as an argument
     public Question getQuestionByID(int _id){
         Log.d("getQuestionByID","Enter the getQuestionByID method in the AccountsDB class.");
-        Cursor cursor = this.runQuery("SELECT * FROM QUESTION  JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id WHERE QUESTION._id = "+ _id);
+        //Cursor cursor = this.runQuery("SELECT * FROM QUESTION  JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id WHERE QUESTION._id = "+ _id);
+        Cursor cursor = this.runQuery("SELECT QUESTION._id, QUESTION.Value AS Q, ANSWER._id AS AnswerID,ANSWER.Value AS Answer, " +
+                "ANSWER.initVector AS initVector FROM QUESTION  " +
+                "LEFT JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id WHERE QUESTION._id = "+ _id);
         if(cursor != null && cursor.getCount() >0){
             cursor.moveToFirst();
             Log.d("getQuestionByID","Exit successfully (QUESTION with id " +_id+ " has been found) the getQuestionByID method in the AccountsDB class.");
@@ -962,12 +965,33 @@ public class AccountsDB extends SQLiteOpenHelper {
         if(value.contains(apostrophe)){
             value = includeApostropheEscapeChar(value);
         }
-        Cursor cursor = this.runQuery("SELECT * FROM QUESTION WHERE QUESTION.Value = '"+ value+"'");
+        //Cursor cursor = this.runQuery("SELECT * FROM QUESTION WHERE QUESTION.Value = '"+ value+"'");
+        Cursor cursor = this.runQuery("SELECT QUESTION._id, QUESTION.Value AS Q, ANSWER._id AS AnswerID,ANSWER.Value AS Answer, " +
+                "ANSWER.initVector AS initVector FROM QUESTION  " +
+                "JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id WHERE QUESTION.Value = '"+  value+"'");
         if(cursor != null && cursor.getCount() >0){
             cursor.moveToFirst();
             Log.d("getQuestionByValue","Exit successfully (QUESTION with value " +value+ " has been found) the getQuestionByValue method in the AccountsDB class.");
         }else{
+            cursor = null;
             Log.d("getQuestionByID","Exit the getQuestionByID method in the AccountsDB class without finding the account with value: "+value);
+        }//End of if else statement
+        return cursor;
+    }//End of getQuestionByID method
+
+    //Method to get a specific question, by passing in its DB _id as an argument
+    public Cursor getListOfQuestionsExceptTheOnePassedIn(String value){
+        Log.d("getQuestExceptPassIn","Enter the getQuestionByValue method in the AccountsDB class.");
+        if(value.contains(apostrophe)){
+            value = includeApostropheEscapeChar(value);
+        }
+        Cursor cursor = this.runQuery("SELECT * FROM QUESTION WHERE QUESTION.Value <> '"+ value+"'");
+        if(cursor != null && cursor.getCount() >0){
+            cursor.moveToFirst();
+            Log.d("getQuestExceptPassIn","Exit successfully (QUESTION with value " +value+ " has been found) the getQuestionByValue method in the AccountsDB class.");
+        }else{
+            cursor = null;
+            Log.d("getQuestExceptPassIn","Exit the getQuestionByID method in the AccountsDB class without finding the account with value: "+value);
         }//End of if else statement
         return cursor;
     }//End of getQuestionByID method
@@ -975,11 +999,17 @@ public class AccountsDB extends SQLiteOpenHelper {
     //Method to get a question cursor by passing in its DB id as argument
     public Cursor getQuestionCursorByID(int _id){
         Log.d("getQuestionCursorByID0","Enter the getQuestionCursorByID method in the AccountsDB class.");
-        Cursor question = this.runQuery("SELECT QUESTION._id, QUESTION.Value AS Q, ANSWER._id AS AnswerID,ANSWER.Value AS Answer, " +
+        Cursor cursor = this.runQuery("SELECT QUESTION._id, QUESTION.Value AS Q, ANSWER._id AS AnswerID,ANSWER.Value AS Answer, " +
                 "ANSWER.initVector AS initVector FROM QUESTION  " +
-                "JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id WHERE QUESTION._id = "+ _id);
-        Log.d("getQuestionCursorByID0","Exit the getQuestionCursorByID method in the AccountsDB class.");
-        return question;
+                "LEFT JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id WHERE QUESTION._id = "+ _id);
+        if(cursor != null && cursor.getCount() >0){
+            cursor.moveToFirst();
+            Log.d("getPsswrdCursorByID","Exit successfully (password with id " +_id+ " has been found) the getPsswrdCursorByID method in the AccountsDB class.");
+        }else{
+            cursor = null;
+            Log.d("getPsswrdCursorByID","Exit the getUserNameByID method in the AccountsDB class without finding the password with id: "+_id);
+        }//End of if else statement
+        return cursor;
     }//End of getQuestionCursorByID method
 
     //Method to get a a two question cursor by passing in their DB ids as arguments
