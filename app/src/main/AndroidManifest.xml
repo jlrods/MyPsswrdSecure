@@ -30,6 +30,16 @@
             android:name=".SelectLogoActivity" />
         <activity
             android:name=".AddQuestionActivity" />
+        <activity
+            android:name=".AddUserNameActivity" />
+        <activity
+            android:name=".AddPsswrdActivity" />
+        <activity
+            android:name=".EditUserNameActivity" />
+        <activity
+            android:name=".EditPsswrdActivity" />
+        <activity
+            android:name=".EditQuestionActivity" />
     </application>
 
 </manifest>

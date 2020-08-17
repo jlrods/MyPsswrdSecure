@@ -7,7 +7,8 @@
     android:layout_height="match_parent"
     tools:context=".AddAccountActivity">
     <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <LinearLayout
@@ -348,7 +349,7 @@
                 android:id="@+id/layoutDates"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1.05"
+                android:layout_weight="1.01"
                 android:orientation="horizontal">
                 <RelativeLayout
                     android:id="@+id/subLayout_accDateCreated"

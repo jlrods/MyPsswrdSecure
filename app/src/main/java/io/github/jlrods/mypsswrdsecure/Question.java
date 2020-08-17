@@ -42,10 +42,17 @@ class Question{
         Log.d("QuestionConst3","Exit Question Constructor 3 arguments");
     }
 
+    public Question(String value){
+        this(value,null);
+        Log.d("QuestionConst4","Exit Question Constructor 1 arguments");
+    }
+
     public Question(){
         this("",null);
-        Log.d("QuestionConst4","Exit Question Constructor no arguments");
+        Log.d("QuestionConst5","Exit Question Constructor no arguments");
     }
+
+
 
     //
     @NonNull

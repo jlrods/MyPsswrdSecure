@@ -3,20 +3,11 @@ package io.github.jlrods.mypsswrdsecure;
 import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
-import android.util.SparseBooleanArray;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import javax.crypto.spec.IvParameterSpec;
 
 public class SecurityQuestionAdapter extends UserNameAdapter {
 
@@ -24,6 +15,20 @@ public class SecurityQuestionAdapter extends UserNameAdapter {
         super(context, cursor);
     }//End of default constructor
 
+    @Override
+    public UserNameAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+
+        Log.d("QuestAdaptVHOnCre","Enter onCreateViewHolder method in the SecurityQuestionAdapter class.");
+//        Context context = parent.getContext();
+//        LayoutInflater inflater = LayoutInflater.from(context);
+//        // Inflate the custom layout
+//        View view = inflater.inflate(R.layout.element_string_value,parent,false);
+//        view.setOnClickListener(this.listener);
+        // Return a new holder instance
+        SecurityQuestionAdapter.ViewHolder viewHolder = super.onCreateViewHolder(parent,viewType);
+        Log.d("QuestAdaptVHOnCre","Exit onCreateViewHolder method in the SecurityQuestionAdapter class.");
+        return viewHolder;
+    }//End of onCreateViewHolder method
 
     @Override
     public void onBindViewHolder(@NonNull SecurityQuestionAdapter.ViewHolder holder, int position) {
@@ -37,9 +42,6 @@ public class SecurityQuestionAdapter extends UserNameAdapter {
         //holder.tvStrength.setVisibility(View.VISIBLE);
         //holder.tvStrength.setText(psswrd.getStrength().toString());
         holder.imgIcon.setImageResource(R.mipmap.ic_shield_lock_black_48dp);
-        holder.tvStringValue.setText(question.getValue());
-
-
         //Declare and instantiate an int to hold the string id from resources
         int questionID = context.getResources().getIdentifier(question.getValue(),"string",context.getPackageName());
         //If textID is 0, means it's not stored in the app resources
@@ -58,6 +60,4 @@ public class SecurityQuestionAdapter extends UserNameAdapter {
         holder.tvTimesUsed.setText(String.valueOf(timesUsed));
         Log.d("SecQuestOnBindVH","Exit onBindViewHolder method in SecurityQuestionAdapter class.");
     }//End of onBindViewHolder method
-
-
 }//End of  SecurityQuestionAdapter class

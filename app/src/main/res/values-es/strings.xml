@@ -48,9 +48,9 @@
     <!--    TabBar Menu texts-->
     <string name="about">Acerca...</string>
     <string name="action_search">Buscar</string>
-    <string name="action_accounts">List de Cuentas</string>
-    <string name="action_userNames">Nombres de Usuario</string>
-    <string name="action_psswrds">Lista de Contraseñas</string>
+    <string name="action_accounts">List de cuentas</string>
+    <string name="action_userNames">Nombres de usuario</string>
+    <string name="action_psswrds">Lista de contraseñas</string>
     <string name="action_secQuestions">Preguntas de seguridad</string>
 
     <!--    Add account layout icons-->
@@ -60,8 +60,8 @@
     <string name="account_userName">Nombre de usuario:</string>
     <string name="account_psswrd">Clave:</string>
     <string name="account_secQuestion">Preguntas de seguridad:</string>
-    <string name="account_isFavoriteChecked">Toque la estrella para marcar como Favorita</string>
-    <string name="account_isFavoriteUnchecked">Toque la estrella para desmarcar como Favorita</string>
+    <string name="account_isFavoriteChecked">Toque la estrella para marcar como favorita</string>
+    <string name="account_isFavoriteUnchecked">Toque la estrella para desmarcar como favorita</string>
     <string name="account_new">Nuevo</string>
     <string name="account_addQuestion">Agregar</string>
     <string name="account_dateCreated">Fecha de creación:</string>
@@ -98,19 +98,45 @@
 
     <!--    Add/Edit Account Activity-->
     <string name="addEditAccName">Introduzca el nomber de la cuenta...</string>
-    <string name="selectCatHint">Seleccione una Categoría...</string>
+    <string name="selectCatHint">Seleccione una categoría...</string>
     <string name="selectUserHint">Seleccione un nombre de Usuario...</string>
-    <string name="selectPsswrdHint">Seleccione una Contraseña...</string>
+    <string name="selectPsswrdHint">Seleccione una contraseña...</string>
     <string name="accountEmptyName">Lo siento, no ha introducino un nombre para la cuenta nueva</string>
     <string name="accountNameInUse">Lo siento, el nombre de la cuenta que introdujo ya está en uso</string>
     <string name="accountRenewDateInPast">Lo siento, la fecha de renovacion de la contraseña es invalida. La fecha debe ser en el futuro</string>
     <string name="accountNoCatSelected">Los siento, no ha seleccionado una categoria en el menu despegable</string>
     <string name="accountNoUserSelected">Los siento, no ha seleccionado un nombre de usuario en el menu despegable</string>
     <string name="accountNoPsswrdSelected">Los siento, no ha seleccionado una contraseña en el menu despegable</string>
+    <string name="accountAdded"> has sido agregada a sus lista!</string>
+
+    <!--    AddUserName Activity-->
+    <string name="userNameAdded">Nuevo usuario agregado stisfactoriamente!</string>
+    <string name="userNameNotEntered">Lo siento, no ha introducino un nombre de usuario</string>
+
+    <!--    EditUserName Activity   -->
+    <string name="userNameNotChanged">Lo siento, el nombre de usuario no ha sido cambiado</string>
+    <string name="userNameUpdated">El nombre de usuario ha sido actualizado</string>
+
+    <!--    AddPsswrd Activity-->
+    <string name="psswrdAdded">New password added successfully!</string>
+    <string name="psswrdNotEntered">Lo siento, no ha introducino una contraseña</string>
+
+    <!--    EditUserName Activity   -->
+    <string name="psswrdNotChanged">Lo siento, la contrasseña no ha sido cambiada</string>
+    <string name="psswrdUpdated">La contrasseña  ha sido actualizada</string>
 
     <!--    AddQuestion Activity    -->
+    <string name="addQuestQuestionTag">Pregunta de seguridad</string>
     <string name="addQuestQuestionHint">Escriba la pregunata nueva aquí...</string>
     <string name="addQuestAnswerHint">Escriba la respuesta nueva aquí...</string>
+    <string name="questionAdded">Nueva pregunta agregada satisfactoriamente!</string>
+    <string name="questionNotEntered">Lo siento, no ha introducino la pregunta</string>
+    <string name="answerNotEntered">Lo siento, no ha introducino la respuesta</string>
+
+    <!--    EditQuestion Activity-->
+    <string name="answerNoTChanged">Lo siento, la respuesta no ha sido cambiada</string>
+    <string name="questionAnswerNoTChanged">Lo siento, al menos un valor debe ser cambiado (pregunta or respuesta)</string>
+    <string name="questionUpdated">La pregunta ha sido actualizada</string>
 
     <!--    AlertDialog texts-->
     <string name="alertBoxNewUser">Agregar Usuario</string>
@@ -131,11 +157,4 @@
     <string name="snackBarPsswrdExists">Disculpa, la contraseña ya existe</string>
     <string name="snackBarQuestionNotAdded">Disculpa, la pregunta no fue guardada</string>
     <string name="snackBarQuestionExists">Disculpa, la pregunta ya existe</string>
-
-    <string name="sample_text">4.- The \"+/-\" button allows to toggle between positive and negative numbers and
-        vice versa. This button can only be used when the Temperature property has been selected, as transforming
-        negative magnitudes of weight and volume does not make any sense.Negative sign can be set, even when the
-        input box is empty and has no numerical value yet. Negative values are only possible for Celsius and Fahrenheit scales,
-        since Kelvin is an absolute scale, which minimum point is zero. Minimum valid values for Celsius and Fahrenheit
-        are -273.15°C and -456.67°F, respectively .</string>
 </resources>
