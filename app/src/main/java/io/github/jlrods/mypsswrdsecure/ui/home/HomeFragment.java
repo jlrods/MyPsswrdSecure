@@ -88,6 +88,12 @@ public class HomeFragment extends Fragment {
                 Log.d("ThrowEditAcc","Exit throwEditAccountActivity method in the MainActivity class.");
             }//End of onClick method
         });//End of setOnClickListener
+        accountAdapter.setStarImgOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.toggleIsFavorite(v);
+            }
+        });
         MainActivity.updateRecyclerViewData(accountAdapter);
     }
 
@@ -178,7 +184,6 @@ public class HomeFragment extends Fragment {
         }else if(requestCode == MainActivity.getThrowEditAccountActReqCode() && resultCode == Activity.RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from EditAccountActivity (received by HomeFragment).");
         }
-
         //Check if toast would be displayed
         if(goodResultDelivered){
             this.rv.getAdapter().notifyDataSetChanged();
