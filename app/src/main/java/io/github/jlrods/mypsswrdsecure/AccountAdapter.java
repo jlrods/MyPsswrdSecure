@@ -68,10 +68,13 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
             //Call static method that will get the resource by passing in it's name and set it as the resource image of the ImageView passed in
             MainActivity.setAccountLogoImage(holder.imgIcon,context,account.getIcon().getName());
         }//FIXME: Here there will be another possibility: The icon comes  from URI in phone
-        //Set up correct star image based on the Account's  isFavorite attribute state
         if(account.isFavorite()){
             holder.imgFavoriteStar.setImageResource(android.R.drawable.btn_star_big_on);
+        }else{
+            holder.imgFavoriteStar.setImageResource(android.R.drawable.btn_star_big_off);
         }
+        //Include the item's adapter position and the isFavorite state in the StateArray list
+        itemStateArray.put(position,account.isFavorite());
         //Set up the onclick event listener for the star image
         holder.imgFavoriteStar.setOnClickListener(this.starImgOnClickListener);
         holder.tvAccountName.setText(account.getName());
@@ -130,4 +133,10 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
             Log.d("AccountVHCreator","Exit ViewHolder constructor in the AccountAdapter class.");
         }//End of ViewHolder
     }//End of ViewHolder inner class
+
+    //Method to update the key value list that keeps record of current state of each task's check box
+    public void updateItemIsFavorite(int position,boolean isFavorite){
+        //Add or overwrite the checkbox list
+        itemStateArray.put(position,isFavorite);
+    }//End of updateItemIsSelected method
 }
