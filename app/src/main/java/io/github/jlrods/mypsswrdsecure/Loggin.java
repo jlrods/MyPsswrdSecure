@@ -44,7 +44,7 @@ abstract class Loggin {
     public void setName(String name) {
         this.name = name;
     }
-    protected int get_id() {
+    public int get_id() {
         return _id;
     }
 

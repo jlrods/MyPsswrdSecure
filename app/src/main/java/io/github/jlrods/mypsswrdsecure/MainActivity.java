@@ -11,6 +11,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.Menu;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -75,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
     private int throwEditUserNameActReqCode = 4475;
     private int throwEditPsswrdActReqCode = 6542;
     private int throwEditQuestionActReqCode = 2456;
+    private static int throwEditAccountActReqCode = 1199;
 
      //DB Table names
     private static final String USERNAME_TABLE = "USERNAME";
@@ -151,12 +153,19 @@ public class MainActivity extends AppCompatActivity {
                     case 0:
                         //Consider the category selected on drawer menu to run correct sql query
                         AccountAdapter accountAdapter = new AccountAdapter(getBaseContext(),null);
+                        //Setup the onclick event listener
+                        accountAdapter.setOnClickListener(new View.OnClickListener(){
+                            @Override
+                            public void onClick(View v) {
+                                throwEditAccountActivity(v);
+                            }//End of onClick method
+                        });//End of setOnClickListener
                         MainActivity.updateRecyclerViewData(accountAdapter);
                         break;
                     case 1:
                         //Create rv adapter for the user name tab
                         UserNameAdapter userNameAdapter = new UserNameAdapter(getBaseContext(),null);
-                        //Setup the onclick even listener
+                        //Setup the onclick event listener
                         userNameAdapter.setOnClickListener(new View.OnClickListener(){
                             @Override
                             public void onClick(View v) {
@@ -167,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case 2:
                         PsswrdAdapter psswrdAdapter = new PsswrdAdapter(getBaseContext(),null);
-                        //Setup the onclick even listener
+                        //Setup the onclick event listener
                         psswrdAdapter.setOnClickListener(new View.OnClickListener(){
                             @Override
                             public void onClick(View v) {
@@ -239,6 +248,7 @@ public class MainActivity extends AppCompatActivity {
 //        byte[] joseleoEncrypt = cryptographer.encryptText("joseleo");
 //        String joseleoDecrypt = cryptographer.decryptText(joseleoEncrypt, cryptographer.getIv());
         accountsDB = new AccountsDB(this);
+
 //        String test3 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
         //Save it IV in the APPSTATE Table
 //        ContentValues appStateValues = new ContentValues();
@@ -416,6 +426,28 @@ public class MainActivity extends AppCompatActivity {
     }//End of throwAddTaskActivity
 
     //Method to throw new AddTaskActivity
+    private void throwEditAccountActivity(View v){
+        Log.d("ThrowEditAcc","Enter throwEditAccountActivity method in the MainActivity class.");
+        //rv
+        RecyclerView rv = HomeFragment.getRv();
+        //Get the item position in the adapter
+        int itemPosition = rv.getChildAdapterPosition(v);
+        //move the cursor to the task position in the adapter
+        Cursor cursor = ((AccountAdapter)rv.getAdapter()).getCursor();
+        cursor.moveToPosition(itemPosition);
+        //Extract the task object from the cursor row
+        Account account = Account.extractAccount(cursor);
+        //Declare and instantiate a new intent object
+        Intent i= new Intent(MainActivity.this, EditAccountActivity.class );
+        //Add extras to the intent object, specifically the current category where the add button was pressed from
+        //i.putExtra("category",this.currentCategory.toString());
+        i.putExtra("_id",account.get_id());
+        //Start the AddItemActivity class
+        startActivityForResult(i,throwEditAccountActReqCode);
+        Log.d("ThrowEditAcc","Exit throwEditAccountActivity method in the MainActivity class.");
+    }//End of throwAddTaskActivity
+
+    //Method to throw new AddTaskActivity
     private void throwEditUserNameActivity(View v){
         Log.d("ThrowEditUser","Enter throwEditUserNameActivity method in the MainActivity class.");
         //rv
@@ -503,7 +535,7 @@ public class MainActivity extends AppCompatActivity {
             //Define text to display Toast to confirm the account has been added
             //Set variable to display Toast
             goodResultDelivered = true;
-            toastText = data.getExtras().getString("accountName ")+ getResources().getString(R.string.accountAdded);
+            toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountAdded);
         }else if(requestCode ==this.throwAddAccountActReqCode && resultCode == RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from AddAccountActivity (received by MainActivity).");
             //Check if result comes from AddAccountActivity
@@ -612,6 +644,10 @@ public class MainActivity extends AppCompatActivity {
         return throwAddQuestionActReqCode;
     }
 
+    public static int getThrowEditAccountActReqCode() {
+        return throwEditAccountActReqCode;
+    }
+
     public int getThrowEditUserNameActReqCode() {
         return throwEditUserNameActReqCode;
     }
@@ -667,4 +703,14 @@ public class MainActivity extends AppCompatActivity {
         toast.show();
         Log.d("displayToast","Exit displayToast method in the MainActivity class.");
     }//End of displayToast method
+
+    //Method to set account logo resource image
+    public static void setAccountLogoImage(ImageView imgLogo, Context context, String iconResName){
+        //Extract all the logos from the app resources
+        int idRes;
+        Resources r = context.getResources();
+        idRes = r.getIdentifier(iconResName,"drawable",context.getPackageName());
+        imgLogo.setImageResource(idRes);
+    }
+
 }//End of MainActivity class.

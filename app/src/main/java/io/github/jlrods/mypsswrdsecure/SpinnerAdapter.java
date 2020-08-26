@@ -79,4 +79,6 @@ public class SpinnerAdapter extends CursorAdapter implements android.widget.Spin
     public void setCursor(Cursor c) {
         this.c = c;
     }
+
+
 }//End of SpinnerAdapter class

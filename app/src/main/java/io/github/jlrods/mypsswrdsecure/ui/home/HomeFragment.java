@@ -1,20 +1,27 @@
 package io.github.jlrods.mypsswrdsecure.ui.home;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import io.github.jlrods.mypsswrdsecure.Account;
 import io.github.jlrods.mypsswrdsecure.AccountAdapter;
 import io.github.jlrods.mypsswrdsecure.AccountsDB;
+import io.github.jlrods.mypsswrdsecure.EditAccountActivity;
 import io.github.jlrods.mypsswrdsecure.MainActivity;
 import io.github.jlrods.mypsswrdsecure.PsswrdAdapter;
 import io.github.jlrods.mypsswrdsecure.R;
@@ -49,11 +56,40 @@ public class HomeFragment extends Fragment {
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(getActivity().getBaseContext(), DividerItemDecoration.VERTICAL);
         this.rv.addItemDecoration(itemDecoration);
         this.accountsDB = new AccountsDB(getActivity().getBaseContext());
-        AccountAdapter accountAdapter = new AccountAdapter(getActivity().getBaseContext(),null);
-        MainActivity.updateRecyclerViewData(accountAdapter);
+
         Log.d("HomeFragOnCreate","Exit onCreate method in HomeFragment class.");
         return root;
     }//End of onCreateView method
+
+    @Override
+    public void onActivityCreated(Bundle state) {
+        super.onActivityCreated(state);
+        AccountAdapter accountAdapter = new AccountAdapter(getActivity().getBaseContext(),null);
+        accountAdapter.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Log.d("ThrowEditAcc","Enter throwEditAccountActivity method in the MainActivity class.");
+                //rv
+                //RecyclerView rv = HomeFragment.getRv();
+                //Get the item position in the adapter
+                int itemPosition = rv.getChildAdapterPosition(v);
+                //move the cursor to the task position in the adapter
+                Cursor cursor = ((AccountAdapter)rv.getAdapter()).getCursor();
+                cursor.moveToPosition(itemPosition);
+                //Extract the task object from the cursor row
+                Account account = Account.extractAccount(cursor);
+                //Declare and instantiate a new intent object
+                Intent i= new Intent(getContext(), EditAccountActivity.class );
+                //Add extras to the intent object, specifically the current category where the add button was pressed from
+                //i.putExtra("category",this.currentCategory.toString());
+                i.putExtra("_id",account.get_id());
+                //Start the AddItemActivity class
+                startActivityForResult(i,MainActivity.getThrowEditAccountActReqCode());
+                Log.d("ThrowEditAcc","Exit throwEditAccountActivity method in the MainActivity class.");
+            }//End of onClick method
+        });//End of setOnClickListener
+        MainActivity.updateRecyclerViewData(accountAdapter);
+    }
 
     //Getters and setters method
     public static RecyclerView getRv() {
@@ -122,4 +158,35 @@ public class HomeFragment extends Fragment {
         Log.d("HomeFragOnCreate","Call getPsswrdList method in HomeFragment class.");
         return this.accountsDB.getTimesUsedUserName(psswrd);
     }
+
+    //Method to receive and handle data coming from other activities such as: SelectLogoActivity,
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d("onActivityResult","Enter the onActivityResult method in the HomeFragment class.");
+        //Check if result comes from AddAccountActivity
+        String toastText = "";
+        //Flag to display Toast and update RV
+        boolean goodResultDelivered = false;
+        if (requestCode == MainActivity.getThrowEditAccountActReqCode() && resultCode == Activity.RESULT_OK) {
+            Log.d("onActivityResult","Received GOOD result from EditAccountActivity (received by HomeFragment).");
+            ((AccountAdapter) this.rv.getAdapter()).setCursor(accountsDB.getAccountsList());
+            //Define text to display Toast to confirm the account has been added
+            //Set variable to display Toast
+            goodResultDelivered = true;
+            toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountUpdated);
+        }else if(requestCode == MainActivity.getThrowEditAccountActReqCode() && resultCode == Activity.RESULT_CANCELED){
+            Log.d("onActivityResult","Received BAD result from EditAccountActivity (received by HomeFragment).");
+        }
+
+        //Check if toast would be displayed
+        if(goodResultDelivered){
+            this.rv.getAdapter().notifyDataSetChanged();
+            //Move to new account position
+            //Display Toast to confirm the account has been added
+            MainActivity.displayToast(getContext(),toastText, Toast.LENGTH_LONG, Gravity.CENTER);
+        }//End of if statement to check good result was delivered
+        //End of if else statement to check the data comes from one of the thrown activities
+        Log.d("onActivityResult","Exit the onActivityResult method in the DisplayAccountActivity class.");
+    }//End of onActivityResult method
 }//End of HomeFragment class

@@ -71,17 +71,17 @@ class IconAdapter extends RecyclerView.Adapter<IconAdapter.ViewHolder> {
         // Get the data model based on position
         Icon logo = iconList.get(position);
         // Set item views based on your views and data model
-        ImageView tvLogo = holder.icon;
+        ImageView imgLogo = holder.icon;
         //Set image resource file by passing in the resource number, which was stored in the _id attribute
-        tvLogo.setImageResource(logo.getResourceID());
+        imgLogo.setImageResource(logo.getResourceID());
         //Check if the logo isSelected attribute is true
         if(logo.isSelected()){
             //If that is the case set background color to itemSelected colour from Color values file
-            tvLogo.setBackgroundColor(ContextCompat.getColor(this.context, R.color.itemSelected));
+            imgLogo.setBackgroundColor(ContextCompat.getColor(this.context, R.color.itemSelected));
             //this.selectedPosition = position;
         }else{
             //Otherwise, set background to white background
-            tvLogo.setBackgroundColor(ContextCompat.getColor(this.context, R.color.whiteBackground));
+            imgLogo.setBackgroundColor(ContextCompat.getColor(this.context, R.color.whiteBackground));
         }//End of if else statement to check if logo is selected
         //Put the int boolean pair in the SparseBooleanArray that stores the item selected in the RecyclerViewer object
         this.itemStateArray.put(position,logo.isSelected());

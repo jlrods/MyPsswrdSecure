@@ -40,6 +40,8 @@
             android:name=".EditPsswrdActivity" />
         <activity
             android:name=".EditQuestionActivity" />
+        <activity
+            android:name=".EditAccountActivity" />
     </application>
 
 </manifest>

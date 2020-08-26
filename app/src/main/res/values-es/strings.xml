@@ -96,7 +96,7 @@
     <string name="strVal_times_used">Veces en uso:</string>
     <string name="strVal_date_created">Creado:</string>
 
-    <!--    Add/Edit Account Activity-->
+    <!--    Add Account Activity-->
     <string name="addEditAccName">Introduzca el nomber de la cuenta...</string>
     <string name="selectCatHint">Seleccione una categoría...</string>
     <string name="selectUserHint">Seleccione un nombre de Usuario...</string>
@@ -108,6 +108,10 @@
     <string name="accountNoUserSelected">Los siento, no ha seleccionado un nombre de usuario en el menu despegable</string>
     <string name="accountNoPsswrdSelected">Los siento, no ha seleccionado una contraseña en el menu despegable</string>
     <string name="accountAdded"> has sido agregada a sus lista!</string>
+
+    <!--    Edit Account Activity-->
+    <string name="accountNotChanged">Sorry, the account attributes have not been changed. Please, updated one of the values at least</string>
+    <string name="accountUpdated"> cuenta ha sido actualizada!</string>
 
     <!--    AddUserName Activity-->
     <string name="userNameAdded">Nuevo usuario agregado stisfactoriamente!</string>
@@ -137,6 +141,7 @@
     <string name="answerNoTChanged">Lo siento, la respuesta no ha sido cambiada</string>
     <string name="questionAnswerNoTChanged">Lo siento, al menos un valor debe ser cambiado (pregunta or respuesta)</string>
     <string name="questionUpdated">La pregunta ha sido actualizada</string>
+
 
     <!--    AlertDialog texts-->
     <string name="alertBoxNewUser">Agregar Usuario</string>
