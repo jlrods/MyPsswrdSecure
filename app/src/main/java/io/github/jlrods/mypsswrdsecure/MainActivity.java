@@ -748,7 +748,7 @@ public class MainActivity extends AppCompatActivity {
         }else{
             account.setFavorite(true);
         }
-        accountAdapter.updateItemIsFavorite(adapterPosition,account.isFavorite());
+        //accountAdapter.updateItemIsFavorite(adapterPosition,account.isFavorite());
         //Call DB method to update the account item in the Accounts table
         ContentValues values = new ContentValues();
         values.put("_id",account.get_id());

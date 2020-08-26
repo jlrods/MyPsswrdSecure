@@ -1,21 +1,12 @@
 package io.github.jlrods.mypsswrdsecure;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-
-import javax.crypto.spec.IvParameterSpec;
 
 public class AddAccountActivity extends DisplayAccountActivity {
 
@@ -25,10 +16,6 @@ public class AddAccountActivity extends DisplayAccountActivity {
         Log.d("OnCreateDispAcc", "Enter onCreate method in the a AddAccountActivity class.");
         //Set up the Created date
         this.setDateText(this.tvAccDateCreated,System.currentTimeMillis());
-//        //Set up current date into the Created date field
-//        Calendar calendar = Calendar.getInstance();
-//        calendar.setTime(new Date());
-//        this.tvAccDateCreated.setText(new SimpleDateFormat(MainActivity.getDateFormat()).format(calendar.getTime()));
         Log.d("OnCreateDispAcc", "eXIT onCreate method in the AddAccountActivity class.");
     }//End of onCreate method
 

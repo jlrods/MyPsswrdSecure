@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHolder>{
     //Attribute definition
     private View.OnClickListener listener;
-    private static SparseBooleanArray itemStateArray= new SparseBooleanArray();
+    //private static SparseBooleanArray itemStateArray= new SparseBooleanArray();
     private Context context;
     private Cursor cursor;// List to hold all User or Password data coming from the database
     private View.OnClickListener starImgOnClickListener;
@@ -74,7 +74,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
             holder.imgFavoriteStar.setImageResource(android.R.drawable.btn_star_big_off);
         }
         //Include the item's adapter position and the isFavorite state in the StateArray list
-        itemStateArray.put(position,account.isFavorite());
+        //itemStateArray.put(position,account.isFavorite());
         //Set up the onclick event listener for the star image
         holder.imgFavoriteStar.setOnClickListener(this.starImgOnClickListener);
         holder.tvAccountName.setText(account.getName());
@@ -135,8 +135,8 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
     }//End of ViewHolder inner class
 
     //Method to update the key value list that keeps record of current state of each task's check box
-    public void updateItemIsFavorite(int position,boolean isFavorite){
-        //Add or overwrite the checkbox list
-        itemStateArray.put(position,isFavorite);
-    }//End of updateItemIsSelected method
+//    public void updateItemIsFavorite(int position,boolean isFavorite){
+//        //Add or overwrite the checkbox list
+//        //itemStateArray.put(position,isFavorite);
+//    }//End of updateItemIsSelected method
 }
