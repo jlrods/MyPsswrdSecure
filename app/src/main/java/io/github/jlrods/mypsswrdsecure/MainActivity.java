@@ -1,6 +1,7 @@
 package io.github.jlrods.mypsswrdsecure;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -593,6 +594,15 @@ public class MainActivity extends AppCompatActivity {
             toastText = getResources().getString(R.string.questionUpdated);
         }else if(requestCode == throwEditQuestionActReqCode && resultCode == RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from EditQuestionActivity (received by MainActivity).");
+        }else if (requestCode == throwEditAccountActReqCode && resultCode == Activity.RESULT_OK) {
+            Log.d("onActivityResult","Received GOOD result from EditAccountActivity (received by HomeFragment).");
+            ((AccountAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getAccountsList());
+            //Define text to display Toast to confirm the account has been added
+            //Set variable to display Toast
+            goodResultDelivered = true;
+            toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountUpdated);
+        }else if(requestCode == throwEditAccountActReqCode && resultCode == Activity.RESULT_CANCELED){
+            Log.d("onActivityResult","Received BAD result from EditAccountActivity (received by HomeFragment).");
         }//End of if else statement chain to check activity results
 
         //Check if toast would be displayed
