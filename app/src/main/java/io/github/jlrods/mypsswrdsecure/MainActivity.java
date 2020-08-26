@@ -2,6 +2,7 @@ package io.github.jlrods.mypsswrdsecure;
 
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -161,6 +162,12 @@ public class MainActivity extends AppCompatActivity {
                                 throwEditAccountActivity(v);
                             }//End of onClick method
                         });//End of setOnClickListener
+                        accountAdapter.setStarImgOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                toggleIsFavorite(v);
+                            }
+                        });
                         MainActivity.updateRecyclerViewData(accountAdapter);
                         break;
                     case 1:
@@ -721,6 +728,58 @@ public class MainActivity extends AppCompatActivity {
         Resources r = context.getResources();
         idRes = r.getIdentifier(iconResName,"drawable",context.getPackageName());
         imgLogo.setImageResource(idRes);
+    }
+
+    //Method to be setup within OnClick event listener for the star icon within each Account item
+    public static boolean toggleIsFavorite(View v){
+        boolean update = false;
+        RecyclerView recyclerView = HomeFragment.getRv();
+        Cursor cursor = ((AccountAdapter)recyclerView.getAdapter()).getCursor();
+        //Find the position of parent recyclerview item in the adapter and store it in an int variable
+        int adapterPosition = recyclerView.getChildAdapterPosition((View) v.getParent().getParent());
+        //Move the cursor to the Account position in the adapter
+        cursor.moveToPosition(adapterPosition);
+        //Extract the account object from the cursor row
+        Account account = Account.extractAccount(cursor);
+        //Update the isFav attribute in the account object
+        if(account.isFavorite()){
+            account.setFavorite(false);
+        }else{
+            account.setFavorite(true);
+        }
+        //Call DB method to update the account item in the Accounts table
+        ContentValues values = new ContentValues();
+        values.put("_id",account.get_id());
+        values.put("isFavorite",account.isFavorite());
+        if(accountsDB.updateTable(ACCOUNTS_TABLE,values)){
+            //If DB update was successful, call method to update the recyclerview
+            updateRecyclerViewData(recyclerView.getAdapter());
+            recyclerView.scrollToPosition(adapterPosition);
+            update = true;
+        }else{
+            //Prompt the user about DB problem
+            //MainActivity.displayToast(this.getBaseContext(),"DB Error",Toast.LENGTH_SHORT,Gravity.CENTER);
+        }
+
+//        //Check the current account isFavorite attribute has changed or not
+//        if(account.isFavorite()){
+//            //Update the isSelected list within the adapter used to track the actua isSelected status of each task
+//            //((AccountAdapter)recyclerView.getAdapter()).updateItemIsSelected(adapterPosition,isChecked);
+//            //Declare and initialize a string to hold the sql query to update the cursor
+//            String sql= "";
+//            if(isArchivedSelected){
+//                sql="SELECT * FROM TASK WHERE IsArchived = 1 ORDER BY DateClosed " + tvHighlightFilter.getText().toString();
+//            }else{
+//                sql= getSQLForRecyclerView();
+//            }
+//
+//            accountsDB.updateTable();
+//            //Update the isSelected attribute (un)checked task
+//            db.updateBoolAttribute(currentCategory.getName().toString(),"IsSelected",task.getId(),isChecked);
+//            //Call method to update the adapter and the recyclerView
+//            updateRecyclerViewData(sql);
+//        }//End of if statement to check the current task actually changed isSelected stated (otherwise is the recyclerview recycling a  View)
+    return update;
     }
 
 }//End of MainActivity class.

@@ -9,6 +9,7 @@ import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -22,6 +23,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
     private static SparseBooleanArray itemStateArray= new SparseBooleanArray();
     private Context context;
     private Cursor cursor;// List to hold all User or Password data coming from the database
+    private View.OnClickListener starImgOnClickListener;
 
     // Pass in the contact array into the constructor
     public AccountAdapter(Context context, Cursor cursor) {
@@ -66,6 +68,12 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
             //Call static method that will get the resource by passing in it's name and set it as the resource image of the ImageView passed in
             MainActivity.setAccountLogoImage(holder.imgIcon,context,account.getIcon().getName());
         }//FIXME: Here there will be another possibility: The icon comes  from URI in phone
+        //Set up correct star image based on the Account's  isFavorite attribute state
+        if(account.isFavorite()){
+            holder.imgFavoriteStar.setImageResource(android.R.drawable.btn_star_big_on);
+        }
+        //Set up the onclick event listener for the star image
+        holder.imgFavoriteStar.setOnClickListener(this.starImgOnClickListener);
         holder.tvAccountName.setText(account.getName());
         Log.d("AccountOnBindVH","Exit onBindViewHolder method in AccountAdapter class.");
     }//End of onBindViewHolder method
@@ -96,6 +104,12 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
     public void setOnClickListener(View.OnClickListener listener) {
         Log.d("AccAdapterVHOnClick","Enter setOnClickListener in the AccountAdapter class.");
         this.listener= listener;
+    }//End of setOnItemClickListener
+
+    // Define the method that allows the parent activity or fragment to define the listener
+    public void setStarImgOnClickListener(View.OnClickListener listener) {
+        Log.d("AccAdapterVHOnClick","Enter setOnClickListener in the AccountAdapter class.");
+        this.starImgOnClickListener= listener;
     }//End of setOnItemClickListener
 
     //Inner class to inherit from RV ViewHolder class
