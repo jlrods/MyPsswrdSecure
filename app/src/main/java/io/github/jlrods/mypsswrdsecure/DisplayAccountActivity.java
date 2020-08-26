@@ -386,119 +386,82 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         Log.d("setUpQuestListSpData","Exit the setUpQuestionListSpinnerData method in the DisplayAccountActivity class.");
     }//End of setUpQuestionListSpinnerData
 
+
     //Method to add a new userName to the user name dropdown menu
     protected void addNewUserName(){
-        Log.d("addNewUserName","Enter the addNewUserName method in the DisplayAccountActivity class.");
-        //Declare an instantiate a new editText view to be passed in as parameter for the AlertDialog builder method
-        final EditText inputField = new EditText(this);
-        //Call MainMethod AlertDialog display method
-         androidx.appcompat.app.AlertDialog.Builder alertDialogBuilder = MainActivity.displayAlertDialog(this, inputField,
-                 getResources().getString(R.string.alertBoxNewUser),getResources().getString(R.string.alertBoxNewUserMssg),
-                 getResources().getString(R.string.alertBoxNewUserHint));
-         alertDialogBuilder.setPositiveButton(R.string.dialog_OK, new DialogInterface.OnClickListener(){
-                    public void onClick(DialogInterface dialog,int whichButton){
-                        //Get user name text from AlertDialog text input field
-                        String userNameValue = inputField.getText().toString().trim();
-                        byte[] userNameValueEncrypted;
-                        //Check the user name is not in the user name list already
-                        Cursor userNameCursor = accountsDB.getUserNameByName(userNameValue);
-                        if(userNameCursor == null || userNameCursor.getCount() ==0){
-                            //Encrypt the user name
-                            userNameValueEncrypted = cryptographer.encryptText(userNameValue);
-                            //If user name not in the list create new user object and store it in global variable used to build the account object
-                            userName = new UserName(userNameValueEncrypted,cryptographer.getIv().getIV());
-                            //Call DB method to insert  the user name object into the DB
-                            int userNameID = accountsDB.addItem(userName);
-                            if(userNameID > 0 ){
-                                //Update the userName object ID
-                                userName.set_id(userNameID);
-                                cursorUserName = accountsDB.getUserNameList();
-                                //Populate the user name spinner with new data set
-                                setUpSpinnerData(cursorUserName,spAccUserName,USERNAME_SPINNER);
-                                //Move spinner to new user name just inserted
-                                spAccUserName.setSelection(spAccUserName.getAdapter().getCount()-1);
-                                //Prompt the user the user name has been added and give option to undo
-                                Snackbar snackbar = Snackbar.make(coordinatorLayoutAccAct, R.string.snackBarUserAdded, Snackbar.LENGTH_LONG);
-                                snackbar.setAction(R.string.snackBarUndo,new SnackBarClickHandler(userName,userNameCursor,spAccUserName));
-                                snackbar.show();
-                                Log.d("addNewUserName","The user name "+ userName.getValue()+" has been added into the DB through addNewUserName method in the DisplayAccountActivity class.");
-                            }
-                            else {
-                                //Prompt the user the user name input failed to be inserted in the DB
-                               Toast toast = Toast.makeText(getBaseContext(), R.string.snackBarUserNotAdded,Toast.LENGTH_LONG);
-                               toast.setGravity(Gravity.CENTER,0,0);
-                               toast.show();
-                                Log.d("addNewUserName","The user name "+ userName.getValue()+" has NOT been added into the DB through addNewUserName method in the DisplayAccountActivity class, due to DB problem.");
-                            }//End of if else statement to check user name in DB
-                        }else {
-                            //Prompt the user the user name input already exists in the list
-                            Toast toast = Toast.makeText(getBaseContext(), R.string.snackBarUserExists,Toast.LENGTH_LONG)     ;
-                            toast.setGravity(Gravity.CENTER,0,0);
-                            toast.show();
-                            Log.d("addNewUserName","The user name "+ userNameValue +" already exists in the DB.");
-                        }//End of if else statement to check user name in DB
-                    }//End of Onclick method
-                })//End of setPositiveButton method
-        .show();//End of AlertDialog builder
-        Log.d("addNewUserName","Exit the addNewUserName method in the DisplayAccountActivity class.");
-    }//End of addNewUserName
+        Log.d("addNewQuestion","Enter the addNewQuestion method in the DisplayAccountActivity class.");
+        //Declare and instantiate a new intent object
+        Intent i= new Intent(this, AddUserNameActivity.class);
+        startActivityForResult(i,MainActivity.getThrowAddUserNameActReqCode());
+        Log.d("addNewPsswrd","Exit the addNewQuestion method in the DisplayAccountActivity class.");
+    }
 
     //Method to add a new password to the password dropdown menu
     protected void addNewPsswrd(){
-        Log.d("addNewPsswrd","Enter the addNewPsswrd method in the DisplayAccountActivity class.");
-        //Declare an instantiate a new editText view to be passed in as parameter for the AlertDialog builder method
-        final EditText inputField = new EditText(this);
-        //Call MainMethod AlertDialog display method
-        androidx.appcompat.app.AlertDialog.Builder alertDialogBuilder = MainActivity.displayAlertDialog(this, inputField,
-                getResources().getString(R.string.alertBoxNewPsswrd),getResources().getString(R.string.alertBoxNewPsswrdMssg),
-                getResources().getString(R.string.alertBoxNewPsswrdHint));
-        alertDialogBuilder.setPositiveButton(R.string.dialog_OK, new DialogInterface.OnClickListener(){
-            public void onClick(DialogInterface dialog,int whichButton){
-                //Get user name text from AlertDialog text input field
-                String psswrdValue = inputField.getText().toString().trim();
-                byte[] psswrdValueEncrypted;
-                //Check the user name is not in the user name list already
-                Cursor psswrdCursor = accountsDB.getPsswrdByName(psswrdValue);
-                if(psswrdCursor == null || psswrdCursor.getCount() == 0){
-                    //Encrypt the psswrd
-                    psswrdValueEncrypted = cryptographer.encryptText(psswrdValue);
-                    //If user name not in the list create new user object and store it in global variable used to build the account object
-                    psswrd = new Psswrd(psswrdValueEncrypted,cryptographer.getIv().getIV());
-                    //Call DB method to insert  the user name object into the DB
-                    int psswrdID = accountsDB.addItem(psswrd);
-                    if(psswrdID > 0 ){
-                        //Update the userName object ID
-                        psswrd.set_id(psswrdID);
-                        psswrdCursor = accountsDB.getPsswrdList();
-                        //Populate the user name spinner with new data set
-                        setUpSpinnerData(psswrdCursor,spAccPsswrd,PSSWRD_SPINNER);
-                        //Move spinner to new user name just inserted
-                        spAccPsswrd.setSelection(spAccPsswrd.getAdapter().getCount()-1);
-                        //Prompt the user the user name has been added and give option to undo
-                        Snackbar snackbar = Snackbar.make(coordinatorLayoutAccAct, R.string.snackBarUserAdded, Snackbar.LENGTH_LONG);
-                        snackbar.setAction(R.string.snackBarUndo,new SnackBarClickHandler(psswrd,psswrdCursor,spAccPsswrd));
-                        snackbar.show();
-                        Log.d("addNewPsswrd","The password "+ psswrd.getValue()+" has been added into the DB through addNewPsswrd method in the DisplayAccountActivity class.");
-                    }
-                    else {
-                        //Prompt the user the user name input failed to be inserted in the DB
-                        Toast toast = Toast.makeText(getBaseContext(), R.string.snackBarPsswrdNotAdded,Toast.LENGTH_LONG);
-                        toast.setGravity(Gravity.CENTER,0,0);
-                        toast.show();
-                        Log.d("addNewPsswrd","The password "+ psswrd.getValue()+" has NOT been added into the DB through addNewPsswrd method in the DisplayAccountActivity class, due to DB problem.");
-                    }//End of if else statement to check user name in DB
-                }else {
-                    //Prompt the user the user name input already exists in the list
-                    Toast toast = Toast.makeText(getBaseContext(), R.string.snackBarPsswrdExists,Toast.LENGTH_LONG);
-                    toast.setGravity(Gravity.CENTER,0,0);
-                    toast.show();
-                    Log.d("addNewPsswrd","The password "+ psswrdValue +" already exists in the DB.");
-                }//End of if else statement to check user name in DB
-            }//End of Onclick method
-        })//End of setPositiveButton method
-                .show();//End of AlertDialog builder
-        Log.d("addNewPsswrd","Exit the addNewPsswrd method in the DisplayAccountActivity class.");
-    }//End of addNewPsswrd method
+        Log.d("addNewQuestion","Enter the addNewQuestion method in the DisplayAccountActivity class.");
+        //Declare and instantiate a new intent object
+        Intent i= new Intent(this, AddPsswrdActivity.class);
+        startActivityForResult(i,MainActivity.getThrowAddPsswrdActReqCode());
+        Log.d("addNewPsswrd","Exit the addNewQuestion method in the DisplayAccountActivity class.");
+    }
+
+
+    //Method to add a new password to the password dropdown menu
+//    protected void addNewPsswrd(){
+//        Log.d("addNewPsswrd","Enter the addNewPsswrd method in the DisplayAccountActivity class.");
+//        //Declare an instantiate a new editText view to be passed in as parameter for the AlertDialog builder method
+//        final EditText inputField = new EditText(this);
+//        //Call MainMethod AlertDialog display method
+//        androidx.appcompat.app.AlertDialog.Builder alertDialogBuilder = MainActivity.displayAlertDialog(this, inputField,
+//                getResources().getString(R.string.alertBoxNewPsswrd),getResources().getString(R.string.alertBoxNewPsswrdMssg),
+//                getResources().getString(R.string.alertBoxNewPsswrdHint));
+//        alertDialogBuilder.setPositiveButton(R.string.dialog_OK, new DialogInterface.OnClickListener(){
+//            public void onClick(DialogInterface dialog,int whichButton){
+//                //Get user name text from AlertDialog text input field
+//                String psswrdValue = inputField.getText().toString().trim();
+//                byte[] psswrdValueEncrypted;
+//                //Check the user name is not in the user name list already
+//                Cursor psswrdCursor = accountsDB.getPsswrdByName(psswrdValue);
+//                if(psswrdCursor == null || psswrdCursor.getCount() == 0){
+//                    //Encrypt the psswrd
+//                    psswrdValueEncrypted = cryptographer.encryptText(psswrdValue);
+//                    //If user name not in the list create new user object and store it in global variable used to build the account object
+//                    psswrd = new Psswrd(psswrdValueEncrypted,cryptographer.getIv().getIV());
+//                    //Call DB method to insert  the user name object into the DB
+//                    int psswrdID = accountsDB.addItem(psswrd);
+//                    if(psswrdID > 0 ){
+//                        //Update the userName object ID
+//                        psswrd.set_id(psswrdID);
+//                        psswrdCursor = accountsDB.getPsswrdList();
+//                        //Populate the user name spinner with new data set
+//                        setUpSpinnerData(psswrdCursor,spAccPsswrd,PSSWRD_SPINNER);
+//                        //Move spinner to new user name just inserted
+//                        spAccPsswrd.setSelection(spAccPsswrd.getAdapter().getCount()-1);
+//                        //Prompt the user the user name has been added and give option to undo
+//                        Snackbar snackbar = Snackbar.make(coordinatorLayoutAccAct, R.string.snackBarUserAdded, Snackbar.LENGTH_LONG);
+//                        snackbar.setAction(R.string.snackBarUndo,new SnackBarClickHandler(psswrd,psswrdCursor,spAccPsswrd));
+//                        snackbar.show();
+//                        Log.d("addNewPsswrd","The password "+ psswrd.getValue()+" has been added into the DB through addNewPsswrd method in the DisplayAccountActivity class.");
+//                    }
+//                    else {
+//                        //Prompt the user the user name input failed to be inserted in the DB
+//                        Toast toast = Toast.makeText(getBaseContext(), R.string.snackBarPsswrdNotAdded,Toast.LENGTH_LONG);
+//                        toast.setGravity(Gravity.CENTER,0,0);
+//                        toast.show();
+//                        Log.d("addNewPsswrd","The password "+ psswrd.getValue()+" has NOT been added into the DB through addNewPsswrd method in the DisplayAccountActivity class, due to DB problem.");
+//                    }//End of if else statement to check user name in DB
+//                }else {
+//                    //Prompt the user the user name input already exists in the list
+//                    Toast toast = Toast.makeText(getBaseContext(), R.string.snackBarPsswrdExists,Toast.LENGTH_LONG);
+//                    toast.setGravity(Gravity.CENTER,0,0);
+//                    toast.show();
+//                    Log.d("addNewPsswrd","The password "+ psswrdValue +" already exists in the DB.");
+//                }//End of if else statement to check user name in DB
+//            }//End of Onclick method
+//        })//End of setPositiveButton method
+//                .show();//End of AlertDialog builder
+//        Log.d("addNewPsswrd","Exit the addNewPsswrd method in the DisplayAccountActivity class.");
+//    }//End of addNewPsswrd method
 
     //Method to add a new question to the security question  dropdown menu
     protected void addNewQuestion(){
@@ -747,8 +710,42 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             }//End of if else statement to check if logo comes from app resources
         }else if(requestCode==this.throwSelectLogoActReqCode && resultCode==RESULT_CANCELED){
             //In the event of receiving a cancel result, no change to be done on the current account, no logo change to be applied
-            Log.d("onActivityResult","Received CANCEL result from SelectLogoActivity in the DisplayAccountActivity class.");
+            Log.d("onActivityResult","Received CANCEL result from SelectLogoActivity received by the DisplayAccountActivity class.");
+        }else if(requestCode== MainActivity.getThrowAddUserNameActReqCode() && resultCode==RESULT_OK){
+            Log.d("onActivityResult","Received GOOD result from AddUserNameActivity received by the DisplayAccountActivity class.");
+            int userNameID = data.getExtras().getInt("userNameID");
+            //Update the userName object ID
+            this.userName = this.accountsDB.getUserNameByID(userNameID);
+            //userName.set_id(userNameID);
+            this.cursorUserName = this.accountsDB.getUserNameList();
+            //Populate the user name spinner with new data set
+            this.setUpSpinnerData(this.cursorUserName,this.spAccUserName,this.USERNAME_SPINNER);
+            //Move spinner to new user name just inserted
+            this.spAccUserName.setSelection(this.spAccUserName.getAdapter().getCount()-1);
+            //Prompt the user the user name has been added and give option to undo
+            Snackbar snackbar = Snackbar.make(coordinatorLayoutAccAct, R.string.snackBarUserAdded, Snackbar.LENGTH_LONG);
+            snackbar.setAction(R.string.snackBarUndo,new SnackBarClickHandler(this.userName,this.cursorUserName,spAccUserName));
+            snackbar.show();
+        }else if(requestCode== MainActivity.getThrowAddUserNameActReqCode() && resultCode==RESULT_CANCELED){
+            Log.d("onActivityResult","Received BAD result from AddUserNameActivity received by the DisplayAccountActivity class.");
+        }else if(requestCode== MainActivity.getThrowAddPsswrdActReqCode() && resultCode==RESULT_OK){
+            Log.d("onActivityResult","Received GOOD result from AddPsswrdActivity received by the DisplayAccountActivity class.");
+            int psswrdID = data.getExtras().getInt("psswrdID");
+            //Update the password object
+            this.psswrd = this.accountsDB.getPsswrdByID(psswrdID);
+            this.cursorPsswrd = this.accountsDB.getPsswrdList();
+            //Populate the password spinner with new data set
+            this.setUpSpinnerData(this.cursorPsswrd,this.spAccPsswrd,this.PSSWRD_SPINNER);
+            //Move spinner to new password just inserted
+            this.spAccPsswrd.setSelection(this.spAccPsswrd.getAdapter().getCount()-1);
+            //Prompt the user the user name has been added and give option to undo
+            Snackbar snackbar = Snackbar.make(coordinatorLayoutAccAct, R.string.snackBarPsswrdAdded, Snackbar.LENGTH_LONG);
+            snackbar.setAction(R.string.snackBarUndo,new SnackBarClickHandler(this.psswrd,this.cursorPsswrd,spAccPsswrd));
+            snackbar.show();
+        }else if(requestCode== MainActivity.getThrowAddPsswrdActReqCode() && resultCode==RESULT_CANCELED){
+            Log.d("onActivityResult","Received BAD result from AddPsswrdActivity received by the DisplayAccountActivity class.");
         }else if(requestCode== MainActivity.getThrowAddQuestionActReqCode() && resultCode==RESULT_OK){
+            Log.d("onActivityResult","Received GOOD result from AddQuestionActivity received by the DisplayAccountActivity class.");
             //Setup the Questions Available spinner and populate with data
             this.cursorListOfQuestionsAvailable = accountsDB.getListQuestionsAvailable();
             this.spQuestionsAvailable.setPrompt(getBaseContext().getResources().getString(R.string.account_quest_avilab_spinner_prompt));
@@ -756,7 +753,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             this.spQuestionsAvailable.setSelection(spQuestionsAvailable.getAdapter().getCount()-1);
             this.addQuestionToSecList(this.spQuestionsAvailable.getSelectedItemPosition());
         }else if(requestCode== MainActivity.getThrowAddQuestionActReqCode() && resultCode==RESULT_CANCELED){
-
+            Log.d("onActivityResult","Received BAD result from AddQuestionActivity received by the DisplayAccountActivity class.");
         }//End of if else statement to check the data comes SelectLogoActivity
         Log.d("onActivityResult","Exit the onActivityResult method in the DisplayAccountActivity class.");
     }//End of onActivityResult method

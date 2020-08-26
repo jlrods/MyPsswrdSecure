@@ -73,8 +73,8 @@ public class MainActivity extends AppCompatActivity {
 
     private int throwAddAccountActReqCode = 5566;
     private static int throwAddQuestionActReqCode = 9876;
-    private int throwAddUserNameActReqCode = 5744;
-    private int throwAddPsswrdActReqCode = 9732;
+    private static int throwAddUserNameActReqCode = 5744;
+    private static int throwAddPsswrdActReqCode = 9732;
     private int throwEditUserNameActReqCode = 4475;
     private int throwEditPsswrdActReqCode = 6542;
     private int throwEditQuestionActReqCode = 2456;
@@ -667,6 +667,14 @@ public class MainActivity extends AppCompatActivity {
 
     public int getThrowEditUserNameActReqCode() {
         return throwEditUserNameActReqCode;
+    }
+
+    public static int getThrowAddUserNameActReqCode() {
+        return throwAddUserNameActReqCode;
+    }
+
+    public static int getThrowAddPsswrdActReqCode() {
+        return throwAddPsswrdActReqCode;
     }
 
     public static String getUsernameTable() {
