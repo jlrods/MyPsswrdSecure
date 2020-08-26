@@ -52,6 +52,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
     Category category = null;
     UserName userName = null;
     Psswrd psswrd = null;
+    Account account = null;
     //int objectType = -1;
 
     //Layout attributes
@@ -216,7 +217,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             @Override
             public void onClick(View v) {
                 //Call method to add question from question available list to security question list
-                addQuestionToSecList();
+                addQuestionToSecList(spQuestionsAvailable.getSelectedItemPosition());
             }//End of onClick method
         });//End of setOnClickListener method
 
@@ -504,24 +505,19 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         Log.d("addNewQuestion","Enter the addNewQuestion method in the DisplayAccountActivity class.");
         //Declare and instantiate a new intent object
         Intent i= new Intent(this, AddQuestionActivity.class);
-        //Add extras to the intent object, specifically the current category where the add button was pressed from
-        // the current logo data which is sent back if select logo is cancel or updated if new logo has been selected
-        //i.putExtra("selectedImgPosition",selectedPosition);
-        //i.putExtra("selectedImgLocation",logo.getLocation());
-        //Start the addTaskActivity and wait for result
         startActivityForResult(i,MainActivity.getThrowAddQuestionActReqCode());
         Log.d("addNewPsswrd","Exit the addNewQuestion method in the DisplayAccountActivity class.");
     }//End of addNewQuestion method
 
     //Method to add a question from question available list to security question list spinner
-    protected void addQuestionToSecList(){
+    protected void addQuestionToSecList(int questionPositionInAvailableList){
         Log.d("addQuestionToSecList","Enter the addQuestionToSecList method in the DisplayAccountActivity class.");
         Cursor c = null;
         boolean repeatedQuestion = false;
         //Find the question selected
-        int selectedQuestionPosition = this.spQuestionsAvailable.getSelectedItemPosition() ;
+        //questionPositionInAvailableList = this.spQuestionsAvailable.getSelectedItemPosition() ;
         //Get its DB _id number
-        int selectedQuestionID = (int) this.spQuestionsAvailable.getAdapter().getItemId(selectedQuestionPosition);
+        int selectedQuestionID = (int) this.spQuestionsAvailable.getAdapter().getItemId(questionPositionInAvailableList);
         //Check if spinner is holding dummy item by checking if spinner is disabled
         if(!this.spAccSecQuestionList.isEnabled()){
             //If spinner is disabled and holding a dummy item, set new adapter with null cursor
@@ -710,6 +706,14 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         Log.d("toggleIsFavorite","Exit the toggleIsFavorite method in the DisplayAccountActivity class.");
     }// End of toggleIsFavorite method
 
+    //Method to set text of Date created field
+    protected void setDateText(TextView tvDate,long timeInMills){
+        //Set up current date into the Created date field
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date(timeInMills));
+        tvDate.setText(new SimpleDateFormat(MainActivity.getDateFormat()).format(calendar.getTime()));
+    }
+
     //Method to throw the SelectLogoActivity
     protected void throwSelectLogoActivity(){
         Log.d("throwSelectLogoActivity","Enter the throwSelectLogoActivity method in the DisplayAccountActivity class.");
@@ -750,7 +754,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             this.spQuestionsAvailable.setPrompt(getBaseContext().getResources().getString(R.string.account_quest_avilab_spinner_prompt));
             this.setUpQuestionListSpinnerData(cursorListOfQuestionsAvailable,spQuestionsAvailable);
             this.spQuestionsAvailable.setSelection(spQuestionsAvailable.getAdapter().getCount()-1);
-            this.addQuestionToSecList();
+            this.addQuestionToSecList(this.spQuestionsAvailable.getSelectedItemPosition());
         }else if(requestCode== MainActivity.getThrowAddQuestionActReqCode() && resultCode==RESULT_CANCELED){
 
         }//End of if else statement to check the data comes SelectLogoActivity
@@ -895,13 +899,19 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         userName = accountsDB.getUserNameByID((int) this.spAccUserName.getSelectedItemId());
         psswrd = accountsDB.getPsswrdByID((int) this.spAccPsswrd.getSelectedItemId());
         securityQuestionList = this.extractQuestionsFromSpinner(spAccSecQuestionList);
+        psswrdChangeDate = this.getPsswrdRenewDate();
         //Check the security question list isn't empty
         if(securityQuestionList != null){
-            //Insert the question list in the DB so the DB _id is retrieved and can be passed in to insert the new account later on
-            securityQuestionList.set_id(accountsDB.addItem(securityQuestionList));
+            //Check if security question list already exists in the DB. If it does exist, set it's id number to the account object.
+            int secQuestionListID = getSecQuestionListID(securityQuestionList);
+            if(secQuestionListID != -1){
+                securityQuestionList.set_id(secQuestionListID);
+            }else{
+                //Otherwise insert the question list in the DB so the DB _id is retrieved and can be passed in to insert the new account later on
+                securityQuestionList.set_id(accountsDB.addItem(securityQuestionList));
+            }
         }
         if(this.cbHasToBeChanged.isChecked() && psswrdChangeDate > 0){
-            psswrdChangeDate = this.getPsswrdRenewDate();
             //Once all required objects have been created, the account object can be created
             account = new Account(accountName,userName,psswrd,category,securityQuestionList,this.logo,this.isFavorite,psswrdChangeDate);
         }else{
@@ -1008,13 +1018,81 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
 
         if(cursorQuestionList != null && cursorQuestionList.getCount() > 0){
             questionList = new QuestionList();
-            while(cursorQuestionList.moveToNext()){
+            cursorQuestionList.moveToFirst();
+            do{
                Question question = Question.extractQuestion(cursorQuestionList);
                questionList.addQuestion(question);
-           }//End of while loop to go through the question list cursor
+           }while(cursorQuestionList.moveToNext());//End of while loop to go through the question list cursor
         }//End of if statement that checks cursor isn't empty or null
         Log.d("XtrctQuestFromSpinner","Enter the extractQuestionsFromSpinner method in the DisplayActivity abstract class.");
         return questionList;
     }//End of extractQuestionsFromSpinner method
 
+    protected int getSecQuestionListID(QuestionList questionList){
+        int _id = this.accountsDB.getSecQuestionListID(questionList);
+        return _id;
+    }
+
+
+    //Method to find Item position in a cursor by passing in it's text value
+    protected int getItemPositionInSpinner(Cursor cursor, int _id){
+        Log.d("getPositionInSpinner","Enter the getItemPositionInSpinner method in the DisplayActivity abstract class.");
+        //Declare and initialize the variables to be used and return by the method
+        int position = -1;
+        int i = 0;
+        //Check the cursor passed in isn't null
+        if(cursor !=null){
+            //If not null, move to first item, it could be in any other position
+            cursor.moveToFirst();
+        }//End of if statement to check cursor isn't null
+        //Iterate through the cursor while position is not found
+        do{
+            //Check the item id is iqual to the one passed in
+            if(cursor.getInt(0) == _id){
+                //if found, make the position equal to current iterator
+                position = i;
+            }else{
+                //Increase counter by 1
+                i++;
+            }//End of if else statement to check ids
+        }while (cursor.moveToNext() && position == -1);
+        Log.d("getPositionInSpinner","Exit the getItemPositionInSpinner method in the DisplayActivity abstract class.");
+        return position;
+    }//End of the getItemPositionInSpinner method
+
+    //Method to check if Account name is in use
+    protected boolean isAccNameUsed(String accountName,int _id){
+        Log.d("isAccNameUsed","Enter isAccNameUsed method in AddAccountActivity class.");
+        boolean isAccNameUsed = false;
+        //Cursor cursorListOfAccounts = this.accountsDB.getAccountsList();
+        Cursor accountCursor = this.accountsDB.getAccountCursorByName(accountName);
+        if(accountCursor != null){
+            Boolean accNameFound = accountName.toLowerCase().trim().equals(accountCursor.getString(1).toLowerCase().trim());
+            //In case the _id passed in is not -1, means the EditAccountActivity call method
+            //Which means the account name of the account being edited must be ignore from the search, it's ok to have the same account name
+            //But not other exiting account name
+            if((_id == -1 && accNameFound) || ((_id != accountCursor.getInt(0)) && (accNameFound) )){
+                isAccNameUsed = true;
+                Log.d("isAccNameUsed","Account name "+ accountName+" found in account list by isAccNameUsed method in AddAccountActivity class.");
+//                if(accountName.toLowerCase().equals(accountCursor.getString(1).toLowerCase())){
+//                    isAccNameUsed = true;
+//                    Log.d("isAccNameUsed","Account name "+ accountName+" found in account list by isAccNameUsed method in AddAccountActivity class.");
+//                }//End of if statement to check account name is in use
+//            }else{
+//                /
+//                //But not other exiting account name
+//                if(_id != accountCursor.getInt(0)){
+//                    isAccNameUsed = true;
+//                    Log.d("isAccNameUsed","Account name "+ accountName+" found in account list by isAccNameUsed method in AddAccountActivity class.");
+//                }
+            }//End of if else statement to check the _id passed in is equal to -1
+        }//End of if that checks the cursor isn't null. Null means the account name isn't being used, hence return false
+        return isAccNameUsed;
+    }//End of isAccNameUsed method
+
+    //Overloaded method to check if Account name is in use
+    protected boolean isAccNameUsed(String accountName) {
+        Log.d("isAccNameUsed", "Enter/Exit isAccNameUsed overloaded method in AddAccountActivity class.");
+        return this.isAccNameUsed(accountName,-1);
+    }//End of isAccNameUsed overloaded method
 }//End of AddAccountActivity

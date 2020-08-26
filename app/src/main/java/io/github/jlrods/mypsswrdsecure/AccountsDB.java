@@ -507,7 +507,7 @@ public class AccountsDB extends SQLiteOpenHelper {
             table = "QUESTIONLIST";
             for(int i=0;i< questionList.getSize();i++){
                 fields.put("QuestionID"+(i+1),questionList.getQuestions().get(i).get_id());
-            }//End of for loop to add all question ids in the quesiton list
+            }//End of for loop to add all question ids in the question list
         }else if(item instanceof Account){
             table ="ACCOUNTS";
             Account account = (Account) item;
@@ -623,14 +623,28 @@ public class AccountsDB extends SQLiteOpenHelper {
     public Account getAccountByID(int _id){
         Log.d("getAccountByID","Enter the getAccountByID method in the AccountsDB class.");
         Cursor cursor = this.runQuery("SELECT * FROM ACCOUNTS WHERE _id = "+ _id);
+        Account account = null;
+        if(cursor != null && cursor.getCount() >0){
+            cursor.moveToFirst();
+            account = Account.extractAccount(cursor);
+            Log.d("getAccountByID","Exit successfully (account with id " +_id+ " has been found) the getAccountByID method in the AccountsDB class.");
+        }else{
+            Log.d("getAccountByID","Exit the getAccountByID method in the AccountsDB class without finding the category with id: "+_id);
+        }//End of if else statement
+        return account;
+    }//End of getAccountByID method
+
+    //Method to get a specific Category, by passing in its DB _id as an argument
+    public Cursor getAccountCursorByID(int _id){
+        Log.d("getAccountByID","Enter the getAccountByID method in the AccountsDB class.");
+        Cursor cursor = this.runQuery("SELECT * FROM ACCOUNTS WHERE _id = "+ _id);
         if(cursor != null && cursor.getCount() >0){
             cursor.moveToFirst();
             Log.d("getAccountByID","Exit successfully (account with id " +_id+ " has been found) the getAccountByID method in the AccountsDB class.");
-            return Account.extractAccount(cursor);
         }else{
             Log.d("getAccountByID","Exit the getAccountByID method in the AccountsDB class without finding the category with id: "+_id);
-            return null;
         }//End of if else statement
+        return cursor;
     }//End of getAccountByID method
 
     //Method to get a specific Category, by passing in its DB _id as an argument
@@ -921,7 +935,6 @@ public class AccountsDB extends SQLiteOpenHelper {
         return preLoadedQuestions;
     }//End of getListQuestionsAvailable method
 
-
     //Method to get cursor with list of questions available
     public Cursor getListQuestionsAvailable(){
         Log.d("getListOfQuestionLists","Enter the getListOfQuestionLists method in the AccountsDB class.");
@@ -1058,6 +1071,60 @@ public class AccountsDB extends SQLiteOpenHelper {
         }//End of if else statement to check cursor is not empty
     }//End of getQuestionListById method
 
+    public int getSecQuestionListID(QuestionList questionList){
+        Log.d("getSecQuestionListID","Enter the getSecQuestionListID method in the AccountsDB class.");
+        int _id = -1;
+        Cursor questionCursor = null;
+        switch(questionList.getSize()){
+            case 1:
+                questionCursor = this.runQuery("SELECT * FROM QUESTIONLIST WHERE QuestionID1 = " + questionList.getQuestions().get(0).get_id()
+                        + " AND QuestionID2 IS NULL"
+                        + " AND QuestionID3 IS NULL");
+                Log.d("getSecQuestionListID","1 question detected by getSecQuestionListID method in the AccountsDB class.");
+                break;
+            case 2:
+                questionCursor = this.runQuery("SELECT * FROM QUESTIONLIST WHERE QuestionID1 = " + questionList.getQuestions().get(0).get_id()
+                                                +" AND QuestionID2 = " + questionList.getQuestions().get(1).get_id()
+                                                +" AND QuestionID3 IS NULL");
+                Log.d("getSecQuestionListID","2 questions detected by getSecQuestionListID method in the AccountsDB class.");
+                break;
+            case 3:
+                questionCursor = this.runQuery("SELECT * FROM QUESTIONLIST WHERE QuestionID1 = " + questionList.getQuestions().get(0).get_id()
+                        + " AND QuestionID2 = " + questionList.getQuestions().get(1).get_id()
+                        + " AND QuestionID3 = " + questionList.getQuestions().get(2).get_id());
+                Log.d("getSecQuestionListID","3 questions detected by getSecQuestionListID method in the AccountsDB class.");
+                break;
+            default:
+                _id = -1;
+                Log.d("getSecQuestionListID","no question list detected by getSecQuestionListID method in the AccountsDB class.");
+        }
+        if(questionCursor != null && questionCursor.getCount() > 0){
+            questionCursor.moveToFirst();
+            _id = questionCursor.getInt(0);
+        }
+        Log.d("getSecQuestionListID","Exit the getSecQuestionListID method in the AccountsDB class.");
+        return _id;
+    }//End of getSecQuestionListID method
+
+
+    //Method to return item position within cursor passed in as parameter
+    public int findItemPositionInCursor(Cursor cursor, int _id){
+        Log.d("findPositionInCursor","Enter the findItemPositionInCursor method in the AccountsDB class.");
+        int itemPosition = -1;
+
+        if(cursor!=null){
+            cursor.moveToFirst();
+        }
+        boolean found = false;
+        do{
+            if(cursor.getInt(0) == _id){
+                itemPosition = cursor.getPosition();
+                found = true;
+            }//Endo of if else statement to check the _id
+        }while(cursor.moveToNext() && !found);
+        Log.d("findPositionInCursor","Exit the findItemPositionInCursor method in the AccountsDB class.");
+        return itemPosition;
+    }//End of findItemPositionInCursor method
 
     //Method used to break a string down into multiple pieces when to allow the apostrophe to be part of the string
     public String includeApostropheEscapeChar(String text){

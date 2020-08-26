@@ -5,7 +5,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
 
-class Account extends Loggin {
+public class Account extends Loggin {
     // Attribute definition
 
     private Category category; // Account type
@@ -17,6 +17,18 @@ class Account extends Loggin {
     //Method definition
 
     //Constructors
+    public Account(int _id, String name, UserName userName, Psswrd psswrd, Category category,
+                   QuestionList questionList, Icon icon, boolean isFavorite, long dateCreated,long dateChange){
+        super(_id, name, userName, psswrd);
+        Log.d("AcctFull_Ent","Enter Account Full Constructor");
+        this.category = category;
+        this.questionList = questionList;
+        this.icon = icon;
+        this.isFavorite = isFavorite;
+        this.dateCreated = dateCreated;
+        this.dateChange = dateChange;
+        Log.d("AcctFull_Ext","Exit Account Full Constructor");
+    }
     public Account(int _id, String name, UserName userName, Psswrd psswrd, Category category,
                     QuestionList questionList, Icon icon, boolean isFavorite, long dateChange){
         super(_id, name, userName, psswrd);
@@ -163,13 +175,15 @@ class Account extends Loggin {
        int questionListID;
        int iconID;
        boolean isFavorite;
+       long dateCreated;
+       long dateChange;
        //Call common method to extract basic StringValue object data from a cursor
        ArrayList<Object> attributes = Loggin.extractLoggin(c);
        //Get userName object by passing in its DB _id
        userName = accountsDB.getUserNameByID((int) attributes.get(2));
        //Get psswrd object by passing in its DB _id
        psswrd = accountsDB.getPsswrdByID((int) attributes.get(3));
-       catID = c.getInt(4);
+       catID = c.getInt(2);
        //Get category object by passing in its DB _id
        category = MainActivity.getCategoryByID(catID);
        questionListID = c.getInt(5);
@@ -183,8 +197,19 @@ class Account extends Loggin {
            icon = MainActivity.getMyPsswrdSecureLogo();
        }
        isFavorite = AccountsDB.toBoolean(c.getInt(7));
-       //Create new account object with data extracted from cursor and objects created to make the account object
-       account = new Account((int) attributes.get(0),(String) attributes.get(1),userName, psswrd,category,questionList,icon,isFavorite,0);
+       //Get date created
+       dateCreated = c.getLong(8);
+       //Get change password date
+       dateChange = c.getLong(9);
+       //Call account constructor based on the data extracted from cursor
+       if(dateCreated == 0 && dateChange == 0){
+           //Create new account object with data extracted from cursor and objects created to make the account object
+           account = new Account((int) attributes.get(0),(String) attributes.get(1),userName, psswrd,category,questionList,icon,isFavorite,dateChange);
+       }else{
+           //Create new account object with data extracted from cursor and objects created to make the account object
+           account = new Account((int) attributes.get(0),(String) attributes.get(1),userName, psswrd,category,questionList,icon,isFavorite,dateCreated,dateChange);
+       }
+
        Log.d("Ext_ExtractAccount","Exit extractAccount method in the Account class.");
        //Return the category object
        return account;

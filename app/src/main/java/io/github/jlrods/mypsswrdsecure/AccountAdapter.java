@@ -44,7 +44,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
         LayoutInflater inflater = LayoutInflater.from(context);
         // Inflate the custom layout
         View view = inflater.inflate(R.layout.element_account,parent,false);
-        view.setOnClickListener(listener);
+        view.setOnClickListener(this.listener);
         // Return a new holder instance
         AccountAdapter.ViewHolder viewHolder = new AccountAdapter.ViewHolder(view);
         Log.d("AccountAdaptVHOnCre","Exit onCreateViewHolder method in the AccountAdapter class.");
@@ -63,11 +63,8 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
         if(account.getIcon().get_id() == R.mipmap.ic_my_psswrd_secure){
             holder.imgIcon.setImageResource(R.mipmap.ic_my_psswrd_secure);
         }else{
-            //Extract all the logos from the app resources
-            int idRes;
-            Resources r = context.getResources();
-            idRes = r.getIdentifier(account.getIcon().getName(),"drawable",context.getPackageName());
-            holder.imgIcon.setImageResource(idRes);
+            //Call static method that will get the resource by passing in it's name and set it as the resource image of the ImageView passed in
+            MainActivity.setAccountLogoImage(holder.imgIcon,context,account.getIcon().getName());
         }//FIXME: Here there will be another possibility: The icon comes  from URI in phone
         holder.tvAccountName.setText(account.getName());
         Log.d("AccountOnBindVH","Exit onBindViewHolder method in AccountAdapter class.");
@@ -94,6 +91,12 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
     public void setCursor(Cursor cursor) {
         this.cursor = cursor;
     }
+
+    // Define the method that allows the parent activity or fragment to define the listener
+    public void setOnClickListener(View.OnClickListener listener) {
+        Log.d("AccAdapterVHOnClick","Enter setOnClickListener in the AccountAdapter class.");
+        this.listener= listener;
+    }//End of setOnItemClickListener
 
     //Inner class to inherit from RV ViewHolder class
     public static class ViewHolder extends RecyclerView.ViewHolder{

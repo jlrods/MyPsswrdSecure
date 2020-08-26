@@ -94,7 +94,7 @@
     <string name="strVal_date_created">Created on:</string>
 
 
-    <!--    Add/Edit Account Activity-->
+    <!--    Add Account Activity-->
     <string name="addEditAccName">Enter the account name...</string>
     <string name="selectCatHint">Select a Category...</string>
     <string name="selectUserHint">Select a User name...</string>
@@ -106,6 +106,10 @@
     <string name="accountNoUserSelected">Sorry, no user name has been selected from the drop down menu</string>
     <string name="accountNoPsswrdSelected">Sorry, no password has been selected from the drop down menu</string>
     <string name="accountAdded"> account has been added to your list!</string>
+
+    <!--    Edit Account Activity-->
+    <string name="accountNotChanged">Sorry, the account attributes have not been changed. Please, updated one of the values at least</string>
+    <string name="accountUpdated"> account has been updated!</string>
 
 
     <!--    AddUserName Activity-->
@@ -139,6 +143,7 @@
     <string name="answerNoTChanged">Sorry, the answer value has been not changed</string>
     <string name="questionAnswerNoTChanged">Sorry, at least one value must be changed (question or answer)</string>
     <string name="questionUpdated">The question has been updated</string>
+
 
     <!--    AlertDialog texts-->
     <string name="alertBoxNewUser">Add user name</string>
