@@ -406,63 +406,6 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
     }
 
 
-    //Method to add a new password to the password dropdown menu
-//    protected void addNewPsswrd(){
-//        Log.d("addNewPsswrd","Enter the addNewPsswrd method in the DisplayAccountActivity class.");
-//        //Declare an instantiate a new editText view to be passed in as parameter for the AlertDialog builder method
-//        final EditText inputField = new EditText(this);
-//        //Call MainMethod AlertDialog display method
-//        androidx.appcompat.app.AlertDialog.Builder alertDialogBuilder = MainActivity.displayAlertDialog(this, inputField,
-//                getResources().getString(R.string.alertBoxNewPsswrd),getResources().getString(R.string.alertBoxNewPsswrdMssg),
-//                getResources().getString(R.string.alertBoxNewPsswrdHint));
-//        alertDialogBuilder.setPositiveButton(R.string.dialog_OK, new DialogInterface.OnClickListener(){
-//            public void onClick(DialogInterface dialog,int whichButton){
-//                //Get user name text from AlertDialog text input field
-//                String psswrdValue = inputField.getText().toString().trim();
-//                byte[] psswrdValueEncrypted;
-//                //Check the user name is not in the user name list already
-//                Cursor psswrdCursor = accountsDB.getPsswrdByName(psswrdValue);
-//                if(psswrdCursor == null || psswrdCursor.getCount() == 0){
-//                    //Encrypt the psswrd
-//                    psswrdValueEncrypted = cryptographer.encryptText(psswrdValue);
-//                    //If user name not in the list create new user object and store it in global variable used to build the account object
-//                    psswrd = new Psswrd(psswrdValueEncrypted,cryptographer.getIv().getIV());
-//                    //Call DB method to insert  the user name object into the DB
-//                    int psswrdID = accountsDB.addItem(psswrd);
-//                    if(psswrdID > 0 ){
-//                        //Update the userName object ID
-//                        psswrd.set_id(psswrdID);
-//                        psswrdCursor = accountsDB.getPsswrdList();
-//                        //Populate the user name spinner with new data set
-//                        setUpSpinnerData(psswrdCursor,spAccPsswrd,PSSWRD_SPINNER);
-//                        //Move spinner to new user name just inserted
-//                        spAccPsswrd.setSelection(spAccPsswrd.getAdapter().getCount()-1);
-//                        //Prompt the user the user name has been added and give option to undo
-//                        Snackbar snackbar = Snackbar.make(coordinatorLayoutAccAct, R.string.snackBarUserAdded, Snackbar.LENGTH_LONG);
-//                        snackbar.setAction(R.string.snackBarUndo,new SnackBarClickHandler(psswrd,psswrdCursor,spAccPsswrd));
-//                        snackbar.show();
-//                        Log.d("addNewPsswrd","The password "+ psswrd.getValue()+" has been added into the DB through addNewPsswrd method in the DisplayAccountActivity class.");
-//                    }
-//                    else {
-//                        //Prompt the user the user name input failed to be inserted in the DB
-//                        Toast toast = Toast.makeText(getBaseContext(), R.string.snackBarPsswrdNotAdded,Toast.LENGTH_LONG);
-//                        toast.setGravity(Gravity.CENTER,0,0);
-//                        toast.show();
-//                        Log.d("addNewPsswrd","The password "+ psswrd.getValue()+" has NOT been added into the DB through addNewPsswrd method in the DisplayAccountActivity class, due to DB problem.");
-//                    }//End of if else statement to check user name in DB
-//                }else {
-//                    //Prompt the user the user name input already exists in the list
-//                    Toast toast = Toast.makeText(getBaseContext(), R.string.snackBarPsswrdExists,Toast.LENGTH_LONG);
-//                    toast.setGravity(Gravity.CENTER,0,0);
-//                    toast.show();
-//                    Log.d("addNewPsswrd","The password "+ psswrdValue +" already exists in the DB.");
-//                }//End of if else statement to check user name in DB
-//            }//End of Onclick method
-//        })//End of setPositiveButton method
-//                .show();//End of AlertDialog builder
-//        Log.d("addNewPsswrd","Exit the addNewPsswrd method in the DisplayAccountActivity class.");
-//    }//End of addNewPsswrd method
-
     //Method to add a new question to the security question  dropdown menu
     protected void addNewQuestion(){
         Log.d("addNewQuestion","Enter the addNewQuestion method in the DisplayAccountActivity class.");
@@ -594,7 +537,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             this.setUpQuestionListSpinnerData(c,this.spAccSecQuestionList);
         }else{
             //Use a Dummy cursor again to display spinner prompt
-            c = accountsDB.getQuestionCursorByID(selectedQuestionID);
+            c = accountsDB.getQuestionCursorByID(1);
             this.spAccSecQuestionList.setPrompt(getResources().getString(R.string.account_quest_list_spinner_prompt));
             //setup new adapter for the security question list spinner, with a null cursor so it doesn't display any question
             this.spAccSecQuestionList.setAdapter(new SpinnerAdapterQuestion(this,c, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER));
@@ -752,6 +695,10 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             this.setUpQuestionListSpinnerData(cursorListOfQuestionsAvailable,spQuestionsAvailable);
             this.spQuestionsAvailable.setSelection(spQuestionsAvailable.getAdapter().getCount()-1);
             this.addQuestionToSecList(this.spQuestionsAvailable.getSelectedItemPosition());
+            int newQuestionPosition = this.spAccSecQuestionList.getAdapter().getCount() -1;
+            Snackbar snackbar = Snackbar.make(coordinatorLayoutAccAct, R.string.snackBarQuestionAdded, Snackbar.LENGTH_LONG);
+            snackbar.setAction(R.string.snackBarUndo,new SnackBarClickHandler(this.extractQuestionsFromSpinner(this.spAccSecQuestionList).getQuestions().get(newQuestionPosition),this.cursorQuestionList,this.spAccSecQuestionList));
+            snackbar.show();
         }else if(requestCode== MainActivity.getThrowAddQuestionActReqCode() && resultCode==RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from AddQuestionActivity received by the DisplayAccountActivity class.");
         }//End of if else statement to check the data comes SelectLogoActivity
@@ -846,6 +793,12 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             Log.d("SnackBarOnClick","Enter the onClick method method in the SnackBarClickHandler subclass from DisplayTaskActivity abstract class.");
             int spinnerType;
             //Call DB method to delete item from DB
+
+            if(item instanceof Question){
+                //Delete the answer first
+                accountsDB.deleteItem(((Question) item).getAnswer());
+            }
+            //Then delete the item
             accountsDB.deleteItem(item);
             //Check the type of object passed in to setup variables required to populate the respective spinner correctly
             if(item instanceof Psswrd){
@@ -869,7 +822,10 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             if(spinnerType != QUESTION_SPINNER){
                 setUpSpinnerData(cursor, spinner, spinnerType);
             }else{
-                setUpQuestionListSpinnerData(cursor,spinner);
+                spAccSecQuestionList.setSelection(spAccSecQuestionList.getAdapter().getCount()-1);
+                removeQuestionFromSecList();
+                setUpQuestionListSpinnerData(cursor,spQuestionsAvailable);
+                btnAccAddQuestion.setEnabled(false);
             }
             Log.d("SnackBarOnClick","Exit the onClick method method in the SnackBarClickHandler subclass from DisplayTaskActivity abstract class.");
         }//End of onClick method

@@ -573,13 +573,22 @@ public class AccountsDB extends SQLiteOpenHelper {
             table = "USERNAME";
             //Delete all items from USERNAME table where type id is equal to id
             id= ((UserName) item).get_id();
-            Log.d("deletUserName","USERNAME to be deleted.");
+            Log.d("deleteUserName","USERNAME to be deleted.");
+        }else if(item instanceof Answer){
+            table = "ANSWER";
+            //Delete all items from USERNAME table where type id is equal to id
+            id= ((Answer) item).get_id();
+            Log.d("deleteAnswer","ANSWER to be deleted.");
+        }else if(item instanceof Question){
+            table = "QUESTION";
+            //Delete all items from USERNAME table where type id is equal to id
+            id= ((Question) item).get_id();
+            Log.d("deleteQuestion","QUESTION to be deleted.");
         }else if(item instanceof Account){
             table = "ACCOUNTS";
             id = ((Account) item).get_id();
             Log.d("deleteAccount","ACCOUNT to be deleted.");
         }//End of if else statements
-
         //Run SQL statement to delete the task with id x from the TASK table
         db.execSQL(deleteFrom+ table +whereID+ id);
         db.close();
