@@ -17,6 +17,8 @@ public class AccountsDB extends SQLiteOpenHelper {
     private static final String apostrophe ="'";
     private Context context;
     private Cryptographer cryptographer;
+    //Declare and initialize constant to define the number of preloaded questions to retrieve from the DB
+    private static final int NUMBER_OF_PRELOADED_QUESTIONS = 10;
     //Default constructor
     public AccountsDB(Context context){
         super(context, "Accounts Database",null, 1);
@@ -81,6 +83,7 @@ public class AccountsDB extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO QUESTION VALUES(null,'schoolNameQuestion',null);");
         db.execSQL("INSERT INTO QUESTION VALUES(null,'streetNameQuestion',null);");
         db.execSQL("INSERT INTO QUESTION VALUES(null,'dadMiddleNameQuestion',null);");
+
 
         //Create intermediate table to associate several questions to one list of questions.
         // Leave empty as user has to group their own questions and assign them to an account.
@@ -939,7 +942,7 @@ public class AccountsDB extends SQLiteOpenHelper {
         Log.d("getPreLoadedQuestions","Enter the getPreLoadedQuestions method in the AccountsDB class.");
         //Declare and initialize cursor to hold list of questions available from DB
         Cursor preLoadedQuestions = this.runQuery("SELECT QUESTION._id, QUESTION.Value AS Q, ANSWER._id AS AnswerID,ANSWER.Value AS \n" +
-                "Answer, ANSWER.initVector AS initVector FROM QUESTION LEFT JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id WHERE QUESTION._id <= 10;");
+                "Answer, ANSWER.initVector AS initVector FROM QUESTION LEFT JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id WHERE QUESTION._id <= "+this.NUMBER_OF_PRELOADED_QUESTIONS);
         Log.d("getPreLoadedQuestions","Exit the getPreLoadedQuestions method in the AccountsDB class.");
         return preLoadedQuestions;
     }//End of getListQuestionsAvailable method
