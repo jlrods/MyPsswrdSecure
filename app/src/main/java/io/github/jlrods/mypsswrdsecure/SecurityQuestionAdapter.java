@@ -19,12 +19,6 @@ public class SecurityQuestionAdapter extends UserNameAdapter {
     public UserNameAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         Log.d("QuestAdaptVHOnCre","Enter onCreateViewHolder method in the SecurityQuestionAdapter class.");
-//        Context context = parent.getContext();
-//        LayoutInflater inflater = LayoutInflater.from(context);
-//        // Inflate the custom layout
-//        View view = inflater.inflate(R.layout.element_string_value,parent,false);
-//        view.setOnClickListener(this.listener);
-        // Return a new holder instance
         SecurityQuestionAdapter.ViewHolder viewHolder = super.onCreateViewHolder(parent,viewType);
         Log.d("QuestAdaptVHOnCre","Exit onCreateViewHolder method in the SecurityQuestionAdapter class.");
         return viewHolder;

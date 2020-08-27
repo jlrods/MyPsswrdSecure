@@ -73,8 +73,8 @@ public class MainActivity extends AppCompatActivity {
 
     private int throwAddAccountActReqCode = 5566;
     private static int throwAddQuestionActReqCode = 9876;
-    private int throwAddUserNameActReqCode = 5744;
-    private int throwAddPsswrdActReqCode = 9732;
+    private static int throwAddUserNameActReqCode = 5744;
+    private static int throwAddPsswrdActReqCode = 9732;
     private int throwEditUserNameActReqCode = 4475;
     private int throwEditPsswrdActReqCode = 6542;
     private int throwEditQuestionActReqCode = 2456;
@@ -669,6 +669,14 @@ public class MainActivity extends AppCompatActivity {
         return throwEditUserNameActReqCode;
     }
 
+    public static int getThrowAddUserNameActReqCode() {
+        return throwAddUserNameActReqCode;
+    }
+
+    public static int getThrowAddPsswrdActReqCode() {
+        return throwAddPsswrdActReqCode;
+    }
+
     public static String getUsernameTable() {
         return USERNAME_TABLE;
     }
@@ -734,7 +742,8 @@ public class MainActivity extends AppCompatActivity {
     public static boolean toggleIsFavorite(View v){
         boolean update = false;
         RecyclerView recyclerView = HomeFragment.getRv();
-        Cursor cursor = ((AccountAdapter)recyclerView.getAdapter()).getCursor();
+        AccountAdapter accountAdapter = (AccountAdapter) recyclerView.getAdapter();
+        Cursor cursor = accountAdapter.getCursor();
         //Find the position of parent recyclerview item in the adapter and store it in an int variable
         int adapterPosition = recyclerView.getChildAdapterPosition((View) v.getParent().getParent());
         //Move the cursor to the Account position in the adapter
@@ -747,13 +756,14 @@ public class MainActivity extends AppCompatActivity {
         }else{
             account.setFavorite(true);
         }
+        //accountAdapter.updateItemIsFavorite(adapterPosition,account.isFavorite());
         //Call DB method to update the account item in the Accounts table
         ContentValues values = new ContentValues();
         values.put("_id",account.get_id());
         values.put("isFavorite",account.isFavorite());
         if(accountsDB.updateTable(ACCOUNTS_TABLE,values)){
             //If DB update was successful, call method to update the recyclerview
-            updateRecyclerViewData(recyclerView.getAdapter());
+            updateRecyclerViewData(accountAdapter);
             recyclerView.scrollToPosition(adapterPosition);
             update = true;
         }else{
@@ -761,24 +771,6 @@ public class MainActivity extends AppCompatActivity {
             //MainActivity.displayToast(this.getBaseContext(),"DB Error",Toast.LENGTH_SHORT,Gravity.CENTER);
         }
 
-//        //Check the current account isFavorite attribute has changed or not
-//        if(account.isFavorite()){
-//            //Update the isSelected list within the adapter used to track the actua isSelected status of each task
-//            //((AccountAdapter)recyclerView.getAdapter()).updateItemIsSelected(adapterPosition,isChecked);
-//            //Declare and initialize a string to hold the sql query to update the cursor
-//            String sql= "";
-//            if(isArchivedSelected){
-//                sql="SELECT * FROM TASK WHERE IsArchived = 1 ORDER BY DateClosed " + tvHighlightFilter.getText().toString();
-//            }else{
-//                sql= getSQLForRecyclerView();
-//            }
-//
-//            accountsDB.updateTable();
-//            //Update the isSelected attribute (un)checked task
-//            db.updateBoolAttribute(currentCategory.getName().toString(),"IsSelected",task.getId(),isChecked);
-//            //Call method to update the adapter and the recyclerView
-//            updateRecyclerViewData(sql);
-//        }//End of if statement to check the current task actually changed isSelected stated (otherwise is the recyclerview recycling a  View)
     return update;
     }
 
