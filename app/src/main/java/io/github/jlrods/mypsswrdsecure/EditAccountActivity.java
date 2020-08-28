@@ -1,18 +1,16 @@
 package io.github.jlrods.mypsswrdsecure;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import java.text.SimpleDateFormat;
-
-import javax.crypto.spec.IvParameterSpec;
+import androidx.annotation.Nullable;
 
 public class EditAccountActivity extends DisplayAccountActivity {
     //Attribute definition
@@ -33,10 +31,15 @@ public class EditAccountActivity extends DisplayAccountActivity {
         if(this.account.getIcon().getLocation().equals(MainActivity.getRESOURCES())){
             //Extract all the logos from the app resources
             //Call static method that will get the resource by passing in it's name and set it as the resource image of the ImageView passed in
-            MainActivity.setAccountLogoImage(this.imgAccLogo,getBaseContext(),account.getIcon().getName());
+            MainActivity.setAccountLogoImageFromRes(this.imgAccLogo,getBaseContext(),account.getIcon().getName());
             this.logo = this.accountsDB.getIconByName(account.getIcon().getName());
         }else if(this.account.getIcon().getLocation().equals(String.valueOf(R.mipmap.ic_my_psswrd_secure))){
+            //Setup the app logo if required
             this.imgAccLogo.setImageResource(R.mipmap.ic_my_psswrd_secure);
+        }else if(this.account.getIcon().getLocation().startsWith("content://com.android.providers.media")){
+            //Set up image from URI if required
+            this.logo = this.accountsDB.getIconByID(this.account.getIcon().get_id());
+            this.imgAccLogo.setImageURI(Uri.parse(this.account.getIcon().getLocation()));
         }//End of if else statement to check if logo comes from app resources
         //Set up the category spinner to display the category assigned to the account by calling method that gets the cursor position by passing in it's text value
         this.spCategory.setSelection(this.getItemPositionInSpinner(this.cursorCategory,this.account.getCategory().get_id()));
@@ -97,7 +100,7 @@ public class EditAccountActivity extends DisplayAccountActivity {
                                     //Check the renew date is valid
                                     if(this.isValidRenewDate(psswrdRenewDate)){
                                         //Create a new account based on data input by user
-                                        Account newAccount = this.getItemFromUIData();
+                                        Account newAccount = this.getAccountFromUIData();
                                         //Check the grocery is not empty
                                         if(newAccount != null){
                                             newAccount.set_id(this.extras.getInt("_id"));
@@ -220,4 +223,18 @@ public class EditAccountActivity extends DisplayAccountActivity {
         Log.d("isQuestionListTheSame","Exit the isQuestionListTheSame method in EditAccountActivity class.");
         return isTheSame;
     }//End of isQuestionListTheSame method
+
+    //Method to receive and handle data coming from other activities such as: SelectLogoActivity,
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d("onActivityResult","Enter the onActivityResult method in the DisplayAccountActivity class.");
+        if(requestCode == MainActivity.getThrowImageGalleryReqCode() && resultCode == Activity.RESULT_OK){
+            //Set the image as per path coming from the intent. The data can be parsed as an uri
+            String uri = data.getDataString();
+            this.logo.setLocation(uri);
+            this.imgAccLogo.setImageURI(Uri.parse(uri));
+        }//End of if statement that checks the resultCode is OK
+        Log.d("onActivityResult","Exit the onActivityResult method in the DisplayAccountActivity class.");
+    }//End of onActivityResult method
 }//End of EditAccountActivity class

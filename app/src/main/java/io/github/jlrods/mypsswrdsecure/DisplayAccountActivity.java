@@ -1,13 +1,16 @@
 package io.github.jlrods.mypsswrdsecure;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
@@ -21,10 +24,13 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
+
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.ContextCompat;
+
 import com.google.android.material.snackbar.Snackbar;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -37,6 +43,8 @@ import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
 abstract class DisplayAccountActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
     //Attribute definition
     //Constants
+
+
     //Spinner types constants
     static final int CATEGORY_SPINNER = 0;
     static final int USERNAME_SPINNER = 1;
@@ -61,10 +69,8 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
     protected EditText etAccountName;
     protected NoDefaultSpinner spCategory;
     protected NoDefaultSpinner spAccUserName;
-    //protected EditText etAccNewUserName;
     protected Button btnAccNewUserName;
     protected NoDefaultSpinner spAccPsswrd;
-    //protected EditText etAccNewPsswrd;
     protected Button btnAccNewPsswrd;
     protected NoDefaultSpinner spAccSecQuestionList;
     protected NoDefaultSpinner spQuestionsAvailable;
@@ -113,11 +119,8 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         Log.d("OnCreateDispAcc","Enter onCreate method in the DisplayAccountActivity abstract class.");
         //Set layout for this activity
         setContentView(R.layout.activity_add_account);
-        //Extract extra data from Bundle object
-        //extras = getIntent().getExtras();
         //Get DB handler cass from the home fragment
         this.accountsDB = HomeFragment.getAccountsDB();
-
         cryptographer = MainActivity.getCryptographer();
 
         //Initialize layout coordinator required to use Snackbar
@@ -129,7 +132,8 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         this.imgAccLogo.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                throwSelectLogoActivity();;
+                displayAlartDialogForImgSource();
+                //throwSelectLogoActivity();
             }
         });//End of setOnClickListener
         //Initialize logo with default app logo
@@ -701,7 +705,13 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             snackbar.show();
         }else if(requestCode== MainActivity.getThrowAddQuestionActReqCode() && resultCode==RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from AddQuestionActivity received by the DisplayAccountActivity class.");
-        }//End of if else statement to check the data comes SelectLogoActivity
+        }
+//        else if(requestCode == MainActivity.getThrowImageGalleryReqCode() && resultCode == Activity.RESULT_OK){
+//            //Set the image as per path coming from the intent. The data can be parsed as an uri
+//            String uri = data.getDataString();
+//            this.logo.setLocation(uri);
+//            this.imgAccLogo.setImageURI(Uri.parse(uri));
+//        }//End of if statement that checks the resultCode is OK
         Log.d("onActivityResult","Exit the onActivityResult method in the DisplayAccountActivity class.");
     }//End of onActivityResult method
 
@@ -831,8 +841,8 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         }//End of onClick method
     }//End of SnackBarClickHandler subclass
 
-    protected Account getItemFromUIData(){
-        Log.d("getItemFromUIData","Enter the getItemFromUIData method method in the DisplayTaskActivity abstract class.");
+    protected Account getAccountFromUIData(){
+        Log.d("getAccountFromUIData","Enter the getAccountFromUIData method method in the DisplayTaskActivity abstract class.");
         //Declare and initialize account object to be returned
         Account account = null;
         //Declare and initialize variables to be used to construct different objects that will be used to create new account object
@@ -870,7 +880,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         }else{
             account = new Account(accountName,userName,psswrd,category,securityQuestionList,this.logo,this.isFavorite);
         }
-        Log.d("getItemFromUIData","Exit the getItemFromUIData method  in the DisplayTaskActivity abstract class.");
+        Log.d("getAccountFromUIData","Exit the getAccountFromUIData method  in the DisplayTaskActivity abstract class.");
         return account;
     }//End of getItemFromUIData method
 
@@ -1048,4 +1058,89 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         Log.d("isAccNameUsed", "Enter/Exit isAccNameUsed overloaded method in AddAccountActivity class.");
         return this.isAccNameUsed(accountName,-1);
     }//End of isAccNameUsed overloaded method
+
+    protected int displayAlartDialogForImgSource(){
+        final int[] selectedValue = {1};
+        new AlertDialog.Builder(this)
+                .setTitle("Select image source")
+                //.setMessage("Select an option to load a profile picture:")
+                .setSingleChoiceItems(R.array.profileImageSources,0, null)//End of setSingleChoice method
+                .setPositiveButton(R.string.dialog_OK,new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog,int whichButton){
+                        //Check the option selected by user
+                        int selectedOption = ((AlertDialog)dialog).getListView().getCheckedItemPosition();
+                        switch(selectedOption){
+                            case 0:
+                                break;
+                            case 1:
+                                setGalleryImageAsAccLogo();
+                                break;
+                            case 2:
+                                throwSelectLogoActivity();
+                                break;
+                            default:
+                                setAppLogoAsAccIcon();
+                                break;
+                        }//End of switch statement
+                        selectedValue[0] = selectedOption;
+//                        if(selectedPosition == 0){
+//                            if (ContextCompat.checkSelfPermission(MainActivity.this,
+//                                    Manifest.permission.WRITE_EXTERNAL_STORAGE)
+//                                    == PackageManager.PERMISSION_GRANTED) {
+//                                //If permit has been granted Call method to take image via the camera
+//                                takePicture(null);
+//                            } else {
+//                                //Otherwise, call method to display justification for this permit and request access to it
+//                                permissionRequest(Manifest.permission.WRITE_EXTERNAL_STORAGE, "Without this permit"+
+//                                                " the app won't be able to take pictures with the camera.",
+//                                        CAMERA_ACCESS_REQUEST, MainActivity.this);
+//                            }//End of if else statement to check the Camera access rights has been granted or not
+//                        }else if(selectedPosition==1){
+//                            if (ContextCompat.checkSelfPermission(MainActivity.this,
+//                                    Manifest.permission.READ_EXTERNAL_STORAGE)
+//                                    == PackageManager.PERMISSION_GRANTED) {
+//                                //If permit has been granted Call method to get access to gallery app via new intent
+//                                loadPicture(null);
+//                            } else {
+//                                //Otherwise, call method to display justification for this permit and request access to it
+//                                permissionRequest(Manifest.permission.READ_EXTERNAL_STORAGE, "Without this permit"+
+//                                                " the app won't be able to load pictures from your selected gallery.",
+//                                        GALLERY_ACCESS_REQUEST, MainActivity.this);
+//                            }//end of if else statement to check the read storage access rights has been granted or not
+//                        }else{
+//                            finish();
+//                        }//End of if else statement to check the selectedPosition value
+                    }//End of Onclick method
+                })
+                .setNegativeButton(R.string.cancel,null)
+                .create()
+                .show();
+        return selectedValue[0];
+    }
+
+    //Method to set the Default app logo as the account icon
+    protected void setAppLogoAsAccIcon(){
+        Log.d("setAppLogoAsAccIcon", "Enter setAppLogoAsAccIcon overloaded method in DisplayAccountActivity abstract class.");
+        this.logo = MainActivity.getMyPsswrdSecureLogo();
+        this.imgAccLogo.setImageResource(R.mipmap.ic_my_psswrd_secure);
+        Log.d("setAppLogoAsAccIcon", "Exit setAppLogoAsAccIcon overloaded method in DisplayAccountActivity abstract class.");
+    }//End of setAppLogoAsAccIcon method
+
+    //Method to set up an image from gallery as the account icon
+    protected void setGalleryImageAsAccLogo(){
+        Log.d("setGalImgAsAccLogo", "Enter setAppLogoAsAccIcon overloaded method in DisplayAccountActivity abstract class.");
+        if (ContextCompat.checkSelfPermission(this,
+                                    Manifest.permission.READ_EXTERNAL_STORAGE)
+                                    == PackageManager.PERMISSION_GRANTED) {
+                                //If permit has been granted Call method to get access to gallery app via new intent
+                                Intent intent = new Intent();
+                                MainActivity.loadPictureFromGallery(intent);
+                                startActivityForResult(intent, MainActivity.getThrowImageGalleryReqCode());
+                            } else {
+                                //Otherwise, call method to display justification for this permit and request access to it
+                                MainActivity.permissionRequest(Manifest.permission.READ_EXTERNAL_STORAGE, getResources().getString(R.string.galleryAccesRqst),
+                                        MainActivity.getGalleryAccessRequest(), this);
+                            }//end of if else statement to check the read storage access rights has been granted or not
+        Log.d("setGalImgAsAccLogo", "Exit setAppLogoAsAccIcon overloaded method in DisplayAccountActivity abstract class.");
+    }//End of setGalleryImageAsAccLogo method
 }//End of AddAccountActivity

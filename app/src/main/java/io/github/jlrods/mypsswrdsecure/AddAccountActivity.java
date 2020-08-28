@@ -1,12 +1,16 @@
 package io.github.jlrods.mypsswrdsecure;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
 
 public class AddAccountActivity extends DisplayAccountActivity {
 
@@ -228,11 +232,21 @@ public class AddAccountActivity extends DisplayAccountActivity {
                                     //Check the renew date is valid
                                     if(this.isValidRenewDate(psswrdRenewDate)){
                                         //Create a new account based on data input by user
-                                        this.account = this.getItemFromUIData();
+                                        this.account = this.getAccountFromUIData();
                                         //Check the grocery is not empty
                                         if(this.account != null){
                                             //Declare and instantiate to invalid value a new int var to hold the returned int from the addItem method which will correspond with the grocery just created
                                             int accountID = -1;
+                                            int logoID = -1;
+                                            if(this.account.getIcon()!=null){
+                                                if(this.account.getIcon().getLocation()!= MainActivity.getRESOURCES() && this.account.getIcon()!= MainActivity.getMyPsswrdSecureLogo()){
+                                                    //Save the logo uri in the DB
+                                                    logoID = this.accountsDB.addItem(this.account.getIcon());
+                                                    if(logoID != -1){
+                                                        this.account.getIcon().set_id(logoID);
+                                                    }
+                                                }
+                                            }
                                             //Call the addItem method and receive the id sent from method
                                             accountID    = accountsDB.addItem(this.account);
                                             //Check the id from the DB is valid and different than the dummy one.
@@ -286,6 +300,24 @@ public class AddAccountActivity extends DisplayAccountActivity {
         Log.d("onOptionsItemSelected","Exit successfully onOptionsItemSelected method in AddAccountActivity class.");
         return result;
     }//End of onOptionsItemSelected
+
+
+    //Method to receive and handle data coming from other activities such as: SelectLogoActivity,
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d("onActivityResult","Enter the onActivityResult method in the AddAccountActivity class.");
+        if(requestCode == MainActivity.getThrowImageGalleryReqCode() && resultCode == RESULT_OK){
+            Log.d("onActivityResult","Received GOOD result from Gallery intent. Received by the onActivityResult method in the AddAccountActivity class.");
+            //Set the image as per path coming from the intent. The data can be parsed as an uri
+            String uri = data.getDataString();
+            this.logo = new Icon("galleryImage_"+System.currentTimeMillis(),uri);
+            this.imgAccLogo.setImageURI(Uri.parse(uri));
+        }else if(requestCode == MainActivity.getThrowImageGalleryReqCode() && resultCode == Activity. RESULT_CANCELED){
+            Log.d("onActivityResult","Received BAD result from Gallery intent. Received by the onActivityResult method in the AddAccountActivity class.");
+        }//End of if statement that checks the resultCode is OK
+        Log.d("onActivityResult","Exit the onActivityResult method in the AddAccountActivity class.");
+    }//End of onActivityResult method
 
 
 }//End of AddAccountActivity method

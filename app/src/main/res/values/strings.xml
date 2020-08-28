@@ -152,6 +152,8 @@
     <string name="alertBoxNewPsswrd">Add password</string>
     <string name="alertBoxNewPsswrdMssg">Please, enter a new password</string>
     <string name="alertBoxNewPsswrdHint">Type password here...</string>
+    <string name="generalPermitRqst">Permit request</string>
+    <string name="galleryAccesRqst">Without this permit the app will not be able to load pictures from your selected gallery.</string>
 
 
 
@@ -168,4 +170,13 @@
     <string name="snackBarPsswrdExists">Sorry, the password already exists</string>
     <string name="snackBarQuestionNotAdded">Sorry, the question was not saved</string>
     <string name="snackBarQuestionExists">Sorry, the question already exists</string>
+
+
+
+    <!--    Image resource diaglog alert-->
+    <string name="camera">&#128247; Camera</string>
+    <string name="gallery">&#127966; Gallery</string>
+    <string name="appResources">&#x1F4F1; Resources</string>
+    <string name="defaultLog">&#x1F50F; App logo</string>
+
 </resources>

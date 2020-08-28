@@ -1,19 +1,15 @@
 package io.github.jlrods.mypsswrdsecure;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.database.Cursor;
-import android.os.Build;
+import android.net.Uri;
 import android.util.Log;
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 
@@ -62,12 +58,18 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
         this.cursor.moveToPosition(position);
         //Extract the data from cursor to create a new User or Password
         Account account = Account.extractAccount(this.cursor);
-        if(account.getIcon().get_id() == R.mipmap.ic_my_psswrd_secure){
-            holder.imgIcon.setImageResource(R.mipmap.ic_my_psswrd_secure);
-        }else{
+//        if(account.getIcon().get_id() == R.mipmap.ic_my_psswrd_secure){
+//            holder.imgIcon.setImageResource(R.mipmap.ic_my_psswrd_secure);
+//        }else
+        if(account.getIcon().getLocation().startsWith("content://com.android.providers.media")){
+            //FIXME: Here there will be another possibility: The icon comes  from URI in phone
+            holder.imgIcon.setImageURI(Uri.parse(account.getIcon().getLocation()));
+        }else if(account.getIcon().getLocation().equals(MainActivity.getRESOURCES())){
             //Call static method that will get the resource by passing in it's name and set it as the resource image of the ImageView passed in
-            MainActivity.setAccountLogoImage(holder.imgIcon,context,account.getIcon().getName());
-        }//FIXME: Here there will be another possibility: The icon comes  from URI in phone
+            MainActivity.setAccountLogoImageFromRes(holder.imgIcon,context,account.getIcon().getName());
+        }else{
+            holder.imgIcon.setImageResource(R.mipmap.ic_my_psswrd_secure);
+        }
         if(account.isFavorite()){
             holder.imgFavoriteStar.setImageResource(android.R.drawable.btn_star_big_on);
         }else{
