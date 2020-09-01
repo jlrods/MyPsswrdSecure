@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -100,6 +101,9 @@ public class MainActivity extends AppCompatActivity {
     private static final String CATEGORY_TABLE = "CATEGORY";
     private static final String APPSTATE_TABLE = "APPSTATE";
     private static final String ACCOUNTS_TABLE = "ACCOUNTS";
+
+    private static Uri uriCameraImage = null;
+    private static final String EXTERNAL_IMAGE_STORAGE_CLUE = "content://";
 
 
     @Override
@@ -745,6 +749,14 @@ public class MainActivity extends AppCompatActivity {
         return CAMERA_ACCESS_REQUEST;
     }
 
+    public static Uri getUriCameraImage() {
+        return uriCameraImage;
+    }
+
+    public static String getExternalImageStorageClue() {
+        return EXTERNAL_IMAGE_STORAGE_CLUE;
+    }
+
     public static void displayToast(Context context, String text, int toastLength, int gravity){
         Log.d("displayToast","Enter displayToast method in the MainActivity class.");
         Toast toast = Toast.makeText(context,text,toastLength);
@@ -805,7 +817,7 @@ public class MainActivity extends AppCompatActivity {
 
     //Method to load ad picture from gallery app
     public static void loadPictureFromGallery(Intent intent) {
-        Log.d("LoadPicture","Enter loadPictureFromGallery method in the MainActivity class.");
+        Log.d("LoadGalPicture","Enter loadPictureFromGallery method in the MainActivity class.");
         //Declare a new intent
         //Intent intent;
         //Check SDK version
@@ -827,7 +839,27 @@ public class MainActivity extends AppCompatActivity {
             intent.setType("image/*");
             //startActivityForResult(intent, RESULT_PROFILE_IMAGE_GALLERY);
         }//End of if else statement that checks the SDK version
-        Log.d("LoadPicture","Exit loadPictureFromGallery method in the MainActivity class.");
+        Log.d("LoadGalPicture","Exit loadPictureFromGallery method in the MainActivity class.");
+    }//End of loadPicture method
+
+    ////Method To take a picture via intent
+    public static void loadPictureFromCamera(Intent intent, Activity activity) {
+        Log.d("LoadCamPicture","Enter loadPictureFromCamera method in the MainActivity class.");
+            //Declare and initialize a new Intent object to call camera app
+//            intent = new Intent();
+            intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
+            //Check the PackageManager is not null
+            if (intent.resolveActivity(activity.getPackageManager()) != null) {
+                ContentValues values = new ContentValues(1);
+                values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpg");
+                uriCameraImage = activity.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, uriCameraImage);
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                //startActivityForResult(intent, RESULT_PROFILE_IMAGE_CAMERA);
+            } else {
+                MainActivity.displayToast(activity,"",Toast.LENGTH_LONG,Gravity.BOTTOM);
+            }//End of if else statement
+        Log.d("LoadCamPicture","Exit loadPictureFromCamera method in the MainActivity class.");
     }//End of loadPicture method
 
 

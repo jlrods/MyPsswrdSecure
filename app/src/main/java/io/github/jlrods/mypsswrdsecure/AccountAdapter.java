@@ -58,7 +58,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
         this.cursor.moveToPosition(position);
         //Extract the data from cursor to create a new User or Password
         Account account = Account.extractAccount(this.cursor);
-        if(account.getIcon().getLocation().startsWith("content://com.android.providers.media")){
+        if(account.getIcon().getLocation().startsWith(MainActivity.getExternalImageStorageClue())){
             //Set image if it comes from phone URI
             holder.imgIcon.setImageURI(Uri.parse(account.getIcon().getLocation()));
         }else if(account.getIcon().getLocation().equals(MainActivity.getRESOURCES())){
@@ -132,10 +132,4 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
             Log.d("AccountVHCreator","Exit ViewHolder constructor in the AccountAdapter class.");
         }//End of ViewHolder
     }//End of ViewHolder inner class
-
-    //Method to update the key value list that keeps record of current state of each task's check box
-//    public void updateItemIsFavorite(int position,boolean isFavorite){
-//        //Add or overwrite the checkbox list
-//        //itemStateArray.put(position,isFavorite);
-//    }//End of updateItemIsSelected method
-}
+}//End of AccountAdapter class

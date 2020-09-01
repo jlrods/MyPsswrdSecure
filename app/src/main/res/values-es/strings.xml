@@ -112,6 +112,7 @@
     <!--    Edit Account Activity-->
     <string name="accountNotChanged">Sorry, the account attributes have not been changed. Please, updated one of the values at least</string>
     <string name="accountUpdated"> cuenta ha sido actualizada!</string>
+    <string name="accountUpdateError">Los siento, la base de datos ha fallado en registrar los cambios en la cuenta!</string>
 
     <!--    AddUserName Activity-->
     <string name="userNameAdded">Nuevo usuario agregado stisfactoriamente!</string>
@@ -152,6 +153,7 @@
     <string name="alertBoxNewPsswrdHint">Escriba la contraseña aquí...</string>
     <string name="generalPermitRqst">Solicitud de permiso</string>
     <string name="galleryAccesRqst">Sin este permiso la app no podrá accesar sus imagenes en la galería.</string>
+    <string name="cameraAccesRqst">Sin este permiso la app no podrá accesar la cámara.</string>
 
     <!--    Snackbar texts-->
     <string name="snackBarUndo">UNDO</string>

@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
@@ -24,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -706,12 +708,25 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         }else if(requestCode== MainActivity.getThrowAddQuestionActReqCode() && resultCode==RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from AddQuestionActivity received by the DisplayAccountActivity class.");
         }else if(requestCode == MainActivity.getThrowImageGalleryReqCode() && resultCode == Activity.RESULT_OK){
+            Log.d("onActivityResult","Received GOOD result from Gallery intent received by the DisplayAccountActivity class.");
             //Set the image as per path coming from the intent. The data can be parsed as an uri
             String uri = data.getDataString();
             this.logo = new Icon("galleryImage_"+System.currentTimeMillis(),uri);
             this.imgAccLogo.setImageURI(Uri.parse(uri));
         }else if(requestCode == MainActivity.getThrowImageGalleryReqCode() && resultCode == Activity.RESULT_CANCELED){
-            Log.d("onActivityResult","Received BAD result from AddQuestionActivity received by the DisplayAccountActivity class.");
+            Log.d("onActivityResult","Received BAD result from Gallery intent received by the DisplayAccountActivity class.");
+        }else if(requestCode == MainActivity.getThrowImageCameraReqCode() && resultCode == Activity.RESULT_OK){
+            Log.d("onActivityResult","Received GOOD result from Camera intent received by the DisplayAccountActivity class.");
+            //Set the image as per path coming from the intent. The data can be parsed as an uri
+            Uri uri = MainActivity.getUriCameraImage();
+            if(uri != null && !uri.equals("")){
+                this.logo = new Icon("CameraImage_"+System.currentTimeMillis(),uri.toString());
+                this.imgAccLogo.setImageURI(uri);
+            }else{
+                MainActivity.displayToast(this,"Error with camera", Toast.LENGTH_SHORT, Gravity.BOTTOM);
+            }
+        }else if(requestCode == MainActivity.getThrowImageCameraReqCode() && resultCode == Activity.RESULT_CANCELED){
+            Log.d("onActivityResult","Received BAD result from Camera intent received by the DisplayAccountActivity class.");
         }//End of if statement that checks the resultCode is OK
 //        else if(requestCode == MainActivity.getThrowImageGalleryReqCode() && resultCode == Activity.RESULT_OK){
 //            //Set the image as per path coming from the intent. The data can be parsed as an uri
@@ -1062,10 +1077,14 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
                         int selectedOption = ((AlertDialog)dialog).getListView().getCheckedItemPosition();
                         switch(selectedOption){
                             case 0:
+                                setExternalImageAsAccLogo(Manifest.permission.WRITE_EXTERNAL_STORAGE,getResources().getString(R.string.cameraAccesRqst),
+                                        MainActivity.getThrowImageCameraReqCode(),MainActivity.getCameraAccessRequest());
                                 break;
                             case 1:
                                 //Call method to set up an image from the phone gallery
-                                setGalleryImageAsAccLogo();
+//                                setGalleryImageAsAccLogo();
+                                setExternalImageAsAccLogo(Manifest.permission.READ_EXTERNAL_STORAGE,getResources().getString(R.string.galleryAccesRqst),
+                                                            MainActivity.getThrowImageGalleryReqCode(),MainActivity.getGalleryAccessRequest());
                                 break;
                             case 2:
                                 //Call method to throw the select logo activity, where logos are stored as app resources
@@ -1125,6 +1144,26 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         Log.d("setGalImgAsAccLogo", "Exit setAppLogoAsAccIcon overloaded method in DisplayAccountActivity abstract class.");
     }//End of setGalleryImageAsAccLogo method
 
+    //Method to set up an image from gallery as the account icon
+    protected void setExternalImageAsAccLogo(String permissionType, String permissionReason, int requestCode, int accessRequestCode){
+        Log.d("setGalImgAsAccLogo", "Enter setAppLogoAsAccIcon overloaded method in DisplayAccountActivity abstract class.");
+        if (ContextCompat.checkSelfPermission(this,permissionType) == PackageManager.PERMISSION_GRANTED) {
+            //If permit has been granted Call method to get access to gallery app via new intent
+            Intent intent = new Intent();
+            if(requestCode == MainActivity.getThrowImageGalleryReqCode()){
+                MainActivity.loadPictureFromGallery(intent);
+            }else if(requestCode == MainActivity.getThrowImageCameraReqCode()){
+                MainActivity.loadPictureFromCamera(intent,this);
+            }//End of if else statement to check the request code
+            startActivityForResult(intent, requestCode);
+        } else {
+            //Otherwise, call method to display justification for this permit and request access to it
+            MainActivity.permissionRequest(permissionType, permissionReason,
+                    accessRequestCode, this);
+        }//End of if else statement to check the read storage access rights has been granted or not
+        Log.d("setGalImgAsAccLogo", "Exit setAppLogoAsAccIcon overloaded method in DisplayAccountActivity abstract class.");
+    }//End of setGalleryImageAsAccLogo method
+
     //Method to add new icon into the DB if icon isn't the app logo or comes from the app resources
     protected boolean isAddIconRequired(Account account){
         Log.d("isAddIconRequired", "Enter isAddIconRequired method in DisplayAccountActivity abstract class.");
@@ -1133,7 +1172,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         boolean isIconAddedToDB = false;
         //Check the account icon isn't null
         if(account.getIcon()!=null){
-            //Check the icon doesn't come from app resources or isn't the defatul app logo
+            //Check the icon doesn't come from app resources or isn't the default app logo
             if(account.getIcon().getLocation()!= MainActivity.getRESOURCES() && account.getIcon()!= MainActivity.getMyPsswrdSecureLogo()){
                 //If icon isn't coming from either option, save the logo uri in the DB
                 logoID = this.accountsDB.addItem(account.getIcon());

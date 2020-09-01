@@ -36,7 +36,7 @@ public class EditAccountActivity extends DisplayAccountActivity {
         }else if(this.account.getIcon().getLocation().equals(String.valueOf(R.mipmap.ic_my_psswrd_secure))){
             //Setup the app logo if required
             this.imgAccLogo.setImageResource(R.mipmap.ic_my_psswrd_secure);
-        }else if(this.account.getIcon().getLocation().startsWith("content://com.android.providers.media")){
+        }else if(this.account.getIcon().getLocation().startsWith(MainActivity.getExternalImageStorageClue())){
             //Set up image from URI if required
             this.logo = this.accountsDB.getIconByID(this.account.getIcon().get_id());
             this.imgAccLogo.setImageURI(Uri.parse(this.account.getIcon().getLocation()));
@@ -151,7 +151,7 @@ public class EditAccountActivity extends DisplayAccountActivity {
                                                         finish();
                                                     }else{
                                                         //Report DB error when updating the record
-
+                                                        MainActivity.displayToast(this,getResources().getString(R.string.accountUpdateError),Toast.LENGTH_LONG,Gravity.CENTER);
                                                     }//End of if statement to check the accountID is not -1
                                                 }else{
                                                     //Prompt the user no change has been done on the UI data
