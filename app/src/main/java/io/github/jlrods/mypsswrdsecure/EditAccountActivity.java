@@ -125,7 +125,6 @@ public class EditAccountActivity extends DisplayAccountActivity {
                                                     values.put("CategoryID",newAccount.getCategory().get_id());
                                                     values.put("UserNameID",newAccount.getUserName().get_id());
                                                     values.put("PsswrdID",newAccount.getPsswrd().get_id());
-                                                    //@Fixme:
                                                     if(!this.isQuestionListTheSame(this.account.getQuestionList(),newAccount.getQuestionList())){
                                                         if(this.account.getQuestionList() == null && newAccount.getQuestionList() != null){
                                                             values.put("QuestionListID",newAccount.getQuestionList().get_id());
@@ -135,7 +134,9 @@ public class EditAccountActivity extends DisplayAccountActivity {
                                                             values.put("QuestionListID",newAccount.getQuestionList().get_id());
                                                         }//End of if else statement to check the question list states
                                                     }//End of if statement to check the question list are the same
-
+                                                    if(!this.isAddIconRequired(newAccount)){
+                                                        newAccount.setIcon(MainActivity.getMyPsswrdSecureLogo());
+                                                    }
                                                     values.put("IconID",newAccount.getIcon().get_id());
                                                     values.put("IsFavorite",newAccount.isFavorite());
                                                     //values.put("DateCreated",this.account.getDateCreated());
@@ -228,13 +229,6 @@ public class EditAccountActivity extends DisplayAccountActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d("onActivityResult","Enter the onActivityResult method in the DisplayAccountActivity class.");
-        if(requestCode == MainActivity.getThrowImageGalleryReqCode() && resultCode == Activity.RESULT_OK){
-            //Set the image as per path coming from the intent. The data can be parsed as an uri
-            String uri = data.getDataString();
-            this.logo.setLocation(uri);
-            this.imgAccLogo.setImageURI(Uri.parse(uri));
-        }//End of if statement that checks the resultCode is OK
-        Log.d("onActivityResult","Exit the onActivityResult method in the DisplayAccountActivity class.");
+        Log.d("onActivityResult","Enter/Exit the onActivityResult method in the DisplayAccountActivity class.");
     }//End of onActivityResult method
 }//End of EditAccountActivity class

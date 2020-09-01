@@ -132,7 +132,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         this.imgAccLogo.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                displayAlartDialogForImgSource();
+                displayAlertDialogForImgSource();
                 //throwSelectLogoActivity();
             }
         });//End of setOnClickListener
@@ -650,7 +650,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
                 //this.imgAccLogo.setImageResource(data.getExtras().getInt("selectedImgID"));
                 this.selectedPosition = data.getExtras().getInt("selectedImgPosition");
                         //iconAdapter.getIconList().get().get_id();
-                this.logo = iconAdapter.getIconList().get(this.selectedPosition);
+                this.logo = this.iconAdapter.getIconList().get(this.selectedPosition);
                 this.imgAccLogo.setImageResource(this.logo.getResourceID());
             }else if(data.getExtras().getString("selectedImgLocation").equals(String.valueOf(R.mipmap.ic_my_psswrd_secure))){
                 this.imgAccLogo.setImageResource(R.mipmap.ic_my_psswrd_secure);
@@ -705,7 +705,14 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             snackbar.show();
         }else if(requestCode== MainActivity.getThrowAddQuestionActReqCode() && resultCode==RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from AddQuestionActivity received by the DisplayAccountActivity class.");
-        }
+        }else if(requestCode == MainActivity.getThrowImageGalleryReqCode() && resultCode == Activity.RESULT_OK){
+            //Set the image as per path coming from the intent. The data can be parsed as an uri
+            String uri = data.getDataString();
+            this.logo = new Icon("galleryImage_"+System.currentTimeMillis(),uri);
+            this.imgAccLogo.setImageURI(Uri.parse(uri));
+        }else if(requestCode == MainActivity.getThrowImageGalleryReqCode() && resultCode == Activity.RESULT_CANCELED){
+            Log.d("onActivityResult","Received BAD result from AddQuestionActivity received by the DisplayAccountActivity class.");
+        }//End of if statement that checks the resultCode is OK
 //        else if(requestCode == MainActivity.getThrowImageGalleryReqCode() && resultCode == Activity.RESULT_OK){
 //            //Set the image as per path coming from the intent. The data can be parsed as an uri
 //            String uri = data.getDataString();
@@ -854,10 +861,6 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         long psswrdChangeDate = 0;
         //Start extracting data from UI
         accountName = this.etAccountName.getText().toString();
-        //@FIXME check if including apostrophe esc char is required when using insert android method
-//        if(accountName.contains(""/)){
-//            accountName = accounts.includeApostropheEscapeChar(accountName);
-//        }
         category = accountsDB.getCategoryByID((int) this.spCategory.getSelectedItemId());
         userName = accountsDB.getUserNameByID((int) this.spAccUserName.getSelectedItemId());
         psswrd = accountsDB.getPsswrdByID((int) this.spAccPsswrd.getSelectedItemId());
@@ -921,7 +924,6 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             return 0;
         }//End of if else state to check the date isn't null
     }//End of getAppointmentDate method
-
 
     //Method to check password renew date is valid
     protected boolean isValidRenewDate(long renewDate){
@@ -996,7 +998,6 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         return _id;
     }
 
-
     //Method to find Item position in a cursor by passing in it's text value
     protected int getItemPositionInSpinner(Cursor cursor, int _id){
         Log.d("getPositionInSpinner","Enter the getItemPositionInSpinner method in the DisplayActivity abstract class.");
@@ -1037,17 +1038,6 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             if((_id == -1 && accNameFound) || ((_id != accountCursor.getInt(0)) && (accNameFound) )){
                 isAccNameUsed = true;
                 Log.d("isAccNameUsed","Account name "+ accountName+" found in account list by isAccNameUsed method in AddAccountActivity class.");
-//                if(accountName.toLowerCase().equals(accountCursor.getString(1).toLowerCase())){
-//                    isAccNameUsed = true;
-//                    Log.d("isAccNameUsed","Account name "+ accountName+" found in account list by isAccNameUsed method in AddAccountActivity class.");
-//                }//End of if statement to check account name is in use
-//            }else{
-//                /
-//                //But not other exiting account name
-//                if(_id != accountCursor.getInt(0)){
-//                    isAccNameUsed = true;
-//                    Log.d("isAccNameUsed","Account name "+ accountName+" found in account list by isAccNameUsed method in AddAccountActivity class.");
-//                }
             }//End of if else statement to check the _id passed in is equal to -1
         }//End of if that checks the cursor isn't null. Null means the account name isn't being used, hence return false
         return isAccNameUsed;
@@ -1059,7 +1049,8 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         return this.isAccNameUsed(accountName,-1);
     }//End of isAccNameUsed overloaded method
 
-    protected int displayAlartDialogForImgSource(){
+    protected int displayAlertDialogForImgSource(){
+        Log.d("AlertDiagImgSource", "Enter displayAlertDialogForImgSource  method in DisplayAccountActivity abstract class.");
         final int[] selectedValue = {1};
         new AlertDialog.Builder(this)
                 .setTitle("Select image source")
@@ -1073,12 +1064,15 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
                             case 0:
                                 break;
                             case 1:
+                                //Call method to set up an image from the phone gallery
                                 setGalleryImageAsAccLogo();
                                 break;
                             case 2:
+                                //Call method to throw the select logo activity, where logos are stored as app resources
                                 throwSelectLogoActivity();
                                 break;
                             default:
+                                //Any other case, set up the app logo for the current account
                                 setAppLogoAsAccIcon();
                                 break;
                         }//End of switch statement
@@ -1095,28 +1089,15 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
 //                                                " the app won't be able to take pictures with the camera.",
 //                                        CAMERA_ACCESS_REQUEST, MainActivity.this);
 //                            }//End of if else statement to check the Camera access rights has been granted or not
-//                        }else if(selectedPosition==1){
-//                            if (ContextCompat.checkSelfPermission(MainActivity.this,
-//                                    Manifest.permission.READ_EXTERNAL_STORAGE)
-//                                    == PackageManager.PERMISSION_GRANTED) {
-//                                //If permit has been granted Call method to get access to gallery app via new intent
-//                                loadPicture(null);
-//                            } else {
-//                                //Otherwise, call method to display justification for this permit and request access to it
-//                                permissionRequest(Manifest.permission.READ_EXTERNAL_STORAGE, "Without this permit"+
-//                                                " the app won't be able to load pictures from your selected gallery.",
-//                                        GALLERY_ACCESS_REQUEST, MainActivity.this);
-//                            }//end of if else statement to check the read storage access rights has been granted or not
-//                        }else{
-//                            finish();
-//                        }//End of if else statement to check the selectedPosition value
+
                     }//End of Onclick method
                 })
                 .setNegativeButton(R.string.cancel,null)
                 .create()
                 .show();
+        Log.d("AlertDiagImgSource", "Exit displayAlertDialogForImgSource  method in DisplayAccountActivity abstract class.");
         return selectedValue[0];
-    }
+    }//End of displayAlertDialogForImgSource
 
     //Method to set the Default app logo as the account icon
     protected void setAppLogoAsAccIcon(){
@@ -1143,4 +1124,32 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
                             }//end of if else statement to check the read storage access rights has been granted or not
         Log.d("setGalImgAsAccLogo", "Exit setAppLogoAsAccIcon overloaded method in DisplayAccountActivity abstract class.");
     }//End of setGalleryImageAsAccLogo method
+
+    //Method to add new icon into the DB if icon isn't the app logo or comes from the app resources
+    protected boolean isAddIconRequired(Account account){
+        Log.d("isAddIconRequired", "Enter isAddIconRequired method in DisplayAccountActivity abstract class.");
+        //Declare and initialize variables to be used in method and the return variable
+        int logoID = -1;
+        boolean isIconAddedToDB = false;
+        //Check the account icon isn't null
+        if(account.getIcon()!=null){
+            //Check the icon doesn't come from app resources or isn't the defatul app logo
+            if(account.getIcon().getLocation()!= MainActivity.getRESOURCES() && account.getIcon()!= MainActivity.getMyPsswrdSecureLogo()){
+                //If icon isn't coming from either option, save the logo uri in the DB
+                logoID = this.accountsDB.addItem(account.getIcon());
+                //Check the DB insertion was successful
+                if(logoID != -1){
+                    //Update the account object Icon ID
+                    account.getIcon().set_id(logoID);
+                    //Set boolean flag to true, to denote the icon had to be inserted in DB
+                    isIconAddedToDB = true;
+                }else{
+                    //Otherwise, set the account attribute's icon id for the account object
+                    account.getIcon().set_id(this.account.getIcon().get_id());
+                }//End of if statement to check the logoID is valid
+            }//End of if statement to check the icon doesn't come from resources or isn't the app logo
+        }//End of if statement to check the icon isn't null
+        Log.d("isAddIconRequired", "Exit isAddIconRequired method in DisplayAccountActivity abstract class.");
+        return isIconAddedToDB;
+    }//End of isAddIconRequired
 }//End of AddAccountActivity

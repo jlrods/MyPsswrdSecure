@@ -237,16 +237,8 @@ public class AddAccountActivity extends DisplayAccountActivity {
                                         if(this.account != null){
                                             //Declare and instantiate to invalid value a new int var to hold the returned int from the addItem method which will correspond with the grocery just created
                                             int accountID = -1;
-                                            int logoID = -1;
-                                            if(this.account.getIcon()!=null){
-                                                if(this.account.getIcon().getLocation()!= MainActivity.getRESOURCES() && this.account.getIcon()!= MainActivity.getMyPsswrdSecureLogo()){
-                                                    //Save the logo uri in the DB
-                                                    logoID = this.accountsDB.addItem(this.account.getIcon());
-                                                    if(logoID != -1){
-                                                        this.account.getIcon().set_id(logoID);
-                                                    }
-                                                }
-                                            }
+                                            //Call method to add new icon into the DB if icon isn't the app logo or comes from the app resources
+                                            this.isAddIconRequired(this.account);
                                             //Call the addItem method and receive the id sent from method
                                             accountID    = accountsDB.addItem(this.account);
                                             //Check the id from the DB is valid and different than the dummy one.
@@ -306,17 +298,7 @@ public class AddAccountActivity extends DisplayAccountActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d("onActivityResult","Enter the onActivityResult method in the AddAccountActivity class.");
-        if(requestCode == MainActivity.getThrowImageGalleryReqCode() && resultCode == RESULT_OK){
-            Log.d("onActivityResult","Received GOOD result from Gallery intent. Received by the onActivityResult method in the AddAccountActivity class.");
-            //Set the image as per path coming from the intent. The data can be parsed as an uri
-            String uri = data.getDataString();
-            this.logo = new Icon("galleryImage_"+System.currentTimeMillis(),uri);
-            this.imgAccLogo.setImageURI(Uri.parse(uri));
-        }else if(requestCode == MainActivity.getThrowImageGalleryReqCode() && resultCode == Activity. RESULT_CANCELED){
-            Log.d("onActivityResult","Received BAD result from Gallery intent. Received by the onActivityResult method in the AddAccountActivity class.");
-        }//End of if statement that checks the resultCode is OK
-        Log.d("onActivityResult","Exit the onActivityResult method in the AddAccountActivity class.");
+        Log.d("onActivityResult","Enter/Exit the onActivityResult method in the AddAccountActivity class.");
     }//End of onActivityResult method
 
 
