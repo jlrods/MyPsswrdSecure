@@ -63,7 +63,6 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
     UserName userName = null;
     Psswrd psswrd = null;
     Account account = null;
-    //int objectType = -1;
 
     //Layout attributes
     protected Bundle extras;
@@ -300,6 +299,199 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         this.iconAdapter = new IconAdapter(this);
         Log.d("OnCreateDispAcc","Exit onCreate method in the DisplayAccountActivity abstract class.");
     }//End of onCreate method
+
+    @Override
+    protected void onSaveInstanceState(Bundle saveState) {
+        //Call super method
+        super.onSaveInstanceState(saveState);
+        Log.d("onSaveInstanceState", "Enter onSaveInstanceState method in the a AddAccountActivity class.");
+        //Record input data that is not saved by OS already
+        //Fields save by OS: Account Name edit text,
+        //The date created is generated itself during onCreate method
+        //Save all the input fields first
+        //Save te Account name input in edit text field
+        saveState.putString("etAccountNameText",this.etAccountName.getText().toString());
+        //Save te Category spinner item position selected
+        saveState.putInt("spCategorySelectedPosition",this.spCategory.getSelectedItemPosition());
+        //Save te UserName spinner item position selected
+        saveState.putInt("spUserNameSelectedPosition",this.spAccUserName.getSelectedItemPosition());
+        //Save te Password spinner item position selected
+        saveState.putInt("spPsswrdSelectedPosition",this.spAccPsswrd.getSelectedItemPosition());
+        saveState.putBoolean("spAccSecQuestionListIsEnabled",this.spAccSecQuestionList.isEnabled());
+        //Check if Security question spinner is enable
+        if(this.spAccSecQuestionList.isEnabled()){
+            //Check number of questions and store their QuestionIDs
+            QuestionList questionList = this.extractQuestionsFromSpinner(this.spAccSecQuestionList);
+            saveState.putInt("numberOfQuestionsInList",questionList.getSize());
+            for(int i=0;i<questionList.getSize();i++){
+                saveState.putInt("questionID"+(i+1),questionList.getQuestions().get(i).get_id());
+            }
+            //If so, save the current position
+            saveState.putInt("spSecQuestListSelectedPos",this.spAccSecQuestionList.getSelectedItemPosition());
+        }else{
+            //Otherwise, save -1 (even though there's a dummy item selected)
+            saveState.putInt("spSecQuestListSelectedPos",-1);
+        }
+        //Save the Question Available spinner item position selected
+        saveState.putInt("spQuestAvailableSelectedPos",this.spQuestionsAvailable.getSelectedItemPosition());
+        //Save the current isFavorite attribute state
+        saveState.putBoolean("isFavorite",this.isFavorite);
+        //Save the checkbox state of "Has to be changed?" checkbox
+        saveState.putBoolean("cbHasToBeChanged",this.cbHasToBeChanged.isChecked());
+        //If the checkbox is ticked, save the password renew date
+        if(this.cbHasToBeChanged.isChecked()){
+            saveState.putString("tvDateRenewValueText",this.tvAccDateRenewValue.getText().toString());
+        }
+        //Save the current icon
+        if(this.logo.getLocation().equals(MainActivity.getRESOURCES())){
+            //If logo comes from resources save the logoLocation and selected position, so the same logo can be retrieved later on
+            saveState.putString("logoLocation",MainActivity.getRESOURCES());
+            saveState.putInt("logoListPosition",this.selectedPosition);
+            saveState.putString("logoName",this.logo.getName());
+        }else if(this.logo.getLocation().equals(String.valueOf(R.mipmap.ic_my_psswrd_secure))){
+            saveState.putString("logoLocation",String.valueOf(R.mipmap.ic_my_psswrd_secure));
+            saveState.putInt("logoListPosition",R.mipmap.ic_my_psswrd_secure);
+        }else if(this.logo.getLocation().startsWith(MainActivity.getExternalImageStorageClue())){
+            saveState.putString("logoName",this.logo.getName());
+            saveState.putString("logoLocation",this.logo.getLocation());
+        }//End of if else statement to check the logo location
+        Log.d("onSaveInstanceState", "Exit onSaveInstanceState method in the a AddAccountActivity class.");
+    }//End of onSaveInstanceState
+
+    @Override
+    protected void onRestoreInstanceState(Bundle restoreState) {
+        //Call the super method
+        super.onRestoreInstanceState(restoreState);
+        Log.d("onRestoreInstanceState", "Enter onRestoreInstanceState method in the a AddAccountActivity class.");
+        //Check the stored state is not null
+        if (restoreState != null){
+            //Populate Account name
+            this.etAccountName.setText(restoreState.getString("etAccountNameText"));
+            //Set up current Category spinner position
+            int spCategorySelectedPosition = restoreState.getInt("spCategorySelectedPosition");
+            //Check the position, if set to -1 then reconfigure spinner from scratch to get prompt, otherwise move to position
+            if(spCategorySelectedPosition != -1){
+                this.spCategory.setSelection(spCategorySelectedPosition);
+            }else{
+                //Set up Category spinner from beginning
+                //Setup the Category spinner and populate with data
+                this.cursorCategory = this.accountsDB.getCategoryListCursor();
+                this.setUpSpinnerData(this.cursorCategory,this.spCategory,this.CATEGORY_SPINNER);
+            }//End of if else statement  that checks the selected position in the category  spinner
+
+            //Set up current UserName spinner position
+            int spUserNameSelectedPosition = restoreState.getInt("spUserNameSelectedPosition");
+            //Check the position, if set to -1 then reconfigure spinner from scratch to get prompt, otherwise move to position
+            if(spUserNameSelectedPosition != -1){
+                this.spAccUserName.setSelection(spUserNameSelectedPosition);
+            }else{
+                //Set up UserName spinner from beginning
+                this.cursorUserName = this.accountsDB.getUserNameList();
+                this.setUpSpinnerData(this.cursorUserName,this.spAccUserName,this.USERNAME_SPINNER);
+            }//End of if else statement that checks the selected position in the user name spinner
+
+            //Set up current Password spinner position
+            int spPsswrdSelectedPosition = restoreState.getInt("spPsswrdSelectedPosition");
+            //Check the position, if set to -1 then reconfigure spinner from scratch to get prompt, otherwise move to position
+            if(spPsswrdSelectedPosition != -1){
+                this.spAccPsswrd.setSelection(spPsswrdSelectedPosition);
+            }else{
+                //Set up UserName spinner from beginning
+                this.cursorPsswrd = this.accountsDB.getPsswrdList();
+                this.setUpSpinnerData(this.cursorPsswrd,this.spAccPsswrd,this.PSSWRD_SPINNER);
+            }//End of if else statement that checks the selected position in the password spinner
+
+            //Check the sec question list spinner is enabled (ignores dummy question cursor)
+            if(restoreState.getBoolean("spAccSecQuestionListIsEnabled")){
+                //Set up current Security question spinner position
+                int spSecQuestListSelectedPos = restoreState.getInt("spSecQuestListSelectedPos");
+                //Check the position, if set to -1 then reconfigure spinner from scratch to get prompt, otherwise move to position
+                //Set up Sec question list spinner from beginning passing the questionsID to get the cursor
+                switch(restoreState.getInt("numberOfQuestionsInList")){
+                    case 1:
+                        this.cursorQuestionList = this.accountsDB.getQuestionCursorByID(restoreState.getInt("questionID1"));
+                        break;
+                    case 2:
+                        this.cursorQuestionList = this.accountsDB.getQuestionCursorByID(restoreState.getInt("questionID1"),restoreState.getInt("questionID2"));
+                        break;
+                    case 3:
+                        this.cursorQuestionList = this.accountsDB.getQuestionCursorByID(restoreState.getInt("questionID1"),restoreState.getInt("questionID2"),restoreState.getInt("questionID3"));
+                        break;
+                }//End of switch statement
+                //Set up the spinner data once the cursor has been generated based on number of questions in list
+                this.setUpQuestionListSpinnerData(this.cursorQuestionList,this.spAccSecQuestionList);
+                //Check spinner position selected (The spinner could hold questions but none is selected, display proper prompt in each case)
+                if(spSecQuestListSelectedPos != -1){
+                    //Just move spinner to correct item position
+                    this.spAccSecQuestionList.setSelection(spSecQuestListSelectedPos);
+                }else{
+                    //Setup spinner prompt by getting proper text after calling method to get text
+                    this.spAccSecQuestionList.setPrompt(this.getSecQuestListPrompt(this.cursorQuestionList.getCount()));
+                }//End of if else statement to check spinner position selected (The spinner could hold questions but none is selected)
+            }else{
+                this.initSecQuestionListSpinner();
+            }//End of if statement that checks the sec question list spinner is enabled (ignores dummy question cursor)
+
+            //Set up current Question available  spinner position
+            int spQuestAvailableSelectedPos = restoreState.getInt("spQuestAvailableSelectedPos");
+            //Check the position, if set to -1 then reconfigure spinner from scratch to get prompt, otherwise move to position
+            if(spQuestAvailableSelectedPos != -1){
+                this.spQuestionsAvailable.setSelection(spQuestAvailableSelectedPos);
+            }else{
+                //Set up Question available spinner from beginning
+                this.initQuesitonAvailableListSpinner();
+            }//End of if else statement to check the selected position for the list of question available
+
+            //Setup the isFav image accordingly
+            this.isFavorite = !restoreState.getBoolean("isFavorite");
+            this.toggleIsFavorite();
+            //Setup the checkbox state
+            boolean isChecked = restoreState.getBoolean("cbHasToBeChanged");
+            if(isChecked){
+                this.cbHasToBeChanged.setChecked(isChecked);
+                this.tvAccDateRenewValue.setText(restoreState.getString("tvDateRenewValueText"));
+            }//End of if statement that checks the checkbox is ticked
+
+            //Setup the account logo icon
+            String logoLocation = restoreState.getString("logoLocation");
+            if(logoLocation.equals(MainActivity.getRESOURCES())){
+                //If current logo comes from resources update this.logo attribute with proper icon object from icon adapter
+                this.selectedPosition = restoreState.getInt("logoListPosition");
+                if(this.selectedPosition == -1){
+                    MainActivity.setAccountLogoImageFromRes(this.imgAccLogo,getBaseContext(),account.getIcon().getName());
+                    this.logo = this.accountsDB.getIconByName(account.getIcon().getName());
+                }else{
+                    this.logo = this.iconAdapter.getIconList().get(this.selectedPosition);
+                    //set up the image view with correct logo image
+                    this.imgAccLogo.setImageResource(this.iconAdapter.getIconList().get(restoreState.getInt("logoListPosition")).getResourceID());
+                }
+            }else if(logoLocation.startsWith(MainActivity.getExternalImageStorageClue())){
+                //If current logo object is an external image, store logo name and logo uri location, to recreate the object again
+                this.logo = new Icon(restoreState.getString("logoName"),logoLocation);
+                //set up the image view with correct logo image
+                this.imgAccLogo.setImageURI(Uri.parse(logoLocation));
+            }else{
+                this.logo = MainActivity.getMyPsswrdSecureLogo();
+                this.imgAccLogo.setImageResource(R.mipmap.ic_my_psswrd_secure);
+            }//End of if else statement to check the logo location and set up logo object and img accordingly based on the source.
+            //No need to set up the app logo, as this is set up during onCreate method
+
+
+            //Buttons configuration
+            //Setup Remove button visibility
+            if(this.spAccSecQuestionList.getSelectedItemPosition() != -1){
+                this.btnAccRemoveQuestion.setVisibility(View.VISIBLE);
+            }else{
+                this.btnAccRemoveQuestion.setVisibility(View.INVISIBLE);
+            }//End of if else statement to setup remove question button visibility
+
+            //Setup New Question button enable property
+            if(this.spAccSecQuestionList.getAdapter().getCount() == 3){
+                this.btnAccNewSecQuestion.setEnabled(false);
+            }//End of if statement to setup new question button enable property
+        }//End of if statement to check the restore state isn't null
+        Log.d("onRestoreInstanceState", "Exit onRestoreInstanceState method in the a AddAccountActivity class.");
+    }//End of onRestoreInstanceState method
 
     //Method to setup dummy cursor for security question spinner when initializing it
     protected void initSecQuestionListSpinner(){
