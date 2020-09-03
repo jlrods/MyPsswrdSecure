@@ -95,7 +95,7 @@ public class HomeFragment extends Fragment {
             }
         });
         MainActivity.updateRecyclerViewData(accountAdapter);
-    }
+    }//End of onActivityCreated method
 
     //Getters and setters method
     public static RecyclerView getRv() {

@@ -18,7 +18,6 @@ class Icon {
 
     //Constructors
     public Icon(int _id, String name, String location,boolean isSelected, int resourceID){
-
         Log.d("Icon_Full_Ent","Enter Icon Full Constructor");
         this._id = _id;
         this.name = name;
@@ -27,10 +26,22 @@ class Icon {
         this.resourceID = resourceID;
         Log.d("Icon_Full_Ext","Exit Icon Full Constructor");
     }
+    public Icon(String name, String location){
+        this(-1,name,location,false,-1);
+        Log.d("Icon_Full_Ext","Exit Icon Constructor with no arguments");
+    }
+
+    public Icon(int _id, String name, String location, boolean isSelected){
+        this(_id,name,location,isSelected,-1);
+        Log.d("Icon_Full_Ext","Exit Icon Constructor with no arguments");
+    }
+
     public Icon(){
         this(-1,"","",false,-1);
         Log.d("Icon_Full_Ext","Exit Icon Constructor with no arguments");
     }
+
+
 
     public int getResourceID() {
         return resourceID;
@@ -40,10 +51,6 @@ class Icon {
         this.resourceID = resourceID;
     }
 
-    public Icon(int _id, String name, String location, boolean isSelected){
-        this(_id,name,location,isSelected,-1);
-        Log.d("Icon_Full_Ext","Exit Icon Constructor with no arguments");
-    }
 
     //Getters and Setters
 

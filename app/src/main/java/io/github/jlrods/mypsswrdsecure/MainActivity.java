@@ -4,10 +4,14 @@ package io.github.jlrods.mypsswrdsecure;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -22,6 +26,7 @@ import com.google.android.material.tabs.TabLayout;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.app.ActivityCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -29,7 +34,6 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -71,6 +75,11 @@ public class MainActivity extends AppCompatActivity {
 
     private static Cryptographer cryptographer;
 
+    private final static int THROW_IMAGE_GALLERY_REQ_CODE = 1642;
+    private final static int THROW_IMAGE_CAMERA_REQ_CODE = 2641;
+    private static final int GALLERY_ACCESS_REQUEST = 5196;
+    private static final int CAMERA_ACCESS_REQUEST = 3171;
+
     private int throwAddAccountActReqCode = 5566;
     private static int throwAddQuestionActReqCode = 9876;
     private static int throwAddUserNameActReqCode = 5744;
@@ -92,6 +101,9 @@ public class MainActivity extends AppCompatActivity {
     private static final String CATEGORY_TABLE = "CATEGORY";
     private static final String APPSTATE_TABLE = "APPSTATE";
     private static final String ACCOUNTS_TABLE = "ACCOUNTS";
+
+    private static Uri uriCameraImage = null;
+    private static final String EXTERNAL_IMAGE_STORAGE_CLUE = "content://";
 
 
     @Override
@@ -721,6 +733,30 @@ public class MainActivity extends AppCompatActivity {
         return ACCOUNTS_TABLE;
     }
 
+    public static int getThrowImageGalleryReqCode() {
+        return THROW_IMAGE_GALLERY_REQ_CODE;
+    }
+
+    public static int getThrowImageCameraReqCode() {
+        return THROW_IMAGE_CAMERA_REQ_CODE;
+    }
+
+    public static int getGalleryAccessRequest() {
+        return GALLERY_ACCESS_REQUEST;
+    }
+
+    public static int getCameraAccessRequest() {
+        return CAMERA_ACCESS_REQUEST;
+    }
+
+    public static Uri getUriCameraImage() {
+        return uriCameraImage;
+    }
+
+    public static String getExternalImageStorageClue() {
+        return EXTERNAL_IMAGE_STORAGE_CLUE;
+    }
+
     public static void displayToast(Context context, String text, int toastLength, int gravity){
         Log.d("displayToast","Enter displayToast method in the MainActivity class.");
         Toast toast = Toast.makeText(context,text,toastLength);
@@ -730,12 +766,18 @@ public class MainActivity extends AppCompatActivity {
     }//End of displayToast method
 
     //Method to set account logo resource image
-    public static void setAccountLogoImage(ImageView imgLogo, Context context, String iconResName){
+    public static void setAccountLogoImageFromRes(ImageView imgLogo, Context context, String iconResName){
         //Extract all the logos from the app resources
         int idRes;
         Resources r = context.getResources();
         idRes = r.getIdentifier(iconResName,"drawable",context.getPackageName());
         imgLogo.setImageResource(idRes);
+    }
+
+    //Method to set account logo resource image
+    public static void setAccountLogoImageFromGallery(ImageView imgLogo, String uri){
+        //Extract all the logos from the app resources
+        imgLogo.setImageURI(Uri.parse(uri));
     }
 
     //Method to be setup within OnClick event listener for the star icon within each Account item
@@ -769,9 +811,81 @@ public class MainActivity extends AppCompatActivity {
         }else{
             //Prompt the user about DB problem
             //MainActivity.displayToast(this.getBaseContext(),"DB Error",Toast.LENGTH_SHORT,Gravity.CENTER);
-        }
-
+        }//End of if else statement to check the item was updated
     return update;
-    }
+    }//End of toggleIsFavorite method
+
+    //Method to load ad picture from gallery app
+    public static void loadPictureFromGallery(Intent intent) {
+        Log.d("LoadGalPicture","Enter loadPictureFromGallery method in the MainActivity class.");
+        //Declare a new intent
+        //Intent intent;
+        //Check SDK version
+        if (Build.VERSION.SDK_INT < 19){
+            //Log the current verison
+            Log.i("Build.VERSION", "< 19");
+            //Initiallize the intent object and set it up for calling the Gallery app
+            //intent = new Intent();
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            intent.setType("image/*");
+            //startActivityForResult(intent, RESULT_PROFILE_IMAGE_GALLERY);
+        } else {
+            //Log the current verison
+            Log.i("Build.VERSION", ">= 19");
+            //Initialize the intent object and set it up for calling the Gallery app
+            //intent = new Intent();
+            intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("image/*");
+            //startActivityForResult(intent, RESULT_PROFILE_IMAGE_GALLERY);
+        }//End of if else statement that checks the SDK version
+        Log.d("LoadGalPicture","Exit loadPictureFromGallery method in the MainActivity class.");
+    }//End of loadPicture method
+
+    ////Method To take a picture via intent
+    public static void loadPictureFromCamera(Intent intent, Activity activity) {
+        Log.d("LoadCamPicture","Enter loadPictureFromCamera method in the MainActivity class.");
+            //Declare and initialize a new Intent object to call camera app
+//            intent = new Intent();
+            intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
+            //Check the PackageManager is not null
+            if (intent.resolveActivity(activity.getPackageManager()) != null) {
+                ContentValues values = new ContentValues(1);
+                values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpg");
+                uriCameraImage = activity.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, uriCameraImage);
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                //startActivityForResult(intent, RESULT_PROFILE_IMAGE_CAMERA);
+            } else {
+                MainActivity.displayToast(activity,"",Toast.LENGTH_LONG,Gravity.BOTTOM);
+            }//End of if else statement
+        Log.d("LoadCamPicture","Exit loadPictureFromCamera method in the MainActivity class.");
+    }//End of loadPicture method
+
+
+    //Method to display alert dialog to request permission for access rights
+    public static void permissionRequest(final String permit,String justify,final int requestCode,final Activity activity) {
+        Log.d("permissionRequest","Enter permissionRequest method in the MainActivity class.");
+        //Check the permission request needs formal explanation
+        if (ActivityCompat.shouldShowRequestPermissionRationale(activity,
+                permit)){
+            //Display alert with justification about why permit is necessary
+            new AlertDialog.Builder(activity)
+                    .setTitle(R.string.generalPermitRqst)
+                    .setMessage(justify)
+                    .setPositiveButton(R.string.dialog_OK, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            //Call method to request permission
+                            ActivityCompat.requestPermissions(activity,
+                                    new String[]{permit}, requestCode);
+                        }})
+                    .show();
+        } else {
+            //Otherwise, proceed to request permission
+            ActivityCompat.requestPermissions(activity,
+                    new String[]{permit}, requestCode);
+        }//End of if else statement to check the permission request must be displayed
+        Log.d("permissionRequest","Exit permissionRequest method in the MainActivity class.");
+    }//End of permissionRequest method
 
 }//End of MainActivity class.

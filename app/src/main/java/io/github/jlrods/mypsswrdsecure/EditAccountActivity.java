@@ -1,18 +1,16 @@
 package io.github.jlrods.mypsswrdsecure;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import java.text.SimpleDateFormat;
-
-import javax.crypto.spec.IvParameterSpec;
+import androidx.annotation.Nullable;
 
 public class EditAccountActivity extends DisplayAccountActivity {
     //Attribute definition
@@ -33,10 +31,15 @@ public class EditAccountActivity extends DisplayAccountActivity {
         if(this.account.getIcon().getLocation().equals(MainActivity.getRESOURCES())){
             //Extract all the logos from the app resources
             //Call static method that will get the resource by passing in it's name and set it as the resource image of the ImageView passed in
-            MainActivity.setAccountLogoImage(this.imgAccLogo,getBaseContext(),account.getIcon().getName());
+            MainActivity.setAccountLogoImageFromRes(this.imgAccLogo,getBaseContext(),account.getIcon().getName());
             this.logo = this.accountsDB.getIconByName(account.getIcon().getName());
         }else if(this.account.getIcon().getLocation().equals(String.valueOf(R.mipmap.ic_my_psswrd_secure))){
+            //Setup the app logo if required
             this.imgAccLogo.setImageResource(R.mipmap.ic_my_psswrd_secure);
+        }else if(this.account.getIcon().getLocation().startsWith(MainActivity.getExternalImageStorageClue())){
+            //Set up image from URI if required
+            this.logo = this.accountsDB.getIconByID(this.account.getIcon().get_id());
+            this.imgAccLogo.setImageURI(Uri.parse(this.account.getIcon().getLocation()));
         }//End of if else statement to check if logo comes from app resources
         //Set up the category spinner to display the category assigned to the account by calling method that gets the cursor position by passing in it's text value
         this.spCategory.setSelection(this.getItemPositionInSpinner(this.cursorCategory,this.account.getCategory().get_id()));
@@ -97,7 +100,7 @@ public class EditAccountActivity extends DisplayAccountActivity {
                                     //Check the renew date is valid
                                     if(this.isValidRenewDate(psswrdRenewDate)){
                                         //Create a new account based on data input by user
-                                        Account newAccount = this.getItemFromUIData();
+                                        Account newAccount = this.getAccountFromUIData();
                                         //Check the grocery is not empty
                                         if(newAccount != null){
                                             newAccount.set_id(this.extras.getInt("_id"));
@@ -122,7 +125,6 @@ public class EditAccountActivity extends DisplayAccountActivity {
                                                     values.put("CategoryID",newAccount.getCategory().get_id());
                                                     values.put("UserNameID",newAccount.getUserName().get_id());
                                                     values.put("PsswrdID",newAccount.getPsswrd().get_id());
-                                                    //@Fixme:
                                                     if(!this.isQuestionListTheSame(this.account.getQuestionList(),newAccount.getQuestionList())){
                                                         if(this.account.getQuestionList() == null && newAccount.getQuestionList() != null){
                                                             values.put("QuestionListID",newAccount.getQuestionList().get_id());
@@ -132,7 +134,9 @@ public class EditAccountActivity extends DisplayAccountActivity {
                                                             values.put("QuestionListID",newAccount.getQuestionList().get_id());
                                                         }//End of if else statement to check the question list states
                                                     }//End of if statement to check the question list are the same
-
+                                                    if(!this.isAddIconRequired(newAccount)){
+                                                        newAccount.setIcon(MainActivity.getMyPsswrdSecureLogo());
+                                                    }
                                                     values.put("IconID",newAccount.getIcon().get_id());
                                                     values.put("IsFavorite",newAccount.isFavorite());
                                                     //values.put("DateCreated",this.account.getDateCreated());
@@ -147,7 +151,7 @@ public class EditAccountActivity extends DisplayAccountActivity {
                                                         finish();
                                                     }else{
                                                         //Report DB error when updating the record
-
+                                                        MainActivity.displayToast(this,getResources().getString(R.string.accountUpdateError),Toast.LENGTH_LONG,Gravity.CENTER);
                                                     }//End of if statement to check the accountID is not -1
                                                 }else{
                                                     //Prompt the user no change has been done on the UI data
@@ -220,4 +224,11 @@ public class EditAccountActivity extends DisplayAccountActivity {
         Log.d("isQuestionListTheSame","Exit the isQuestionListTheSame method in EditAccountActivity class.");
         return isTheSame;
     }//End of isQuestionListTheSame method
+
+    //Method to receive and handle data coming from other activities such as: SelectLogoActivity,
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d("onActivityResult","Enter/Exit the onActivityResult method in the DisplayAccountActivity class.");
+    }//End of onActivityResult method
 }//End of EditAccountActivity class

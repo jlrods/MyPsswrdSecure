@@ -476,12 +476,12 @@ public class AccountsDB extends SQLiteOpenHelper {
 
         if(item instanceof Category){
             //if item is a Category object, update the Task table where the id corresponds
-            table = "CATEGORY";
+            table = MainActivity.getCategoryTable();
             itemName = ((Category)item).getName();
             fields.put("Name",itemName);
             Log.d("addCategory","Catgory to be added in the addItem method in AccountsDB class.");
         }else if(item instanceof Psswrd){
-            table = "PSSWRD";
+            table = MainActivity.getPsswrdTable();
             itemNameEcrypted = ((Psswrd)item).getValue();
             fields.put("Value",itemNameEcrypted);
             fields.put("DateCreated",((Psswrd) item).getDateCreated());
@@ -489,30 +489,35 @@ public class AccountsDB extends SQLiteOpenHelper {
             Log.d("addPassword","Password to be added in the addItem method in AccountsDB class.");
         }else if(item instanceof UserName ) {
             itemNameEcrypted = ((UserName)item).getValue();
-            table = "USERNAME";
+            table = MainActivity.getUsernameTable();
             fields.put("Value",itemNameEcrypted);
             fields.put("DateCreated",((UserName) item).getDateCreated());
             fields.put("initVector",((UserName) item).getIv());
             Log.d("addUserName", "User name to be added in the addItem method in AccountsDB class.");
         }else if(item instanceof Answer){
-            table = "ANSWER";
+            table = MainActivity.getAnswerTable();
             fields.put("Value",((Answer) item).getValue());
             fields.put("initVector",((Answer) item).getIv());
             Log.d("addAnswer", "Answer to be added in the addItem method in AccountsDB class.");
         }else if(item instanceof Question){
             itemName = ((Question)item).getValue();
-            table = "QUESTION";
+            table = MainActivity.getQuestionTable();
             fields.put("Value",itemName);
             fields.put("AnswerID",((Question) item).getAnswer().get_id());
             Log.d("addQuestion", "User name to be added in the addItem method in AccountsDB class.");
         }else if(item instanceof QuestionList){
             QuestionList questionList = (QuestionList) item;
-            table = "QUESTIONLIST";
+            table = MainActivity.getQuestionlistTable();
             for(int i=0;i< questionList.getSize();i++){
                 fields.put("QuestionID"+(i+1),questionList.getQuestions().get(i).get_id());
             }//End of for loop to add all question ids in the question list
+        }else if(item instanceof Icon){
+            table = MainActivity.getIconTable();
+            fields.put("Name",((Icon)item).getName());
+            fields.put("Location",((Icon)item).getLocation());
+            fields.put("isSelected",  toInt(((Icon)item).isSelected()));
         }else if(item instanceof Account){
-            table ="ACCOUNTS";
+            table = MainActivity.getAccountsTable();
             Account account = (Account) item;
             fields.put("Name",account.getName());
             fields.put("CategoryID",account.getCategory().get_id());

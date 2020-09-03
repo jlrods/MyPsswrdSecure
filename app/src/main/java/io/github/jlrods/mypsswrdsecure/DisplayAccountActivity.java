@@ -1,10 +1,14 @@
 package io.github.jlrods.mypsswrdsecure;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -22,9 +26,13 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.ContextCompat;
+
 import com.google.android.material.snackbar.Snackbar;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -37,6 +45,8 @@ import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
 abstract class DisplayAccountActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
     //Attribute definition
     //Constants
+
+
     //Spinner types constants
     static final int CATEGORY_SPINNER = 0;
     static final int USERNAME_SPINNER = 1;
@@ -53,7 +63,6 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
     UserName userName = null;
     Psswrd psswrd = null;
     Account account = null;
-    //int objectType = -1;
 
     //Layout attributes
     protected Bundle extras;
@@ -61,10 +70,8 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
     protected EditText etAccountName;
     protected NoDefaultSpinner spCategory;
     protected NoDefaultSpinner spAccUserName;
-    //protected EditText etAccNewUserName;
     protected Button btnAccNewUserName;
     protected NoDefaultSpinner spAccPsswrd;
-    //protected EditText etAccNewPsswrd;
     protected Button btnAccNewPsswrd;
     protected NoDefaultSpinner spAccSecQuestionList;
     protected NoDefaultSpinner spQuestionsAvailable;
@@ -113,11 +120,8 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         Log.d("OnCreateDispAcc","Enter onCreate method in the DisplayAccountActivity abstract class.");
         //Set layout for this activity
         setContentView(R.layout.activity_add_account);
-        //Extract extra data from Bundle object
-        //extras = getIntent().getExtras();
         //Get DB handler cass from the home fragment
         this.accountsDB = HomeFragment.getAccountsDB();
-
         cryptographer = MainActivity.getCryptographer();
 
         //Initialize layout coordinator required to use Snackbar
@@ -129,7 +133,8 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         this.imgAccLogo.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                throwSelectLogoActivity();;
+                displayAlertDialogForImgSource();
+                //throwSelectLogoActivity();
             }
         });//End of setOnClickListener
         //Initialize logo with default app logo
@@ -294,6 +299,199 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         this.iconAdapter = new IconAdapter(this);
         Log.d("OnCreateDispAcc","Exit onCreate method in the DisplayAccountActivity abstract class.");
     }//End of onCreate method
+
+    @Override
+    protected void onSaveInstanceState(Bundle saveState) {
+        //Call super method
+        super.onSaveInstanceState(saveState);
+        Log.d("onSaveInstanceState", "Enter onSaveInstanceState method in the a AddAccountActivity class.");
+        //Record input data that is not saved by OS already
+        //Fields save by OS: Account Name edit text,
+        //The date created is generated itself during onCreate method
+        //Save all the input fields first
+        //Save te Account name input in edit text field
+        saveState.putString("etAccountNameText",this.etAccountName.getText().toString());
+        //Save te Category spinner item position selected
+        saveState.putInt("spCategorySelectedPosition",this.spCategory.getSelectedItemPosition());
+        //Save te UserName spinner item position selected
+        saveState.putInt("spUserNameSelectedPosition",this.spAccUserName.getSelectedItemPosition());
+        //Save te Password spinner item position selected
+        saveState.putInt("spPsswrdSelectedPosition",this.spAccPsswrd.getSelectedItemPosition());
+        saveState.putBoolean("spAccSecQuestionListIsEnabled",this.spAccSecQuestionList.isEnabled());
+        //Check if Security question spinner is enable
+        if(this.spAccSecQuestionList.isEnabled()){
+            //Check number of questions and store their QuestionIDs
+            QuestionList questionList = this.extractQuestionsFromSpinner(this.spAccSecQuestionList);
+            saveState.putInt("numberOfQuestionsInList",questionList.getSize());
+            for(int i=0;i<questionList.getSize();i++){
+                saveState.putInt("questionID"+(i+1),questionList.getQuestions().get(i).get_id());
+            }
+            //If so, save the current position
+            saveState.putInt("spSecQuestListSelectedPos",this.spAccSecQuestionList.getSelectedItemPosition());
+        }else{
+            //Otherwise, save -1 (even though there's a dummy item selected)
+            saveState.putInt("spSecQuestListSelectedPos",-1);
+        }
+        //Save the Question Available spinner item position selected
+        saveState.putInt("spQuestAvailableSelectedPos",this.spQuestionsAvailable.getSelectedItemPosition());
+        //Save the current isFavorite attribute state
+        saveState.putBoolean("isFavorite",this.isFavorite);
+        //Save the checkbox state of "Has to be changed?" checkbox
+        saveState.putBoolean("cbHasToBeChanged",this.cbHasToBeChanged.isChecked());
+        //If the checkbox is ticked, save the password renew date
+        if(this.cbHasToBeChanged.isChecked()){
+            saveState.putString("tvDateRenewValueText",this.tvAccDateRenewValue.getText().toString());
+        }
+        //Save the current icon
+        if(this.logo.getLocation().equals(MainActivity.getRESOURCES())){
+            //If logo comes from resources save the logoLocation and selected position, so the same logo can be retrieved later on
+            saveState.putString("logoLocation",MainActivity.getRESOURCES());
+            saveState.putInt("logoListPosition",this.selectedPosition);
+            saveState.putString("logoName",this.logo.getName());
+        }else if(this.logo.getLocation().equals(String.valueOf(R.mipmap.ic_my_psswrd_secure))){
+            saveState.putString("logoLocation",String.valueOf(R.mipmap.ic_my_psswrd_secure));
+            saveState.putInt("logoListPosition",R.mipmap.ic_my_psswrd_secure);
+        }else if(this.logo.getLocation().startsWith(MainActivity.getExternalImageStorageClue())){
+            saveState.putString("logoName",this.logo.getName());
+            saveState.putString("logoLocation",this.logo.getLocation());
+        }//End of if else statement to check the logo location
+        Log.d("onSaveInstanceState", "Exit onSaveInstanceState method in the a AddAccountActivity class.");
+    }//End of onSaveInstanceState
+
+    @Override
+    protected void onRestoreInstanceState(Bundle restoreState) {
+        //Call the super method
+        super.onRestoreInstanceState(restoreState);
+        Log.d("onRestoreInstanceState", "Enter onRestoreInstanceState method in the a AddAccountActivity class.");
+        //Check the stored state is not null
+        if (restoreState != null){
+            //Populate Account name
+            this.etAccountName.setText(restoreState.getString("etAccountNameText"));
+            //Set up current Category spinner position
+            int spCategorySelectedPosition = restoreState.getInt("spCategorySelectedPosition");
+            //Check the position, if set to -1 then reconfigure spinner from scratch to get prompt, otherwise move to position
+            if(spCategorySelectedPosition != -1){
+                this.spCategory.setSelection(spCategorySelectedPosition);
+            }else{
+                //Set up Category spinner from beginning
+                //Setup the Category spinner and populate with data
+                this.cursorCategory = this.accountsDB.getCategoryListCursor();
+                this.setUpSpinnerData(this.cursorCategory,this.spCategory,this.CATEGORY_SPINNER);
+            }//End of if else statement  that checks the selected position in the category  spinner
+
+            //Set up current UserName spinner position
+            int spUserNameSelectedPosition = restoreState.getInt("spUserNameSelectedPosition");
+            //Check the position, if set to -1 then reconfigure spinner from scratch to get prompt, otherwise move to position
+            if(spUserNameSelectedPosition != -1){
+                this.spAccUserName.setSelection(spUserNameSelectedPosition);
+            }else{
+                //Set up UserName spinner from beginning
+                this.cursorUserName = this.accountsDB.getUserNameList();
+                this.setUpSpinnerData(this.cursorUserName,this.spAccUserName,this.USERNAME_SPINNER);
+            }//End of if else statement that checks the selected position in the user name spinner
+
+            //Set up current Password spinner position
+            int spPsswrdSelectedPosition = restoreState.getInt("spPsswrdSelectedPosition");
+            //Check the position, if set to -1 then reconfigure spinner from scratch to get prompt, otherwise move to position
+            if(spPsswrdSelectedPosition != -1){
+                this.spAccPsswrd.setSelection(spPsswrdSelectedPosition);
+            }else{
+                //Set up UserName spinner from beginning
+                this.cursorPsswrd = this.accountsDB.getPsswrdList();
+                this.setUpSpinnerData(this.cursorPsswrd,this.spAccPsswrd,this.PSSWRD_SPINNER);
+            }//End of if else statement that checks the selected position in the password spinner
+
+            //Check the sec question list spinner is enabled (ignores dummy question cursor)
+            if(restoreState.getBoolean("spAccSecQuestionListIsEnabled")){
+                //Set up current Security question spinner position
+                int spSecQuestListSelectedPos = restoreState.getInt("spSecQuestListSelectedPos");
+                //Check the position, if set to -1 then reconfigure spinner from scratch to get prompt, otherwise move to position
+                //Set up Sec question list spinner from beginning passing the questionsID to get the cursor
+                switch(restoreState.getInt("numberOfQuestionsInList")){
+                    case 1:
+                        this.cursorQuestionList = this.accountsDB.getQuestionCursorByID(restoreState.getInt("questionID1"));
+                        break;
+                    case 2:
+                        this.cursorQuestionList = this.accountsDB.getQuestionCursorByID(restoreState.getInt("questionID1"),restoreState.getInt("questionID2"));
+                        break;
+                    case 3:
+                        this.cursorQuestionList = this.accountsDB.getQuestionCursorByID(restoreState.getInt("questionID1"),restoreState.getInt("questionID2"),restoreState.getInt("questionID3"));
+                        break;
+                }//End of switch statement
+                //Set up the spinner data once the cursor has been generated based on number of questions in list
+                this.setUpQuestionListSpinnerData(this.cursorQuestionList,this.spAccSecQuestionList);
+                //Check spinner position selected (The spinner could hold questions but none is selected, display proper prompt in each case)
+                if(spSecQuestListSelectedPos != -1){
+                    //Just move spinner to correct item position
+                    this.spAccSecQuestionList.setSelection(spSecQuestListSelectedPos);
+                }else{
+                    //Setup spinner prompt by getting proper text after calling method to get text
+                    this.spAccSecQuestionList.setPrompt(this.getSecQuestListPrompt(this.cursorQuestionList.getCount()));
+                }//End of if else statement to check spinner position selected (The spinner could hold questions but none is selected)
+            }else{
+                this.initSecQuestionListSpinner();
+            }//End of if statement that checks the sec question list spinner is enabled (ignores dummy question cursor)
+
+            //Set up current Question available  spinner position
+            int spQuestAvailableSelectedPos = restoreState.getInt("spQuestAvailableSelectedPos");
+            //Check the position, if set to -1 then reconfigure spinner from scratch to get prompt, otherwise move to position
+            if(spQuestAvailableSelectedPos != -1){
+                this.spQuestionsAvailable.setSelection(spQuestAvailableSelectedPos);
+            }else{
+                //Set up Question available spinner from beginning
+                this.initQuesitonAvailableListSpinner();
+            }//End of if else statement to check the selected position for the list of question available
+
+            //Setup the isFav image accordingly
+            this.isFavorite = !restoreState.getBoolean("isFavorite");
+            this.toggleIsFavorite();
+            //Setup the checkbox state
+            boolean isChecked = restoreState.getBoolean("cbHasToBeChanged");
+            if(isChecked){
+                this.cbHasToBeChanged.setChecked(isChecked);
+                this.tvAccDateRenewValue.setText(restoreState.getString("tvDateRenewValueText"));
+            }//End of if statement that checks the checkbox is ticked
+
+            //Setup the account logo icon
+            String logoLocation = restoreState.getString("logoLocation");
+            if(logoLocation.equals(MainActivity.getRESOURCES())){
+                //If current logo comes from resources update this.logo attribute with proper icon object from icon adapter
+                this.selectedPosition = restoreState.getInt("logoListPosition");
+                if(this.selectedPosition == -1){
+                    MainActivity.setAccountLogoImageFromRes(this.imgAccLogo,getBaseContext(),account.getIcon().getName());
+                    this.logo = this.accountsDB.getIconByName(account.getIcon().getName());
+                }else{
+                    this.logo = this.iconAdapter.getIconList().get(this.selectedPosition);
+                    //set up the image view with correct logo image
+                    this.imgAccLogo.setImageResource(this.iconAdapter.getIconList().get(restoreState.getInt("logoListPosition")).getResourceID());
+                }
+            }else if(logoLocation.startsWith(MainActivity.getExternalImageStorageClue())){
+                //If current logo object is an external image, store logo name and logo uri location, to recreate the object again
+                this.logo = new Icon(restoreState.getString("logoName"),logoLocation);
+                //set up the image view with correct logo image
+                this.imgAccLogo.setImageURI(Uri.parse(logoLocation));
+            }else{
+                this.logo = MainActivity.getMyPsswrdSecureLogo();
+                this.imgAccLogo.setImageResource(R.mipmap.ic_my_psswrd_secure);
+            }//End of if else statement to check the logo location and set up logo object and img accordingly based on the source.
+            //No need to set up the app logo, as this is set up during onCreate method
+
+
+            //Buttons configuration
+            //Setup Remove button visibility
+            if(this.spAccSecQuestionList.getSelectedItemPosition() != -1){
+                this.btnAccRemoveQuestion.setVisibility(View.VISIBLE);
+            }else{
+                this.btnAccRemoveQuestion.setVisibility(View.INVISIBLE);
+            }//End of if else statement to setup remove question button visibility
+
+            //Setup New Question button enable property
+            if(this.spAccSecQuestionList.getAdapter().getCount() == 3){
+                this.btnAccNewSecQuestion.setEnabled(false);
+            }//End of if statement to setup new question button enable property
+        }//End of if statement to check the restore state isn't null
+        Log.d("onRestoreInstanceState", "Exit onRestoreInstanceState method in the a AddAccountActivity class.");
+    }//End of onRestoreInstanceState method
 
     //Method to setup dummy cursor for security question spinner when initializing it
     protected void initSecQuestionListSpinner(){
@@ -646,7 +844,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
                 //this.imgAccLogo.setImageResource(data.getExtras().getInt("selectedImgID"));
                 this.selectedPosition = data.getExtras().getInt("selectedImgPosition");
                         //iconAdapter.getIconList().get().get_id();
-                this.logo = iconAdapter.getIconList().get(this.selectedPosition);
+                this.logo = this.iconAdapter.getIconList().get(this.selectedPosition);
                 this.imgAccLogo.setImageResource(this.logo.getResourceID());
             }else if(data.getExtras().getString("selectedImgLocation").equals(String.valueOf(R.mipmap.ic_my_psswrd_secure))){
                 this.imgAccLogo.setImageResource(R.mipmap.ic_my_psswrd_secure);
@@ -701,7 +899,33 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             snackbar.show();
         }else if(requestCode== MainActivity.getThrowAddQuestionActReqCode() && resultCode==RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from AddQuestionActivity received by the DisplayAccountActivity class.");
-        }//End of if else statement to check the data comes SelectLogoActivity
+        }else if(requestCode == MainActivity.getThrowImageGalleryReqCode() && resultCode == Activity.RESULT_OK){
+            Log.d("onActivityResult","Received GOOD result from Gallery intent received by the DisplayAccountActivity class.");
+            //Set the image as per path coming from the intent. The data can be parsed as an uri
+            String uri = data.getDataString();
+            this.logo = new Icon("galleryImage_"+System.currentTimeMillis(),uri);
+            this.imgAccLogo.setImageURI(Uri.parse(uri));
+        }else if(requestCode == MainActivity.getThrowImageGalleryReqCode() && resultCode == Activity.RESULT_CANCELED){
+            Log.d("onActivityResult","Received BAD result from Gallery intent received by the DisplayAccountActivity class.");
+        }else if(requestCode == MainActivity.getThrowImageCameraReqCode() && resultCode == Activity.RESULT_OK){
+            Log.d("onActivityResult","Received GOOD result from Camera intent received by the DisplayAccountActivity class.");
+            //Set the image as per path coming from the intent. The data can be parsed as an uri
+            Uri uri = MainActivity.getUriCameraImage();
+            if(uri != null && !uri.equals("")){
+                this.logo = new Icon("CameraImage_"+System.currentTimeMillis(),uri.toString());
+                this.imgAccLogo.setImageURI(uri);
+            }else{
+                MainActivity.displayToast(this,"Error with camera", Toast.LENGTH_SHORT, Gravity.BOTTOM);
+            }
+        }else if(requestCode == MainActivity.getThrowImageCameraReqCode() && resultCode == Activity.RESULT_CANCELED){
+            Log.d("onActivityResult","Received BAD result from Camera intent received by the DisplayAccountActivity class.");
+        }//End of if statement that checks the resultCode is OK
+//        else if(requestCode == MainActivity.getThrowImageGalleryReqCode() && resultCode == Activity.RESULT_OK){
+//            //Set the image as per path coming from the intent. The data can be parsed as an uri
+//            String uri = data.getDataString();
+//            this.logo.setLocation(uri);
+//            this.imgAccLogo.setImageURI(Uri.parse(uri));
+//        }//End of if statement that checks the resultCode is OK
         Log.d("onActivityResult","Exit the onActivityResult method in the DisplayAccountActivity class.");
     }//End of onActivityResult method
 
@@ -831,8 +1055,8 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         }//End of onClick method
     }//End of SnackBarClickHandler subclass
 
-    protected Account getItemFromUIData(){
-        Log.d("getItemFromUIData","Enter the getItemFromUIData method method in the DisplayTaskActivity abstract class.");
+    protected Account getAccountFromUIData(){
+        Log.d("getAccountFromUIData","Enter the getAccountFromUIData method method in the DisplayTaskActivity abstract class.");
         //Declare and initialize account object to be returned
         Account account = null;
         //Declare and initialize variables to be used to construct different objects that will be used to create new account object
@@ -844,10 +1068,6 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         long psswrdChangeDate = 0;
         //Start extracting data from UI
         accountName = this.etAccountName.getText().toString();
-        //@FIXME check if including apostrophe esc char is required when using insert android method
-//        if(accountName.contains(""/)){
-//            accountName = accounts.includeApostropheEscapeChar(accountName);
-//        }
         category = accountsDB.getCategoryByID((int) this.spCategory.getSelectedItemId());
         userName = accountsDB.getUserNameByID((int) this.spAccUserName.getSelectedItemId());
         psswrd = accountsDB.getPsswrdByID((int) this.spAccPsswrd.getSelectedItemId());
@@ -870,7 +1090,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         }else{
             account = new Account(accountName,userName,psswrd,category,securityQuestionList,this.logo,this.isFavorite);
         }
-        Log.d("getItemFromUIData","Exit the getItemFromUIData method  in the DisplayTaskActivity abstract class.");
+        Log.d("getAccountFromUIData","Exit the getAccountFromUIData method  in the DisplayTaskActivity abstract class.");
         return account;
     }//End of getItemFromUIData method
 
@@ -911,7 +1131,6 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             return 0;
         }//End of if else state to check the date isn't null
     }//End of getAppointmentDate method
-
 
     //Method to check password renew date is valid
     protected boolean isValidRenewDate(long renewDate){
@@ -986,7 +1205,6 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         return _id;
     }
 
-
     //Method to find Item position in a cursor by passing in it's text value
     protected int getItemPositionInSpinner(Cursor cursor, int _id){
         Log.d("getPositionInSpinner","Enter the getItemPositionInSpinner method in the DisplayActivity abstract class.");
@@ -1027,17 +1245,6 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             if((_id == -1 && accNameFound) || ((_id != accountCursor.getInt(0)) && (accNameFound) )){
                 isAccNameUsed = true;
                 Log.d("isAccNameUsed","Account name "+ accountName+" found in account list by isAccNameUsed method in AddAccountActivity class.");
-//                if(accountName.toLowerCase().equals(accountCursor.getString(1).toLowerCase())){
-//                    isAccNameUsed = true;
-//                    Log.d("isAccNameUsed","Account name "+ accountName+" found in account list by isAccNameUsed method in AddAccountActivity class.");
-//                }//End of if statement to check account name is in use
-//            }else{
-//                /
-//                //But not other exiting account name
-//                if(_id != accountCursor.getInt(0)){
-//                    isAccNameUsed = true;
-//                    Log.d("isAccNameUsed","Account name "+ accountName+" found in account list by isAccNameUsed method in AddAccountActivity class.");
-//                }
             }//End of if else statement to check the _id passed in is equal to -1
         }//End of if that checks the cursor isn't null. Null means the account name isn't being used, hence return false
         return isAccNameUsed;
@@ -1048,4 +1255,132 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         Log.d("isAccNameUsed", "Enter/Exit isAccNameUsed overloaded method in AddAccountActivity class.");
         return this.isAccNameUsed(accountName,-1);
     }//End of isAccNameUsed overloaded method
+
+    protected int displayAlertDialogForImgSource(){
+        Log.d("AlertDiagImgSource", "Enter displayAlertDialogForImgSource  method in DisplayAccountActivity abstract class.");
+        final int[] selectedValue = {1};
+        new AlertDialog.Builder(this)
+                .setTitle("Select image source")
+                //.setMessage("Select an option to load a profile picture:")
+                .setSingleChoiceItems(R.array.profileImageSources,0, null)//End of setSingleChoice method
+                .setPositiveButton(R.string.dialog_OK,new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog,int whichButton){
+                        //Check the option selected by user
+                        int selectedOption = ((AlertDialog)dialog).getListView().getCheckedItemPosition();
+                        switch(selectedOption){
+                            case 0:
+                                setExternalImageAsAccLogo(Manifest.permission.WRITE_EXTERNAL_STORAGE,getResources().getString(R.string.cameraAccesRqst),
+                                        MainActivity.getThrowImageCameraReqCode(),MainActivity.getCameraAccessRequest());
+                                break;
+                            case 1:
+                                //Call method to set up an image from the phone gallery
+//                                setGalleryImageAsAccLogo();
+                                setExternalImageAsAccLogo(Manifest.permission.READ_EXTERNAL_STORAGE,getResources().getString(R.string.galleryAccesRqst),
+                                                            MainActivity.getThrowImageGalleryReqCode(),MainActivity.getGalleryAccessRequest());
+                                break;
+                            case 2:
+                                //Call method to throw the select logo activity, where logos are stored as app resources
+                                throwSelectLogoActivity();
+                                break;
+                            default:
+                                //Any other case, set up the app logo for the current account
+                                setAppLogoAsAccIcon();
+                                break;
+                        }//End of switch statement
+                        selectedValue[0] = selectedOption;
+//                        if(selectedPosition == 0){
+//                            if (ContextCompat.checkSelfPermission(MainActivity.this,
+//                                    Manifest.permission.WRITE_EXTERNAL_STORAGE)
+//                                    == PackageManager.PERMISSION_GRANTED) {
+//                                //If permit has been granted Call method to take image via the camera
+//                                takePicture(null);
+//                            } else {
+//                                //Otherwise, call method to display justification for this permit and request access to it
+//                                permissionRequest(Manifest.permission.WRITE_EXTERNAL_STORAGE, "Without this permit"+
+//                                                " the app won't be able to take pictures with the camera.",
+//                                        CAMERA_ACCESS_REQUEST, MainActivity.this);
+//                            }//End of if else statement to check the Camera access rights has been granted or not
+
+                    }//End of Onclick method
+                })
+                .setNegativeButton(R.string.cancel,null)
+                .create()
+                .show();
+        Log.d("AlertDiagImgSource", "Exit displayAlertDialogForImgSource  method in DisplayAccountActivity abstract class.");
+        return selectedValue[0];
+    }//End of displayAlertDialogForImgSource
+
+    //Method to set the Default app logo as the account icon
+    protected void setAppLogoAsAccIcon(){
+        Log.d("setAppLogoAsAccIcon", "Enter setAppLogoAsAccIcon overloaded method in DisplayAccountActivity abstract class.");
+        this.logo = MainActivity.getMyPsswrdSecureLogo();
+        this.imgAccLogo.setImageResource(R.mipmap.ic_my_psswrd_secure);
+        Log.d("setAppLogoAsAccIcon", "Exit setAppLogoAsAccIcon overloaded method in DisplayAccountActivity abstract class.");
+    }//End of setAppLogoAsAccIcon method
+
+    //Method to set up an image from gallery as the account icon
+    protected void setGalleryImageAsAccLogo(){
+        Log.d("setGalImgAsAccLogo", "Enter setAppLogoAsAccIcon overloaded method in DisplayAccountActivity abstract class.");
+        if (ContextCompat.checkSelfPermission(this,
+                                    Manifest.permission.READ_EXTERNAL_STORAGE)
+                                    == PackageManager.PERMISSION_GRANTED) {
+                                //If permit has been granted Call method to get access to gallery app via new intent
+                                Intent intent = new Intent();
+                                MainActivity.loadPictureFromGallery(intent);
+                                startActivityForResult(intent, MainActivity.getThrowImageGalleryReqCode());
+                            } else {
+                                //Otherwise, call method to display justification for this permit and request access to it
+                                MainActivity.permissionRequest(Manifest.permission.READ_EXTERNAL_STORAGE, getResources().getString(R.string.galleryAccesRqst),
+                                        MainActivity.getGalleryAccessRequest(), this);
+                            }//end of if else statement to check the read storage access rights has been granted or not
+        Log.d("setGalImgAsAccLogo", "Exit setAppLogoAsAccIcon overloaded method in DisplayAccountActivity abstract class.");
+    }//End of setGalleryImageAsAccLogo method
+
+    //Method to set up an image from gallery as the account icon
+    protected void setExternalImageAsAccLogo(String permissionType, String permissionReason, int requestCode, int accessRequestCode){
+        Log.d("setGalImgAsAccLogo", "Enter setAppLogoAsAccIcon overloaded method in DisplayAccountActivity abstract class.");
+        if (ContextCompat.checkSelfPermission(this,permissionType) == PackageManager.PERMISSION_GRANTED) {
+            //If permit has been granted Call method to get access to gallery app via new intent
+            Intent intent = new Intent();
+            if(requestCode == MainActivity.getThrowImageGalleryReqCode()){
+                MainActivity.loadPictureFromGallery(intent);
+            }else if(requestCode == MainActivity.getThrowImageCameraReqCode()){
+                MainActivity.loadPictureFromCamera(intent,this);
+            }//End of if else statement to check the request code
+            startActivityForResult(intent, requestCode);
+        } else {
+            //Otherwise, call method to display justification for this permit and request access to it
+            MainActivity.permissionRequest(permissionType, permissionReason,
+                    accessRequestCode, this);
+        }//End of if else statement to check the read storage access rights has been granted or not
+        Log.d("setGalImgAsAccLogo", "Exit setAppLogoAsAccIcon overloaded method in DisplayAccountActivity abstract class.");
+    }//End of setGalleryImageAsAccLogo method
+
+    //Method to add new icon into the DB if icon isn't the app logo or comes from the app resources
+    protected boolean isAddIconRequired(Account account){
+        Log.d("isAddIconRequired", "Enter isAddIconRequired method in DisplayAccountActivity abstract class.");
+        //Declare and initialize variables to be used in method and the return variable
+        int logoID = -1;
+        boolean isIconAddedToDB = false;
+        //Check the account icon isn't null
+        if(account.getIcon()!=null){
+            //Check the icon doesn't come from app resources or isn't the default app logo
+            if(account.getIcon().getLocation()!= MainActivity.getRESOURCES() && account.getIcon()!= MainActivity.getMyPsswrdSecureLogo()){
+                //If icon isn't coming from either option, save the logo uri in the DB
+                logoID = this.accountsDB.addItem(account.getIcon());
+                //Check the DB insertion was successful
+                if(logoID != -1){
+                    //Update the account object Icon ID
+                    account.getIcon().set_id(logoID);
+                    //Set boolean flag to true, to denote the icon had to be inserted in DB
+                    isIconAddedToDB = true;
+                }else{
+                    //Otherwise, set the account attribute's icon id for the account object
+                    account.getIcon().set_id(this.account.getIcon().get_id());
+                }//End of if statement to check the logoID is valid
+            }//End of if statement to check the icon doesn't come from resources or isn't the app logo
+        }//End of if statement to check the icon isn't null
+        Log.d("isAddIconRequired", "Exit isAddIconRequired method in DisplayAccountActivity abstract class.");
+        return isIconAddedToDB;
+    }//End of isAddIconRequired
 }//End of AddAccountActivity
