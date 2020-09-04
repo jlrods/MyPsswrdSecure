@@ -121,14 +121,21 @@
     <!--    EditUserName Activity   -->
     <string name="userNameNotChanged">Lo siento, el nombre de usuario no ha sido cambiado</string>
     <string name="userNameUpdated">El nombre de usuario ha sido actualizado</string>
+    <string name="userNameDeleted">nombre de usuario ha sido elimidado</string>
+    <string name="userNameDeleteTitle">Eliminar nombre de usuario</string>
+    <string name="userNameDeleteMssg">Está seguro que desea eliminar este nomber du usuario?</string>
+
 
     <!--    AddPsswrd Activity-->
     <string name="psswrdAdded">New password added successfully!</string>
     <string name="psswrdNotEntered">Lo siento, no ha introducino una contraseña</string>
 
-    <!--    EditUserName Activity   -->
+    <!--    EditPsswrd Activity   -->
     <string name="psswrdNotChanged">Lo siento, la contrasseña no ha sido cambiada</string>
-    <string name="psswrdUpdated">La contrasseña  ha sido actualizada</string>
+    <string name="psswrdUpdated">La contraseña  ha sido actualizada</string>
+    <string name="psswrdDeleted">contraseña  ha sido eliminada</string>
+    <string name="psswrdDeleteTitle">Eliminar contraseña</string>
+    <string name="psswrdDeleteMssg">Está seguro que desea eliminar esta contraseña?</string>
 
     <!--    AddQuestion Activity    -->
     <string name="addQuestQuestionTag">Pregunta de seguridad</string>
@@ -142,7 +149,9 @@
     <string name="answerNoTChanged">Lo siento, la respuesta no ha sido cambiada</string>
     <string name="questionAnswerNoTChanged">Lo siento, al menos un valor debe ser cambiado (pregunta or respuesta)</string>
     <string name="questionUpdated">La pregunta ha sido actualizada</string>
-
+    <string name="questionDeleted">pregunta ha sido eliminada</string>
+    <string name="questionDeleteTitle">Eliminar pregunta de seguridad</string>
+    <string name="questionDeleteMssg">Está seguro que desea eliminar esta pregunta?</string>
 
     <!--    AlertDialog texts-->
     <string name="alertBoxNewUser">Agregar Usuario</string>

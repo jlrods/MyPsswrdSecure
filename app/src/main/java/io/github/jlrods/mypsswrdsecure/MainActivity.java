@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
     //Declare and initialize variables to define the current app state saved on DB
     private Category currentCategory = null;
-    private int currentTab = 0;
+    private static int currentTab = 0;
     private boolean showAllAccounts = true;
     private boolean isFavoriteFilter = false;
     private boolean isSearchFilter = false;
@@ -138,14 +138,6 @@ public class MainActivity extends AppCompatActivity {
                         break;
 
                 }//End of switch statement to check current tab selection
-
-
-                //Declare and instantiate a new intent object
-                //Intent i= new Intent(MainActivity.this,SelectLogoActivity.class);
-                //Add extras to the intent object, specifically the current category where the add button was pressed from
-                //Start the addTaskActivity class
-                //startActivity(i);
-
             }//End of on click method implementation
         });//End of set on click listener method
         Resources r = getResources();
@@ -588,29 +580,41 @@ public class MainActivity extends AppCompatActivity {
             Log.d("onActivityResult","Received BAD result from AddQuestionActivity (received by MainActivity).");
         }else if(requestCode == throwEditUserNameActReqCode && resultCode == RESULT_OK){
             Log.d("onActivityResult","Received GOOD result from EditUserNameActivity (received by MainActivity).");
+            //Define text to display Toast to confirm the account has been added
+            if(data.getExtras().getBoolean("itemDeleted")){
+                toastText = data.getExtras().getString("itemDeletedName") + " " + getResources().getString(R.string.userNameDeleted);
+            }else{
+                toastText = getResources().getString(R.string.userNameUpdated);
+            }
             ((UserNameAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getUserNameList());
             //Set variable to display Toast
             goodResultDelivered = true;
-            //Define text to display Toast to confirm the account has been added
-            toastText = getResources().getString(R.string.userNameUpdated);
         }else if(requestCode == throwEditUserNameActReqCode && resultCode == RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from EditUserNameActivity (received by MainActivity).");
         }else if(requestCode == throwEditPsswrdActReqCode && resultCode == RESULT_OK){
             Log.d("onActivityResult","Received GOOD result from EditUserNameActivity (received by MainActivity).");
+            //Define text to display Toast to confirm the account has been added
+            if(data.getExtras().getBoolean("itemDeleted")){
+                toastText = data.getExtras().getString("itemDeletedName") + " " + getResources().getString(R.string.psswrdDeleted);
+            }else{
+                toastText = getResources().getString(R.string.psswrdUpdated);
+            }
             ((PsswrdAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getPsswrdList());
             //Set variable to display Toast
             goodResultDelivered = true;
-            //Define text to display Toast to confirm the account has been added
-            toastText = getResources().getString(R.string.psswrdUpdated);
         }else if(requestCode == throwEditPsswrdActReqCode && resultCode == RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from EditUserNameActivity (received by MainActivity).");
         }else if(requestCode == throwEditQuestionActReqCode && resultCode == RESULT_OK){
             Log.d("onActivityResult","Received GOOD result from EditQuestionActivity (received by MainActivity).");
+            //Define text to display Toast to confirm the account has been added
+            if(data.getExtras().getBoolean("itemDeleted")){
+                toastText = data.getExtras().getString("itemDeletedName") + " " + getResources().getString(R.string.questionDeleted);
+            }else{
+                toastText = getResources().getString(R.string.questionUpdated);
+            }
             ((SecurityQuestionAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getListQuestionsAvailableNoAnsw());
             //Set variable to display Toast
             goodResultDelivered = true;
-            //Define text to display Toast to confirm the account has been added
-            toastText = getResources().getString(R.string.questionUpdated);
         }else if(requestCode == throwEditQuestionActReqCode && resultCode == RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from EditQuestionActivity (received by MainActivity).");
         }else if (requestCode == throwEditAccountActReqCode && resultCode == Activity.RESULT_OK) {
@@ -637,16 +641,28 @@ public class MainActivity extends AppCompatActivity {
 
 
     //Method to display a generic new Dialog Alert view from any activity.
-    public static AlertDialog.Builder displayAlertDialog(Context context, EditText inputField,String title, String message, String hint){
+    public static AlertDialog.Builder displayAlertDialogWithInput(Context context, EditText inputField, String title, String message, String hint){
         Log.d("displayAlertDialog","Enter displayAlertDialog method in the MainActivity class.");
         //final EditText inputField = new EditText(context);
-        inputField.setText("");
-        inputField.setHint(hint);
+        if(inputField != null && hint != null){
+            inputField.setText("");
+            inputField.setHint(hint);
+        }
         Log.d("displayAlertDialog","Enter displayAlertDialog method in the MainActivity class.");
         return new AlertDialog.Builder(context)
                 .setTitle(title)
                 .setMessage(message)
                 .setView(inputField)
+                .setNegativeButton(R.string.cancel,null);
+    }//End of displayAlertDialog
+
+    //Method to display a generic new Dialog Alert view from any activity.
+    public static AlertDialog.Builder displayAlertDialogNoInput(Context context, String title, String message){
+        Log.d("displayAlertDialog","Enter displayAlertDialog method in the MainActivity class.");
+        Log.d("displayAlertDialog","Enter displayAlertDialog method in the MainActivity class.");
+        return new AlertDialog.Builder(context)
+                .setTitle(title)
+                .setMessage(message)
                 .setNegativeButton(R.string.cancel,null);
     }//End of displayAlertDialog
 
@@ -757,6 +773,9 @@ public class MainActivity extends AppCompatActivity {
         return EXTERNAL_IMAGE_STORAGE_CLUE;
     }
 
+    public static int getCurrentTabID(){
+        return currentTab;
+    }
     public static void displayToast(Context context, String text, int toastLength, int gravity){
         Log.d("displayToast","Enter displayToast method in the MainActivity class.");
         Toast toast = Toast.makeText(context,text,toastLength);

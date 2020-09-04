@@ -1,5 +1,7 @@
 package io.github.jlrods.mypsswrdsecure;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -13,7 +15,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import javax.crypto.spec.IvParameterSpec;
 
@@ -30,6 +35,8 @@ public abstract class AddItemActivity extends AppCompatActivity {
     protected Cursor cursor;
     //Cryptographer object
     protected Cryptographer cryptographer = MainActivity.getCryptographer();
+    //Floating action button to delete existing item
+    protected FloatingActionButton fabDelete = null;
 
     //Method definition
     //Other methods
@@ -44,6 +51,39 @@ public abstract class AddItemActivity extends AppCompatActivity {
         this.imgAddActivityIcon = (ImageView) findViewById(R.id.imgAddActivityIcon);
         this.tvAddActivityTag = (TextView) findViewById(R.id.tvAddActivityTag);
         this.etNewItemField = (EditText) findViewById(R.id.etNewItemField);
+        this.fabDelete = findViewById(R.id.fabDelete);
+//        this.fabDelete.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                //Call the correct activity based on tab selection
+//                int selectedTab = MainActivity.getCurrentTabID();
+//                String title = "";
+//                String message = "";
+//                Object item = null;
+//                switch (selectedTab){
+//                    //Set up the variables required to delete the item
+//                    case 1:
+//                        title ="User Name";
+//                        message = "Delete user name!";
+//                        break;
+//                    case 2:
+//                        break;
+//                    case 3:
+//                        break;
+//                }//End of switch statement
+//
+//                //Display AlertDialog to warn user it's about to delete an item
+//                AlertDialog.Builder dialog = MainActivity.displayAlertDialog(view.getContext(),null,title,message,null );
+//                dialog.setPositiveButton(R.string.dialog_OK, new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//
+//                    }
+//                });
+//                //Set up the positive button to delete the item
+//
+//            }//End of on click method implementation
+//        });//End of set on click listener method
         Log.d("OnCreateAddQuest","Exit onCreate method in the AddItemActivity class.");
     }//End of onCreate method
 
@@ -258,5 +298,49 @@ public abstract class AddItemActivity extends AppCompatActivity {
         Log.d("isQuestionPreLoadedOL","Enter/Exit the isQuestionPreLoaded overloaded method in AddQuestionActivity class.");
         return this.isQuestionPreLoaded(question,false);
     }//End of isQuestionPreLoaded method
+
+    //Inner class to handle the Delete item fab onClick event listener
+    protected class FabOnClickEventHandler implements View.OnClickListener{
+        //Attributes
+        Object item;
+        Cursor cursor;
+        String alertDiaglogTitle ="";
+        String alertDialogMessage ="";
+        String itemDeletedName ="";
+        String itemDeletedNameForIntent ="";
+
+        FabOnClickEventHandler(Object item, String alertDiaglogTitle, String alertDialogMessage,
+                               String itemDeletedName, String itemDeletedNameForIntent){
+            this.item = item;
+            this.alertDiaglogTitle = alertDiaglogTitle;
+            this.alertDialogMessage = alertDialogMessage;
+            this.itemDeletedName = itemDeletedName;
+            this.itemDeletedNameForIntent = itemDeletedNameForIntent;
+        }
+
+        @Override
+        //Method to handle click events on fab  button
+        public void onClick(View v) {
+            //Display AlertDialog to warn user it's about to delete an item
+            AlertDialog.Builder dialog = MainActivity.displayAlertDialogNoInput(fabDelete.getContext(),alertDiaglogTitle,alertDialogMessage);
+            dialog.setPositiveButton(R.string.dialog_OK, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //Check if item is an instance of question class so the answer can be deleted first
+                    if(item instanceof Question){
+                        accountsDB.deleteItem(((Question)item).getAnswer());
+                    }
+                    accountsDB.deleteItem(item);
+                    //MainActivity.displayToast(getBaseContext(),itemDeletedToastText,Toast.LENGTH_LONG,Gravity.CENTER);
+                    Intent intent = new Intent();
+                    intent.putExtra("itemDeletedName",itemDeletedName);
+                    intent.putExtra(itemDeletedNameForIntent,true);
+                    setResult(RESULT_OK,intent);
+                    finish();
+                }//End of onClick method
+            });//End of 
+            dialog.show();
+        }
+    }
 
 }//End of AddItemActivity abstract class
