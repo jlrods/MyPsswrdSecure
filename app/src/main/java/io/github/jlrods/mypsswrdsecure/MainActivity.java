@@ -39,7 +39,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class  MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
     private CoordinatorLayout coordinatorLayout;
@@ -102,9 +102,21 @@ public class MainActivity extends AppCompatActivity {
     private static final String APPSTATE_TABLE = "APPSTATE";
     private static final String ACCOUNTS_TABLE = "ACCOUNTS";
 
+    private static final String CATEGORY_ID_COLUMN ="CategoryID";
+    private static final String USER_NAME_ID_COLUMN ="UserNameID";
+    private static final String PSSWRD_ID_COLUMN ="PsswrdID";
+    private static final String QUESTION_LIST_ID_COLUMN ="QuestionListID";
+    private static final String QUESTION_ID_1_COLUMN= "QuestionID1";
+    private static final String QUESTION_ID_2_COLUMN= "QuestionID2";
+    private static final String QUESTION_ID_3_COLUMN= "QuestionID3";
+
     private static Uri uriCameraImage = null;
     private static final String EXTERNAL_IMAGE_STORAGE_CLUE = "content://";
 
+    private static final String USER_NAME = "user name";
+    private static final String PASSWORD = "password";
+    private static final String QUESTION = "question";
+    private static final String QUESTION_LIST ="question list";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -749,6 +761,34 @@ public class MainActivity extends AppCompatActivity {
         return ACCOUNTS_TABLE;
     }
 
+    public static String getUserNameIdColumn() {
+        return USER_NAME_ID_COLUMN;
+    }
+
+    public static String getPsswrdIdColumn() {
+        return PSSWRD_ID_COLUMN;
+    }
+
+    public static String getQuestionListIdColumn() {
+        return QUESTION_LIST_ID_COLUMN;
+    }
+
+    public static String getCategoryIdColumn() {
+        return CATEGORY_ID_COLUMN;
+    }
+
+    public static String getQuestionId1Column() {
+        return QUESTION_ID_1_COLUMN;
+    }
+
+    public static String getQuestionId2Column() {
+        return QUESTION_ID_2_COLUMN;
+    }
+
+    public static String getQuestionId3Column() {
+        return QUESTION_ID_3_COLUMN;
+    }
+
     public static int getThrowImageGalleryReqCode() {
         return THROW_IMAGE_GALLERY_REQ_CODE;
     }
@@ -773,9 +813,26 @@ public class MainActivity extends AppCompatActivity {
         return EXTERNAL_IMAGE_STORAGE_CLUE;
     }
 
+    public static String getUserName() {
+        return USER_NAME;
+    }
+
+    public static String getPASSWORD() {
+        return PASSWORD;
+    }
+
+    public static String getQUESTION() {
+        return QUESTION;
+    }
+
+    public static String getQuestionList() {
+        return QUESTION_LIST;
+    }
+
     public static int getCurrentTabID(){
         return currentTab;
     }
+
     public static void displayToast(Context context, String text, int toastLength, int gravity){
         Log.d("displayToast","Enter displayToast method in the MainActivity class.");
         Toast toast = Toast.makeText(context,text,toastLength);

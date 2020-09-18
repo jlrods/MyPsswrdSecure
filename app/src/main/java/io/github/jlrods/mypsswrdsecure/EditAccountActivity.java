@@ -44,9 +44,13 @@ public class EditAccountActivity extends DisplayAccountActivity {
         //Set up the category spinner to display the category assigned to the account by calling method that gets the cursor position by passing in it's text value
         this.spCategory.setSelection(this.getItemPositionInSpinner(this.cursorCategory,this.account.getCategory().get_id()));
         //Set up the user name spinner to display the user name assigned to the account by calling method that gets the cursor position by passing in it's text value
-        this.spAccUserName.setSelection(this.getItemPositionInSpinner(this.cursorUserName,this.account.getUserName().get_id()));
-        //Set up the user name spinner to display the user name assigned to the account by calling method that gets the cursor position by passing in it's text value
-        this.spAccPsswrd.setSelection(this.getItemPositionInSpinner(this.cursorPsswrd,this.account.getPsswrd().get_id()));
+        if(this.account.getUserName() != null){
+            this.spAccUserName.setSelection(this.getItemPositionInSpinner(this.cursorUserName,this.account.getUserName().get_id()));
+        }
+        if(this.account.getPsswrd() != null){
+            //Set up the user name spinner to display the user name assigned to the account by calling method that gets the cursor position by passing in it's text value
+            this.spAccPsswrd.setSelection(this.getItemPositionInSpinner(this.cursorPsswrd,this.account.getPsswrd().get_id()));
+        }
         //Set up the security question list if applicable
         if(this.account.getQuestionList() != null){
             //For each question in the list, call method that will add the question to the security question list
@@ -125,14 +129,21 @@ public class EditAccountActivity extends DisplayAccountActivity {
                                                     values.put("CategoryID",newAccount.getCategory().get_id());
                                                     values.put("UserNameID",newAccount.getUserName().get_id());
                                                     values.put("PsswrdID",newAccount.getPsswrd().get_id());
+
                                                     if(!this.isQuestionListTheSame(this.account.getQuestionList(),newAccount.getQuestionList())){
                                                         if(this.account.getQuestionList() == null && newAccount.getQuestionList() != null){
                                                             values.put("QuestionListID",newAccount.getQuestionList().get_id());
                                                         }else if(this.account.getQuestionList() != null && newAccount.getQuestionList() == null){
-                                                            values.put("QuestionListID","NULL");
+                                                            values.put("QuestionListID","(null)");
                                                         }else if(this.account.getQuestionList().get_id() != newAccount.getQuestionList().get_id()){
                                                             values.put("QuestionListID",newAccount.getQuestionList().get_id());
-                                                        }//End of if else statement to check the question list states
+                                                        }
+                                                        //@Fixme: when question list is extended, same id is retrieved from old and new account objects
+//                                                        else if(this.account.getQuestionList().get_id() != newAccount.getQuestionList().get_id()
+//                                                                &&(this.account.getQuestionList().getSize() != newAccount.getQuestionList().getSize())){
+//                                                            //Update the
+//                                                            values.put("QuestionListID",newAccount.getQuestionList().get_id());
+//                                                        }//End of if else statement to check the question list states
                                                     }//End of if statement to check the question list are the same
                                                     if(!this.isAddIconRequired(newAccount)){
                                                         newAccount.setIcon(MainActivity.getMyPsswrdSecureLogo());
@@ -215,8 +226,12 @@ public class EditAccountActivity extends DisplayAccountActivity {
             //If list2 is null and the other doesn't, they aren't the same
             isTheSame = false;
         }else if(list1.get_id() == list2.get_id()){
-            //If both list hold the same id they are the same
-            isTheSame = true;
+            if(list1.getSize() == list2.getSize()){
+                //If both list hold the same id they are the same
+                isTheSame = true;
+            }else{
+                isTheSame = false;
+            }
         }else{
             //Any other case return false
             isTheSame = false;

@@ -568,30 +568,33 @@ public class AccountsDB extends SQLiteOpenHelper {
         String whereID =" WHERE _id = ";
         String table="";
         if(item instanceof Category){
-            table ="CATEGORY";
+            table = MainActivity.getCategoryTable();
             //Delete all items from TASK table where Category ID = id
             // db.execSQL(deleteFrom+"TASK WHERE Category = "+ ((Category) item).getId());
             id = ((Category) item).get_id();
             Log.d("deleteCATEGORY","CATEGORY to be deleted.");
         }else if(item instanceof Psswrd){
-            table = "PSSWRD";
+            table = MainActivity.getPsswrdTable();
             id = ((Psswrd) item).get_id();
             Log.d("deletePsswrd","PSSWRD to be deleted.");
         }else if(item instanceof UserName){
-            table = "USERNAME";
+            table = MainActivity.getUsernameTable();
             //Delete all items from USERNAME table where type id is equal to id
             id= ((UserName) item).get_id();
             Log.d("deleteUserName","USERNAME to be deleted.");
         }else if(item instanceof Answer){
-            table = "ANSWER";
+            table = MainActivity.getAnswerTable();
             //Delete all items from USERNAME table where type id is equal to id
             id= ((Answer) item).get_id();
             Log.d("deleteAnswer","ANSWER to be deleted.");
         }else if(item instanceof Question){
-            table = "QUESTION";
+            table = MainActivity.getQuestionTable();
             //Delete all items from USERNAME table where type id is equal to id
             id= ((Question) item).get_id();
             Log.d("deleteQuestion","QUESTION to be deleted.");
+        }else if(item instanceof  QuestionList){
+            table = MainActivity.getQuestionlistTable();
+            id = ((QuestionList) item).get_id();
         }else if(item instanceof Account){
             table = "ACCOUNTS";
             id = ((Account) item).get_id();
@@ -599,6 +602,13 @@ public class AccountsDB extends SQLiteOpenHelper {
         }//End of if else statements
         //Run SQL statement to delete the task with id x from the TASK table
         db.execSQL(deleteFrom+ table +whereID+ id);
+//        if(item instanceof QuestionList){
+//            QuestionList questionList = (QuestionList) item;
+//            for(int i=0;i<questionList.getSize();i++){
+//                table = MainActivity.getQuestionassignmentTable();
+//                db.execSQL(deleteFrom+ table +" WHERE QuestionListID =" + questionList.get_id());
+//            }//End of for loop
+//        }//End of if statement to check the item type
         db.close();
         result = true;
         Log.d("Ext_deleteItem","Exit deleteItem method in AccountsDB class.");
@@ -696,23 +706,49 @@ public class AccountsDB extends SQLiteOpenHelper {
 
     //Method to get the number of times a specific password is being used in different accounts as per the DB
     public int getTimesUsedQuestion(int questionID){
-        return this.runQuery("SELECT * FROM QUESTIONASSIGNMENT WHERE QUESTIONASSIGNMENT.QuestionID = "+questionID).getCount();
-    }
+        Log.d("getTimesUsedQuestion","Enter the getAccountCursorByName method in the AccountsDB class.");
+        int timesUsed = 0;
+        //Get a list of questionLists that hold the question to be deleted
+        Cursor questionListsWithThisQuestion = this.getQuestionAssignmentCursorFor1QuestionID(questionID); //this.runQuery("SELECT * FROM QUESTIONASSIGNMENT WHERE QUESTIONASSIGNMENT.QuestionID = "+questionID);
+        //Now get the list of accounts using the those question lists
+        //It's necessary to check a questionList that holds the specific questionID is being used more than once (a questionList can be assigned to multiple accounts)
+        if(questionListsWithThisQuestion.moveToFirst()){
+            //If that is the case, more than one list holding the question, check for each list how many accounts are using the list
+            Cursor accountListUsingQuestionList = null;
+            do{
+                accountListUsingQuestionList =  this.getAccountsWithSpecifcValue(MainActivity.getQuestionListIdColumn(),questionListsWithThisQuestion.getInt(1)); //this.runQuery("SELECT * FROM ACCOUNTS WHERE QuestionListID = " + );
+                if(accountListUsingQuestionList.moveToFirst()){
+                    timesUsed += accountListUsingQuestionList.getCount();
+                }
+            }while(questionListsWithThisQuestion.moveToNext());
+        }//End of if statement that check the cursor with the question lists move to first position and can be iterated
+        Log.d("getTimesUsedQuestion","Exit the getAccountCursorByName method in the AccountsDB class.");
+        return timesUsed;
+    }//End of getTimesUsedQuestion method
+
+    //Method to return cursor with rows from the accounts table with specific value in the column name passed in as argument
+    public Cursor getAccountsWithSpecifcValue(String column, int itemID){
+        Log.d("getAccWithSpecifcValue","Enter the getAccountCursorByName method in the AccountsDB class.");
+        Cursor  listOfAccountsThatHoldsASpecificValue = null;
+        listOfAccountsThatHoldsASpecificValue = runQuery("SELECT * FROM "+ MainActivity.getAccountsTable()+ " WHERE " + column + " = " + itemID);
+        Log.d("getAccWithSpecifcValue","Exit the getAccountCursorByName method in the AccountsDB class.");
+        return listOfAccountsThatHoldsASpecificValue;
+    }//End of getAccountsWithSpecifcValue method
 
 
     //Method to retrieve a specific Icon from DB by passing in it's ID
     public Icon getIconByID(int _id){
         Log.d("getIconByID","Enter the getIconByID method in the AccountsDB class.");
-    Cursor cursor = this.runQuery("SELECT * FROM ICON WHERE _id = "+ _id);
+        Cursor cursor = this.runQuery("SELECT * FROM ICON WHERE _id = "+ _id);
         if(cursor != null && cursor.getCount() >0){
-        cursor.moveToFirst();
-        Log.d("getIconByID","Exit successfully (icon with id " +_id+ " has been found) the getIconByID method in the AccountsDB class.");
-        return Icon.extractIcon(cursor);
-    }else{
-        Log.d("getIconByID","Exit the getIconByID method in the AccountsDB class without finding the account with id: "+_id);
-        return null;
-    }//End of if else statement
-}//End of getIconByID method
+            cursor.moveToFirst();
+            Log.d("getIconByID","Exit successfully (icon with id " +_id+ " has been found) the getIconByID method in the AccountsDB class.");
+            return Icon.extractIcon(cursor);
+        }else{
+            Log.d("getIconByID","Exit the getIconByID method in the AccountsDB class without finding the account with id: "+_id);
+            return null;
+        }//End of if else statement
+    }//End of getIconByID method
 
     //Method to retrieve a specific Icon from DB by passing in it's ID
     public Icon getIconByName(String name){
@@ -760,10 +796,6 @@ public class AccountsDB extends SQLiteOpenHelper {
     //Method to get a specific user name, by passing in its DB _id as an argument
     public Cursor getUserNameByName(String userName){
         Log.d("getUserNameByName","Enter the getUserNameByName method in the AccountsDB class.");
-//        if(userName.contains(apostrophe)){
-//            userName = includeApostropheEscapeChar(userName);
-//        }
-
         //Declare and initialize a boolean flag to inform the name was found
         boolean found = false;
         String userNameDecrypted = "";
@@ -787,23 +819,6 @@ public class AccountsDB extends SQLiteOpenHelper {
         }//End of if else statement
         return userNameCursor;
     }//End of getUserNameByID method
-
-//    //Method to get a specific user name, by passing in its DB _id as an argument
-//    public Cursor getUserNameByName(String userName){
-//        Log.d("getUserNameByName","Enter the getUserNameByName method in the AccountsDB class.");
-//        if(userName.contains(apostrophe)){
-//            userName = includeApostropheEscapeChar(userName);
-//        }
-//        Cursor cursor = this.runQuery("SELECT * FROM USERNAME WHERE Value = '"+ userName+"'");
-//        if(cursor != null && cursor.getCount() >0){
-//            cursor.moveToFirst();
-//            Log.d("getUserNameByName","Exit successfully (user name with value " +userName + " has been found) the getUserNameByID method in the AccountsDB class.");
-//
-//        }else{
-//            Log.d("getUserNameByName","Exit the getUserNameByName method in the AccountsDB class without finding the user name with value: "+userName);
-//        }//End of if else statement
-//        return cursor;
-//    }//End of getUserNameByID method
 
     //Method to get a specific password, by passing in its DB _id as an argument
     public Psswrd getPsswrdByID(int _id){
@@ -863,23 +878,6 @@ public class AccountsDB extends SQLiteOpenHelper {
     public Cursor getPsswrdList(){
         return  this.runQuery("SELECT * FROM PSSWRD");
     }
-
-//    //Method to get a specific user name, by passing in its DB _id as an argument
-//    public Cursor getPsswrdByName(String psswrd){
-//        Log.d("getUserNameByName","Enter the getUserNameByName method in the AccountsDB class.");
-//        if(psswrd.contains(apostrophe)){
-//            psswrd = includeApostropheEscapeChar(psswrd);
-//        }
-//        Cursor cursor = this.runQuery("SELECT * FROM PSSWRD WHERE Value = '"+ psswrd+"'");
-//        if(cursor != null && cursor.getCount() >0){
-//            cursor.moveToFirst();
-//            Log.d("getUserNameByName","Exit successfully (user name with value " +psswrd + " has been found) the getUserNameByID method in the AccountsDB class.");
-//
-//        }else{
-//            Log.d("getUserNameByName","Exit the getUserNameByName method in the AccountsDB class without finding the user name with value: "+psswrd);
-//        }//End of if else statement
-//        return cursor;
-//    }//End of getUserNameByID method
 
     //Method to retrieve the list of categories stored on the database
     public ArrayList<Category> getCategoryList(){
@@ -1062,7 +1060,6 @@ public class AccountsDB extends SQLiteOpenHelper {
         return question;
     }//End of getQuestionCursorByID method
 
-
     //Method to get a list of questions, by passing in its DB _id as an argument
     public QuestionList getQuestionListById(int _id){
         Log.d("getQuestionListById","Enter the getQuestionListById method in the AccountsDB class.");
@@ -1088,6 +1085,16 @@ public class AccountsDB extends SQLiteOpenHelper {
         }//End of if else statement to check cursor is not empty
     }//End of getQuestionListById method
 
+    public Cursor getQuestionAssignmentCursorFor1QuestionID(int _id){
+        Log.d("questAssgCur1QuestID","Enter the getQuestionAssignmentCursorFor1QuestionID method in the AccountsDB class.");
+        Cursor cursor = null;
+        cursor = this.runQuery("SELECT * FROM "+MainActivity.getQuestionassignmentTable()+"  WHERE "+MainActivity.getQuestionassignmentTable()+ ".QuestionID = "+ _id);
+        Log.d("questAssgCur1QuestID","Enter the getQuestionAssignmentCursorFor1QuestionID method in the AccountsDB class.");
+        return cursor;
+    }//End of the getQuestionAssignmentCursorFor1QuestionID method
+
+
+    //Method that returns a security question list ID by passing in the questions that make up the list as argument
     public int getSecQuestionListID(QuestionList questionList){
         Log.d("getSecQuestionListID","Enter the getSecQuestionListID method in the AccountsDB class.");
         int _id = -1;
@@ -1123,6 +1130,201 @@ public class AccountsDB extends SQLiteOpenHelper {
         return _id;
     }//End of getSecQuestionListID method
 
+    public ArrayList getAccountsUsingItemWithID(String itemType, int itemID){
+        Log.d("getAccUsingItemWithID","Enter the getAccountsUsingItemWithID method in the AccountsDB class.");
+        Cursor listOfAccountUsingTheItem = null;
+        ArrayList listOfQuestionListIDsUsingTheItem = new ArrayList();
+        ArrayList listOfAccountIDsUsingTheItem = new ArrayList();
+        String column = "";
+        //Check the itemType to assign proper column to be used in the Where condition of the SQL query
+        if(itemType.equals(MainActivity.getUserName())){
+            column = MainActivity.getUserNameIdColumn();
+        }else if(itemType.equals(MainActivity.getPASSWORD())){
+            column = MainActivity.getPsswrdIdColumn();
+        }else if(itemType.equals(MainActivity.getQuestionList())){
+            column = MainActivity.getQuestionListIdColumn();
+        }
+        if(itemType.equals(MainActivity.getQUESTION())){
+            //In case of questions, the SQL must be run differently as the accounts hold the question list ID and not the question ID itself
+            //First, it's necessary to check all the questionLists that have the question to be deleted
+            Cursor questionListsWithQuestionToBeDeleted = this.getQuestionAssignmentCursorFor1QuestionID(itemID); //runQuery("SELECT * FROM QUESTIONASSIGNMENT WHERE QUESTIONASSIGNMENT.QuestionID = "+ itemID);
+            //Now query the DB to find all the accounts with each questionListID that holds the question to be deleted
+            column = MainActivity.getQuestionListIdColumn();
+            //Get the list of questionList ids that holds the question and store it in ArrayList
+
+            while(questionListsWithQuestionToBeDeleted.moveToNext()){
+                //Every account using any of the lists stored in questionListsWithQuestionToBeDeleted, should be stored
+                listOfQuestionListIDsUsingTheItem.add(questionListsWithQuestionToBeDeleted.getInt(1));
+            }
+            //Call method to get account row from ACCOUNTS table that contains any of the values passed in
+            listOfAccountUsingTheItem = this.getRowsThatMeetMultipleValuesCriteria(MainActivity.getAccountsTable(),column, listOfQuestionListIDsUsingTheItem);
+            // listOfAccountUsingTheItem = this.runQuery("SELECT * FROM ACCOUNTS WHERE "+ column + " = " + questionListsWithQuestionToBeDeleted.getInt(1));
+        }else{
+            listOfAccountUsingTheItem = this.runQuery("SELECT * FROM ACCOUNTS WHERE "+ column + " = " + itemID);
+        }//End of if else statement to check if item type is question
+
+        //Add the each account id to the list of accounts using the item
+        if(listOfAccountUsingTheItem.moveToFirst()){
+            do{
+                listOfAccountIDsUsingTheItem.add(listOfAccountUsingTheItem.getInt(0));
+            }while(listOfAccountUsingTheItem.moveToNext());
+        }//End of while loop to fill up list of accounts id that have the passed in item
+        Log.d("getAccUsingItemWithID","Exit the getAccountsUsingItemWithID method in the AccountsDB class.");
+        return listOfAccountIDsUsingTheItem;
+    }//End of getAccountsUsingItemWithID method
+
+    //Method to return rows from a table that meet multiple possible values
+    private Cursor getRowsThatMeetMultipleValuesCriteria(String table, String column, ArrayList values){
+        Log.d("rowThatMeetCriteria","Enter the getRowsThatMeetMultipleValuesCriteria method in the AccountsDB class.");
+        //Declare and initialize variables to be used and return by the method
+        Cursor cursor = null;
+        String inClause = " IN (";
+        //Iterate through values list to build the SQL statement closing section (i.e. IN (x,y,z))
+        for(int i=0;i< values.size();i++){
+            inClause += values.get(i);
+            if(i!= values.size()-1){
+                inClause += ",";
+            }else{
+                inClause += ")";
+            }
+        }//End of for loop
+        //Run the query and retrieve the cursor with all the matching rows
+        cursor = this.runQuery("SELECT * FROM "+ table +" WHERE "+ column + inClause);
+        Log.d("rowThatMeetCriteria","Enter the getRowsThatMeetMultipleValuesCriteria method in the AccountsDB class.");
+        return cursor;
+    }//End of getRowsThatMeetMultipleValuesCriteria method
+
+    public String getQuestionListColumnNameThatHoldsQuestion(int questionListID,int questionID){
+        Log.d("questListColumnName","Enter the getQuestionListColumnNameThatHoldsQuestion method in the AccountsDB class.");
+        //Declare and initialize variables to be used and return by the method
+        String column = "QuestionID";
+        //Extract the full question list object from cursor by passing in questionListID
+        QuestionList questionList = this.getQuestionListById(questionListID);
+        //Iterate through the question list
+        int i =0;
+        boolean found = false;
+        while(i<= questionList.getSize() && !found){
+            //Check if current question has the same id as the question being searched
+            if(questionList.getQuestions().get(i).get_id() == questionID){
+                column += (i+1);
+                found = true;
+            }
+            //Increment iterator
+            i++;
+        }//End of while loop
+        Log.d("questListColumnName","Enter the getQuestionListColumnNameThatHoldsQuestion method in the AccountsDB class.");
+        //Return the QuestionID and append the iterator value which corresponds to the column number holding the searched question
+        return column;
+    }//End of getQuestionListColumnNameThatHoldsQuestion method
+
+    public int re_sctructureQuestionList(QuestionList questionListUsingTheQuestionToBeDeleted, int questionID){
+        Log.d("re_sctrctrQuestionList","Enter the re_sctructureQuestionList method in the AccountsDB class.");
+        //Boolean flag to define the question list re-structure was successful and value to be returned by method
+        boolean re_structuredListAlreadyExists = false;
+        int initPosition = -1;
+        final String questionID1 = MainActivity.getQuestionId1Column();
+        final String questionID2 = MainActivity.getQuestionId2Column();
+        final String questionID3 = MainActivity.getQuestionId3Column();
+        ContentValues values;
+        //Extract the full question list object from cursor by passing in questionListID
+        int questionListID = questionListUsingTheQuestionToBeDeleted.get_id();
+
+        String column = this.getQuestionListColumnNameThatHoldsQuestion(questionListID,questionID);
+        //Check the column where question is being stored in DB
+        if(column.equals(questionID1)){
+            //Set QuestionID1 column to null
+            initPosition = 0;
+        }else if(column.equals(questionID2)){
+            initPosition = 1;
+        }else if(column.equals(questionID3)){
+            initPosition = 2;
+        }//End of if else statements that check the question position that is going to be removed, this will allow to re-structure the question list if isn't left empty
+        //Before updating the questionList table it's necessary to see if the resulting questionList is not in the table already, in order to avoid duplication
+        QuestionList newQuestionListAfterRemovingQuestion = new QuestionList();
+        //Check what the new list size will be and base on that populate the newQuestionListAfterRemovingQuestion variable with the remainder questions
+        switch (questionListUsingTheQuestionToBeDeleted.getSize()-1){
+            case 1:
+                int remainderQuestionPosition1 = -1;
+                if(initPosition == 0){
+                    remainderQuestionPosition1 = 1;
+                }else{
+                    remainderQuestionPosition1 = 0;
+                }
+                newQuestionListAfterRemovingQuestion.addQuestion(questionListUsingTheQuestionToBeDeleted.getQuestions().get(remainderQuestionPosition1));
+                //newQuestionListAfterRemovingQuestion = this.getQuestionCursorByID((questionListUsingTheQuestionToBeDeleted.getQuestions().get(remainderQuestionPosition1).get_id()));
+                break;
+            case 2:
+                int remainderQuestionPosition2 = -1;
+                if(initPosition == 0){
+                    remainderQuestionPosition1 = 1;
+                    remainderQuestionPosition2 = 2;
+                }else if(initPosition == 1){
+                    remainderQuestionPosition1 = 0;
+                    remainderQuestionPosition2 = 2;
+                }else{
+                    remainderQuestionPosition1 = 0;
+                    remainderQuestionPosition2 = 1;
+                }
+                newQuestionListAfterRemovingQuestion.addQuestion(questionListUsingTheQuestionToBeDeleted.getQuestions().get(remainderQuestionPosition1));
+                newQuestionListAfterRemovingQuestion.addQuestion(questionListUsingTheQuestionToBeDeleted.getQuestions().get(remainderQuestionPosition2));
+                break;
+            default:
+                break;
+        }//End of switch statement that populates newQuestionListAfterRemovingQuestion with remainder questions
+
+        //Check is the modified question list already exists on the DB
+        int re_structuredQuestionListID = this.getSecQuestionListID(newQuestionListAfterRemovingQuestion);
+        if( re_structuredQuestionListID == -1){
+            //If the list id returns -1, means the resulting list doesn't exist in the DB, therefore updating the current list ID will do
+            values = this.moveValuesBetweenColumns(initPosition,questionListUsingTheQuestionToBeDeleted);
+            //Store the _id attribute of the question list to be updated
+            values.put("_id",questionListID);
+            if(this.updateTable(MainActivity.getQuestionlistTable(),values)){
+                //If the question list updated is successful, the id to be returned by method should be the ID from question list holding the question
+                //to be deleted
+                re_structuredQuestionListID = questionListUsingTheQuestionToBeDeleted.get_id();
+            }
+        }//End of if statement to  check the re-structured list isn't in the DB
+        Log.d("re_sctrctrQuestionList","Exit the re_sctructureQuestionList method in the AccountsDB class.");
+        return re_structuredQuestionListID;
+    }//End of the re_sctructureQuestionList method
+
+    //Method to assign new column name and question ids when a question is removed form the list
+    private ContentValues moveValuesBetweenColumns(int initPosition, QuestionList questionListUsingTheQuestionToBeDeleted){
+        Log.d("movValuesBetweenColumns","Enter the moveValuesBetweenColumns method in the AccountsDB class.");
+        ContentValues values = new ContentValues();
+        for(int i=initPosition;i < questionListUsingTheQuestionToBeDeleted.getSize();i++){
+            if(i!=questionListUsingTheQuestionToBeDeleted.getSize()-1){
+                values.put("QuestionID"+(i+1),questionListUsingTheQuestionToBeDeleted.getQuestions().get(i+1).get_id());
+            }else{
+                values.put("QuestionID"+(i+1),"(null)");
+            }//End of if else statement to check the question size after removing one item
+        }//End of for loop to iterate through the question list
+        Log.d("movValuesBetweenColumns","Exit the moveValuesBetweenColumns method in the AccountsDB class.");
+        return values;
+    }//End of moveValuesBetweenColumns method
+
+    public boolean deleteRowFromTable(String table, String column, int columnValue){
+        Log.d("deleteRowFromTable","Enter deleteRowFromTable method in AccountsDB class.");
+        boolean result = false;
+        //Declare and instantiate a new database object to handle the database operations
+        SQLiteDatabase db = getWritableDatabase();
+        //Declare and initialize a query string
+        String deleteFrom = "DELETE FROM ";
+//        table= MainActivity.getQuestionassignmentTable();
+        String whereClause =" WHERE "+ column +" = ";
+        //Run SQL statement to delete the task with id x from the TASK table
+        try{
+            db.execSQL(deleteFrom + table + whereClause + columnValue);
+            result = true;
+            Log.d("deleteRowFromTable","Exit successfully deleteRowFromTable method in AccountsDB class.");
+        }catch (Exception e) {
+            Log.d("deleteRowFromTable","Exit the deleteRowFromTable method in the AccountsDB class with exception: "+e.getMessage());
+        }finally{
+            db.close();
+            return result;
+        }//End of try catch finally block
+    }//End of deleteQuestionAssignment method
 
     //Method to return item position within cursor passed in as parameter
     public int findItemPositionInCursor(Cursor cursor, int _id){
