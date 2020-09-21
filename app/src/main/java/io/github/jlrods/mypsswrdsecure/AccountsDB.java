@@ -595,20 +595,18 @@ public class AccountsDB extends SQLiteOpenHelper {
         }else if(item instanceof  QuestionList){
             table = MainActivity.getQuestionlistTable();
             id = ((QuestionList) item).get_id();
+            Log.d("deleteQuestionList","QUESTIONLIST to be deleted.");
+        }else if(item instanceof  Icon){
+            table = MainActivity.getIconTable();
+            id = ((Icon) item).get_id();
+            Log.d("deleteIcon","ICON to be deleted.");
         }else if(item instanceof Account){
-            table = "ACCOUNTS";
+            table = MainActivity.getAccountsTable();
             id = ((Account) item).get_id();
             Log.d("deleteAccount","ACCOUNT to be deleted.");
         }//End of if else statements
         //Run SQL statement to delete the task with id x from the TASK table
-        db.execSQL(deleteFrom+ table +whereID+ id);
-//        if(item instanceof QuestionList){
-//            QuestionList questionList = (QuestionList) item;
-//            for(int i=0;i<questionList.getSize();i++){
-//                table = MainActivity.getQuestionassignmentTable();
-//                db.execSQL(deleteFrom+ table +" WHERE QuestionListID =" + questionList.get_id());
-//            }//End of for loop
-//        }//End of if statement to check the item type
+        db.execSQL(deleteFrom + table + whereID + id);
         db.close();
         result = true;
         Log.d("Ext_deleteItem","Exit deleteItem method in AccountsDB class.");
@@ -704,9 +702,9 @@ public class AccountsDB extends SQLiteOpenHelper {
         return this.runQuery("SELECT * FROM ACCOUNTS WHERE PsswrdID = "+psswrdID).getCount();
     }
 
-    //Method to get the number of times a specific password is being used in different accounts as per the DB
+    //Method to get the number of times a specific question is being used in different accounts as per the DB
     public int getTimesUsedQuestion(int questionID){
-        Log.d("getTimesUsedQuestion","Enter the getAccountCursorByName method in the AccountsDB class.");
+        Log.d("getTimesUsedQuestion","Enter the getTimesUsedQuestion method in the AccountsDB class.");
         int timesUsed = 0;
         //Get a list of questionLists that hold the question to be deleted
         Cursor questionListsWithThisQuestion = this.getQuestionAssignmentCursorFor1QuestionID(questionID); //this.runQuery("SELECT * FROM QUESTIONASSIGNMENT WHERE QUESTIONASSIGNMENT.QuestionID = "+questionID);
@@ -722,9 +720,55 @@ public class AccountsDB extends SQLiteOpenHelper {
                 }
             }while(questionListsWithThisQuestion.moveToNext());
         }//End of if statement that check the cursor with the question lists move to first position and can be iterated
-        Log.d("getTimesUsedQuestion","Exit the getAccountCursorByName method in the AccountsDB class.");
+        Log.d("getTimesUsedQuestion","Exit the getTimesUsedQuestion method in the AccountsDB class.");
         return timesUsed;
     }//End of getTimesUsedQuestion method
+
+    //Method to get the number of times a specific question list is being used in different accounts as per the DB
+    public int getTimesUsedQuestionList(int questionListID){
+        Log.d("getTimesUsedQuestList","Enter the getTimesUsedQuestionList method in the AccountsDB class.");
+        int timesUsed = 0;
+        //Get a list of questionLists that hold the question to be deleted
+        Cursor accountsWithThisQuestionList = this.runQuery("SELECT * FROM "+MainActivity.getAccountsTable()+" WHERE " + MainActivity.getQuestionListIdColumn()+" = "+questionListID);
+        //Now get the list of accounts using the those question lists
+        //It's necessary to check a questionList that holds the specific questionID is being used more than once (a questionList can be assigned to multiple accounts)
+        if(accountsWithThisQuestionList.moveToFirst()){
+            timesUsed = accountsWithThisQuestionList.getCount();
+//            //If that is the case, more than one list holding the question, check for each list how many accounts are using the list
+//            Cursor accountListUsingQuestionList = null;
+//            do{
+//                accountListUsingQuestionList =  this.getAccountsWithSpecifcValue(MainActivity.getQuestionListIdColumn(),accountsWithThisQuestionList.getInt(1)); //this.runQuery("SELECT * FROM ACCOUNTS WHERE QuestionListID = " + );
+//                if(accountListUsingQuestionList.moveToFirst()){
+//                    timesUsed += accountListUsingQuestionList.getCount();
+//                }
+//            }while(accountsWithThisQuestionList.moveToNext());
+        }//End of if statement that check the cursor with the question lists move to first position and can be iterated
+        Log.d("getTimesUsedQuestList","Exit the getTimesUsedQuestionList method in the AccountsDB class.");
+        return  timesUsed;
+    }//End of getTimesUsedQuestionList method
+
+    //Method to get the number of times a specific question list is being used in different accounts as per the DB
+    public int getTimesUsedIcon(int iconID){
+        Log.d("getTimesUsedQuestList","Enter the getTimesUsedQuestionList method in the AccountsDB class.");
+        int timesUsed = 0;
+        //Get a list of questionLists that hold the question to be deleted
+        Cursor accountsWithThisQuestionList = this.runQuery("SELECT * FROM "+MainActivity.getAccountsTable()+" WHERE " + MainActivity.getIconTable()+" = "+iconID);
+        //Now get the list of accounts using the those question lists
+        //It's necessary to check a questionList that holds the specific questionID is being used more than once (a questionList can be assigned to multiple accounts)
+        if(accountsWithThisQuestionList.moveToFirst()){
+            timesUsed = accountsWithThisQuestionList.getCount();
+//            //If that is the case, more than one list holding the question, check for each list how many accounts are using the list
+//            Cursor accountListUsingQuestionList = null;
+//            do{
+//                accountListUsingQuestionList =  this.getAccountsWithSpecifcValue(MainActivity.getQuestionListIdColumn(),accountsWithThisQuestionList.getInt(1)); //this.runQuery("SELECT * FROM ACCOUNTS WHERE QuestionListID = " + );
+//                if(accountListUsingQuestionList.moveToFirst()){
+//                    timesUsed += accountListUsingQuestionList.getCount();
+//                }
+//            }while(accountsWithThisQuestionList.moveToNext());
+        }//End of if statement that check the cursor with the question lists move to first position and can be iterated
+        Log.d("getTimesUsedQuestList","Exit the getTimesUsedQuestionList method in the AccountsDB class.");
+        return  timesUsed;
+    }//End of getTimesUsedQuestionList method
 
     //Method to return cursor with rows from the accounts table with specific value in the column name passed in as argument
     public Cursor getAccountsWithSpecifcValue(String column, int itemID){

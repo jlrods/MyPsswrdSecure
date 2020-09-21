@@ -109,6 +109,8 @@ public class  MainActivity extends AppCompatActivity {
     private static final String QUESTION_ID_1_COLUMN= "QuestionID1";
     private static final String QUESTION_ID_2_COLUMN= "QuestionID2";
     private static final String QUESTION_ID_3_COLUMN= "QuestionID3";
+    private static final String ICON_ID_COLUMN ="IconID";
+    private static final String ID_COLUMN = "_id";
 
     private static Uri uriCameraImage = null;
     private static final String EXTERNAL_IMAGE_STORAGE_CLUE = "content://";
@@ -635,7 +637,12 @@ public class  MainActivity extends AppCompatActivity {
             //Define text to display Toast to confirm the account has been added
             //Set variable to display Toast
             goodResultDelivered = true;
-            toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountUpdated);
+            if(data.getExtras().getInt("accountID") == -1){
+                toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountDeleted);
+            }else{
+                toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountUpdated);
+            }
+
         }else if(requestCode == throwEditAccountActReqCode && resultCode == Activity.RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from EditAccountActivity (received by HomeFragment).");
         }//End of if else statement chain to check activity results
@@ -827,6 +834,14 @@ public class  MainActivity extends AppCompatActivity {
 
     public static String getQuestionList() {
         return QUESTION_LIST;
+    }
+
+    public static String getIconIdColumn() {
+        return ICON_ID_COLUMN;
+    }
+
+    public static String getIdColumn() {
+        return ID_COLUMN;
     }
 
     public static int getCurrentTabID(){

@@ -335,7 +335,7 @@ public abstract class AddItemActivity extends AppCompatActivity {
                 for(int i=0;i < listOfAccountsUsingTheItem.size();i++){
                     Account account = accountsDB.getAccountByID((int)listOfAccountsUsingTheItem.get(i));
                     if( account != null){
-                        alertDialogMessage += "\n✳ "+ account.getName();
+                        alertDialogMessage += "\n❎ "+ account.getName();
                     }//End of if statement to check account isn't null
                 }//End of for loop to include every account name in the warning message
             }//End of if statement to check the the item is being used

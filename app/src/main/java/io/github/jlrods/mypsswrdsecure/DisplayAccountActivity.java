@@ -516,7 +516,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.d("onCreateOptionsMenu","Enter onCreateOptionsMenu method in the DisplayAccountActivity abstract class.");
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.activity_menu_save_cancel, menu);
+        getMenuInflater().inflate(R.menu.activity_menu_delete_save_cancel, menu);
         Log.d("onCreateOptionsMenu","Enter onCreateOptionsMenu method in the DisplayAccountActivity abstract class.");
         return true;
     }//End of onCreateOptionsMenu method

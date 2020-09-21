@@ -85,6 +85,7 @@
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>
     <string name="dialog_OK">Ok</string>
+    <string name="delete">Delete</string>
 
     <!--    Select Logo Activity-->
     <string name="logo_list_header">Pick a logo for your account:</string>
@@ -111,6 +112,10 @@
     <string name="accountNotChanged">Sorry, the account attributes have not been changed. Please, updated one of the values at least</string>
     <string name="accountUpdated"> account has been updated!</string>
     <string name="accountUpdateError">Sorry, the DB failed to record the changes in the account!</string>
+    <string name="accountDeleteTitle">Delete account</string>
+    <string name="accountDeleteMssg">Are you sure you want to delete this account?</string>
+    <string name="accountDeleted"> account has been deleted!</string>
+
 
 
     <!--    AddUserName Activity-->

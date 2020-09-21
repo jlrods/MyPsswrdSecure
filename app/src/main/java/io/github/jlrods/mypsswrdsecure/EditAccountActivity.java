@@ -2,6 +2,7 @@ package io.github.jlrods.mypsswrdsecure;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,10 +12,12 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 
 public class EditAccountActivity extends DisplayAccountActivity {
     //Attribute definition
     private Bundle extras;
+    final private Intent[] intents = {new Intent()};
     //Method definition
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,11 +86,12 @@ public class EditAccountActivity extends DisplayAccountActivity {
         //Boolean to return method result
         boolean result = false;
         Intent intent = new Intent();
+        this.intents[0] = intent;
         //Check the id of item selected in menu
         switch (item.getItemId()) {
             case R.id.select_logo_save:
                 Log.d("onOptionsItemSelected","The save button was selected by user in EditAccountActivity class.");
-                String accountName = this.etAccountName.getText().toString();
+                final String accountName = this.etAccountName.getText().toString();
                 long psswrdRenewDate = this.getPsswrdRenewDate();
                 //Check all data input is valid and correct (Account name not in use and valid password renew date, as most data come from dropdown menus which are already valid)
                 //Check the name entered is not empty
@@ -116,7 +120,6 @@ public class EditAccountActivity extends DisplayAccountActivity {
                                                         && this.account.getCategory().get_id() == newAccount.getCategory().get_id()
                                                         && this.account.getUserName().get_id() == newAccount.getUserName().get_id()
                                                         && this.account.getPsswrd().get_id() == newAccount.getPsswrd().get_id()
-                                                        //@Fixme: When system calls Extract Account from UI method, the question is being recorded on the DB with new ID
                                                         //@Fixme: improve the way question lists are checked and recorded on DB
                                                         && this.isQuestionListTheSame(this.account.getQuestionList(),newAccount.getQuestionList())
                                                         && this.account.isFavorite() == newAccount.isFavorite()
@@ -137,13 +140,7 @@ public class EditAccountActivity extends DisplayAccountActivity {
                                                             values.put("QuestionListID","(null)");
                                                         }else if(this.account.getQuestionList().get_id() != newAccount.getQuestionList().get_id()){
                                                             values.put("QuestionListID",newAccount.getQuestionList().get_id());
-                                                        }
-                                                        //@Fixme: when question list is extended, same id is retrieved from old and new account objects
-//                                                        else if(this.account.getQuestionList().get_id() != newAccount.getQuestionList().get_id()
-//                                                                &&(this.account.getQuestionList().getSize() != newAccount.getQuestionList().getSize())){
-//                                                            //Update the
-//                                                            values.put("QuestionListID",newAccount.getQuestionList().get_id());
-//                                                        }//End of if else statement to check the question list states
+                                                        }//End of if else statements to catch null lists
                                                     }//End of if statement to check the question list are the same
                                                     if(!this.isAddIconRequired(newAccount)){
                                                         newAccount.setIcon(MainActivity.getMyPsswrdSecureLogo());
@@ -199,12 +196,62 @@ public class EditAccountActivity extends DisplayAccountActivity {
                     MainActivity.displayToast(this,getResources().getString(R.string.accountEmptyName),Toast.LENGTH_LONG, Gravity.CENTER);
                 }//End of if else statement to check account name was not left in blank
                 break;
+            case R.id.select_logo_delete:
+                //Prompt the user if they're sure to delete the account
+                AlertDialog.Builder dialog = MainActivity.displayAlertDialogNoInput(this,getResources().getString(R.string.accountDeleteTitle),getResources().getString(R.string.accountDeleteMssg));
+                dialog.setPositiveButton(R.string.dialog_OK, new DialogInterface.OnClickListener() {
+                            @Override
+                            //Handle the onclick event for the dialog alert buttons, Ok and cancel
+                            public void onClick(DialogInterface dialog, int which) {
+                                //If Ok was pressed, call DB method that runs query that deletes an account from Accounts table by passing in it's _id
+                                //But, before deleting the account, check the components that make up the account, check if they are not being used
+                                //any longer and delete them from the DB if required. User names, passwords, questions, categories and resource icons  are the only
+                                //exceptions, where they will be able to exist in DB even when not being used.
+                                //Any other sub-item, not being used in any account will be removed form DB: This means QuestionList,
+                                //QuestionAssignment, Icon if the icon comes from URI
+                                //Check the QuestionList (if applicable) has to be deleted
+                                if(account.getQuestionList() != null){
+                                    if(accountsDB.getTimesUsedQuestionList(account.getQuestionList().get_id()) <= 1){
+                                        //Delete the question assignments
+                                        accountsDB.deleteRowFromTable(MainActivity.getQuestionassignmentTable(),MainActivity.getQuestionListIdColumn(),account.getQuestionList().get_id());
+                                        //Delete the list
+                                        accountsDB.deleteItem(account.getQuestionList());
+                                    }//End of if statement to check how many times the list is being used
+                                }//End of if statement to check th question list isn't null
+                                //Check the icon, if icon comes from URI, delete from DB if used only once
+                                Icon icon = account.getIcon();
+                                if(icon != null){
+                                    if(!icon.getLocation().equals(MainActivity.getRESOURCES()) && !icon.equals(MainActivity.getMyPsswrdSecureLogo())){
+                                        //Get the number of times used
+                                        if(accountsDB.getAccountsWithSpecifcValue(MainActivity.getIconIdColumn(),icon.get_id()).getCount() <=1){
+                                            //Delete icon from DB
+                                            accountsDB.deleteRowFromTable(MainActivity.getIconTable(),MainActivity.getIdColumn(),icon.get_id());
+                                        }//End of if statement to check the number of times the icon is being used
+                                    }//End of if statement to check the isn't a resource file
+                                }//End of if statement to check the icon isn't null
+
+                                //Now the account can be deleted
+                                if(accountsDB.deleteItem(account)){
+                                    //Call method to update data set displayed on the recycler view and display proper message after adding the grocery to the DB
+                                    //Put extra info to transfer to the Main activity
+                                    intents[0].putExtra("accountID",-1);
+                                    intents[0].putExtra("accountName",account.getName());
+                                    setResult(RESULT_OK, intents[0]);
+                                    Log.d("onOptionsItemSelected","Set activity result to OK  on onOptionsItemSelected method in EditAccountActivity class.");
+                                    finish();
+                                }
+                                //Check the boolean flag that confirms the account was deleted so proper info is passed back to caller activity
+                            }//End of onClick method
+                });//End of
+                dialog.show();
+                Log.d("onOptionsItemSelected","Delete option selected on onOptionsItemSelected method in EditAccountActivity class.");
+                break;
             case R.id.select_logo_cancel:
                 //Set activity result as cancelled so DisplayAccActivity can decide what to do if this is the case
                 setResult(RESULT_CANCELED, intent);
                 //Go back to previous activity
                 finish();
-                Log.d("onOptionsItemSelected","Cancel option selected on onOptionsItemSelected method in EditAccountActivity class.");
+
                 break;
         }//End of switch statement
         Log.d("onOptionsItemSelected","Exit successfully onOptionsItemSelected method in EditAccountActivity class.");

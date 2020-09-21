@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -22,6 +23,15 @@ public class AddAccountActivity extends DisplayAccountActivity {
         this.setDateText(this.tvAccDateCreated,System.currentTimeMillis());
         Log.d("OnCreateDispAcc", "eXIT onCreate method in the AddAccountActivity class.");
     }//End of onCreate method
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        Log.d("onCreateOptionsMenu","Enter onCreateOptionsMenu method in the DisplayAccountActivity abstract class.");
+        menu.getItem(0).setVisible(false);
+        Log.d("onCreateOptionsMenu","Enter onCreateOptionsMenu method in the DisplayAccountActivity abstract class.");
+        return true;
+    }//End of onCreateOptionsMenu method
 
 
     // Method to check the menu item selected and execute the corresponding actions
