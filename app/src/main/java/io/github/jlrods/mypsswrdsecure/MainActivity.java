@@ -54,11 +54,6 @@ public class  MainActivity extends AppCompatActivity {
     private int counter=0;
     private byte[] encrypted=null;
     private String decrypted=null;
-    //private RecyclerView rv = null;
-    //private AccountsDB accounts = null;
-
-    //private RecyclerView recyclerView = null;
-    //private RecyclerView.LayoutManager layoutManager;
     private TabLayout tabLayout = null;
     private int idRes;
     private static Icon myPsswrdSecureLogo = null;
@@ -226,7 +221,7 @@ public class  MainActivity extends AppCompatActivity {
                 boolean appStateUpdated = accountsDB.updateAppState(-1,tab.getPosition(), accountsDB.toInt(showAllAccounts) , accountsDB.toInt(isFavoriteFilter), accountsDB.toInt(isSearchFilter),"HelloWorld'BaBay");
 
                 if(appStateUpdated){
-                    Cursor c = accountsDB.runQuery("SELECT * FROM APPSTATE");
+                    Cursor c = accountsDB.runQuery("SELECT * FROM "+ APPSTATE_TABLE);
                     c.moveToFirst();
                     int cat = c.getInt(1);
                     int tabP = c.getInt(2);
@@ -271,38 +266,7 @@ public class  MainActivity extends AppCompatActivity {
         //Dummy encryption to get IV created
         byte[] testEncrypted = cryptographer.encryptText("DummyEncryption");
         String test2 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
-//        byte[] joseleoEncrypt = cryptographer.encryptText("joseleo");
-//        String joseleoDecrypt = cryptographer.decryptText(joseleoEncrypt, cryptographer.getIv());
         accountsDB = new AccountsDB(this);
-
-//        String test3 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
-        //Save it IV in the APPSTATE Table
-//        ContentValues appStateValues = new ContentValues();
-//        String test4 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
-//        appStateValues.put("_id",accounts.getMaxItemIdInTable("APPSTATE"));
-//        String test5 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
-//        String joseleo2 = cryptographer.decryptText(joseleoEncrypt,cryptographer.getIv());
-//        IvParameterSpec ivFromCrypt = cryptographer.getIv();
-//        String test6 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
-//        byte [] initVector = cryptographer.getIv().getIV();
-//        appStateValues.put("initVector",initVector);
-//        accounts.updateTable("APPSTATE",appStateValues);
-//        String test9 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
-       //accounts.getWritableDatabase().update("APPSTATE",appStateValues,"_id = 1",null);
-
-//        Cursor c = accounts.runQuery("SELECT * FROM APPSTATE WHERE _id = "+appStateValues.getAsInteger("_id"));
-//        c.moveToNext();
-//        int appID = c.getInt(0);
-//        int abc = c.getInt(2);
-//        int abcd = c.getInt(3);
-//        int abcde = c.getInt(4);
-//        int abcdef = c.getInt(5);
-//        String abcdefg = c.getString(6);
-//        byte[] iv = c.getBlob(7);
-//        IvParameterSpec a = new IvParameterSpec(iv);
-//        String test = cryptographer.decryptText(testEncrypted,a);
-//        String test1 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
-
 
         this.categoryList = accountsDB.getCategoryList();
         this.currentCategory = categoryList.get(0);
@@ -361,7 +325,6 @@ public class  MainActivity extends AppCompatActivity {
     public TabLayout.Tab getCurrentTab(){
         return this.tabLayout.getTabAt(this.tabLayout.getSelectedTabPosition());
     }
-
 
 
     //Method to return a category by passing in its DB id
@@ -915,13 +878,13 @@ public class  MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT < 19){
             //Log the current verison
             Log.i("Build.VERSION", "< 19");
-            //Initiallize the intent object and set it up for calling the Gallery app
+            //Initialize the intent object and set it up for calling the Gallery app
             //intent = new Intent();
             intent.setAction(Intent.ACTION_GET_CONTENT);
             intent.setType("image/*");
             //startActivityForResult(intent, RESULT_PROFILE_IMAGE_GALLERY);
         } else {
-            //Log the current verison
+            //Log the current version
             Log.i("Build.VERSION", ">= 19");
             //Initialize the intent object and set it up for calling the Gallery app
             //intent = new Intent();
