@@ -39,14 +39,14 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class  MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
     private CoordinatorLayout coordinatorLayout;
 
     //Declare and initialize variables to define the current app state saved on DB
     private Category currentCategory = null;
-    private int currentTab = 0;
+    private static int currentTab = 0;
     private boolean showAllAccounts = true;
     private boolean isFavoriteFilter = false;
     private boolean isSearchFilter = false;
@@ -54,11 +54,6 @@ public class MainActivity extends AppCompatActivity {
     private int counter=0;
     private byte[] encrypted=null;
     private String decrypted=null;
-    //private RecyclerView rv = null;
-    //private AccountsDB accounts = null;
-
-    //private RecyclerView recyclerView = null;
-    //private RecyclerView.LayoutManager layoutManager;
     private TabLayout tabLayout = null;
     private int idRes;
     private static Icon myPsswrdSecureLogo = null;
@@ -102,9 +97,23 @@ public class MainActivity extends AppCompatActivity {
     private static final String APPSTATE_TABLE = "APPSTATE";
     private static final String ACCOUNTS_TABLE = "ACCOUNTS";
 
+    private static final String CATEGORY_ID_COLUMN ="CategoryID";
+    private static final String USER_NAME_ID_COLUMN ="UserNameID";
+    private static final String PSSWRD_ID_COLUMN ="PsswrdID";
+    private static final String QUESTION_LIST_ID_COLUMN ="QuestionListID";
+    private static final String QUESTION_ID_1_COLUMN= "QuestionID1";
+    private static final String QUESTION_ID_2_COLUMN= "QuestionID2";
+    private static final String QUESTION_ID_3_COLUMN= "QuestionID3";
+    private static final String ICON_ID_COLUMN ="IconID";
+    private static final String ID_COLUMN = "_id";
+
     private static Uri uriCameraImage = null;
     private static final String EXTERNAL_IMAGE_STORAGE_CLUE = "content://";
 
+    private static final String USER_NAME = "user name";
+    private static final String PASSWORD = "password";
+    private static final String QUESTION = "question";
+    private static final String QUESTION_LIST ="question list";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,14 +147,6 @@ public class MainActivity extends AppCompatActivity {
                         break;
 
                 }//End of switch statement to check current tab selection
-
-
-                //Declare and instantiate a new intent object
-                //Intent i= new Intent(MainActivity.this,SelectLogoActivity.class);
-                //Add extras to the intent object, specifically the current category where the add button was pressed from
-                //Start the addTaskActivity class
-                //startActivity(i);
-
             }//End of on click method implementation
         });//End of set on click listener method
         Resources r = getResources();
@@ -220,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
                 boolean appStateUpdated = accountsDB.updateAppState(-1,tab.getPosition(), accountsDB.toInt(showAllAccounts) , accountsDB.toInt(isFavoriteFilter), accountsDB.toInt(isSearchFilter),"HelloWorld'BaBay");
 
                 if(appStateUpdated){
-                    Cursor c = accountsDB.runQuery("SELECT * FROM APPSTATE");
+                    Cursor c = accountsDB.runQuery("SELECT * FROM "+ APPSTATE_TABLE);
                     c.moveToFirst();
                     int cat = c.getInt(1);
                     int tabP = c.getInt(2);
@@ -265,38 +266,7 @@ public class MainActivity extends AppCompatActivity {
         //Dummy encryption to get IV created
         byte[] testEncrypted = cryptographer.encryptText("DummyEncryption");
         String test2 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
-//        byte[] joseleoEncrypt = cryptographer.encryptText("joseleo");
-//        String joseleoDecrypt = cryptographer.decryptText(joseleoEncrypt, cryptographer.getIv());
         accountsDB = new AccountsDB(this);
-
-//        String test3 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
-        //Save it IV in the APPSTATE Table
-//        ContentValues appStateValues = new ContentValues();
-//        String test4 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
-//        appStateValues.put("_id",accounts.getMaxItemIdInTable("APPSTATE"));
-//        String test5 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
-//        String joseleo2 = cryptographer.decryptText(joseleoEncrypt,cryptographer.getIv());
-//        IvParameterSpec ivFromCrypt = cryptographer.getIv();
-//        String test6 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
-//        byte [] initVector = cryptographer.getIv().getIV();
-//        appStateValues.put("initVector",initVector);
-//        accounts.updateTable("APPSTATE",appStateValues);
-//        String test9 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
-       //accounts.getWritableDatabase().update("APPSTATE",appStateValues,"_id = 1",null);
-
-//        Cursor c = accounts.runQuery("SELECT * FROM APPSTATE WHERE _id = "+appStateValues.getAsInteger("_id"));
-//        c.moveToNext();
-//        int appID = c.getInt(0);
-//        int abc = c.getInt(2);
-//        int abcd = c.getInt(3);
-//        int abcde = c.getInt(4);
-//        int abcdef = c.getInt(5);
-//        String abcdefg = c.getString(6);
-//        byte[] iv = c.getBlob(7);
-//        IvParameterSpec a = new IvParameterSpec(iv);
-//        String test = cryptographer.decryptText(testEncrypted,a);
-//        String test1 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
-
 
         this.categoryList = accountsDB.getCategoryList();
         this.currentCategory = categoryList.get(0);
@@ -355,7 +325,6 @@ public class MainActivity extends AppCompatActivity {
     public TabLayout.Tab getCurrentTab(){
         return this.tabLayout.getTabAt(this.tabLayout.getSelectedTabPosition());
     }
-
 
 
     //Method to return a category by passing in its DB id
@@ -588,29 +557,41 @@ public class MainActivity extends AppCompatActivity {
             Log.d("onActivityResult","Received BAD result from AddQuestionActivity (received by MainActivity).");
         }else if(requestCode == throwEditUserNameActReqCode && resultCode == RESULT_OK){
             Log.d("onActivityResult","Received GOOD result from EditUserNameActivity (received by MainActivity).");
+            //Define text to display Toast to confirm the account has been added
+            if(data.getExtras().getBoolean("itemDeleted")){
+                toastText = data.getExtras().getString("itemDeletedName") + " " + getResources().getString(R.string.userNameDeleted);
+            }else{
+                toastText = getResources().getString(R.string.userNameUpdated);
+            }
             ((UserNameAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getUserNameList());
             //Set variable to display Toast
             goodResultDelivered = true;
-            //Define text to display Toast to confirm the account has been added
-            toastText = getResources().getString(R.string.userNameUpdated);
         }else if(requestCode == throwEditUserNameActReqCode && resultCode == RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from EditUserNameActivity (received by MainActivity).");
         }else if(requestCode == throwEditPsswrdActReqCode && resultCode == RESULT_OK){
             Log.d("onActivityResult","Received GOOD result from EditUserNameActivity (received by MainActivity).");
+            //Define text to display Toast to confirm the account has been added
+            if(data.getExtras().getBoolean("itemDeleted")){
+                toastText = data.getExtras().getString("itemDeletedName") + " " + getResources().getString(R.string.psswrdDeleted);
+            }else{
+                toastText = getResources().getString(R.string.psswrdUpdated);
+            }
             ((PsswrdAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getPsswrdList());
             //Set variable to display Toast
             goodResultDelivered = true;
-            //Define text to display Toast to confirm the account has been added
-            toastText = getResources().getString(R.string.psswrdUpdated);
         }else if(requestCode == throwEditPsswrdActReqCode && resultCode == RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from EditUserNameActivity (received by MainActivity).");
         }else if(requestCode == throwEditQuestionActReqCode && resultCode == RESULT_OK){
             Log.d("onActivityResult","Received GOOD result from EditQuestionActivity (received by MainActivity).");
+            //Define text to display Toast to confirm the account has been added
+            if(data.getExtras().getBoolean("itemDeleted")){
+                toastText = data.getExtras().getString("itemDeletedName") + " " + getResources().getString(R.string.questionDeleted);
+            }else{
+                toastText = getResources().getString(R.string.questionUpdated);
+            }
             ((SecurityQuestionAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getListQuestionsAvailableNoAnsw());
             //Set variable to display Toast
             goodResultDelivered = true;
-            //Define text to display Toast to confirm the account has been added
-            toastText = getResources().getString(R.string.questionUpdated);
         }else if(requestCode == throwEditQuestionActReqCode && resultCode == RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from EditQuestionActivity (received by MainActivity).");
         }else if (requestCode == throwEditAccountActReqCode && resultCode == Activity.RESULT_OK) {
@@ -619,7 +600,12 @@ public class MainActivity extends AppCompatActivity {
             //Define text to display Toast to confirm the account has been added
             //Set variable to display Toast
             goodResultDelivered = true;
-            toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountUpdated);
+            if(data.getExtras().getInt("accountID") == -1){
+                toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountDeleted);
+            }else{
+                toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountUpdated);
+            }
+
         }else if(requestCode == throwEditAccountActReqCode && resultCode == Activity.RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from EditAccountActivity (received by HomeFragment).");
         }//End of if else statement chain to check activity results
@@ -637,16 +623,28 @@ public class MainActivity extends AppCompatActivity {
 
 
     //Method to display a generic new Dialog Alert view from any activity.
-    public static AlertDialog.Builder displayAlertDialog(Context context, EditText inputField,String title, String message, String hint){
+    public static AlertDialog.Builder displayAlertDialogWithInput(Context context, EditText inputField, String title, String message, String hint){
         Log.d("displayAlertDialog","Enter displayAlertDialog method in the MainActivity class.");
         //final EditText inputField = new EditText(context);
-        inputField.setText("");
-        inputField.setHint(hint);
+        if(inputField != null && hint != null){
+            inputField.setText("");
+            inputField.setHint(hint);
+        }
         Log.d("displayAlertDialog","Enter displayAlertDialog method in the MainActivity class.");
         return new AlertDialog.Builder(context)
                 .setTitle(title)
                 .setMessage(message)
                 .setView(inputField)
+                .setNegativeButton(R.string.cancel,null);
+    }//End of displayAlertDialog
+
+    //Method to display a generic new Dialog Alert view from any activity.
+    public static AlertDialog.Builder displayAlertDialogNoInput(Context context, String title, String message){
+        Log.d("displayAlertDialog","Enter displayAlertDialog method in the MainActivity class.");
+        Log.d("displayAlertDialog","Enter displayAlertDialog method in the MainActivity class.");
+        return new AlertDialog.Builder(context)
+                .setTitle(title)
+                .setMessage(message)
                 .setNegativeButton(R.string.cancel,null);
     }//End of displayAlertDialog
 
@@ -733,6 +731,34 @@ public class MainActivity extends AppCompatActivity {
         return ACCOUNTS_TABLE;
     }
 
+    public static String getUserNameIdColumn() {
+        return USER_NAME_ID_COLUMN;
+    }
+
+    public static String getPsswrdIdColumn() {
+        return PSSWRD_ID_COLUMN;
+    }
+
+    public static String getQuestionListIdColumn() {
+        return QUESTION_LIST_ID_COLUMN;
+    }
+
+    public static String getCategoryIdColumn() {
+        return CATEGORY_ID_COLUMN;
+    }
+
+    public static String getQuestionId1Column() {
+        return QUESTION_ID_1_COLUMN;
+    }
+
+    public static String getQuestionId2Column() {
+        return QUESTION_ID_2_COLUMN;
+    }
+
+    public static String getQuestionId3Column() {
+        return QUESTION_ID_3_COLUMN;
+    }
+
     public static int getThrowImageGalleryReqCode() {
         return THROW_IMAGE_GALLERY_REQ_CODE;
     }
@@ -755,6 +781,34 @@ public class MainActivity extends AppCompatActivity {
 
     public static String getExternalImageStorageClue() {
         return EXTERNAL_IMAGE_STORAGE_CLUE;
+    }
+
+    public static String getUserName() {
+        return USER_NAME;
+    }
+
+    public static String getPASSWORD() {
+        return PASSWORD;
+    }
+
+    public static String getQUESTION() {
+        return QUESTION;
+    }
+
+    public static String getQuestionList() {
+        return QUESTION_LIST;
+    }
+
+    public static String getIconIdColumn() {
+        return ICON_ID_COLUMN;
+    }
+
+    public static String getIdColumn() {
+        return ID_COLUMN;
+    }
+
+    public static int getCurrentTabID(){
+        return currentTab;
     }
 
     public static void displayToast(Context context, String text, int toastLength, int gravity){
@@ -824,13 +878,13 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT < 19){
             //Log the current verison
             Log.i("Build.VERSION", "< 19");
-            //Initiallize the intent object and set it up for calling the Gallery app
+            //Initialize the intent object and set it up for calling the Gallery app
             //intent = new Intent();
             intent.setAction(Intent.ACTION_GET_CONTENT);
             intent.setType("image/*");
             //startActivityForResult(intent, RESULT_PROFILE_IMAGE_GALLERY);
         } else {
-            //Log the current verison
+            //Log the current version
             Log.i("Build.VERSION", ">= 19");
             //Initialize the intent object and set it up for calling the Gallery app
             //intent = new Intent();

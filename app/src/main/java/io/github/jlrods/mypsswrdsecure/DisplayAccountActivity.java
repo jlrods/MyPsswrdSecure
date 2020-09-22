@@ -33,6 +33,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -109,6 +110,8 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
 
     Icon logo = null;
     int selectedPosition = -1;
+
+
 
 
 
@@ -513,7 +516,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.d("onCreateOptionsMenu","Enter onCreateOptionsMenu method in the DisplayAccountActivity abstract class.");
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.activity_menu_save_cancel, menu);
+        getMenuInflater().inflate(R.menu.activity_menu_delete_save_cancel, menu);
         Log.d("onCreateOptionsMenu","Enter onCreateOptionsMenu method in the DisplayAccountActivity abstract class.");
         return true;
     }//End of onCreateOptionsMenu method
@@ -1080,10 +1083,28 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             if(secQuestionListID != -1){
                 securityQuestionList.set_id(secQuestionListID);
             }else{
-                //Otherwise insert the question list in the DB so the DB _id is retrieved and can be passed in to insert the new account later on
+                //If the account data extraction is done from EditAccountActivity, it will be required to check what to do with
+                //the old security question, as it must be removed from DB if not in use
+                if(this.account != null && this.account.get_id() > 0){
+                    //Check if old securityQuestion list isn't being used, if that is the case, remove from DB and remove QuestionAssignments link to that list
+                    QuestionList oldSecurityQuestionList = this.account.getQuestionList();
+                    if(oldSecurityQuestionList != null){
+                        ArrayList listOfAccountsUsingQuestionList = null;
+                        listOfAccountsUsingQuestionList = accountsDB.getAccountsUsingItemWithID(MainActivity.getQuestionList(),oldSecurityQuestionList.get_id());
+                        if(listOfAccountsUsingQuestionList.size() == 0 || (listOfAccountsUsingQuestionList.size() == 1 && (int) listOfAccountsUsingQuestionList.get(0) == this.account.get_id())){
+                            //This means the old question list is not being used by other account(s)
+                            //Thefore the list and the questionassignments related to this list must be deleted from the DB
+                            //Call generic method to delete rows from table that matches column value
+                            accountsDB.deleteRowFromTable(MainActivity.getQuestionassignmentTable(),MainActivity.getQuestionListIdColumn(),oldSecurityQuestionList.get_id());
+                            //Remove the question list from DB
+                            accountsDB.deleteItem(oldSecurityQuestionList);
+                        }//End of if statement that checks the old question list is not being used
+                    }//End of if statement to check the old question list was not null or empty
+                }// End of if statement to check if data extraction comes from EditAccountActivity, which means the this.account attribute won't be null
+                //@Fixme: This seems to be a risk... The question list is being recorded on the DB even though the proof check hasnt' been finished, which means the transaction  can still fail
                 securityQuestionList.set_id(accountsDB.addItem(securityQuestionList));
-            }
-        }
+            }//End of if else statement that check the new security question list does already exists in the DB
+        }//End of if statement that checks the new security list isn't null
         if(this.cbHasToBeChanged.isChecked() && psswrdChangeDate > 0){
             //Once all required objects have been created, the account object can be created
             account = new Account(accountName,userName,psswrd,category,securityQuestionList,this.logo,this.isFavorite,psswrdChangeDate);

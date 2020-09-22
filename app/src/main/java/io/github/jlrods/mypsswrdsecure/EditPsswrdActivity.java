@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 import javax.crypto.spec.IvParameterSpec;
 
@@ -22,6 +23,15 @@ public class EditPsswrdActivity extends AddPsswrdActivity {
         this.psswrd = Psswrd.extractPsswrd(this.accountsDB.getPsswrdCursorByID(this.extras.getInt("_id")));
         //Set the edit text field with the user name value after decryption
         this.etNewItemField.setText(this.cryptographer.decryptText(this.psswrd.getValue(),new IvParameterSpec(this.psswrd.getIv())));
+        this.fabDelete.setVisibility(View.VISIBLE);
+        //Set up fab onClick event listener by creating a new object of the sub class which handles this event
+        this.fabDelete.setOnClickListener(
+                //Create the subclass object by passing in the text required to populate the AlertDialog box and the intent attribute name to be passed to caller activity
+                new FabOnClickEventHandler(psswrd,getResources().getString(R.string.psswrdDeleteTitle),
+                        getResources().getString(R.string.psswrdDeleteMssg),
+                        cryptographer.decryptText(psswrd.getValue(),new IvParameterSpec(psswrd.getIv())),
+                        "itemDeleted")
+        );
         Log.d("OnCreateEditPsswrd","Exit onCreate method in the EditPsswrdActivity class.");
     }//End of onCreate method
 
@@ -52,6 +62,7 @@ public class EditPsswrdActivity extends AddPsswrdActivity {
                     if(this.accountsDB.updateTable(MainActivity.getPsswrdTable(),values)){
                         //Go back to previous activity
                         intent.putExtra("psswrdID",this.psswrd.get_id());
+                        intent.putExtra("itemDeleted",false);
                         result = true;
                         setResult(RESULT_OK, intent);
                         finish();

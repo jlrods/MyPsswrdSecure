@@ -1,18 +1,25 @@
 package io.github.jlrods.mypsswrdsecure;
 
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
 
 import javax.crypto.spec.IvParameterSpec;
 
 public class EditUserNameActivity extends AddUserNameActivity {
     //Attribute definition
     private Bundle extras;
+    private boolean toBeDeleted = false;
     //Method definition
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -23,6 +30,15 @@ public class EditUserNameActivity extends AddUserNameActivity {
         this.userName = UserName.extractUserName(this.accountsDB.getUserNameCursorByID(this.extras.getInt("_id")));
         //Set the edit text field with the user name value after decryption
         this.etNewItemField.setText(this.cryptographer.decryptText(userName.getValue(),new IvParameterSpec(userName.getIv())));
+        this.fabDelete.setVisibility(View.VISIBLE);
+        //Set up fab onClick event listener by creating a new object of the sub class which handles this event
+        this.fabDelete.setOnClickListener(
+                //Create the subclass object by passing in the text required to populate the AlertDialog box and the intent attribute name to be passed to caller activity
+                new FabOnClickEventHandler(userName,getResources().getString(R.string.userNameDeleteTitle),
+                        getResources().getString(R.string.userNameDeleteMssg),
+                        cryptographer.decryptText(userName.getValue(),new IvParameterSpec(userName.getIv())),
+                        "itemDeleted")
+        );
         Log.d("OnCreateEditUser","Exit onCreate method in the EditUserNameActivity class.");
     }//End of onCreate method
 
@@ -53,6 +69,7 @@ public class EditUserNameActivity extends AddUserNameActivity {
                     if(this.accountsDB.updateTable(MainActivity.getUsernameTable(),values)){
                         //Go back to previous activity
                         intent.putExtra("userNameID",this.userName.get_id());
+                        intent.putExtra("itemDeleted",false);
                         result = true;
                         setResult(RESULT_OK, intent);
                         finish();
@@ -73,4 +90,6 @@ public class EditUserNameActivity extends AddUserNameActivity {
         }//End of switch statement
         return result;
     }//End of onOptionsItemSelected method
+
+    private void test(){}
 }//End of class EditUserNameActivity
