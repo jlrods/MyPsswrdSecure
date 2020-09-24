@@ -176,7 +176,7 @@ public class HomeFragment extends Fragment {
         boolean goodResultDelivered = false;
         if (requestCode == MainActivity.getThrowEditAccountActReqCode() && resultCode == Activity.RESULT_OK) {
             Log.d("onActivityResult","Received GOOD result from EditAccountActivity (received by HomeFragment).");
-            ((AccountAdapter) this.rv.getAdapter()).setCursor(accountsDB.getAccountsList());
+            //((AccountAdapter) this.rv.getAdapter()).setCursor(accountsDB.getAccountsList());
             //Define text to display Toast to confirm the account has been added
             //Set variable to display Toast
             goodResultDelivered = true;
@@ -186,7 +186,7 @@ public class HomeFragment extends Fragment {
         }
         //Check if toast would be displayed
         if(goodResultDelivered){
-            this.rv.getAdapter().notifyDataSetChanged();
+            MainActivity.updateRecyclerViewData(this.rv.getAdapter());
             //Move to new account position
             //Display Toast to confirm the account has been added
             MainActivity.displayToast(getContext(),toastText, Toast.LENGTH_LONG, Gravity.CENTER);

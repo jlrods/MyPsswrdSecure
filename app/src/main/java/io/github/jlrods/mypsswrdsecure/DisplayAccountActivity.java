@@ -923,12 +923,6 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         }else if(requestCode == MainActivity.getThrowImageCameraReqCode() && resultCode == Activity.RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from Camera intent received by the DisplayAccountActivity class.");
         }//End of if statement that checks the resultCode is OK
-//        else if(requestCode == MainActivity.getThrowImageGalleryReqCode() && resultCode == Activity.RESULT_OK){
-//            //Set the image as per path coming from the intent. The data can be parsed as an uri
-//            String uri = data.getDataString();
-//            this.logo.setLocation(uri);
-//            this.imgAccLogo.setImageURI(Uri.parse(uri));
-//        }//End of if statement that checks the resultCode is OK
         Log.d("onActivityResult","Exit the onActivityResult method in the DisplayAccountActivity class.");
     }//End of onActivityResult method
 

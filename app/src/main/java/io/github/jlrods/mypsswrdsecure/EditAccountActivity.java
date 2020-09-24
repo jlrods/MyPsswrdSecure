@@ -15,7 +15,7 @@ import androidx.appcompat.app.AlertDialog;
 
 public class EditAccountActivity extends DisplayAccountActivity {
     //Attribute definition
-    private Bundle extras;
+    //private Bundle extras;
     final private Intent[] intents = {new Intent()};
     //Method definition
     @Override

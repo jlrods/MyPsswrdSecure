@@ -124,16 +124,19 @@ public class  MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //Call super on create
         super.onCreate(savedInstanceState);
+        //Set the main activity layout
         setContentView(R.layout.activity_main);
+        //Get the coordinator layout off layout
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
+        //Get the tool bar off layout
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         final FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 //Call the correct activity based on tab selection
                 switch(tabLayout.getSelectedTabPosition()){
                     case 0:
@@ -156,21 +159,12 @@ public class  MainActivity extends AppCompatActivity {
                 }//End of switch statement to check current tab selection
             }//End of on click method implementation
         });//End of set on click listener method
-//        Resources r = getResources();
-//        this.idRes = r.getIdentifier("logo_google","drawable",getPackageName());
-//        if(idRes ==0) {
-//
-//        }
+        //Get the tablayout from layout
         tabLayout=(TabLayout)findViewById(R.id.tabs);
+        //Set up the onclick behaviour for each tab in the tablayout object
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                //RecyclerView rv = null;
-                // accounts = null;
-                //Cursor cursor = null;
-                //rv = HomeFragment.getRv();
-                //accounts = HomeFragment.getAccounts();
                 switch(tab.getPosition()){
                     case 0:
                         //Consider the category selected on drawer menu to run correct sql query
@@ -260,10 +254,14 @@ public class  MainActivity extends AppCompatActivity {
         //Dummy encryption to get IV created
         byte[] testEncrypted = cryptographer.encryptText("DummyEncryption");
         String test2 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
+        //Create a new object to manage all DB interaction
         accountsDB = new AccountsDB(this);
+        //Get the category list from DB
         this.categoryList = accountsDB.getCategoryList();
+        //Modify the list to be kept on memory and add two new categories, which are not stored in DB: Home and Favorites categories
         this.categoryList.add(0,new Category("Home",new Icon("Home",MainActivity.getRESOURCES(),R.drawable.home)));
         this.categoryList.add(1,new Category(-2,"Favorites",new Icon("Favorites",MainActivity.getRESOURCES(),android.R.drawable.star_big_on)));
+        //Set the Home category as the default one
         this.currentCategory = categoryList.get(0);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -283,17 +281,7 @@ public class  MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
         updateNavMenu(navigationView.getMenu());
 
-
-
-
-
-        //this.listOfQuestionLists = accounts.getListOfQuestionLists();
-
-        //Consider the category selected on drawer menu to run correct sql query
-        //Cursor accountListCursor = accountsDB.getAccountsList();
-
     }//End of onCreate method
-
 
     public void testRVLogo(){
         //Declare and instantiate a new intent object
@@ -342,7 +330,6 @@ public class  MainActivity extends AppCompatActivity {
     public TabLayout.Tab getCurrentTab(){
         return this.tabLayout.getTabAt(this.tabLayout.getSelectedTabPosition());
     }
-
 
     //Method to return a category by passing in its DB id
     public static Category getCategoryByID(int _id){
@@ -403,7 +390,7 @@ public class  MainActivity extends AppCompatActivity {
         //Declare and instantiate a new intent object
         Intent i= new Intent(MainActivity.this,AddAccountActivity.class);
         //Add extras to the intent object, specifically the current category where the add button was pressed from
-        i.putExtra("category",this.currentCategory.toString());
+        i.putExtra("category",this.currentCategory.get_id());
         //i.putExtra("sql",this.getSQLForRecyclerView());
         //Start the addTaskActivity class
         startActivityForResult(i,throwAddAccountActReqCode);
@@ -453,7 +440,7 @@ public class  MainActivity extends AppCompatActivity {
         //Declare and instantiate a new intent object
         Intent i= new Intent(MainActivity.this, EditAccountActivity.class );
         //Add extras to the intent object, specifically the current category where the add button was pressed from
-        //i.putExtra("category",this.currentCategory.toString());
+        i.putExtra("category",this.currentCategory.get_id());
         i.putExtra("_id",account.get_id());
         //Start the AddItemActivity class
         startActivityForResult(i,throwEditAccountActReqCode);
@@ -544,7 +531,8 @@ public class  MainActivity extends AppCompatActivity {
             //@FIXME: Investigate--> What's best option? notify adapter about data set change or set up new adapter with method created??
             //AccountAdapter accountAdapter = new AccountAdapter(getBaseContext(),null);
             //updateRecyclerViewData(accountAdapter);
-            ((AccountAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getAccountsList());
+            //((AccountAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getAccountsList());
+            //adapter =  recyclerView.getAdapter();
             //Define text to display Toast to confirm the account has been added
             //Set variable to display Toast
             goodResultDelivered = true;
@@ -554,7 +542,8 @@ public class  MainActivity extends AppCompatActivity {
             //Check if result comes from AddAccountActivity
         }else if(requestCode == throwAddUserNameActReqCode && resultCode == RESULT_OK){
             Log.d("onActivityResult","Received GOOD result from AddUserNameActivity (received by MainActivity).");
-            ((UserNameAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getUserNameList());
+            //((UserNameAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getUserNameList());
+
             //Set variable to display Toast
             goodResultDelivered = true;
             //Define text to display Toast to confirm the account has been added
@@ -563,7 +552,7 @@ public class  MainActivity extends AppCompatActivity {
             Log.d("onActivityResult","Received BAD result from AddUserNameActivity (received by MainActivity).");
         }else if(requestCode == throwAddPsswrdActReqCode && resultCode == RESULT_OK){
             Log.d("onActivityResult","Received GOOD result from AddPsswrdActivity (received by MainActivity).");
-            ((PsswrdAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getPsswrdList());
+            //((PsswrdAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getPsswrdList());
             //Set variable to display Toast
             goodResultDelivered = true;
             //Define text to display Toast to confirm the account has been added
@@ -572,7 +561,7 @@ public class  MainActivity extends AppCompatActivity {
             Log.d("onActivityResult","Received BAD result from AddPsswrdActivity (received by MainActivity).");
         }else if(requestCode == throwAddQuestionActReqCode && resultCode == RESULT_OK){
             Log.d("onActivityResult","Received GOOD result from AddAccountActivity (received by MainActivity).");
-            ((SecurityQuestionAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getListQuestionsAvailableNoAnsw());
+            //((SecurityQuestionAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getListQuestionsAvailableNoAnsw());
             //Set variable to display Toast
             goodResultDelivered = true;
             //Define text to display Toast to confirm the account has been added
@@ -587,7 +576,7 @@ public class  MainActivity extends AppCompatActivity {
             }else{
                 toastText = getResources().getString(R.string.userNameUpdated);
             }
-            ((UserNameAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getUserNameList());
+            //((UserNameAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getUserNameList());
             //Set variable to display Toast
             goodResultDelivered = true;
         }else if(requestCode == throwEditUserNameActReqCode && resultCode == RESULT_CANCELED){
@@ -600,7 +589,7 @@ public class  MainActivity extends AppCompatActivity {
             }else{
                 toastText = getResources().getString(R.string.psswrdUpdated);
             }
-            ((PsswrdAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getPsswrdList());
+            //((PsswrdAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getPsswrdList());
             //Set variable to display Toast
             goodResultDelivered = true;
         }else if(requestCode == throwEditPsswrdActReqCode && resultCode == RESULT_CANCELED){
@@ -613,14 +602,14 @@ public class  MainActivity extends AppCompatActivity {
             }else{
                 toastText = getResources().getString(R.string.questionUpdated);
             }
-            ((SecurityQuestionAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getListQuestionsAvailableNoAnsw());
+            //((SecurityQuestionAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getListQuestionsAvailableNoAnsw());
             //Set variable to display Toast
             goodResultDelivered = true;
         }else if(requestCode == throwEditQuestionActReqCode && resultCode == RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from EditQuestionActivity (received by MainActivity).");
         }else if (requestCode == throwEditAccountActReqCode && resultCode == Activity.RESULT_OK) {
             Log.d("onActivityResult","Received GOOD result from EditAccountActivity (received by HomeFragment).");
-            ((AccountAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getAccountsList());
+            //((AccountAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getAccountsList());
             //Define text to display Toast to confirm the account has been added
             //Set variable to display Toast
             goodResultDelivered = true;
@@ -636,7 +625,9 @@ public class  MainActivity extends AppCompatActivity {
 
         //Check if toast would be displayed
         if(goodResultDelivered){
-            recyclerView.getAdapter().notifyDataSetChanged();
+            adapter = recyclerView.getAdapter();
+            //recyclerView.getAdapter().notifyDataSetChanged();
+            updateRecyclerViewData(adapter);
             //Move to new account position
             //Display Toast to confirm the account has been added
             displayToast(this,toastText,Toast.LENGTH_LONG, Gravity.CENTER);
@@ -953,7 +944,6 @@ public class  MainActivity extends AppCompatActivity {
         Log.d("LoadCamPicture","Exit loadPictureFromCamera method in the MainActivity class.");
     }//End of loadPicture method
 
-
     //Method to display alert dialog to request permission for access rights
     public static void permissionRequest(final String permit,String justify,final int requestCode,final Activity activity) {
         Log.d("permissionRequest","Enter permissionRequest method in the MainActivity class.");
@@ -982,82 +972,72 @@ public class  MainActivity extends AppCompatActivity {
     //Method to update the Nav Menu items when new task list are created or deleted. Used to populate the menu on onCreate method too
     public void updateNavMenu(final Menu navMenu){
         Log.d("Ent_UpdateNaveMenu","Enter the updateNavMenu method in MainActivity class.");
-        //Declare and initialize a string to get category list from DB
-        String sql = "";
-//        if(navMenu.size()>INDEX_TO_GET_LAST_TASK_LIST_ITEM+1){
-//            //Initialize a string to get the Category with MAX id from category list (The last category added into DB)
-//            sql = "SELECT * FROM CATEGORY  WHERE _id= (SELECT MAX(_id) FROM CATEGORY)";
-//
-//        }
-//        else
-//            {
-//            //Initialize a string to get category list from DB that does not include All and Groceries
-//            sql = "SELECT * FROM CATEGORY WHERE _id NOT IN("+findCategoryByName(allCategory).getId()+", "+findCategoryByName(groceryCategory).getId()+")";
-//            //Make the All Category the default selected item
-//            navMenu.getItem(0).setChecked(true);
-//        }//End of if else statement to check the nav menu size is greater than the number of pre-existent menu items
-        //Declare and initialize a cursor object to retrieve the list task categories in the DB
-        //Cursor c = this.accountsDB.getCategoryList();
+        //Set up onclick listeners for the first two items (home and favorites, which cannot be removed)
         navMenu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
+                //When home button is clicked, the transition to HomeFragment is controlled via navigation
+                //But the current category still need to be set to Home category
                 currentCategory = categoryList.get(0);
                 return false;
-            }
-        });
+            }//End of onMenuItemClick method
+        });//End of setOnMenuItemClickListener method call
         navMenu.getItem(1).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
+                //When home button is clicked, the transition to HomeFragment is controlled via navigation
+                //But the current category still need to be set to Favorites category
                 currentCategory = categoryList.get(1);
                 return false;
-            }
-        });
+            }//End of onMenuItemClick method
+        });//End of setOnMenuItemClickListener method call
 
+        //Declare and initialize variables to be used during method
+        //int to store each menu item order in the menu
         int order =0;
+        //Iterator. Starts at 2 because there are two menus already in the hard coded menu layout
         int i =2;
-        //navMenu.add(R.id.categoryListMenu,categoryList.get(i).get_id(),order,categoryList.get(i).getName());
-        //MenuItem newItem = navMenu.getItem(navMenu.size()-INDEX_TO_GET_LAST_TASK_LIST_ITEM);
-        //newItem.setIcon(android.R.drawable.ic_search_category_default);
-        //While loop to iterate through the cursor and include the item in the Task list menu
+        //Get the nav controller to so HomeFragment navigation can be possible
         final NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        //Iterate through the category list (skipping first two categories: Home and Favorites) so each category menu item
+        //can be added to Nav drawer menu
         while(i<categoryList.size()){
+            //set up new item's order in the menu
             order = navMenu.getItem(navMenu.size()-INDEX_TO_GET_LAST_TASK_LIST_ITEM).getOrder()+1;
-            //MenuItem previousItem = navMenu.getItem(navMenu.size()-1)
+            //Add the new item to the menu
             navMenu.add(R.id.categoryListMenu,categoryList.get(i).get_id(),order,categoryList.get(i).getName());
+            //Create menu item object so it can be accessed and modified
             final MenuItem newItem = navMenu.getItem(navMenu.size()-INDEX_TO_GET_LAST_TASK_LIST_ITEM);
+            //Set up the proper icon for each category (icon data comes from DB)
             idRes = this.getResources().getIdentifier(categoryList.get(i).getIcon().getName(),"drawable",this.getPackageName());
             newItem.setIcon(idRes);
+            //Set up the behaviour when category menu item is clicked on
             newItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
-                    Log.d("TestNavigation","Testing programmatically navigation, which sucks BTW.");
+                    Log.d("onMenuItemClick","Enter the onMenuItemClick method defined for each category menu item in the MainActivity class.");
                     MenuItem homeItem = navMenu.getItem(0);
                     //Set proper variables for the HomeFragment to handle the correct accounts list to be displayed: All categories, favorites or a specific category
                     currentCategory = getCategoryPositionByID(item.getItemId());
                     tabLayout.selectTab( tabLayout.getTabAt(0));
+                    //Ask nav controller to load the HomeFragment class
                     navController.navigate(R.id.nav_home);
+                    //Get the drawer from layout
                     DrawerLayout drawer = findViewById(R.id.drawer_layout);
+                    //Since the navigation item controls the Home menu item, it's necessary to overwrite it's bahaviour and set the home item as not selected
                     homeItem.setChecked(false);
                     homeItem.setCheckable(false);
+                    //Set the item clicked on as the one selected
                     newItem.setChecked(true);
                     newItem.setCheckable(true);
+                    //Close the drawer and display the HomeFragment which will load proper data based on the currentCategory variable
                     drawer.closeDrawer(Gravity.LEFT);
-
+                    Log.d("onMenuItemClick","Exit the onMenuItemClick method defined for each category menu item in the MainActivity class.");
                     return false;
-                }
-            });
-            //navController.getGraph().addDestination(navController.getNavigatorProvider().getNavigator("io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment").createDestination());
-            //navController.getGraph().addDestination(navController.getGraph().findNode(R.id.nav_home));
-            //putAction(categoryList.get(i).get_id(),R.id.nav_home)
-            //navController.getGraph().addDestination(ActivityNavigator(MainActivity.this).createDestination().apply);
+                }//End of onMenuItemClick method
+            });//End of setOnMenuItemClickListener method call
             i++;
         }//End of while loop
-
-//        navController.getGraph().addDestination(new NavDestination()) .addDestination(ActivityNavigator(this).createDestination().apply {
-//            id = R.id.new_dest
-//            setComponentName(ComponentName(context, NewActivity::class.java))
-//            // or setIntent
-//        })
         Log.d("Ext_UpdateNaveMenu","Exit the updateNavMenu method in MainActivity class.");
     }//End of updateNavMenu method
 
@@ -1075,6 +1055,6 @@ public class  MainActivity extends AppCompatActivity {
         }
         Log.d("getCategoryPositionByID", "Exit the getCategoryPositionByID method in MainActivity class.");
         return categoryList.get(i);
-    }
+    }//End of getCategoryPositionByID method
 
 }//End of MainActivity class.
