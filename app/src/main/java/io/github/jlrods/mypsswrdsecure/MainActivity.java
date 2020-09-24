@@ -976,9 +976,19 @@ public class  MainActivity extends AppCompatActivity {
         navMenu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
+                //Since the navigation item controls the Home menu item, it's necessary to overwrite it's behaviour and set the home item as selected
+                item.setChecked(true);
+                item.setCheckable(true);
+                MenuItem previousItem = navMenu.findItem(currentCategory.get_id());
+                //Set the previous menu item clicked on as the one as not selected
+                if(previousItem != null && previousItem.getItemId()!= item.getItemId()){
+                    previousItem.setChecked(false);
+                    previousItem.setCheckable(false);
+                }
                 //When home button is clicked, the transition to HomeFragment is controlled via navigation
                 //But the current category still need to be set to Home category
                 currentCategory = categoryList.get(0);
+                tabLayout.selectTab( tabLayout.getTabAt(0));
                 return false;
             }//End of onMenuItemClick method
         });//End of setOnMenuItemClickListener method call
@@ -987,7 +997,19 @@ public class  MainActivity extends AppCompatActivity {
             public boolean onMenuItemClick(MenuItem item) {
                 //When home button is clicked, the transition to HomeFragment is controlled via navigation
                 //But the current category still need to be set to Favorites category
+                //Since the navigation item controls the Home menu item, it's necessary to overwrite it's behaviour and set the home item as selected
+                item.setChecked(true);
+                item.setCheckable(true);
+                MenuItem previousItem = navMenu.findItem(currentCategory.get_id());
+                //Set the previous menu item clicked on as the one as not selected
+                if(previousItem != null && previousItem.getItemId()!= item.getItemId()){
+                    previousItem.setChecked(false);
+                    previousItem.setCheckable(false);
+                }
+                //When home button is clicked, the transition to HomeFragment is controlled via navigation
+                //But the current category still need to be set to Home category
                 currentCategory = categoryList.get(1);
+                tabLayout.selectTab( tabLayout.getTabAt(0));
                 return false;
             }//End of onMenuItemClick method
         });//End of setOnMenuItemClickListener method call
@@ -1028,8 +1050,8 @@ public class  MainActivity extends AppCompatActivity {
                     homeItem.setChecked(false);
                     homeItem.setCheckable(false);
                     //Set the item clicked on as the one selected
-                    newItem.setChecked(true);
-                    newItem.setCheckable(true);
+                    item.setChecked(true);
+                    item.setCheckable(true);
                     //Close the drawer and display the HomeFragment which will load proper data based on the currentCategory variable
                     drawer.closeDrawer(Gravity.LEFT);
                     Log.d("onMenuItemClick","Exit the onMenuItemClick method defined for each category menu item in the MainActivity class.");
