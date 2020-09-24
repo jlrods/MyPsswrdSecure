@@ -32,7 +32,7 @@ public class HomeFragment extends Fragment {
     //Attribute declaration
     //private HomeViewModel homeViewModel;
     private static AccountsDB accountsDB; // Object to manage all DB actions
-    private static RecyclerView rv=null; // RV object to populate data on the Fragment
+    private static RecyclerView rv = null; // RV object to populate data on the Fragment
 
     //Method declaration
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -55,7 +55,7 @@ public class HomeFragment extends Fragment {
         this.rv.setLayoutManager(new LinearLayoutManager(getActivity().getBaseContext()));
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(getActivity().getBaseContext(), DividerItemDecoration.VERTICAL);
         this.rv.addItemDecoration(itemDecoration);
-        this.accountsDB = new AccountsDB(getActivity().getBaseContext());
+        this.accountsDB = MainActivity.getAccountsDB();
 
         Log.d("HomeFragOnCreate","Exit onCreate method in HomeFragment class.");
         return root;

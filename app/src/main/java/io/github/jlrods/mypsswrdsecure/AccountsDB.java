@@ -125,20 +125,7 @@ public class AccountsDB extends SQLiteOpenHelper {
         //Create table to store the different categories an account can be associated to
         db.execSQL("CREATE TABLE CATEGORY (_id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, \n" +
                 "IconID INT, FOREIGN KEY (IconID) REFERENCES ICON(_id));");
-        //Populate the Category table with some default category items
-        db.execSQL("INSERT INTO CATEGORY (Name) VALUES('SocialMedia');");
-        db.execSQL("INSERT INTO CATEGORY (Name) VALUES('Entertainment');");
-        db.execSQL("INSERT INTO CATEGORY (Name) VALUES('Communication');");
-        db.execSQL("INSERT INTO CATEGORY (Name) VALUES('Work');");
-        db.execSQL("INSERT INTO CATEGORY (Name) VALUES('Internet');");
-        db.execSQL("INSERT INTO CATEGORY (Name) VALUES('Shopping');");
-        db.execSQL("INSERT INTO CATEGORY (Name) VALUES('Travel');");
-        db.execSQL("INSERT INTO CATEGORY (Name) VALUES('Learning');");
-        db.execSQL("INSERT INTO CATEGORY (Name) VALUES('Food');");
-        db.execSQL("INSERT INTO CATEGORY (Name) VALUES('Finance');");
-        db.execSQL("INSERT INTO CATEGORY (Name) VALUES('Insurance');");
-        db.execSQL("INSERT INTO CATEGORY (Name) VALUES('JobHunting');");
-        db.execSQL("INSERT INTO CATEGORY (Name) VALUES('Utilities');");
+
 
         //Create table to store app state
         db.execSQL("CREATE TABLE APPSTATE(_id INTEGER PRIMARY KEY AUTOINCREMENT,currentCategoryID INTEGER,\n" +
@@ -159,7 +146,7 @@ public class AccountsDB extends SQLiteOpenHelper {
                 "FOREIGN KEY (IconID) REFERENCES ICON(_id));");
 
 
-
+        //App resources
         db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_aa','Resources');");
         db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_aerlingus_green','Resources');");
         db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_aib','Resources');");
@@ -208,6 +195,40 @@ public class AccountsDB extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_virgin_media','Resources');");
         db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_vodafone','Resources');");
         db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_vue','Resources');");
+        //Android resources
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('facebook','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('popcorn','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('cellphone_wireless','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('briefcase_clock','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('web','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('shopping','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('airplane_takeoff','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('android_studio','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('food','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('currency_eur','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('shield_check','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('briefcase_search','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('tools','Resources');");
+
+
+
+
+
+
+        //Populate the Category table with some default category items
+        db.execSQL("INSERT INTO CATEGORY (Name,IconID) VALUES('SocialMedia',49);");
+        db.execSQL("INSERT INTO CATEGORY (Name,IconID) VALUES('Entertainment',50);");
+        db.execSQL("INSERT INTO CATEGORY (Name,IconID) VALUES('Communication',51);");
+        db.execSQL("INSERT INTO CATEGORY (Name,IconID) VALUES('Work',52);");
+        db.execSQL("INSERT INTO CATEGORY (Name,IconID) VALUES('Internet',53);");
+        db.execSQL("INSERT INTO CATEGORY (Name,IconID) VALUES('Shopping',54);");
+        db.execSQL("INSERT INTO CATEGORY (Name,IconID) VALUES('Travel',55);");
+        db.execSQL("INSERT INTO CATEGORY (Name,IconID) VALUES('Learning',56);");
+        db.execSQL("INSERT INTO CATEGORY (Name,IconID) VALUES('Food',57);");
+        db.execSQL("INSERT INTO CATEGORY (Name,IconID) VALUES('Finance',58);");
+        db.execSQL("INSERT INTO CATEGORY (Name,IconID) VALUES('Insurance',59);");
+        db.execSQL("INSERT INTO CATEGORY (Name,IconID) VALUES('JobHunting',60);");
+        db.execSQL("INSERT INTO CATEGORY (Name,IconID) VALUES('Utilities',61);");
 
 
         //Test and sample data

@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
 import android.widget.EditText;
@@ -27,7 +28,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
+import androidx.navigation.ActivityNavigator;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
+import androidx.navigation.NavGraph;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
@@ -45,7 +49,7 @@ public class  MainActivity extends AppCompatActivity {
     private CoordinatorLayout coordinatorLayout;
 
     //Declare and initialize variables to define the current app state saved on DB
-    private Category currentCategory = null;
+    private static Category currentCategory = null;
     private static int currentTab = 0;
     private boolean showAllAccounts = true;
     private boolean isFavoriteFilter = false;
@@ -69,6 +73,8 @@ public class  MainActivity extends AppCompatActivity {
     private static String RESOURCES = "Resources";
 
     private static Cryptographer cryptographer;
+
+    private final static int INDEX_TO_GET_LAST_TASK_LIST_ITEM = 2;
 
     private final static int THROW_IMAGE_GALLERY_REQ_CODE = 1642;
     private final static int THROW_IMAGE_CAMERA_REQ_CODE = 2641;
@@ -106,6 +112,7 @@ public class  MainActivity extends AppCompatActivity {
     private static final String QUESTION_ID_3_COLUMN= "QuestionID3";
     private static final String ICON_ID_COLUMN ="IconID";
     private static final String ID_COLUMN = "_id";
+    private static final String IS_FAVORITE_COLUMN = "IsFavorite";
 
     private static Uri uriCameraImage = null;
     private static final String EXTERNAL_IMAGE_STORAGE_CLUE = "content://";
@@ -149,11 +156,11 @@ public class  MainActivity extends AppCompatActivity {
                 }//End of switch statement to check current tab selection
             }//End of on click method implementation
         });//End of set on click listener method
-        Resources r = getResources();
-        this.idRes = r.getIdentifier("logo_google","drawable",getPackageName());
-        if(idRes ==0) {
-
-        }
+//        Resources r = getResources();
+//        this.idRes = r.getIdentifier("logo_google","drawable",getPackageName());
+//        if(idRes ==0) {
+//
+//        }
         tabLayout=(TabLayout)findViewById(R.id.tabs);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
 
@@ -247,19 +254,6 @@ public class  MainActivity extends AppCompatActivity {
             }
         });// End of addOnTabSelectedListener method for tabLayout
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow)
-                .setDrawerLayout(drawer)
-                .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
-        NavigationUI.setupWithNavController(navigationView, navController);
-
-
         //Create and set default logo for accounts
         myPsswrdSecureLogo = new Icon(R.mipmap.ic_my_psswrd_secure,"MyPsswrdSecureIcon",String.valueOf(R.mipmap.ic_my_psswrd_secure),false);
         cryptographer = new Cryptographer();
@@ -267,9 +261,32 @@ public class  MainActivity extends AppCompatActivity {
         byte[] testEncrypted = cryptographer.encryptText("DummyEncryption");
         String test2 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
         accountsDB = new AccountsDB(this);
-
         this.categoryList = accountsDB.getCategoryList();
+        this.categoryList.add(0,new Category("Home",new Icon("Home",MainActivity.getRESOURCES(),R.drawable.home)));
+        this.categoryList.add(1,new Category(-2,"Favorites",new Icon("Favorites",MainActivity.getRESOURCES(),android.R.drawable.star_big_on)));
         this.currentCategory = categoryList.get(0);
+
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
+//        mAppBarConfiguration = new AppBarConfiguration.Builder(
+//                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow)
+//                .setDrawerLayout(drawer)
+//                .build();
+        mAppBarConfiguration = new AppBarConfiguration.Builder(R.id.mobile_navigation)
+                .setDrawerLayout(drawer)
+                .build();
+        //Get the menu in the navigation view
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
+        NavigationUI.setupWithNavController(navigationView, navController);
+        updateNavMenu(navigationView.getMenu());
+
+
+
+
+
         //this.listOfQuestionLists = accounts.getListOfQuestionLists();
 
         //Consider the category selected on drawer menu to run correct sql query
@@ -352,7 +369,14 @@ public class  MainActivity extends AppCompatActivity {
         Cursor cursor = null;
         //Check the class of the adapter passed in as argument
         if(adapter instanceof AccountAdapter){
-            cursor = accountsDB.getAccountsList();
+            //Check current category variable to call method that retrieves proper account list
+            if(MainActivity.getCurrentCategory().get_id() == -1){
+                cursor = accountsDB.getAccountsList();
+            }else if(MainActivity.getCurrentCategory().get_id() == -2){
+                cursor = accountsDB.getAccountsWithSpecifcValue(MainActivity.getIsFavoriteColumn(),1);
+            }else{
+                cursor = accountsDB.getAccountsWithSpecifcValue(MainActivity.getCategoryIdColumn(),MainActivity.getCurrentCategory().get_id());
+            }
             ((AccountAdapter) adapter).setCursor(cursor);
         }else if(adapter instanceof PsswrdAdapter){
             cursor = accountsDB.getPsswrdList();
@@ -651,6 +675,11 @@ public class  MainActivity extends AppCompatActivity {
     public static Cryptographer getCryptographer(){
         return cryptographer;
     }
+
+    public static AccountsDB getAccountsDB() {
+        return accountsDB;
+    }
+
     public static String getDateFormat(){
         return dateFormat;
     }
@@ -807,8 +836,16 @@ public class  MainActivity extends AppCompatActivity {
         return ID_COLUMN;
     }
 
+    public static String getIsFavoriteColumn() {
+        return IS_FAVORITE_COLUMN;
+    }
+
     public static int getCurrentTabID(){
         return currentTab;
+    }
+
+    public static Category getCurrentCategory() {
+        return currentCategory;
     }
 
     public static void displayToast(Context context, String text, int toastLength, int gravity){
@@ -941,5 +978,103 @@ public class  MainActivity extends AppCompatActivity {
         }//End of if else statement to check the permission request must be displayed
         Log.d("permissionRequest","Exit permissionRequest method in the MainActivity class.");
     }//End of permissionRequest method
+
+    //Method to update the Nav Menu items when new task list are created or deleted. Used to populate the menu on onCreate method too
+    public void updateNavMenu(final Menu navMenu){
+        Log.d("Ent_UpdateNaveMenu","Enter the updateNavMenu method in MainActivity class.");
+        //Declare and initialize a string to get category list from DB
+        String sql = "";
+//        if(navMenu.size()>INDEX_TO_GET_LAST_TASK_LIST_ITEM+1){
+//            //Initialize a string to get the Category with MAX id from category list (The last category added into DB)
+//            sql = "SELECT * FROM CATEGORY  WHERE _id= (SELECT MAX(_id) FROM CATEGORY)";
+//
+//        }
+//        else
+//            {
+//            //Initialize a string to get category list from DB that does not include All and Groceries
+//            sql = "SELECT * FROM CATEGORY WHERE _id NOT IN("+findCategoryByName(allCategory).getId()+", "+findCategoryByName(groceryCategory).getId()+")";
+//            //Make the All Category the default selected item
+//            navMenu.getItem(0).setChecked(true);
+//        }//End of if else statement to check the nav menu size is greater than the number of pre-existent menu items
+        //Declare and initialize a cursor object to retrieve the list task categories in the DB
+        //Cursor c = this.accountsDB.getCategoryList();
+        navMenu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                currentCategory = categoryList.get(0);
+                return false;
+            }
+        });
+        navMenu.getItem(1).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                currentCategory = categoryList.get(1);
+                return false;
+            }
+        });
+
+        int order =0;
+        int i =2;
+        //navMenu.add(R.id.categoryListMenu,categoryList.get(i).get_id(),order,categoryList.get(i).getName());
+        //MenuItem newItem = navMenu.getItem(navMenu.size()-INDEX_TO_GET_LAST_TASK_LIST_ITEM);
+        //newItem.setIcon(android.R.drawable.ic_search_category_default);
+        //While loop to iterate through the cursor and include the item in the Task list menu
+        final NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        while(i<categoryList.size()){
+            order = navMenu.getItem(navMenu.size()-INDEX_TO_GET_LAST_TASK_LIST_ITEM).getOrder()+1;
+            //MenuItem previousItem = navMenu.getItem(navMenu.size()-1)
+            navMenu.add(R.id.categoryListMenu,categoryList.get(i).get_id(),order,categoryList.get(i).getName());
+            final MenuItem newItem = navMenu.getItem(navMenu.size()-INDEX_TO_GET_LAST_TASK_LIST_ITEM);
+            idRes = this.getResources().getIdentifier(categoryList.get(i).getIcon().getName(),"drawable",this.getPackageName());
+            newItem.setIcon(idRes);
+            newItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    Log.d("TestNavigation","Testing programmatically navigation, which sucks BTW.");
+                    MenuItem homeItem = navMenu.getItem(0);
+                    //Set proper variables for the HomeFragment to handle the correct accounts list to be displayed: All categories, favorites or a specific category
+                    currentCategory = getCategoryPositionByID(item.getItemId());
+                    tabLayout.selectTab( tabLayout.getTabAt(0));
+                    navController.navigate(R.id.nav_home);
+                    DrawerLayout drawer = findViewById(R.id.drawer_layout);
+                    homeItem.setChecked(false);
+                    homeItem.setCheckable(false);
+                    newItem.setChecked(true);
+                    newItem.setCheckable(true);
+                    drawer.closeDrawer(Gravity.LEFT);
+
+                    return false;
+                }
+            });
+            //navController.getGraph().addDestination(navController.getNavigatorProvider().getNavigator("io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment").createDestination());
+            //navController.getGraph().addDestination(navController.getGraph().findNode(R.id.nav_home));
+            //putAction(categoryList.get(i).get_id(),R.id.nav_home)
+            //navController.getGraph().addDestination(ActivityNavigator(MainActivity.this).createDestination().apply);
+            i++;
+        }//End of while loop
+
+//        navController.getGraph().addDestination(new NavDestination()) .addDestination(ActivityNavigator(this).createDestination().apply {
+//            id = R.id.new_dest
+//            setComponentName(ComponentName(context, NewActivity::class.java))
+//            // or setIntent
+//        })
+        Log.d("Ext_UpdateNaveMenu","Exit the updateNavMenu method in MainActivity class.");
+    }//End of updateNavMenu method
+
+    //Method to update the Nav Menu items when new task list are created or deleted. Used to populate the menu on onCreate method too
+    public Category getCategoryPositionByID(int _id) {
+        Log.d("getCategoryPositionByID", "Enter the getCategoryPositionByID method in MainActivity class.");
+        boolean found = false;
+        int i = 0;
+        while(i<categoryList.size() && !found){
+            if(categoryList.get(i).get_id() == _id){
+                found = true;
+                break;
+            }
+            i++;
+        }
+        Log.d("getCategoryPositionByID", "Exit the getCategoryPositionByID method in MainActivity class.");
+        return categoryList.get(i);
+    }
 
 }//End of MainActivity class.

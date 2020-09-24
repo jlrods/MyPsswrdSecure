@@ -3,6 +3,8 @@ package io.github.jlrods.mypsswrdsecure;
 import android.database.Cursor;
 import android.util.Log;
 
+import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
+
 class Category {
 
     //Attribute definition
@@ -26,6 +28,11 @@ class Category {
 
     public Category(int _id, String name){
         this(_id,name,null);
+        Log.d("Cat_NoIcon_Ent","Enter Category No Icon Constructor in Category class.");
+    }
+
+    public Category(String name, Icon icon){
+        this(-1,name,icon);
         Log.d("Cat_NoIcon_Ent","Enter Category No Icon Constructor in Category class.");
     }
 
@@ -69,11 +76,12 @@ class Category {
         id = c.getInt(0);
         //Retrieve the name value from the cursor object
         name = c.getString(1);
-        int icon;
-        icon = c.getInt(2);
-        if(icon > 0){
-            Icon iconObject = new Icon();
-            category = new Category (id, name, iconObject);
+        int iconID;
+        iconID = c.getInt(2);
+        if(iconID > 0){
+            AccountsDB accountsDB = MainActivity.getAccountsDB();
+            Icon icon = accountsDB.getIconByID(iconID);
+            category = new Category (id, name, icon);
         }else{
             //Create a new Category object by using the no icon constructor
             category = new Category(id,name);
