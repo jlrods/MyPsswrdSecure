@@ -198,7 +198,7 @@ public class AccountsDB extends SQLiteOpenHelper {
         //Android resources
         db.execSQL("INSERT INTO ICON (Name, Location) VALUES('facebook','Resources');");
         db.execSQL("INSERT INTO ICON (Name, Location) VALUES('popcorn','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('cellphone_wireless','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('ic_cat_cellphone_wireless','Resources');");
         db.execSQL("INSERT INTO ICON (Name, Location) VALUES('briefcase_clock','Resources');");
         db.execSQL("INSERT INTO ICON (Name, Location) VALUES('web','Resources');");
         db.execSQL("INSERT INTO ICON (Name, Location) VALUES('shopping','Resources');");
@@ -500,6 +500,11 @@ public class AccountsDB extends SQLiteOpenHelper {
             table = MainActivity.getCategoryTable();
             itemName = ((Category)item).getName();
             fields.put("Name",itemName);
+            Icon icon = ((Category)item).getIcon();
+            if(icon != null){
+                fields.put("IconID",(icon.get_id()));
+            }
+
             Log.d("addCategory","Catgory to be added in the addItem method in AccountsDB class.");
         }else if(item instanceof Psswrd){
             table = MainActivity.getPsswrdTable();
@@ -645,8 +650,7 @@ public class AccountsDB extends SQLiteOpenHelper {
     public Category getCategoryByID(int _id){
         Log.d("getCategoryByID","Enter the getCategoryByID method in the AccountsDB class.");
         Cursor cursor = this.runQuery("SELECT * FROM CATEGORY WHERE _id = "+ _id);
-        if(cursor != null && cursor.getCount() >0){
-            cursor.moveToFirst();
+        if(cursor.moveToFirst()){
             Log.d("getCategoryByID","Exit successfully (category with id " +_id+ " has been found) the getCategoryByID method in the AccountsDB class.");
             return Category.extractCategory(cursor);
         }else{
@@ -660,6 +664,25 @@ public class AccountsDB extends SQLiteOpenHelper {
         return  this.runQuery("SELECT * FROM CATEGORY");
     }
 
+    //Method to get a specific user name, by passing in its DB _id as an argument
+    public Cursor getCategoryByName(String category){
+        Log.d("getCategoryByName","Enter the getCategoryByName method in the AccountsDB class.");
+        if(category.contains(apostrophe)){
+            category = includeApostropheEscapeChar(category);
+        }
+        Cursor cursor = this.runQuery("SELECT * FROM "+ MainActivity.getCategoryTable()+" WHERE Name = "+ "'"+category+"'");
+//        Cursor cursor = this.runQuery("SELECT QUESTION._id, QUESTION.Value AS Q, ANSWER._id AS AnswerID,ANSWER.Value AS Answer, " +
+//                "ANSWER.initVector AS initVector FROM QUESTION  " +
+//                "JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id WHERE QUESTION.Value = '"+  category+"'");
+        if(cursor.moveToFirst()){
+            Log.d("getCategoryByName","Exit successfully (CATEGORY with value " +category+ " has been found) the getCategoryByName method in the AccountsDB class.");
+        }else{
+            cursor = null;
+            Log.d("getCategoryByName","Exit the getQuestionByID method in the AccountsDB class without finding the account with value: "+category);
+        }//End of if else statement
+        return cursor;
+    }//End of getUserNameByID method
+
     //Method to get the list of user names from the DB
     public Cursor getUserNameList(){
         return  this.runQuery("SELECT * FROM USERNAME");
@@ -670,8 +693,7 @@ public class AccountsDB extends SQLiteOpenHelper {
         Log.d("getAccountByID","Enter the getAccountByID method in the AccountsDB class.");
         Cursor cursor = this.runQuery("SELECT * FROM ACCOUNTS WHERE _id = "+ _id);
         Account account = null;
-        if(cursor != null && cursor.getCount() >0){
-            cursor.moveToFirst();
+        if(cursor.moveToFirst()){
             account = Account.extractAccount(cursor);
             Log.d("getAccountByID","Exit successfully (account with id " +_id+ " has been found) the getAccountByID method in the AccountsDB class.");
         }else{
@@ -684,8 +706,7 @@ public class AccountsDB extends SQLiteOpenHelper {
     public Cursor getAccountCursorByID(int _id){
         Log.d("getAccountByID","Enter the getAccountByID method in the AccountsDB class.");
         Cursor cursor = this.runQuery("SELECT * FROM ACCOUNTS WHERE _id = "+ _id);
-        if(cursor != null && cursor.getCount() >0){
-            cursor.moveToFirst();
+        if(cursor.moveToFirst()){
             Log.d("getAccountByID","Exit successfully (account with id " +_id+ " has been found) the getAccountByID method in the AccountsDB class.");
         }else{
             Log.d("getAccountByID","Exit the getAccountByID method in the AccountsDB class without finding the category with id: "+_id);
@@ -698,8 +719,7 @@ public class AccountsDB extends SQLiteOpenHelper {
         Log.d("getAccountCursorByName","Enter the getAccountCursorByName method in the AccountsDB class.");
         Cursor cursor = this.runQuery("SELECT * FROM ACCOUNTS WHERE lower(ACCOUNTS.Name) = '"
                 + accountName.toLowerCase() + "'");
-        if(cursor != null && cursor.getCount() >0){
-            cursor.moveToFirst();
+        if(cursor.moveToFirst()){
             Log.d("getAccountCursorByName","Exit successfully (account with name " +accountName+ " has been found) the getAccountCursorByName method in the AccountsDB class.");
             return cursor;
         }else{
@@ -755,14 +775,6 @@ public class AccountsDB extends SQLiteOpenHelper {
         //It's necessary to check a questionList that holds the specific questionID is being used more than once (a questionList can be assigned to multiple accounts)
         if(accountsWithThisQuestionList.moveToFirst()){
             timesUsed = accountsWithThisQuestionList.getCount();
-//            //If that is the case, more than one list holding the question, check for each list how many accounts are using the list
-//            Cursor accountListUsingQuestionList = null;
-//            do{
-//                accountListUsingQuestionList =  this.getAccountsWithSpecifcValue(MainActivity.getQuestionListIdColumn(),accountsWithThisQuestionList.getInt(1)); //this.runQuery("SELECT * FROM ACCOUNTS WHERE QuestionListID = " + );
-//                if(accountListUsingQuestionList.moveToFirst()){
-//                    timesUsed += accountListUsingQuestionList.getCount();
-//                }
-//            }while(accountsWithThisQuestionList.moveToNext());
         }//End of if statement that check the cursor with the question lists move to first position and can be iterated
         Log.d("getTimesUsedQuestList","Exit the getTimesUsedQuestionList method in the AccountsDB class.");
         return  timesUsed;
@@ -819,8 +831,8 @@ public class AccountsDB extends SQLiteOpenHelper {
     public Icon getIconByName(String name){
         Log.d("getIconByID","Enter the getIconByID method in the AccountsDB class.");
         Cursor cursor = this.runQuery("SELECT * FROM ICON WHERE Name = '"+ name+"'");
-        if(cursor != null && cursor.getCount() >0){
-            cursor.moveToFirst();
+        if(cursor.moveToFirst()){
+            //cursor.moveToFirst();
             Log.d("getIconByID","Exit successfully (icon with id " +name+ " has been found) the getIconByID method in the AccountsDB class.");
             return Icon.extractIcon(cursor);
         }else{
@@ -965,6 +977,9 @@ public class AccountsDB extends SQLiteOpenHelper {
                 list.add(item);
             }//End of while loop
         }//End of if statement to check cursor is not null or empty
+        //Modify the list to be kept on memory and add two new categories, which are not stored in DB: Home and Favorites categories
+        list.add(0,MainActivity.getHomeCategory());
+        list.add(1,MainActivity.getFavCategory());
         Log.d("Ext_getCategoryList","Exit getCategoryList method in the TaskDB class.");
         return list;
     }//End of getGroceryList method

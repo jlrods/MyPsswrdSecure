@@ -171,6 +171,11 @@ public abstract class AddItemActivity extends AppCompatActivity {
                     checkPreloadedQuestions = true;
                 }//End of if statement
                 break;
+            case 8:
+                Log.d("isDataValid","Type 8 detected // Add Category call passed into isDataValid method in the AddItemActivity abstract class.");
+                this.cursor = accountsDB.getCategoryByName(inputValue);
+                itemValueNotEnteredStringID = R.string.catNotEntered;
+                itemValueExistsStringID = R.string.catExists;
             default:
                 Log.d("isDataValid","No valid type passed into isDataValid method in the AddItemActivity abstract class.");
                 break;
@@ -188,12 +193,25 @@ public abstract class AddItemActivity extends AppCompatActivity {
                     dbValue = this.cryptographer.decryptText(((Answer)item).getValue(),new IvParameterSpec(((Answer)item).getIv())).trim();
                 }else if(item instanceof Question){
                     dbValue = ((Question) item).getValue();
+                }else if(item instanceof Category){
+                    dbValue = ((Category) item).getName();
                 }
                 if(!dbValue.equals(inputValue)){
                     //Check the input value isn't in the DB already
                     if(checkDBValidation){
                         if(this.cursor == null || this.cursor.getCount() ==0){
-                            isValid = true;
+                            //Check Home and Favorites categories when adding a new category
+                            if(type==8){
+                                if(!inputValue.toLowerCase().equals(MainActivity.getHomeCategory().getName().toLowerCase()) && !inputValue.toLowerCase().equals(MainActivity.getFavCategory().getName().toLowerCase())){
+                                    isValid = true;
+                                }else{
+                                    //Prompt the user the user name input already exists in the list
+                                    MainActivity.displayToast(this,getResources().getString(itemValueExistsStringID),Toast.LENGTH_LONG,Gravity.CENTER);
+                                    Log.d("onOptionsItemSelected","The input value already exists in the DB.");
+                                }
+                            }else{
+                                isValid = true;
+                            }
                         }else{
                             //Prompt the user the user name input already exists in the list
                             MainActivity.displayToast(this,getResources().getString(itemValueExistsStringID),Toast.LENGTH_LONG,Gravity.CENTER);
@@ -215,7 +233,18 @@ public abstract class AddItemActivity extends AppCompatActivity {
                         MainActivity.displayToast(this,getResources().getString(R.string.snackBarQuestionExists),Toast.LENGTH_LONG,Gravity.CENTER);
                     }//End of if statement to check for preloaded questions
                 }else if(this.cursor == null || this.cursor.getCount() ==0){
-                    isValid = true;
+                    //Check Home and Favorites categories when adding a new category
+                    if(type==8){
+                        if(!inputValue.toLowerCase().equals(MainActivity.getHomeCategory().getName().toLowerCase()) && !inputValue.toLowerCase().equals(MainActivity.getFavCategory().getName().toLowerCase())){
+                            isValid = true;
+                        }else{
+                            //Prompt the user the user name input already exists in the list
+                            MainActivity.displayToast(this,getResources().getString(itemValueExistsStringID),Toast.LENGTH_LONG,Gravity.CENTER);
+                            Log.d("onOptionsItemSelected","The input value already exists in the DB.");
+                        }
+                    }else{
+                        isValid = true;
+                    }
                 }else{
                     //Prompt the user the user name input already exists in the list
                     MainActivity.displayToast(this,getResources().getString(itemValueExistsStringID),Toast.LENGTH_LONG,Gravity.CENTER);

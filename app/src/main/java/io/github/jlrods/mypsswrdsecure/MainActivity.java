@@ -85,10 +85,12 @@ public class  MainActivity extends AppCompatActivity {
     private static int throwAddQuestionActReqCode = 9876;
     private static int throwAddUserNameActReqCode = 5744;
     private static int throwAddPsswrdActReqCode = 9732;
+    private int throwAddCategoryReqCode = 5673;
     private int throwEditUserNameActReqCode = 4475;
     private int throwEditPsswrdActReqCode = 6542;
     private int throwEditQuestionActReqCode = 2456;
     private static int throwEditAccountActReqCode = 1199;
+
 
      //DB Table names
     private static final String USERNAME_TABLE = "USERNAME";
@@ -121,6 +123,10 @@ public class  MainActivity extends AppCompatActivity {
     private static final String PASSWORD = "password";
     private static final String QUESTION = "question";
     private static final String QUESTION_LIST ="question list";
+
+    private static Category homeCategory = null;
+    private static Category favCategory = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -257,10 +263,9 @@ public class  MainActivity extends AppCompatActivity {
         //Create a new object to manage all DB interaction
         accountsDB = new AccountsDB(this);
         //Get the category list from DB
+        this.homeCategory = new Category("Home",new Icon("Home",MainActivity.getRESOURCES(),R.drawable.home));
+        this.favCategory = new Category(-2,"Favorites",new Icon("Favorites",MainActivity.getRESOURCES(),android.R.drawable.star_big_on));
         this.categoryList = accountsDB.getCategoryList();
-        //Modify the list to be kept on memory and add two new categories, which are not stored in DB: Home and Favorites categories
-        this.categoryList.add(0,new Category("Home",new Icon("Home",MainActivity.getRESOURCES(),R.drawable.home)));
-        this.categoryList.add(1,new Category(-2,"Favorites",new Icon("Favorites",MainActivity.getRESOURCES(),android.R.drawable.star_big_on)));
         //Set the Home category as the default one
         this.currentCategory = categoryList.get(0);
 
@@ -279,7 +284,8 @@ public class  MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
-        updateNavMenu(navigationView.getMenu());
+        this.setUpLowerCategoryMenu(navigationView.getMenu());
+        this.updateNavMenu(navigationView.getMenu(),INDEX_TO_GET_LAST_TASK_LIST_ITEM);
 
     }//End of onCreate method
 
@@ -425,6 +431,15 @@ public class  MainActivity extends AppCompatActivity {
         Log.d("ThrowAddQuest","Exit throwAddQuestionActivity method in the MainActivity class.");
     }//End of throwAddTaskActivity
 
+    private void throwAddCategoryActivity(){
+        Log.d("ThrowAddCatt","Enter throwAddCategoryActivity method in the MainActivity class.");
+        //Declare and instantiate a new intent object
+        Intent i= new Intent(MainActivity.this,AddCategoryAcitivity.class);
+        //Start the addTaskActivity class
+        startActivityForResult(i,throwAddCategoryReqCode);
+        Log.d("ThrowAddCatt","Exit throwAddCategoryActivity method in the MainActivity class.");
+    }//End of throwAddTaskActivity
+
     //Method to throw new AddTaskActivity
     private void throwEditAccountActivity(View v){
         Log.d("ThrowEditAcc","Enter throwEditAccountActivity method in the MainActivity class.");
@@ -522,6 +537,8 @@ public class  MainActivity extends AppCompatActivity {
         String toastText = "";
         //Flag to display Toast and update RV
         boolean goodResultDelivered = false;
+        //Flag to handle nave drawer menu update when a category has been added, deleted or edited
+        boolean categoryMenuUpdate = false;
         RecyclerView recyclerView = HomeFragment.getRv();
         RecyclerView.Adapter adapter = null;
         if (requestCode ==this.throwAddAccountActReqCode && resultCode == RESULT_OK) {
@@ -621,17 +638,40 @@ public class  MainActivity extends AppCompatActivity {
 
         }else if(requestCode == throwEditAccountActReqCode && resultCode == Activity.RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from EditAccountActivity (received by HomeFragment).");
+        }else if(requestCode == throwAddCategoryReqCode && resultCode == Activity.RESULT_OK){
+            Log.d("onActivityResult","Received GOOD result from AddCategoryActivity (received by HomeFragment).");
+            goodResultDelivered = true;
+            categoryMenuUpdate = true;
+            toastText = data.getExtras().getString("categoryName") + " " + getResources().getString(R.string.catAdded);
+        }else if(requestCode == throwAddCategoryReqCode && resultCode == Activity.RESULT_CANCELED){
+            Log.d("onActivityResult","Received BAD result from AddCategoryActivity (received by HomeFragment).");
         }//End of if else statement chain to check activity results
 
-        //Check if toast would be displayed
-        if(goodResultDelivered){
-            adapter = recyclerView.getAdapter();
-            //recyclerView.getAdapter().notifyDataSetChanged();
-            updateRecyclerViewData(adapter);
-            //Move to new account position
-            //Display Toast to confirm the account has been added
-            displayToast(this,toastText,Toast.LENGTH_LONG, Gravity.CENTER);
-        }//End of if statement to check good result was delivered
+        if(categoryMenuUpdate){
+            //Check if toast would be displayed
+            if(goodResultDelivered){
+                this.categoryList = this.accountsDB.getCategoryList();
+                NavigationView navigationView = findViewById(R.id.nav_view);
+                this.updateNavMenu(navigationView.getMenu(),this.categoryList.size()-1);
+                //adapter = recyclerView.getAdapter();
+                //recyclerView.getAdapter().notifyDataSetChanged();
+                //updateRecyclerViewData(adapter);
+                //Move to new account position
+                //Display Toast to confirm the account has been added
+                displayToast(this,toastText,Toast.LENGTH_LONG, Gravity.CENTER);
+            }//End of if statement to check good result was delivered
+        }else{
+            //Check if toast would be displayed
+            if(goodResultDelivered){
+                adapter = recyclerView.getAdapter();
+                //recyclerView.getAdapter().notifyDataSetChanged();
+                updateRecyclerViewData(adapter);
+                //Move to new account position
+                //Display Toast to confirm the account has been added
+                displayToast(this,toastText,Toast.LENGTH_LONG, Gravity.CENTER);
+            }//End of if statement to check good result was delivered
+        }
+
         //End of if else statement to check the data comes from one of the thrown activities
         Log.d("onActivityResult","Exit the onActivityResult method in the DisplayAccountActivity class.");
     }//End of onActivityResult method
@@ -839,6 +879,14 @@ public class  MainActivity extends AppCompatActivity {
         return currentCategory;
     }
 
+    public static Category getHomeCategory() {
+        return homeCategory;
+    }
+
+    public static Category getFavCategory() {
+        return favCategory;
+    }
+
     public static void displayToast(Context context, String text, int toastLength, int gravity){
         Log.d("displayToast","Enter displayToast method in the MainActivity class.");
         Toast toast = Toast.makeText(context,text,toastLength);
@@ -970,68 +1018,72 @@ public class  MainActivity extends AppCompatActivity {
     }//End of permissionRequest method
 
     //Method to update the Nav Menu items when new task list are created or deleted. Used to populate the menu on onCreate method too
-    public void updateNavMenu(final Menu navMenu){
+    private void updateNavMenu(final Menu navMenu, int startPosition){
         Log.d("Ent_UpdateNaveMenu","Enter the updateNavMenu method in MainActivity class.");
-        //Set up onclick listeners for the first two items (home and favorites, which cannot be removed)
-        navMenu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                //Since the navigation item controls the Home menu item, it's necessary to overwrite it's behaviour and set the home item as selected
-                item.setChecked(true);
-                item.setCheckable(true);
-                MenuItem previousItem = navMenu.findItem(currentCategory.get_id());
-                //Set the previous menu item clicked on as the one as not selected
-                if(previousItem != null && previousItem.getItemId()!= item.getItemId()){
-                    previousItem.setChecked(false);
-                    previousItem.setCheckable(false);
-                }
-                //When home button is clicked, the transition to HomeFragment is controlled via navigation
-                //But the current category still need to be set to Home category
-                currentCategory = categoryList.get(0);
-                tabLayout.selectTab( tabLayout.getTabAt(0));
-                return false;
-            }//End of onMenuItemClick method
-        });//End of setOnMenuItemClickListener method call
-        navMenu.getItem(1).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                //When home button is clicked, the transition to HomeFragment is controlled via navigation
-                //But the current category still need to be set to Favorites category
-                //Since the navigation item controls the Home menu item, it's necessary to overwrite it's behaviour and set the home item as selected
-                item.setChecked(true);
-                item.setCheckable(true);
-                MenuItem previousItem = navMenu.findItem(currentCategory.get_id());
-                //Set the previous menu item clicked on as the one as not selected
-                if(previousItem != null && previousItem.getItemId()!= item.getItemId()){
-                    previousItem.setChecked(false);
-                    previousItem.setCheckable(false);
-                }
-                //When home button is clicked, the transition to HomeFragment is controlled via navigation
-                //But the current category still need to be set to Home category
-                currentCategory = categoryList.get(1);
-                tabLayout.selectTab( tabLayout.getTabAt(0));
-                return false;
-            }//End of onMenuItemClick method
-        });//End of setOnMenuItemClickListener method call
+
+        if(startPosition == INDEX_TO_GET_LAST_TASK_LIST_ITEM){
+            //Set up onclick listeners for the first two items (home and favorites, which cannot be removed)
+            navMenu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    //Since the navigation item controls the Home menu item, it's necessary to overwrite it's behaviour and set the home item as selected
+                    item.setChecked(true);
+                    item.setCheckable(true);
+                    MenuItem previousItem = navMenu.findItem(currentCategory.get_id());
+                    //Set the previous menu item clicked on as the one as not selected
+                    if(previousItem != null && previousItem.getItemId()!= item.getItemId()){
+                        previousItem.setChecked(false);
+                        previousItem.setCheckable(false);
+                    }
+                    //When home button is clicked, the transition to HomeFragment is controlled via navigation
+                    //But the current category still need to be set to Home category
+                    currentCategory = categoryList.get(0);
+                    tabLayout.selectTab( tabLayout.getTabAt(0));
+                    return false;
+                }//End of onMenuItemClick method
+            });//End of setOnMenuItemClickListener method call
+            navMenu.getItem(1).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    //When home button is clicked, the transition to HomeFragment is controlled via navigation
+                    //But the current category still need to be set to Favorites category
+                    //Since the navigation item controls the Home menu item, it's necessary to overwrite it's behaviour and set the home item as selected
+                    item.setChecked(true);
+                    item.setCheckable(true);
+                    MenuItem previousItem = navMenu.findItem(currentCategory.get_id());
+                    //Set the previous menu item clicked on as the one as not selected
+                    if(previousItem != null && previousItem.getItemId()!= item.getItemId()){
+                        previousItem.setChecked(false);
+                        previousItem.setCheckable(false);
+                    }
+                    //When home button is clicked, the transition to HomeFragment is controlled via navigation
+                    //But the current category still need to be set to Home category
+                    currentCategory = categoryList.get(1);
+                    tabLayout.selectTab( tabLayout.getTabAt(0));
+                    return false;
+                }//End of onMenuItemClick method
+            });//End of setOnMenuItemClickListener method call
+
+        }
 
         //Declare and initialize variables to be used during method
         //int to store each menu item order in the menu
         int order =0;
         //Iterator. Starts at 2 because there are two menus already in the hard coded menu layout
-        int i =2;
+        //startPosition = 2;
         //Get the nav controller to so HomeFragment navigation can be possible
         final NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         //Iterate through the category list (skipping first two categories: Home and Favorites) so each category menu item
         //can be added to Nav drawer menu
-        while(i<categoryList.size()){
+        while(startPosition < categoryList.size()){
             //set up new item's order in the menu
             order = navMenu.getItem(navMenu.size()-INDEX_TO_GET_LAST_TASK_LIST_ITEM).getOrder()+1;
             //Add the new item to the menu
-            navMenu.add(R.id.categoryListMenu,categoryList.get(i).get_id(),order,categoryList.get(i).getName());
+            navMenu.add(R.id.categoryListMenu,categoryList.get(startPosition).get_id(),order,categoryList.get(startPosition).getName());
             //Create menu item object so it can be accessed and modified
             final MenuItem newItem = navMenu.getItem(navMenu.size()-INDEX_TO_GET_LAST_TASK_LIST_ITEM);
             //Set up the proper icon for each category (icon data comes from DB)
-            idRes = this.getResources().getIdentifier(categoryList.get(i).getIcon().getName(),"drawable",this.getPackageName());
+            idRes = this.getResources().getIdentifier(categoryList.get(startPosition).getIcon().getName(),"drawable",this.getPackageName());
             newItem.setIcon(idRes);
             //Set up the behaviour when category menu item is clicked on
             newItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
@@ -1058,10 +1110,102 @@ public class  MainActivity extends AppCompatActivity {
                     return false;
                 }//End of onMenuItemClick method
             });//End of setOnMenuItemClickListener method call
-            i++;
+            startPosition++;
         }//End of while loop
         Log.d("Ext_UpdateNaveMenu","Exit the updateNavMenu method in MainActivity class.");
     }//End of updateNavMenu method
+
+    private void setUpCategoryItemsInMenu(final Menu navMenu,int startPostion){
+        //Declare and initialize variables to be used during method
+        //int to store each menu item order in the menu
+        int order =0;
+        //Iterator. Starts at 2 because there are two menus already in the hard coded menu layout
+        //int startPosition =2;
+        //Get the nav controller to so HomeFragment navigation can be possible
+        final NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        //Iterate through the category list (skipping first two categories: Home and Favorites) so each category menu item
+        //can be added to Nav drawer menu
+        while(startPostion < categoryList.size()){
+            //set up new item's order in the menu
+            order = navMenu.getItem(navMenu.size()-INDEX_TO_GET_LAST_TASK_LIST_ITEM).getOrder()+1;
+            //Add the new item to the menu
+            navMenu.add(R.id.categoryListMenu,categoryList.get(startPostion).get_id(),order,categoryList.get(startPostion).getName());
+            //Create menu item object so it can be accessed and modified
+            final MenuItem newItem = navMenu.getItem(navMenu.size()-INDEX_TO_GET_LAST_TASK_LIST_ITEM);
+            //Set up the proper icon for each category (icon data comes from DB)
+            idRes = this.getResources().getIdentifier(categoryList.get(startPostion).getIcon().getName(),"drawable",this.getPackageName());
+            newItem.setIcon(idRes);
+            //Set up the behaviour when category menu item is clicked on
+            newItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    Log.d("onMenuItemClick","Enter the onMenuItemClick method defined for each category menu item in the MainActivity class.");
+                    MenuItem homeItem = navMenu.getItem(0);
+                    //Set proper variables for the HomeFragment to handle the correct accounts list to be displayed: All categories, favorites or a specific category
+                    currentCategory = getCategoryPositionByID(item.getItemId());
+                    tabLayout.selectTab( tabLayout.getTabAt(0));
+                    //Ask nav controller to load the HomeFragment class
+                    navController.navigate(R.id.nav_home);
+                    //Get the drawer from layout
+                    DrawerLayout drawer = findViewById(R.id.drawer_layout);
+                    //Since the navigation item controls the Home menu item, it's necessary to overwrite it's bahaviour and set the home item as not selected
+                    homeItem.setChecked(false);
+                    homeItem.setCheckable(false);
+                    //Set the item clicked on as the one selected
+                    item.setChecked(true);
+                    item.setCheckable(true);
+                    //Close the drawer and display the HomeFragment which will load proper data based on the currentCategory variable
+                    drawer.closeDrawer(Gravity.LEFT);
+                    Log.d("onMenuItemClick","Exit the onMenuItemClick method defined for each category menu item in the MainActivity class.");
+                    return false;
+                }//End of onMenuItemClick method
+            });//End of setOnMenuItemClickListener method call
+            startPostion++;
+        }//End of while loop
+        Log.d("Ext_UpdateNaveMenu","Exit the updateNavMenu method in MainActivity class.");
+    }
+
+    //Method to give nav drawer lower menu actual functionality for adding, deleting and editing a category
+    private void setUpLowerCategoryMenu(final Menu navMenu){
+        Log.d("setUpLowerCategoryMenu","Enter the updateNavMenu method in MainActivity class.");
+        //Get the add category button and assign onclick event listener
+        navMenu.findItem(R.id.nav_addCategory).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                //Navigate to AddCategoryActivity
+                //Check the category name doesn't exist
+                    //If it does, display prompt
+
+                //Add extras to the intent object, specifically the current category where the add button was pressed from
+                //i.putExtra("category",this.currentCategory.toString());
+                //i.putExtra("_id",question.get_id());
+                //Start the AddItemActivity class
+                throwAddCategoryActivity();
+                return false;
+            }//End of onMenuItemClick method
+        });//End of setOnMenuItemClickListener method call
+        //Get the edit category button and assign onclick event listener
+        navMenu.findItem(R.id.nav_editCategory).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+
+                return false;
+            }//End of onMenuItemClick method
+        });//End of setOnMenuItemClickListener method call
+        //Get the delete category button and assign onclick event listener
+        navMenu.findItem(R.id.nav_deleteCategory).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                //Display warning pop up
+                //Delete all accounts associated to this category
+                //Delete the category itself
+                return false;
+            }//End of onMenuItemClick method
+        });//End of setOnMenuItemClickListener method call
+
+
+        Log.d("setUpLowerCategoryMenu","Enter the updateNavMenu method in MainActivity class.");
+    }//End of setUpLowerCategoryMenu method
 
     //Method to update the Nav Menu items when new task list are created or deleted. Used to populate the menu on onCreate method too
     public Category getCategoryPositionByID(int _id) {

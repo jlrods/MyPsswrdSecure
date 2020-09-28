@@ -36,6 +36,11 @@ class Icon {
         Log.d("Icon_Full_Ext","Exit Icon Constructor with no arguments");
     }
 
+    public Icon(String name, String location, boolean isSelected,int resourceID){
+        this(-1,name,location,isSelected,resourceID);
+        Log.d("Icon_Full_Ext","Exit Icon Constructor with no arguments");
+    }
+
     public Icon(int _id, String name, String location, boolean isSelected){
         this(_id,name,location,isSelected,-1);
         Log.d("Icon_Full_Ext","Exit Icon Constructor with no arguments");
