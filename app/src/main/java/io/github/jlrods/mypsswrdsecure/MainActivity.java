@@ -1079,7 +1079,18 @@ public class  MainActivity extends AppCompatActivity {
             //set up new item's order in the menu
             order = navMenu.getItem(navMenu.size()-INDEX_TO_GET_LAST_TASK_LIST_ITEM).getOrder()+1;
             //Add the new item to the menu
-            navMenu.add(R.id.categoryListMenu,categoryList.get(startPosition).get_id(),order,categoryList.get(startPosition).getName());
+            //Declare and instantiate an int to hold the string id from resources
+            int textID = getResources().getIdentifier(categoryList.get(startPosition).getName(),"string",getPackageName());
+            String categoryName = "";
+            //If textID is 0, means it's not stored in the app resources
+            if(textID > 0){
+                categoryName = getResources().getString(textID);
+            }else{
+                //In the case of not being a resource, print the text retrieved from DB
+                //tvItem.setText(stringName);
+                categoryName = categoryList.get(startPosition).getName();
+            }//End of if else statement
+            navMenu.add(R.id.categoryListMenu,categoryList.get(startPosition).get_id(),order,categoryName);
             //Create menu item object so it can be accessed and modified
             final MenuItem newItem = navMenu.getItem(navMenu.size()-INDEX_TO_GET_LAST_TASK_LIST_ITEM);
             //Set up the proper icon for each category (icon data comes from DB)
@@ -1114,56 +1125,6 @@ public class  MainActivity extends AppCompatActivity {
         }//End of while loop
         Log.d("Ext_UpdateNaveMenu","Exit the updateNavMenu method in MainActivity class.");
     }//End of updateNavMenu method
-
-    private void setUpCategoryItemsInMenu(final Menu navMenu,int startPostion){
-        //Declare and initialize variables to be used during method
-        //int to store each menu item order in the menu
-        int order =0;
-        //Iterator. Starts at 2 because there are two menus already in the hard coded menu layout
-        //int startPosition =2;
-        //Get the nav controller to so HomeFragment navigation can be possible
-        final NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        //Iterate through the category list (skipping first two categories: Home and Favorites) so each category menu item
-        //can be added to Nav drawer menu
-        while(startPostion < categoryList.size()){
-            //set up new item's order in the menu
-            order = navMenu.getItem(navMenu.size()-INDEX_TO_GET_LAST_TASK_LIST_ITEM).getOrder()+1;
-            //Add the new item to the menu
-            navMenu.add(R.id.categoryListMenu,categoryList.get(startPostion).get_id(),order,categoryList.get(startPostion).getName());
-            //Create menu item object so it can be accessed and modified
-            final MenuItem newItem = navMenu.getItem(navMenu.size()-INDEX_TO_GET_LAST_TASK_LIST_ITEM);
-            //Set up the proper icon for each category (icon data comes from DB)
-            idRes = this.getResources().getIdentifier(categoryList.get(startPostion).getIcon().getName(),"drawable",this.getPackageName());
-            newItem.setIcon(idRes);
-            //Set up the behaviour when category menu item is clicked on
-            newItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    Log.d("onMenuItemClick","Enter the onMenuItemClick method defined for each category menu item in the MainActivity class.");
-                    MenuItem homeItem = navMenu.getItem(0);
-                    //Set proper variables for the HomeFragment to handle the correct accounts list to be displayed: All categories, favorites or a specific category
-                    currentCategory = getCategoryPositionByID(item.getItemId());
-                    tabLayout.selectTab( tabLayout.getTabAt(0));
-                    //Ask nav controller to load the HomeFragment class
-                    navController.navigate(R.id.nav_home);
-                    //Get the drawer from layout
-                    DrawerLayout drawer = findViewById(R.id.drawer_layout);
-                    //Since the navigation item controls the Home menu item, it's necessary to overwrite it's bahaviour and set the home item as not selected
-                    homeItem.setChecked(false);
-                    homeItem.setCheckable(false);
-                    //Set the item clicked on as the one selected
-                    item.setChecked(true);
-                    item.setCheckable(true);
-                    //Close the drawer and display the HomeFragment which will load proper data based on the currentCategory variable
-                    drawer.closeDrawer(Gravity.LEFT);
-                    Log.d("onMenuItemClick","Exit the onMenuItemClick method defined for each category menu item in the MainActivity class.");
-                    return false;
-                }//End of onMenuItemClick method
-            });//End of setOnMenuItemClickListener method call
-            startPostion++;
-        }//End of while loop
-        Log.d("Ext_UpdateNaveMenu","Exit the updateNavMenu method in MainActivity class.");
-    }
 
     //Method to give nav drawer lower menu actual functionality for adding, deleting and editing a category
     private void setUpLowerCategoryMenu(final Menu navMenu){
