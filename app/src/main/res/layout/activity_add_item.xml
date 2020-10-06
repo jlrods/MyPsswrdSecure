@@ -95,7 +95,8 @@
                         android:id="@+id/layout_add_item_categoryIcon"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:visibility="gone">
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -117,32 +118,36 @@
                                 <TableRow
                                     android:id="@+id/catIconsrow1"
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
+                                    android:layout_height="match_parent"
                                     android:layout_gravity="center"
                                     android:gravity="center">
 
                                     <ImageView
                                         android:id="@+id/account"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="account"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/account" />
 
                                     <ImageView
                                         android:id="@+id/account_details"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="account_details"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/account_details" />
 
                                     <ImageView
                                         android:id="@+id/account_group"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="account_group"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/account_group" />
 
                                     <ImageView
                                         android:id="@+id/airplane_takeoff"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="airplane_takeoff"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/airplane_takeoff" />
                                 </TableRow>
 
@@ -153,31 +158,33 @@
                                     android:layout_gravity="center"
                                     android:gravity="center">
 
-                                    <ImageView
-                                        android:id="@+id/android_studio"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
-                                        android:src="@drawable/android_studio" />
+                                        <ImageView
+                                            android:id="@+id/android_studio"
+                                            android:tag="android_studio"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="match_parent"
+                                            android:src="@drawable/android_studio" />
 
-                                    <ImageView
-                                        android:id="@+id/baseball_bat"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
-                                        android:src="@drawable/baseball_bat" />
+                                        <ImageView
+                                            android:id="@+id/baseball_bat"
+                                            android:tag="baseball_bat"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="match_parent"
+                                            android:src="@drawable/baseball_bat" />
 
-                                    <ImageView
-                                        android:id="@+id/battery_charging"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
-                                        android:src="@drawable/battery_charging" />
+                                        <ImageView
+                                            android:id="@+id/battery_charging"
+                                            android:tag="battery_charging"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="match_parent"
+                                            android:src="@drawable/battery_charging" />
 
-                                    <ImageView
-                                        android:id="@+id/beaker"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
-                                        android:src="@drawable/beaker" />
-
-
+                                        <ImageView
+                                            android:id="@+id/beaker"
+                                            android:tag="beaker"
+                                            android:layout_width="84dp"
+                                            android:layout_height="84dp"
+                                            android:src="@drawable/beaker" />
                                 </TableRow>
 
                                 <TableRow
@@ -189,26 +196,30 @@
 
                                     <ImageView
                                         android:id="@+id/briefcase_clock"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="briefcase_clock"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/briefcase_clock" />
 
                                     <ImageView
                                         android:id="@+id/briefcase_search"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="briefcase_search"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/briefcase_search" />
 
                                     <ImageView
                                         android:id="@+id/calendar"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="calendar"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/calendar" />
 
                                     <ImageView
                                         android:id="@+id/car_lifted_pickup"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="car_lifted_pickup"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/car_lifted_pickup" />
 
                                 </TableRow>
@@ -222,26 +233,30 @@
 
                                     <ImageView
                                         android:id="@+id/controller_classic"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="controller_classic"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/controller_classic" />
 
                                     <ImageView
                                         android:id="@+id/credit_card_check"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="credit_card_check"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/credit_card_check" />
 
                                     <ImageView
                                         android:id="@+id/dog_side"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="dog_side"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/dog_side" />
 
                                     <ImageView
                                         android:id="@+id/engine"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="engine"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/engine" />
 
                                 </TableRow>
@@ -255,26 +270,30 @@
 
                                     <ImageView
                                         android:id="@+id/currency_eur"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="currency_eur"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/currency_eur" />
 
                                     <ImageView
                                         android:id="@+id/facebook"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="facebook"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/facebook" />
 
                                     <ImageView
                                         android:id="@+id/food"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="food"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/food" />
 
                                     <ImageView
                                         android:id="@+id/food_apple"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="food_apple"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/food_apple" />
 
                                 </TableRow>
@@ -288,23 +307,27 @@
 
                                     <ImageView
                                         android:id="@+id/format_list_bulleted"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="format_list_bulleted"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/format_list_bulleted" />
                                     <ImageView
                                         android:id="@+id/glass_mug_variant"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="glass_mug_variant"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/glass_mug_variant" />
                                     <ImageView
                                         android:id="@+id/needle"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="needle"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/needle" />
                                     <ImageView
                                         android:id="@+id/netflix"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="netflix"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/netflix" />
 
                                 </TableRow>
@@ -318,26 +341,30 @@
 
                                     <ImageView
                                         android:id="@+id/home"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="home"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/home" />
 
                                     <ImageView
                                         android:id="@+id/ic_cat_cellphone_wireless"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="ic_cat_cellphone_wireless"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/ic_cat_cellphone_wireless" />
 
                                     <ImageView
                                         android:id="@+id/hospital_box"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="hospital_box"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/hospital_box" />
 
                                     <ImageView
                                         android:id="@+id/ic_menu_camera"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="ic_menu_camera"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/ic_menu_camera" />
                                 </TableRow>
 
@@ -350,26 +377,30 @@
 
                                     <ImageView
                                         android:id="@+id/ic_menu_gallery"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="ic_menu_gallery"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/ic_menu_gallery" />
 
                                     <ImageView
                                         android:id="@+id/ic_menu_slideshow"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="ic_menu_slideshow"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/ic_menu_slideshow" />
 
                                     <ImageView
                                         android:id="@+id/pencil_lock"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="pencil_lock"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/pencil_lock" />
 
                                     <ImageView
                                         android:id="@+id/popcorn"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="popcorn"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/popcorn" />
                                 </TableRow>
 
@@ -382,26 +413,30 @@
 
                                     <ImageView
                                         android:id="@+id/shield_check"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="shield_check"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/shield_check" />
 
                                     <ImageView
                                         android:id="@+id/shield_lock"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="shield_lock"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/shield_lock" />
 
                                     <ImageView
                                         android:id="@+id/shopping"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="shopping"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/shopping" />
 
                                     <ImageView
                                         android:id="@+id/tools"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="tools"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/tools" />
                                 </TableRow>
 
@@ -414,26 +449,30 @@
 
                                     <ImageView
                                         android:id="@+id/music_note"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="music_note"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/music_note" />
 
                                     <ImageView
                                         android:id="@+id/shoe_cleat"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="shoe_cleat"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/shoe_cleat" />
 
                                     <ImageView
                                         android:id="@+id/signal_variant"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="signal_variant"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/signal_variant" />
 
                                     <ImageView
                                         android:id="@+id/silverware"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="silverware"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/silverware" />
                                 </TableRow>
 
@@ -446,26 +485,30 @@
 
                                     <ImageView
                                         android:id="@+id/sim_outline"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="sim_outline"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/sim_outline" />
 
                                     <ImageView
                                         android:id="@+id/sitemap"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="sitemap"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/sitemap" />
 
                                     <ImageView
                                         android:id="@+id/skull_outline"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="skull_outline"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/skull_outline" />
 
                                     <ImageView
                                         android:id="@+id/sofa_single"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="sofa_single"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/sofa_single" />
                                 </TableRow>
 
@@ -478,26 +521,30 @@
 
                                     <ImageView
                                         android:id="@+id/sony_playstation"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="sony_playstation"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/sony_playstation" />
 
                                     <ImageView
                                         android:id="@+id/sort_ascending"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="sort_ascending"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/sort_ascending" />
 
                                     <ImageView
                                         android:id="@+id/sort_descending"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="sort_descending"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/sort_descending" />
 
                                     <ImageView
                                         android:id="@+id/sort_reverse_variant"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="sort_reverse_variant"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/sort_reverse_variant" />
                                 </TableRow>
 
@@ -510,26 +557,30 @@
 
                                     <ImageView
                                         android:id="@+id/spotify"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="spotify"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/spotify" />
 
                                     <ImageView
                                         android:id="@+id/stethoscope"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="stethoscope"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/stethoscope" />
 
                                     <ImageView
                                         android:id="@+id/television"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="television"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/television" />
 
                                     <ImageView
                                         android:id="@+id/thermometer_lines"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="thermometer_lines"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/thermometer_lines" />
                                 </TableRow>
 
@@ -542,26 +593,30 @@
 
                                     <ImageView
                                         android:id="@+id/twitter"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="twitter"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/twitter" />
 
                                     <ImageView
                                         android:id="@+id/watch"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="watch"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/watch" />
 
                                     <ImageView
                                         android:id="@+id/whatsapp"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="whatsapp"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/whatsapp" />
 
                                     <ImageView
                                         android:id="@+id/youtube_subscription"
-                                        android:layout_width="96dp"
-                                        android:layout_height="96dp"
+                                        android:tag="youtube_subscription"
+                                        android:layout_width="84dp"
+                                        android:layout_height="84dp"
                                         android:src="@drawable/youtube_subscription" />
                                 </TableRow>
 

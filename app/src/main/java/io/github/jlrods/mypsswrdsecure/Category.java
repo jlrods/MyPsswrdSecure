@@ -8,9 +8,9 @@ import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
 class Category {
 
     //Attribute definition
-    int _id; // DB unique ID
-    String name; // Category description name
-    Icon icon; // Category Icon image
+    private int _id; // DB unique ID
+    private String name; // Category description name
+    private Icon icon; // Category Icon image
 
     //Method definition
     //Constructors

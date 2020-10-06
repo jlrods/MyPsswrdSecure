@@ -89,6 +89,7 @@ public class  MainActivity extends AppCompatActivity {
     private int throwEditUserNameActReqCode = 4475;
     private int throwEditPsswrdActReqCode = 6542;
     private int throwEditQuestionActReqCode = 2456;
+    private static int throwEditCategoryActReqCode = 2002;
     private static int throwEditAccountActReqCode = 1199;
 
 
@@ -440,6 +441,7 @@ public class  MainActivity extends AppCompatActivity {
         Log.d("ThrowAddCatt","Exit throwAddCategoryActivity method in the MainActivity class.");
     }//End of throwAddTaskActivity
 
+
     //Method to throw new AddTaskActivity
     private void throwEditAccountActivity(View v){
         Log.d("ThrowEditAcc","Enter throwEditAccountActivity method in the MainActivity class.");
@@ -456,7 +458,7 @@ public class  MainActivity extends AppCompatActivity {
         Intent i= new Intent(MainActivity.this, EditAccountActivity.class );
         //Add extras to the intent object, specifically the current category where the add button was pressed from
         i.putExtra("category",this.currentCategory.get_id());
-        i.putExtra("_id",account.get_id());
+        i.putExtra(ID_COLUMN,account.get_id());
         //Start the AddItemActivity class
         startActivityForResult(i,throwEditAccountActReqCode);
         Log.d("ThrowEditAcc","Exit throwEditAccountActivity method in the MainActivity class.");
@@ -478,7 +480,7 @@ public class  MainActivity extends AppCompatActivity {
         Intent i= new Intent(MainActivity.this, EditUserNameActivity.class );
         //Add extras to the intent object, specifically the current category where the add button was pressed from
         //i.putExtra("category",this.currentCategory.toString());
-        i.putExtra("_id",userName.get_id());
+        i.putExtra(ID_COLUMN,userName.get_id());
         //Start the AddItemActivity class
         startActivityForResult(i,this.throwEditUserNameActReqCode);
         Log.d("ThrowEditUser","Exit throwEditUserNameActivity method in the MainActivity class.");
@@ -500,7 +502,7 @@ public class  MainActivity extends AppCompatActivity {
         Intent i= new Intent(MainActivity.this, EditPsswrdActivity.class );
         //Add extras to the intent object, specifically the current category where the add button was pressed from
         //i.putExtra("category",this.currentCategory.toString());
-        i.putExtra("_id",psswrd.get_id());
+        i.putExtra(ID_COLUMN,psswrd.get_id());
         //Start the AddItemActivity class
         startActivityForResult(i,this.throwEditPsswrdActReqCode);
         Log.d("ThrowAddUser","Exit throwEditPsswrdActivity method in the MainActivity class.");
@@ -522,11 +524,23 @@ public class  MainActivity extends AppCompatActivity {
         Intent i= new Intent(MainActivity.this, EditQuestionActivity.class );
         //Add extras to the intent object, specifically the current category where the add button was pressed from
         //i.putExtra("category",this.currentCategory.toString());
-        i.putExtra("_id",question.get_id());
+        i.putExtra(ID_COLUMN,question.get_id());
         //Start the AddItemActivity class
         startActivityForResult(i,this.throwEditQuestionActReqCode);
         Log.d("ThrowAddUser","Exit throwEditQuestionActivity method in the MainActivity class.");
     }//End of throwAddTaskActivity
+
+    private void throwEditCategoryActivity(int _id,int listPosition){
+        Log.d("ThrowEditCat","Enter throwEditCategoryActivity method in the MainActivity class.");
+        //Declare and instantiate a new intent object
+        Intent i= new Intent(MainActivity.this,EditCategoryActivity.class);
+        i.putExtra(ID_COLUMN,_id);
+        i.putExtra("positionInCatList",listPosition);
+        //Start the addTaskActivity class
+        startActivityForResult(i,throwEditCategoryActReqCode);
+        Log.d("ThrowEditCat","Exit throwEditCategoryActivity method in the MainActivity class.");
+    }//End of throwAddTaskActivity
+
 
     //Method to receive and handle data coming from other activities such as: SelectLogoActivity,
     @Override
@@ -644,19 +658,36 @@ public class  MainActivity extends AppCompatActivity {
             categoryMenuUpdate = true;
             toastText = data.getExtras().getString("categoryName") + " " + getResources().getString(R.string.catAdded);
         }else if(requestCode == throwAddCategoryReqCode && resultCode == Activity.RESULT_CANCELED){
-            Log.d("onActivityResult","Received BAD result from AddCategoryActivity (received by HomeFragment).");
+            Log.d("onActivityResult","Received BAD result from AddCategoryActivity received by MainAcitvity.");
+        }else if(requestCode == throwEditCategoryActReqCode && resultCode == Activity.RESULT_OK){
+            Log.d("onActivityResult","Received GOOD result from EditCategoryActivity received by MainAcitvity.");
+            goodResultDelivered = true;
+            categoryMenuUpdate = true;
+            toastText = data.getExtras().getString("categoryName") + " " + getResources().getString(R.string.catUpdated);
+        }else if(requestCode == throwEditCategoryActReqCode && resultCode == Activity.RESULT_CANCELED){
+            Log.d("onActivityResult","Received BAD result from EditCategoryActivity received by MainAcitvity.");
         }//End of if else statement chain to check activity results
 
         if(categoryMenuUpdate){
             //Check if toast would be displayed
             if(goodResultDelivered){
+                //Get the updated list of categories
                 this.categoryList = this.accountsDB.getCategoryList();
+                //Get the navigation view to access the menu object
                 NavigationView navigationView = findViewById(R.id.nav_view);
-                this.updateNavMenu(navigationView.getMenu(),this.categoryList.size()-1);
-                //adapter = recyclerView.getAdapter();
-                //recyclerView.getAdapter().notifyDataSetChanged();
-                //updateRecyclerViewData(adapter);
-                //Move to new account position
+                //Get the position number of the updated menu item, which is already fixed on EditCategoryActivity
+                //for the AlartDialog numbering issue
+                int positionInCatList = data.getExtras().getInt("positionInCatList");
+                //Create category object pointing to category list position retrieved above
+                Category updatedCategory = this.categoryList.get(positionInCatList);
+                //Get the menu item in the same position as the one in the categor list
+                MenuItem menuItem = navigationView.getMenu().getItem(positionInCatList);
+                //@Fixme: this might cause problem with preloaded categories, as their name comes from the string resources, not form DB directly
+                //Set up the proper name, as this might be updated on previous activity
+                menuItem.setTitle(updatedCategory.getName());
+                //Set up the proper icon for each category (icon data comes from DB), as this might be updated from previous activity
+                idRes = this.getResources().getIdentifier(categoryList.get(positionInCatList).getIcon().getName(),"drawable",this.getPackageName());
+                menuItem.setIcon(idRes);
                 //Display Toast to confirm the account has been added
                 displayToast(this,toastText,Toast.LENGTH_LONG, Gravity.CENTER);
             }//End of if statement to check good result was delivered
@@ -670,8 +701,7 @@ public class  MainActivity extends AppCompatActivity {
                 //Display Toast to confirm the account has been added
                 displayToast(this,toastText,Toast.LENGTH_LONG, Gravity.CENTER);
             }//End of if statement to check good result was delivered
-        }
-
+        }//End of if else statement that checks if nav drawer menu has to be updated
         //End of if else statement to check the data comes from one of the thrown activities
         Log.d("onActivityResult","Exit the onActivityResult method in the DisplayAccountActivity class.");
     }//End of onActivityResult method
@@ -887,6 +917,14 @@ public class  MainActivity extends AppCompatActivity {
         return favCategory;
     }
 
+    public static ArrayList<Category> getCategoryList() {
+        return categoryList;
+    }
+
+    public static int getIndexToGetLastTaskListItem() {
+        return INDEX_TO_GET_LAST_TASK_LIST_ITEM;
+    }
+
     public static void displayToast(Context context, String text, int toastLength, int gravity){
         Log.d("displayToast","Enter displayToast method in the MainActivity class.");
         Toast toast = Toast.makeText(context,text,toastLength);
@@ -1065,7 +1103,6 @@ public class  MainActivity extends AppCompatActivity {
             });//End of setOnMenuItemClickListener method call
 
         }
-
         //Declare and initialize variables to be used during method
         //int to store each menu item order in the menu
         int order =0;
@@ -1079,15 +1116,15 @@ public class  MainActivity extends AppCompatActivity {
             //set up new item's order in the menu
             order = navMenu.getItem(navMenu.size()-INDEX_TO_GET_LAST_TASK_LIST_ITEM).getOrder()+1;
             //Add the new item to the menu
-            //Declare and instantiate an int to hold the string id from resources
+            //Declare and instantiate an int to hold the string id from resources and a String variable to hold the actual category name
             int textID = getResources().getIdentifier(categoryList.get(startPosition).getName(),"string",getPackageName());
             String categoryName = "";
-            //If textID is 0, means it's not stored in the app resources
+            //If textID is 0, means it's not stored in the app resources, which means it won't be translated but it will be displayed as saved on DB
             if(textID > 0){
+                //If res id number exists, set the category name as per the string text, not the string ID
                 categoryName = getResources().getString(textID);
             }else{
                 //In the case of not being a resource, print the text retrieved from DB
-                //tvItem.setText(stringName);
                 categoryName = categoryList.get(startPosition).getName();
             }//End of if else statement
             navMenu.add(R.id.categoryListMenu,categoryList.get(startPosition).get_id(),order,categoryName);
@@ -1149,7 +1186,54 @@ public class  MainActivity extends AppCompatActivity {
         navMenu.findItem(R.id.nav_editCategory).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
+                //final Cursor categories = accountsDB.getCategoryListCursor();
+                final int[] selectedCategoryID = {0};
+                final int[] positionInList ={0};
+                //Iterate through the category list to transform into a charsequence list
+                final CharSequence[] categories = new CharSequence[categoryList.size()-INDEX_TO_GET_LAST_TASK_LIST_ITEM];
+                //another one to hold the isChecked attribute
+                //final boolean[] editableCategories = new boolean[categoryList.size()-INDEX_TO_GET_LAST_TASK_LIST_ITEM];
+                //For loop to populate the char-sequence array with the category names coming from category list
+                for(int i=INDEX_TO_GET_LAST_TASK_LIST_ITEM;i<categoryList.size();i++){
+                    //For each item in the list, extract name and save it in the string array
+                    int textID = getResources().getIdentifier(categoryList.get(i).getName(),"string",getPackageName());
+                    CharSequence categoryName = "";
+                    //Get the name from the cursor
+                    if(textID > 0){
+                        //If res id number exists, set the category name as per the string text, not the string ID
+                        categoryName = getResources().getString(textID);
+                    }else{
+                        //In the case of not being a resource, print the text retrieved from DB
+                        categoryName = MainActivity.getCategoryList().get(i).getName();
+                    }//End of if else statement
+                    //String categoryName = categoryList.get(i).getName();
+                    //Save the name into the array to be passed into the AlertDialog constructor
+                    categories[i-INDEX_TO_GET_LAST_TASK_LIST_ITEM]=  categoryName;
+                    //Set the isChecked to false for all the categories
+                    //editableCategories[i]= false;
+                }//End of for loop to populate the taskList array
+                //Create a dialog box to display the grocery types
+                new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("Select Category to edit")
+                        .setSingleChoiceItems(categories, 0, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                positionInList[0] = which;
+                                selectedCategoryID[0] = categoryList.get(which+INDEX_TO_GET_LAST_TASK_LIST_ITEM).get_id();
+                            }
+                        })
+                        .setPositiveButton(R.string.dialog_OK,new DialogInterface.OnClickListener(){
+                            public void onClick(DialogInterface dialog,int whichButton){
+                                if(positionInList[0] == 0){
+                                    selectedCategoryID[0] = categoryList.get(INDEX_TO_GET_LAST_TASK_LIST_ITEM).get_id();
+                                }
+                                throwEditCategoryActivity(selectedCategoryID[0],positionInList[0]);
+                            }
 
+                        })
+                        .setNegativeButton(R.string.cancel,null)
+                        .create()
+                        .show();
                 return false;
             }//End of onMenuItemClick method
         });//End of setOnMenuItemClickListener method call

@@ -19,6 +19,8 @@ public class AccountsDB extends SQLiteOpenHelper {
     private Cryptographer cryptographer;
     //Declare and initialize constant to define the number of preloaded questions to retrieve from the DB
     private static final int NUMBER_OF_PRELOADED_QUESTIONS = 10;
+    //Declare and initialize constant to define the number of preloaded categories to retrieve from the DB
+    private static final int NUMBER_OF_PRELOADED_CATEGORIES = 13;
     //Default constructor
     public AccountsDB(Context context){
         super(context, "Accounts Database",null, 1);
@@ -209,11 +211,6 @@ public class AccountsDB extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO ICON (Name, Location) VALUES('shield_check','Resources');");
         db.execSQL("INSERT INTO ICON (Name, Location) VALUES('briefcase_search','Resources');");
         db.execSQL("INSERT INTO ICON (Name, Location) VALUES('tools','Resources');");
-
-
-
-
-
 
         //Populate the Category table with some default category items
         db.execSQL("INSERT INTO CATEGORY (Name,IconID) VALUES('SocialMedia',49);");
@@ -541,6 +538,7 @@ public class AccountsDB extends SQLiteOpenHelper {
             table = MainActivity.getIconTable();
             fields.put("Name",((Icon)item).getName());
             fields.put("Location",((Icon)item).getLocation());
+            //fields.put("ResourceID",((Icon)item).getResourceID());
             fields.put("isSelected",  toInt(((Icon)item).isSelected()));
         }else if(item instanceof Account){
             table = MainActivity.getAccountsTable();
@@ -781,11 +779,11 @@ public class AccountsDB extends SQLiteOpenHelper {
     }//End of getTimesUsedQuestionList method
 
     //Method to get the number of times a specific question list is being used in different accounts as per the DB
-    public int getTimesUsedIcon(int iconID){
-        Log.d("getTimesUsedQuestList","Enter the getTimesUsedQuestionList method in the AccountsDB class.");
+    public int getTimesUsedIconInAccounts(int iconID){
+        Log.d("getTimesUsedIconInAcc","Enter the getTimesUsedIconInAccounts method in the AccountsDB class.");
         int timesUsed = 0;
         //Get a list of questionLists that hold the question to be deleted
-        Cursor accountsWithThisQuestionList = this.runQuery("SELECT * FROM "+MainActivity.getAccountsTable()+" WHERE " + MainActivity.getIconTable()+" = "+iconID);
+        Cursor accountsWithThisQuestionList = this.runQuery("SELECT * FROM "+MainActivity.getAccountsTable()+" WHERE " + MainActivity.getIconIdColumn()+" = "+iconID);
         //Now get the list of accounts using the those question lists
         //It's necessary to check a questionList that holds the specific questionID is being used more than once (a questionList can be assigned to multiple accounts)
         if(accountsWithThisQuestionList.moveToFirst()){
@@ -799,7 +797,21 @@ public class AccountsDB extends SQLiteOpenHelper {
 //                }
 //            }while(accountsWithThisQuestionList.moveToNext());
         }//End of if statement that check the cursor with the question lists move to first position and can be iterated
-        Log.d("getTimesUsedQuestList","Exit the getTimesUsedQuestionList method in the AccountsDB class.");
+        Log.d("getTimesUsedIconInAcc","Exit the getTimesUsedIconInAccounts method in the AccountsDB class.");
+        return  timesUsed;
+    }//End of getTimesUsedQuestionList method
+
+    //Method to get the number of times a specific question list is being used in different accounts as per the DB
+    public int getTimesUsedIconInCategory(int iconID){
+        Log.d("getTimesUsedQuestList","Enter the getTimesUsedIconInCategory method in the AccountsDB class.");
+        int timesUsed = 0;
+        //Get a list of categories that hold the icon
+        Cursor categoriesWithThisIcon = this.runQuery("SELECT * FROM "+MainActivity.getCategoryTable()+" WHERE " + MainActivity.getIconIdColumn()+" = "+iconID);
+        //Now get the list of categories using the those question lists
+        if(categoriesWithThisIcon.moveToFirst()){
+            timesUsed = categoriesWithThisIcon.getCount();
+        }//End of if statement that check the cursor with the question lists move to first position and can be iterated
+        Log.d("getTimesUsedQuestList","Exit the getTimesUsedIconInCategory method in the AccountsDB class.");
         return  timesUsed;
     }//End of getTimesUsedQuestionList method
 
@@ -1027,6 +1039,15 @@ public class AccountsDB extends SQLiteOpenHelper {
         Cursor preLoadedQuestions = this.runQuery("SELECT QUESTION._id, QUESTION.Value AS Q, ANSWER._id AS AnswerID,ANSWER.Value AS \n" +
                 "Answer, ANSWER.initVector AS initVector FROM QUESTION LEFT JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id WHERE QUESTION._id <= "+this.NUMBER_OF_PRELOADED_QUESTIONS);
         Log.d("getPreLoadedQuestions","Exit the getPreLoadedQuestions method in the AccountsDB class.");
+        return preLoadedQuestions;
+    }//End of getListQuestionsAvailable method
+
+    //Method to get cursor with list of questions available
+    public Cursor getPreLoadedCategories(){
+        Log.d("getPreLoadedCategories","Enter the getPreLoadedCategories method in the AccountsDB class.");
+        //Declare and initialize cursor to hold list of categories available from DB
+        Cursor preLoadedQuestions = this.runQuery("SELECT * FROM " +MainActivity.getCategoryTable() + " WHERE "+ MainActivity.getIdColumn()+" <= "+this.NUMBER_OF_PRELOADED_CATEGORIES);
+        Log.d("getPreLoadedQuestions","Exit the getPreLoadedCategories method in the AccountsDB class.");
         return preLoadedQuestions;
     }//End of getListQuestionsAvailable method
 

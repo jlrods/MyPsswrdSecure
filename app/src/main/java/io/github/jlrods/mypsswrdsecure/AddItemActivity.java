@@ -176,6 +176,17 @@ public abstract class AddItemActivity extends AppCompatActivity {
                 this.cursor = accountsDB.getCategoryByName(inputValue);
                 itemValueNotEnteredStringID = R.string.catNotEntered;
                 itemValueExistsStringID = R.string.catExists;
+                break;
+            case 9:
+                Log.d("isDataValid","Type 9 detected // Edit Category call passed into isDataValid method in the AddItemActivity abstract class.");
+                this.cursor = accountsDB.getCategoryByName(inputValue);
+                itemValueNotEnteredStringID = R.string.catNotEntered;
+                itemValueExistsStringID = R.string.catExists;
+                if(itemID != -1){
+                    checkItemValueChange = true;
+                    item = (Category) this.accountsDB.getCategoryByID(itemID);
+                    itemValueNotChangedStringID = R.string.catNotChanged;
+                }//End of if statement
             default:
                 Log.d("isDataValid","No valid type passed into isDataValid method in the AddItemActivity abstract class.");
                 break;
@@ -195,17 +206,18 @@ public abstract class AddItemActivity extends AppCompatActivity {
                     dbValue = ((Question) item).getValue();
                 }else if(item instanceof Category){
                     dbValue = ((Category) item).getName();
+                    //nt dbIconID = ((Category) item).getIcon().get_id();
                 }
                 if(!dbValue.equals(inputValue)){
                     //Check the input value isn't in the DB already
                     if(checkDBValidation){
                         if(this.cursor == null || this.cursor.getCount() ==0){
                             //Check Home and Favorites categories when adding a new category
-                            if(type==8){
+                            if(type==8 || type == 9){
                                 if(!inputValue.toLowerCase().equals(MainActivity.getHomeCategory().getName().toLowerCase()) && !inputValue.toLowerCase().equals(MainActivity.getFavCategory().getName().toLowerCase())){
                                     isValid = true;
                                 }else{
-                                    //Prompt the user the user name input already exists in the list
+                                    //Prompt the user the category input already exists in the list
                                     MainActivity.displayToast(this,getResources().getString(itemValueExistsStringID),Toast.LENGTH_LONG,Gravity.CENTER);
                                     Log.d("onOptionsItemSelected","The input value already exists in the DB.");
                                 }
@@ -234,8 +246,9 @@ public abstract class AddItemActivity extends AppCompatActivity {
                     }//End of if statement to check for preloaded questions
                 }else if(this.cursor == null || this.cursor.getCount() ==0){
                     //Check Home and Favorites categories when adding a new category
-                    if(type==8){
-                        if(!inputValue.toLowerCase().equals(MainActivity.getHomeCategory().getName().toLowerCase()) && !inputValue.toLowerCase().equals(MainActivity.getFavCategory().getName().toLowerCase())){
+                    if(type==8 || type == 9){
+                        if((!inputValue.toLowerCase().equals(MainActivity.getHomeCategory().getName().toLowerCase())
+                                && !inputValue.toLowerCase().equals(MainActivity.getFavCategory().getName().toLowerCase()))){
                             isValid = true;
                         }else{
                             //Prompt the user the user name input already exists in the list

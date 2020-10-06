@@ -44,6 +44,8 @@
             android:name=".EditAccountActivity" />
         <activity
             android:name=".AddCategoryAcitivity" />
+        <activity
+            android:name=".EditCategoryActivity" />
     </application>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>

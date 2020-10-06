@@ -121,7 +121,7 @@
     <string name="userNameNotEntered">Sorry, no user name entered in the input field</string>
 
     <!--    EditUserName Activity   -->
-    <string name="userNameNotChanged">Sorry, the user name value has been not changed</string>
+    <string name="userNameNotChanged">Sorry, the user name value has not been changed</string>
     <string name="userNameUpdated">The user name has been updated</string>
     <string name="userNameDeleted"> user name has been deleted</string>
     <string name="userNameDeleteTitle">Delete user name</string>
@@ -133,7 +133,7 @@
     <string name="psswrdNotEntered">Sorry, no password entered in the input field</string>
 
     <!--    EditPsswrd Activity   -->
-    <string name="psswrdNotChanged">Sorry, the password value has been not changed</string>
+    <string name="psswrdNotChanged">Sorry, the password value has not been changed</string>
     <string name="psswrdUpdated">The password has been updated</string>
     <string name="psswrdDeleted">password has been deleted</string>
     <string name="psswrdDeleteTitle">Delete password</string>
@@ -149,7 +149,7 @@
     <string name="answerNotEntered">Sorry, no answer entered in the input field</string>
 
     <!--    EditQuestion Activity-->
-    <string name="answerNoTChanged">Sorry, the answer value has been not changed</string>
+    <string name="answerNoTChanged">Sorry, the answer value has not been changed</string>
     <string name="questionAnswerNoTChanged">Sorry, at least one value must be changed (question or answer)</string>
     <string name="questionUpdated">The question has been updated</string>
     <string name="questionDeleted">question has been deleted</string>
@@ -161,6 +161,15 @@
     <string name="catNotEntered">Sorry, no category entered in the input field</string>
     <string name="catExists">Sorry, the category already exists</string>
     <string name="catNotAdded">Sorry, the category was not saved</string>
+
+    <!--    EditCategory Activity   -->
+    <string name="catNotChanged">Sorry, the category has not been changed</string>
+    <string name="categoryAndIconNoTChanged">Sorry, at least one value must be changed (category name or icon)</string>
+    <string name="catUpdated">The category has been updated</string>
+    <string name="catDeleted">category has been deleted</string>
+    <string name="catDeleteTitle">Delete category</string>
+    <string name="catDeleteMssg">Are you sure you want to delete this category?</string>
+
 
     <!--    AlertDialog texts-->
     <string name="alertBoxNewUser">Add user name</string>
