@@ -573,8 +573,6 @@ public class  MainActivity extends AppCompatActivity {
             //Check if result comes from AddAccountActivity
         }else if(requestCode == throwAddUserNameActReqCode && resultCode == RESULT_OK){
             Log.d("onActivityResult","Received GOOD result from AddUserNameActivity (received by MainActivity).");
-            //((UserNameAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getUserNameList());
-
             //Set variable to display Toast
             goodResultDelivered = true;
             //Define text to display Toast to confirm the account has been added
@@ -583,7 +581,6 @@ public class  MainActivity extends AppCompatActivity {
             Log.d("onActivityResult","Received BAD result from AddUserNameActivity (received by MainActivity).");
         }else if(requestCode == throwAddPsswrdActReqCode && resultCode == RESULT_OK){
             Log.d("onActivityResult","Received GOOD result from AddPsswrdActivity (received by MainActivity).");
-            //((PsswrdAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getPsswrdList());
             //Set variable to display Toast
             goodResultDelivered = true;
             //Define text to display Toast to confirm the account has been added
@@ -592,13 +589,19 @@ public class  MainActivity extends AppCompatActivity {
             Log.d("onActivityResult","Received BAD result from AddPsswrdActivity (received by MainActivity).");
         }else if(requestCode == throwAddQuestionActReqCode && resultCode == RESULT_OK){
             Log.d("onActivityResult","Received GOOD result from AddAccountActivity (received by MainActivity).");
-            //((SecurityQuestionAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getListQuestionsAvailableNoAnsw());
             //Set variable to display Toast
             goodResultDelivered = true;
             //Define text to display Toast to confirm the account has been added
             toastText = getResources().getString(R.string.questionAdded);
         }else if(requestCode == throwAddQuestionActReqCode && resultCode == RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from AddQuestionActivity (received by MainActivity).");
+        }else if(requestCode == throwAddCategoryReqCode && resultCode == Activity.RESULT_OK){
+            Log.d("onActivityResult","Received GOOD result from AddCategoryActivity (received by HomeFragment).");
+            goodResultDelivered = true;
+            categoryMenuUpdate = true;
+            toastText = data.getExtras().getString("categoryName") + " " + getResources().getString(R.string.catAdded);
+        }else if(requestCode == throwAddCategoryReqCode && resultCode == Activity.RESULT_CANCELED){
+            Log.d("onActivityResult","Received BAD result from AddCategoryActivity received by MainAcitvity.");
         }else if(requestCode == throwEditUserNameActReqCode && resultCode == RESULT_OK){
             Log.d("onActivityResult","Received GOOD result from EditUserNameActivity (received by MainActivity).");
             //Define text to display Toast to confirm the account has been added
@@ -620,7 +623,6 @@ public class  MainActivity extends AppCompatActivity {
             }else{
                 toastText = getResources().getString(R.string.psswrdUpdated);
             }
-            //((PsswrdAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getPsswrdList());
             //Set variable to display Toast
             goodResultDelivered = true;
         }else if(requestCode == throwEditPsswrdActReqCode && resultCode == RESULT_CANCELED){
@@ -633,14 +635,12 @@ public class  MainActivity extends AppCompatActivity {
             }else{
                 toastText = getResources().getString(R.string.questionUpdated);
             }
-            //((SecurityQuestionAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getListQuestionsAvailableNoAnsw());
             //Set variable to display Toast
             goodResultDelivered = true;
         }else if(requestCode == throwEditQuestionActReqCode && resultCode == RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from EditQuestionActivity (received by MainActivity).");
         }else if (requestCode == throwEditAccountActReqCode && resultCode == Activity.RESULT_OK) {
             Log.d("onActivityResult","Received GOOD result from EditAccountActivity (received by HomeFragment).");
-            //((AccountAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getAccountsList());
             //Define text to display Toast to confirm the account has been added
             //Set variable to display Toast
             goodResultDelivered = true;
@@ -649,16 +649,8 @@ public class  MainActivity extends AppCompatActivity {
             }else{
                 toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountUpdated);
             }
-
         }else if(requestCode == throwEditAccountActReqCode && resultCode == Activity.RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from EditAccountActivity (received by HomeFragment).");
-        }else if(requestCode == throwAddCategoryReqCode && resultCode == Activity.RESULT_OK){
-            Log.d("onActivityResult","Received GOOD result from AddCategoryActivity (received by HomeFragment).");
-            goodResultDelivered = true;
-            categoryMenuUpdate = true;
-            toastText = data.getExtras().getString("categoryName") + " " + getResources().getString(R.string.catAdded);
-        }else if(requestCode == throwAddCategoryReqCode && resultCode == Activity.RESULT_CANCELED){
-            Log.d("onActivityResult","Received BAD result from AddCategoryActivity received by MainAcitvity.");
         }else if(requestCode == throwEditCategoryActReqCode && resultCode == Activity.RESULT_OK){
             Log.d("onActivityResult","Received GOOD result from EditCategoryActivity received by MainAcitvity.");
             goodResultDelivered = true;
@@ -677,17 +669,23 @@ public class  MainActivity extends AppCompatActivity {
                 NavigationView navigationView = findViewById(R.id.nav_view);
                 //Get the position number of the updated menu item, which is already fixed on EditCategoryActivity
                 //for the AlartDialog numbering issue
-                int positionInCatList = data.getExtras().getInt("positionInCatList");
-                //Create category object pointing to category list position retrieved above
-                Category updatedCategory = this.categoryList.get(positionInCatList);
-                //Get the menu item in the same position as the one in the categor list
-                MenuItem menuItem = navigationView.getMenu().getItem(positionInCatList);
-                //@Fixme: this might cause problem with preloaded categories, as their name comes from the string resources, not form DB directly
-                //Set up the proper name, as this might be updated on previous activity
-                menuItem.setTitle(updatedCategory.getName());
-                //Set up the proper icon for each category (icon data comes from DB), as this might be updated from previous activity
-                idRes = this.getResources().getIdentifier(categoryList.get(positionInCatList).getIcon().getName(),"drawable",this.getPackageName());
-                menuItem.setIcon(idRes);
+                int positionInCatList =-1;
+                MenuItem menuItem =null;
+                if(requestCode == throwAddCategoryReqCode){
+                    positionInCatList = navigationView.getMenu().size()-1;
+                    this.updateNavMenu(navigationView.getMenu(),positionInCatList);
+                }else if(requestCode == throwEditCategoryActReqCode){
+                    positionInCatList = data.getExtras().getInt("positionInCatList");
+                    //Get the menu item in the same position as the one in the categor list
+                    menuItem = navigationView.getMenu().getItem(positionInCatList);
+                    //Create category object pointing to category list position retrieved above
+                    Category updatedCategory = this.categoryList.get(positionInCatList);
+                    //Set up the proper name, as this might be updated on previous activity
+                    menuItem.setTitle(updatedCategory.getName());
+                    //Set up the proper icon for each category (icon data comes from DB), as this might be updated from previous activity
+                    idRes = this.getResources().getIdentifier(categoryList.get(positionInCatList).getIcon().getName(),"drawable",this.getPackageName());
+                    menuItem.setIcon(idRes);
+                }
                 //Display Toast to confirm the account has been added
                 displayToast(this,toastText,Toast.LENGTH_LONG, Gravity.CENTER);
             }//End of if statement to check good result was delivered
