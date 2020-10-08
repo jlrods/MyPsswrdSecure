@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -82,52 +81,26 @@ public class EditCategoryActivity extends AddCategoryAcitivity {
                 //Flag to make sure all data was added on DB
                 boolean dbTransCompleted = true;
                 //Check if Category attributes are  valid
-                //Boolean flags to know what changed, the category name, the icon or both
-                boolean catNameChanged = !this.category.getName().equals(etNewItemField.getText().toString());
-                boolean iconChanged = !this.category.getIcon().getName().equals(this.categoryIcon.getName());
+
                 //Boolean flag to be checked later in code, if true continue with update process
-                boolean isIconAndCatNameValid = false;
-                //Check what piece of data changed during the edition process
-                if(iconChanged || catNameChanged){
-                    //If at least one changed, check if the category name changed, to check for validity
-                    if(catNameChanged){
-                        //Check the name is valid
-                        if(this.isDataValid(9,this.category.get_id())){
-                            //If valid, set flag to true
-                            isIconAndCatNameValid = true;
-                        }//End of is statement to check cat name is valid
-                    }else{
-                        //If name didn't change, no need for validation, set flag to true to continue with process
-                        isIconAndCatNameValid = true;
-                    }//End of if else statement to check if category name changed
-                }else{
+                boolean isIconAndCatNameValid;
+                //Check what piece of data changed during the edition process and the category name is valid by calling method to do the check
+                if(!(isIconAndCatNameValid=this.checkForCategoryChanges())){
                     //If no change, Throw user notification toast
                     //Prompt the user the category name or icon value have not changed
                     MainActivity.displayToast(this, getResources().getString(R.string.categoryAndIconNoTChanged), Toast.LENGTH_SHORT, Gravity.CENTER);
                 }//End of if else statement that check what piece of that changed
+
                 //If data changed and is valid, proceed with DB transactions
                 if(isIconAndCatNameValid){
-                    //Create the category object
                     //Check if icon is already in use in the DB, if not, insert the new icon in the Icon table
                     //Declare and initialize a new icon, populating its value with result from querying the DB for an Icon with the name of the
                     //icon selected by the user
-                    //@Fixme: make this section of code a method, so it can be called by Add cat or Edit Cat
-                    Icon iconInUse;
-                    if((iconInUse = this.accountsDB.getIconByName(this.categoryIcon.getName())) != null){
-                        //If icon is found on the DB, make this category icon the same as the icon in use
-                        this.categoryIcon = iconInUse;
-                    }else{
-                        //If the icon returns null, means it has to be stored in the DB
-                        if((iconID = this.accountsDB.addItem(this.categoryIcon))>0) {
-                            //If id number from DB returns greater that 0, means icon insertion was successful
-                            this.categoryIcon.set_id(iconID);
-                        }else{
-                            //Otherwise, raise boolean flag to prompt user about DB problem
-                            dbTransCompleted = false;
-                        }//End of if else statement to check the icon insertion was successful
-                    }//End of if else statement tha checks whether the icons is being used or not
+                    if(!isIconAssigned()){
+                        dbTransCompleted = false;
+                    }//End of if else statement tha checks whether the icons is being assigned
                     //Check if old icon still in use, if not, delete from the DB
-                    if(iconChanged){
+                    if(!this.category.getIcon().getName().equals(this.categoryIcon.getName())){
                         if(this.accountsDB.getTimesUsedIconInCategory(this.category.getIcon().get_id()) == 1){
                             if(!this.accountsDB.deleteItem(this.category.getIcon())){
                                 dbTransCompleted = false;
@@ -225,4 +198,28 @@ public class EditCategoryActivity extends AddCategoryAcitivity {
         Log.d("isQuestionPreLoaded","Exit the isQuestionPreLoaded method in AddQuestionActivity class.");
         return isPreloaded;
     }//End of isQuestionPreLoaded
+
+    private boolean checkForCategoryChanges(){
+        Log.d("checkForCategoryChanges","Enter checkForCategoryChanges method in EditCategoryActivity class.");
+        //Boolean flags to know what changed, the category name, the icon or both
+        boolean catNameChanged = !this.category.getName().equals(etNewItemField.getText().toString());
+        boolean iconChanged = !this.category.getIcon().getName().equals(this.categoryIcon.getName());
+        boolean isIconAndCatNameValid = false;
+        //Check what piece of data changed during the edition process
+        if(iconChanged || catNameChanged){
+            //If at least one changed, check if the category name changed, to check for validity
+            if(catNameChanged){
+                //Check the name is valid
+                if(this.isDataValid(9,this.category.get_id())){
+                    //If valid, set flag to true
+                    isIconAndCatNameValid = true;
+                }//End of is statement to check cat name is valid
+            }else{
+                //If name didn't change, no need for validation, set flag to true to continue with process
+                isIconAndCatNameValid = true;
+            }//End of if else statement to check if category name changed
+        }
+        Log.d("checkForCategoryChanges","Exit checkForCategoryChanges method in EditCategoryActivity class.");
+        return isIconAndCatNameValid;
+    } //End of checkForCategoryChanges method
 }//End of EditCategoryActivity class
