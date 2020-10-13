@@ -170,6 +170,15 @@
     <string name="catDeleteTitle">Delete category</string>
     <string name="catDeleteMssg">Are you sure you want to delete this category?</string>
 
+    <!--    Delete Category AlertDialog box   -->
+    <string name="noCatSelected">Sorry, no category has been selected</string>
+    <string name="wantToDeleteCatList">Are you sure you want to delete the following categor</string>
+    <string name="deleteCategory">Delete Category</string>
+    <string name="deleteCategoryFailed1">The category delete process was unsuccessful as the category:</string>
+    <string name="deleteCategoryFailed2">was not deleted from the app. If you selected other categories, they might not be deleted as the process stopped</string>
+    <string name="deleteCategoryAccDelFailed1">The category delete process was unsuccessful as the account:</string>
+    <string name="deleteCategorySuccessful"> category has been deleted</string>
+    <string name="deleteCategoriesSuccessful">The following categories have been deleted:</string>
 
     <!--    AlertDialog texts-->
     <string name="alertBoxNewUser">Add user name</string>

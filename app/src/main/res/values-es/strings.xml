@@ -120,7 +120,7 @@
 
     <!--    AddUserName Activity-->
     <string name="userNameAdded">Nuevo usuario agregado stisfactoriamente!</string>
-    <string name="userNameNotEntered">Lo siento, no ha introducino un nombre de usuario</string>
+    <string name="userNameNotEntered">Lo siento, no ha introducido un nombre de usuario</string>
 
     <!--    EditUserName Activity   -->
     <string name="userNameNotChanged">Lo siento, el nombre de usuario no ha sido cambiado</string>
@@ -132,7 +132,7 @@
 
     <!--    AddPsswrd Activity-->
     <string name="psswrdAdded">New password added successfully!</string>
-    <string name="psswrdNotEntered">Lo siento, no ha introducino una contraseña</string>
+    <string name="psswrdNotEntered">Lo siento, no ha introducido una contraseña</string>
 
     <!--    EditPsswrd Activity   -->
     <string name="psswrdNotChanged">Lo siento, la contrasseña no ha sido cambiada</string>
@@ -146,8 +146,8 @@
     <string name="addQuestQuestionHint">Escriba la pregunata nueva aquí...</string>
     <string name="addQuestAnswerHint">Escriba la respuesta nueva aquí...</string>
     <string name="questionAdded">Nueva pregunta agregada satisfactoriamente!</string>
-    <string name="questionNotEntered">Lo siento, no ha introducino la pregunta</string>
-    <string name="answerNotEntered">Lo siento, no ha introducino la respuesta</string>
+    <string name="questionNotEntered">Lo siento, no ha introducido la pregunta</string>
+    <string name="answerNotEntered">Lo siento, no ha introducido la respuesta</string>
 
     <!--    EditQuestion Activity-->
     <string name="answerNoTChanged">Lo siento, la respuesta no ha sido cambiada</string>
@@ -156,6 +156,30 @@
     <string name="questionDeleted">pregunta ha sido eliminada</string>
     <string name="questionDeleteTitle">Eliminar pregunta de seguridad</string>
     <string name="questionDeleteMssg">Está seguro que desea eliminar esta pregunta?</string>
+
+    <!--    AddCategory Activity-->
+    <string name="catAdded">categoría añadida exitosamente!</string>
+    <string name="catNotEntered">Lo siento, no ha introducido el nomber de la categoría</string>
+    <string name="catExists">Lo siento, la categoría ya existe</string>
+    <string name="catNotAdded">Lo siento, la catgoría no fue guardada</string>
+
+    <!--    EditCategory Activity   -->
+    <string name="catNotChanged">Lo siento, la catgoría no ha sido cambiada</string>
+    <string name="categoryAndIconNoTChanged">Lo siento, al menos un ítem debe ser cambiado (nombre de la categoría o el ícono)</string>
+    <string name="catUpdated">La categoría ha sido actualizada</string>
+    <string name="catDeleted">categoría ha sido eliminada</string>
+    <string name="catDeleteTitle">Eliminar categoría</string>
+    <string name="catDeleteMssg">Está seguro que desea eliminar esta categoría?</string>
+
+    <!--    Delete Category AlertDialog box   -->
+    <string name="noCatSelected">Lo siento, Sorry, no ha seleccionado ninguna categoría en la lista</string>
+    <string name="wantToDeleteCatList">Está seguro que desea eliminar la siguiente lista de categor</string>
+    <string name="deleteCategory">Eliminar categoría</string>
+    <string name="deleteCategoryFailed1">El proceso de eliminación de categoría no fue exitoso, ya que la siguiente categoría:</string>
+    <string name="deleteCategoryFailed2">no fue eliminada de la app. Si usted seleccionó otras categorías, puede que ellas no hayan sido eliminadas ya que el proceso se detuvo</string>
+    <string name="deleteCategoryAccDelFailed1">El proceso de eliminación de categoría no fue exitoso, ya que la cuenta :</string>
+    <string name="deleteCategorySuccessful"> categoría ha sido eliminada</string>
+    <string name="deleteCategoriesSuccessful">Las siguientes categorías han sido eliminadas:</string>
 
     <!--    AlertDialog texts-->
     <string name="alertBoxNewUser">Agregar Usuario</string>

@@ -28,10 +28,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
-import androidx.navigation.ActivityNavigator;
 import androidx.navigation.NavController;
-import androidx.navigation.NavDestination;
-import androidx.navigation.NavGraph;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
@@ -40,6 +37,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
 
@@ -644,6 +642,7 @@ public class  MainActivity extends AppCompatActivity {
             //Define text to display Toast to confirm the account has been added
             //Set variable to display Toast
             goodResultDelivered = true;
+            //@Fixme: Check EditAccountActivity, even for deleted accounts returns text account has been updated
             if(data.getExtras().getInt("accountID") == -1){
                 toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountDeleted);
             }else{
@@ -1099,8 +1098,7 @@ public class  MainActivity extends AppCompatActivity {
                     return false;
                 }//End of onMenuItemClick method
             });//End of setOnMenuItemClickListener method call
-
-        }
+        }//End of if statement that check start position variable
         //Declare and initialize variables to be used during method
         //int to store each menu item order in the menu
         int order =0;
@@ -1138,7 +1136,7 @@ public class  MainActivity extends AppCompatActivity {
                     Log.d("onMenuItemClick","Enter the onMenuItemClick method defined for each category menu item in the MainActivity class.");
                     MenuItem homeItem = navMenu.getItem(0);
                     //Set proper variables for the HomeFragment to handle the correct accounts list to be displayed: All categories, favorites or a specific category
-                    currentCategory = getCategoryPositionByID(item.getItemId());
+                    currentCategory = getCategoryInListByID(item.getItemId());
                     tabLayout.selectTab( tabLayout.getTabAt(0));
                     //Ask nav controller to load the HomeFragment class
                     navController.navigate(R.id.nav_home);
@@ -1163,18 +1161,11 @@ public class  MainActivity extends AppCompatActivity {
 
     //Method to give nav drawer lower menu actual functionality for adding, deleting and editing a category
     private void setUpLowerCategoryMenu(final Menu navMenu){
-        Log.d("setUpLowerCategoryMenu","Enter the updateNavMenu method in MainActivity class.");
+        Log.d("setUpLowerCategoryMenu","Enter the setUpLowerCategoryMenu method in MainActivity class.");
         //Get the add category button and assign onclick event listener
         navMenu.findItem(R.id.nav_addCategory).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                //Navigate to AddCategoryActivity
-                //Check the category name doesn't exist
-                    //If it does, display prompt
-
-                //Add extras to the intent object, specifically the current category where the add button was pressed from
-                //i.putExtra("category",this.currentCategory.toString());
-                //i.putExtra("_id",question.get_id());
                 //Start the AddItemActivity class
                 throwAddCategoryActivity();
                 return false;
@@ -1184,7 +1175,6 @@ public class  MainActivity extends AppCompatActivity {
         navMenu.findItem(R.id.nav_editCategory).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                //final Cursor categories = accountsDB.getCategoryListCursor();
                 final int[] selectedCategoryID = {0};
                 final int[] positionInList ={0};
                 //Iterate through the category list to transform into a charsequence list
@@ -1239,9 +1229,175 @@ public class  MainActivity extends AppCompatActivity {
         navMenu.findItem(R.id.nav_deleteCategory).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                //Display warning pop up
-                //Delete all accounts associated to this category
-                //Delete the category itself
+                final int[] selectedCategoryID = {0};
+                final int[] positionInList ={0};
+                //Iterate through the category list to transform into a charsequence list
+                final CharSequence[] categories = new CharSequence[categoryList.size()-INDEX_TO_GET_LAST_TASK_LIST_ITEM];
+                //another one to hold the isChecked attribute
+                final boolean[] deletableCategories = new boolean[categoryList.size()-INDEX_TO_GET_LAST_TASK_LIST_ITEM];
+                //For loop to populate the char-sequence array with the category names coming from category list
+                //Fixme: error out of index due the index to get last taks list item
+                for(int i=INDEX_TO_GET_LAST_TASK_LIST_ITEM;i<categoryList.size();i++){
+                    //For each item in the list, extract name and save it in the string array
+                    int textID = getResources().getIdentifier(categoryList.get(i).getName(),"string",getPackageName());
+                    CharSequence categoryName = "";
+                    //Get the name from the cursor
+                    if(textID > 0){
+                        //If res id number exists, set the category name as per the string text, not the string ID
+                        categoryName = getResources().getString(textID);
+                    }else{
+                        //In the case of not being a resource, print the text retrieved from DB
+                        categoryName = MainActivity.getCategoryList().get(i).getName();
+                    }//End of if else statement
+                    //String categoryName = categoryList.get(i).getName();
+                    //Save the name into the array to be passed into the AlertDialog constructor
+                    categories[i-INDEX_TO_GET_LAST_TASK_LIST_ITEM]=  categoryName;
+                    //Set the isChecked to false for all the categories
+                    //editableCategories[i]= false;
+                }//End of for loop to populate the taskList array
+                //Create a dialog box to display the grocery types
+                new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("Select Category to edit")
+                        .setMultiChoiceItems(categories, deletableCategories, new DialogInterface.OnMultiChoiceClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                                //When a category is selected, save it in the boolean array
+                                deletableCategories[which] = isChecked;
+                            }
+                        })
+                        .setPositiveButton(R.string.dialog_OK,new DialogInterface.OnClickListener(){
+                            public void onClick(DialogInterface dialog,int whichButton) {
+                                //Declare boolean flag to check if list with items to delete is empty or not
+                                boolean notEmpty = false;
+                                //Check the taskList is not empty
+                                //Declare and initialize an empty array list to hold the categories to be deleted
+                                final ArrayList<Category> categoriesToBeDeleted = new ArrayList<Category>();
+                                if (categories.length > 0) {
+                                    //If not empty  get the name of list to be deleted
+                                    for (int i = 0; i < categories.length; i++) {
+                                        //Check the category was selected to be deleted
+                                        if (deletableCategories[i]) {
+                                            categoriesToBeDeleted.add(categoryList.get(i+INDEX_TO_GET_LAST_TASK_LIST_ITEM));
+                                            //positionsToBeDeleted.add(i+INDEX_TO_GET_LAST_TASK_LIST_ITEM);
+                                            notEmpty = true;
+                                        }///End of for loop to go through the deletableTasks list
+                                    }//End of for loop to iterate through the list of Categories
+                                }//End of if statement that checks at least one category was selected
+                                //Check at least one category was selected for deletion, otherwise display an error message
+                                if(notEmpty){
+                                    //Declare and initialize a boolean flag to confirm the categories have been deleted
+                                    final boolean[] isCategoryDeleteProcessWithoutFault = {true};
+                                    //Declare and instantiate a string object to dynamically include the names of lists to be deleted in message
+                                    String deleteConfirmationMessage = getResources().getString(R.string.wantToDeleteCatList);
+                                    final String bulletPoint = "❌";
+                                    if(categoriesToBeDeleted.size()>1){
+                                        //Make the text plural if more than one category will be deleted
+                                        deleteConfirmationMessage += "ies: \n\t"+bulletPoint;
+                                    }else{
+                                        //Make the text singular if only one category will be deleted
+                                        deleteConfirmationMessage += "y: \n\t"+bulletPoint;
+                                    }//End of if else statement fo selected the proper warning message to display
+                                    //For loop to go through the list of categories to be deleted and add every list's name into the warning message
+                                    for(int i=0;i<categoriesToBeDeleted.size();i++){
+                                        //Add the current list name to the text
+                                        deleteConfirmationMessage += categoriesToBeDeleted.get(i).getName();
+                                        //Check this is not the last item in the list
+                                        if(i+1<categoriesToBeDeleted.size()){
+                                            //If it is not the last one, add an extra line and bullet
+                                            deleteConfirmationMessage += "\n\t"+bulletPoint;
+                                        }//End of if statement to check if it's the last one item in the list
+                                    }//End of for loop to include the list names to be deleted
+                                    //Display a final warning message summarizing  all the lists to be deleted and informing all the tasks in that lis will be deleted
+                                    new AlertDialog.Builder(MainActivity.this)
+                                            .setTitle(R.string.deleteCategory)
+                                            .setMessage(deleteConfirmationMessage)
+                                            .setPositiveButton(R.string.dialog_OK,new DialogInterface.OnClickListener(){
+                                                public void onClick(DialogInterface dialog,int whichButton){
+                                                    //If clicked Ok, delete the accounts associated to the selected category
+                                                    int i =0;
+                                                    while(i< categoriesToBeDeleted.size() && isCategoryDeleteProcessWithoutFault[0]){
+                                                        //Get a cursor list of accounts which category is the current one to be deleted
+                                                        ArrayList accountsToBeDeleted = accountsDB.getAccountsUsingItemWithID(MainActivity.getCategoryIdColumn(),categoriesToBeDeleted.get(i).get_id());
+                                                        int j=0;
+                                                        Account account = null;
+                                                        while(j<accountsToBeDeleted.size() && isCategoryDeleteProcessWithoutFault[0]){
+                                                            account = accountsDB.getAccountByID((int) accountsToBeDeleted.get(j));
+                                                            //Delete the current account in the list
+                                                            if(EditAccountActivity.deleteAccount(accountsDB,account)){
+                                                                isCategoryDeleteProcessWithoutFault[0] = true;
+                                                            }else{
+                                                                isCategoryDeleteProcessWithoutFault[0] = false;
+                                                                break;
+                                                            }//End of if else statement that checks the deletion of current account was successful
+                                                            j++;
+                                                        }//End of account list while loop
+                                                        //Check the deletion process went smoothly for the account list
+                                                        if(isCategoryDeleteProcessWithoutFault[0]){
+                                                            //Once the accounts associated to this category has been deleted, delete the category itself
+                                                            //accountsDB.deleteItem(categoriesToBeDeleted.get(i));
+                                                            if(accountsDB.deleteItem(categoriesToBeDeleted.get(i))){
+                                                                isCategoryDeleteProcessWithoutFault[0] = true;
+                                                            }else{
+                                                                isCategoryDeleteProcessWithoutFault[0] = false;
+                                                            }//End of if else statement that checks the deletion of current category was successful
+                                                        }else{
+                                                            //Display error message to notify an account was not deleted and the category deletion
+                                                            //process was interrupted and will not continue
+                                                            MainActivity.displayToast(MainActivity.this,getResources().getString(R.string.deleteCategoryAccDelFailed1)+account+" "+getResources().getString(R.string.deleteCategoryFailed2),Toast.LENGTH_SHORT,Gravity.CENTER);
+                                                        }//End of if else statement to check account deletion was successful
+                                                        i++;
+                                                    }//End of Category list while loop
+                                                    //Check why while loop ended, delete process finished correctly?
+                                                    if(isCategoryDeleteProcessWithoutFault[0]){
+                                                        //Update the list of current categories
+                                                        categoryList = accountsDB.getCategoryList();
+                                                        //Update the Nav drawer menu to display correct list of categories
+                                                        for(int k=0;k < categoriesToBeDeleted.size();k++){
+                                                            navMenu.removeItem(categoriesToBeDeleted.get(k).get_id());
+                                                        }//End of for loop to delete all menu items
+                                                        //Check if the current category is one of the categories just deleted
+                                                        if(isCurrentCategoryInListToBeDeleted(currentCategory.get_id(),categoriesToBeDeleted)){
+                                                            //If that the case, move current category to Home
+                                                            currentCategory = categoryList.get(0);
+                                                            //Then move Nav drawer menu item to Home
+                                                            navMenu.getItem(0).setCheckable(true);
+                                                            navMenu.getItem(0).setChecked(true);
+                                                            NavController navController = Navigation.findNavController(MainActivity.this, R.id.nav_host_fragment);
+                                                            //Ask nav controller to load the HomeFragment class
+                                                            navController.navigate(R.id.nav_home);
+                                                        }//End of if statement that checks if current category has been deleted
+                                                        //Finally, display toast to confirm category was deleted
+                                                        //Check the number of categories that were deleted
+                                                        String toastText ="";
+                                                        if(categoriesToBeDeleted.size() > 1){
+                                                            //Set text for multiple categories and iterate through the categories to be deleted list to add each category name
+                                                            toastText = getResources().getString(R.string.deleteCategoriesSuccessful);
+                                                            for(int l=0;l<categoriesToBeDeleted.size();l++){
+                                                                toastText += "\n\t"+bulletPoint+categoriesToBeDeleted.get(l).getName();
+                                                            }//End of for loop to iterate through categories to be deleted list
+                                                        }else{
+                                                            //If only one category was delete, set up proper message for singular category deleted
+                                                            toastText = categoriesToBeDeleted.get(0).getName()+ " "+getResources().getString(R.string.deleteCategorySuccessful);
+                                                        }//End of if statement that checks number of categories deleted
+                                                        //Display message to confirm category deletion process was successful
+                                                        displayToast(MainActivity.this,toastText,Toast.LENGTH_SHORT,Gravity.CENTER);
+                                                    }else{
+                                                        //Display error message to notify an the current category failed to be deleted and the deletion
+                                                        //process was interrupted and will not continue if  more categories were selected for deletion
+                                                        displayToast(MainActivity.this,getResources().getString(R.string.deleteCategoryFailed1)+categoriesToBeDeleted.get(i).getName()+" "+getResources().getString(R.string.deleteCategoryFailed2),Toast.LENGTH_SHORT,Gravity.CENTER);
+                                                    }//End of if else statement to check category deletion was successful
+                                                }//End of Onclick method
+                                            })//End of setPositiveButton method
+                                            .setNegativeButton(R.string.cancel,null)
+                                            .show();
+                                }else{
+                                    MainActivity.displayToast(MainActivity.this,getResources().getString(R.string.noCatSelected),Toast.LENGTH_SHORT,Gravity.CENTER);
+                                }// End of if else statement to check the list of categories is not empty
+                            }// End of onClick method
+                        })//End of setPositiveButton onClick listener method
+                        .setNegativeButton(R.string.cancel,null)
+                        .create()
+                        .show();
                 return false;
             }//End of onMenuItemClick method
         });//End of setOnMenuItemClickListener method call
@@ -1251,8 +1407,42 @@ public class  MainActivity extends AppCompatActivity {
     }//End of setUpLowerCategoryMenu method
 
     //Method to update the Nav Menu items when new task list are created or deleted. Used to populate the menu on onCreate method too
-    public Category getCategoryPositionByID(int _id) {
+    public static boolean isCurrentCategoryInListToBeDeleted(int _id, ArrayList<Category> categoriesToBeDeleted) {
+        Log.d("isCatInListToBeDeleted", "Enter the isCurrentCategoryInListToBeDeleted static method in MainActivity class.");
+        boolean found = false;
+        int i = 0;
+        while(i<categoriesToBeDeleted.size() && !found){
+            if(categoriesToBeDeleted.get(i).get_id() == _id){
+                found = true;
+                break;
+            }
+            i++;
+        }
+        Log.d("isCatInListToBeDeleted", "Exit the isCurrentCategoryInListToBeDeleted static method in MainActivity class.");
+        return found;
+    }//End of isCurrentCategoryInListToBeDeleted method
+
+    //Method to update the Nav Menu items when new task list are created or deleted. Used to populate the menu on onCreate method too
+    public static Category getCategoryInListByID(int _id) {
         Log.d("getCategoryPositionByID", "Enter the getCategoryPositionByID method in MainActivity class.");
+        boolean found = false;
+        int i = 0;
+        Category category = null;
+        while(i<categoryList.size() && !found){
+            if(categoryList.get(i).get_id() == _id){
+                category = categoryList.get(i);
+                found = true;
+                break;
+            }
+            i++;
+        }
+        Log.d("getCategoryPositionByID", "Exit the getCategoryPositionByID method in MainActivity class.");
+        return category;
+    }//End of getCategoryPositionByID method
+
+//    //Method to update the Nav Menu items when new task list are created or deleted. Used to populate the menu on onCreate method too
+    public static int getCategoryPositionByID(int _id) {
+        Log.d("getCategoryByName", "Enter the getCategoryByName method in MainActivity class.");
         boolean found = false;
         int i = 0;
         while(i<categoryList.size() && !found){
@@ -1262,8 +1452,8 @@ public class  MainActivity extends AppCompatActivity {
             }
             i++;
         }
-        Log.d("getCategoryPositionByID", "Exit the getCategoryPositionByID method in MainActivity class.");
-        return categoryList.get(i);
+        Log.d("getCategoryByName", "Exit the getCategoryByName method in MainActivity class.");
+        return i;
     }//End of getCategoryPositionByID method
 
 }//End of MainActivity class.

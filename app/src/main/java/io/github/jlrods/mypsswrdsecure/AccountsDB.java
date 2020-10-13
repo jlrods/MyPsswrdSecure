@@ -1244,6 +1244,8 @@ public class AccountsDB extends SQLiteOpenHelper {
             column = MainActivity.getPsswrdIdColumn();
         }else if(itemType.equals(MainActivity.getQuestionList())){
             column = MainActivity.getQuestionListIdColumn();
+        }else if(itemType.equals(MainActivity.getCategoryIdColumn())){
+            column = MainActivity.getCategoryIdColumn();
         }
         if(itemType.equals(MainActivity.getQUESTION())){
             //In case of questions, the SQL must be run differently as the accounts hold the question list ID and not the question ID itself

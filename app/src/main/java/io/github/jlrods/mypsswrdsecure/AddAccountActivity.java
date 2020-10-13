@@ -1,8 +1,6 @@
 package io.github.jlrods.mypsswrdsecure;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -26,7 +24,7 @@ public class AddAccountActivity extends DisplayAccountActivity {
         //Retrieve current category so the correct category can be selected on the category spinner
         int currentCategoryID = extras.getInt("category");
         if(currentCategoryID > 0){
-            spCategory.setSelection(currentCategoryID-1);
+            spCategory.setSelection(MainActivity.getCategoryPositionByID(currentCategoryID)-MainActivity.getIndexToGetLastTaskListItem());
         }
         Log.d("OnCreateDispAcc", "eXIT onCreate method in the AddAccountActivity class.");
     }//End of onCreate method
