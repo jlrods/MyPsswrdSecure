@@ -496,13 +496,12 @@ public class AccountsDB extends SQLiteOpenHelper {
             //if item is a Category object, update the Task table where the id corresponds
             table = MainActivity.getCategoryTable();
             itemName = ((Category)item).getName();
-            fields.put("Name",itemName);
+            fields.put(MainActivity.getNameColumn(),itemName);
             Icon icon = ((Category)item).getIcon();
             if(icon != null){
-                fields.put("IconID",(icon.get_id()));
+                fields.put(MainActivity.getIconIdColumn(),(icon.get_id()));
             }
-
-            Log.d("addCategory","Catgory to be added in the addItem method in AccountsDB class.");
+            Log.d("addCategory","Category to be added in the addItem method in AccountsDB class.");
         }else if(item instanceof Psswrd){
             table = MainActivity.getPsswrdTable();
             itemNameEcrypted = ((Psswrd)item).getValue();
@@ -527,36 +526,43 @@ public class AccountsDB extends SQLiteOpenHelper {
             table = MainActivity.getQuestionTable();
             fields.put("Value",itemName);
             fields.put("AnswerID",((Question) item).getAnswer().get_id());
-            Log.d("addQuestion", "User name to be added in the addItem method in AccountsDB class.");
+            Log.d("addQuestion", "Question to be added in the addItem method in AccountsDB class.");
         }else if(item instanceof QuestionList){
             QuestionList questionList = (QuestionList) item;
             table = MainActivity.getQuestionlistTable();
             for(int i=0;i< questionList.getSize();i++){
                 fields.put("QuestionID"+(i+1),questionList.getQuestions().get(i).get_id());
             }//End of for loop to add all question ids in the question list
+            Log.d("addQuestionList","QuestionList to be added in the addItem method in AccountsDB class.");
         }else if(item instanceof Icon){
             table = MainActivity.getIconTable();
-            fields.put("Name",((Icon)item).getName());
+            fields.put(MainActivity.getNameColumn(),((Icon)item).getName());
             fields.put("Location",((Icon)item).getLocation());
             //fields.put("ResourceID",((Icon)item).getResourceID());
             fields.put("isSelected",  toInt(((Icon)item).isSelected()));
+            Log.d("addIcon","Icon to be added in the addItem method in AccountsDB class.");
+        }else if(item instanceof AppLoggin){
+            table = MainActivity.getApplogginTable();
+            fields.put(MainActivity.getNameColumn(),((AppLoggin)item).getName());
+            fields.put("Message",((AppLoggin)item).getMessage());
+            Log.d("addAppLoggin","AppLoggin to be added in the addItem method in AccountsDB class.");
         }else if(item instanceof Account){
             table = MainActivity.getAccountsTable();
             Account account = (Account) item;
-            fields.put("Name",account.getName());
-            fields.put("CategoryID",account.getCategory().get_id());
-            fields.put("UserNameID",account.getUserName().get_id());
-            fields.put("PsswrdID",account.getPsswrd().get_id());
+            fields.put(MainActivity.getNameColumn(),account.getName());
+            fields.put(MainActivity.getCategoryIdColumn(),account.getCategory().get_id());
+            fields.put(MainActivity.getUserNameIdColumn(),account.getUserName().get_id());
+            fields.put(MainActivity.getPsswrdIdColumn(),account.getPsswrd().get_id());
             //Check if security question list is being used for this account
             if(account.getQuestionList() != null && account.getQuestionList().getSize()>0){
-                fields.put("QuestionListID",account.getQuestionList().get_id());
+                fields.put(MainActivity.getQuestionListIdColumn(),account.getQuestionList().get_id());
             }
-            fields.put("IconID",account.getIcon().get_id());
-            fields.put("IsFavorite",account.isFavorite());
+            fields.put(MainActivity.getIconIdColumn(),account.getIcon().get_id());
+            fields.put(MainActivity.getIsFavoriteColumn(),account.isFavorite());
             fields.put("DateCreated",account.getDateCreated());
             //A password renew date is always given,either an actual long number or 0 if not required
             fields.put("DateChange",account.getDateChange());
-            Log.d("addTask","Task to be added in the addItem method in TasksDB class.");
+            Log.d("addAccount","Account to be added in the addItem method in AccountsDB class.");
         }//End of if else statements
         id = (int) db.insert(table,null,fields);
         //Final insertion for question assignment in case the item just inserted was QuestionList object
@@ -575,7 +581,7 @@ public class AccountsDB extends SQLiteOpenHelper {
             }//End of if statement to check the id is valid
         }//End of if statement to check the item type
         db.close();
-        Log.d("Ext_addTask","Exit addTask method in TasksDB class.");
+        Log.d("Ext_addItem","Exit addItem method in AccountsDB class.");
         //Return id of item just added into database
         return id;
     }//End of addTask method
@@ -643,6 +649,20 @@ public class AccountsDB extends SQLiteOpenHelper {
     public Cursor getIconList(){
         return  this.runQuery("SELECT * FROM ICON");
     }
+
+    //Method to get a specific Category, by passing in its DB _id as an argument
+    public Cursor getAppLoginCursor(int _id){
+        Log.d("getCategoryByID","Enter the getCategoryByID method in the AccountsDB class.");
+        Cursor cursor = this.runQuery("SELECT * FROM "+MainActivity.getApplogginTable()+" WHERE "+MainActivity.getIdColumn()+" = "+ _id);
+//        if(cursor.moveToFirst()){
+//            Log.d("getCategoryByID","Exit successfully (category with id " +_id+ " has been found) the getCategoryByID method in the AccountsDB class.");
+//            return Category.extractCategory(cursor);
+//        }else{
+//            Log.d("getCategoryByID","Exit the getCategoryByID method in the AccountsDB class without finding the category with id: "+_id);
+//            return null;
+//        }//End of if else statement
+        return cursor;
+    }//End of getUserNameByID method
 
     //Method to get a specific Category, by passing in its DB _id as an argument
     public Category getCategoryByID(int _id){

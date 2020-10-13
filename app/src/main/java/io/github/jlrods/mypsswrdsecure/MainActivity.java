@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.Menu;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -114,6 +115,7 @@ public class  MainActivity extends AppCompatActivity {
     private static final String ICON_ID_COLUMN ="IconID";
     private static final String ID_COLUMN = "_id";
     private static final String IS_FAVORITE_COLUMN = "IsFavorite";
+    private static final String NAME_COLUMN = "Name";
 
     private static Uri uriCameraImage = null;
     private static final String EXTERNAL_IMAGE_STORAGE_CLUE = "content://";
@@ -270,12 +272,6 @@ public class  MainActivity extends AppCompatActivity {
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-//        mAppBarConfiguration = new AppBarConfiguration.Builder(
-//                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow)
-//                .setDrawerLayout(drawer)
-//                .build();
         mAppBarConfiguration = new AppBarConfiguration.Builder(R.id.mobile_navigation)
                 .setDrawerLayout(drawer)
                 .build();
@@ -285,6 +281,41 @@ public class  MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
         this.setUpLowerCategoryMenu(navigationView.getMenu());
         this.updateNavMenu(navigationView.getMenu(),INDEX_TO_GET_LAST_TASK_LIST_ITEM);
+        View headerView = navigationView.getHeaderView(0);
+        //Set up user data on the nav drawer
+        //@Fixme: define method in accountsDB class
+        Cursor appLoginCursor = accountsDB.getAppLoginCursor(accountsDB.getMaxItemIdInTable(APPLOGGIN_TABLE));
+        TextView tvUserName = (TextView) headerView.findViewById(R.id.tvUserName);
+        tvUserName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //setUserProfileName();
+                setUserProfileText(1,(TextView)v);
+            }
+        });
+        TextView tvUserMessage = (TextView) headerView.findViewById(R.id.tvUserMessage);
+        tvUserMessage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //setUserProfileMessage();
+                setUserProfileText(2,(TextView)v);
+            }
+        });
+        if(appLoginCursor.moveToNext()){
+//            if(!appLogin.getString().equals("")){
+//                imgUserProfile.setImageURI(Uri.parse(appLogin.getString()));
+//            }
+            tvUserName.setText(appLoginCursor.getString(3));
+            tvUserMessage.setText(appLoginCursor.getString(5));
+        }else{
+            //Create applogin with null username and null password
+            //@Fixme: applogin will be created on the very first activity when user login for first time, since I'm not loading anything on the DB side, it can be created programatically here
+            AppLoggin appLoggin = new AppLoggin();
+            appLoggin.setName("Android Studio");
+            appLoggin.setEmail("example@android.com");
+            appLoggin.setMessage("Test message!");
+            accountsDB.addItem(appLoggin);
+        }//End of if statement to check user cursor is not empty
 
     }//End of onCreate method
 
@@ -894,6 +925,10 @@ public class  MainActivity extends AppCompatActivity {
         return ID_COLUMN;
     }
 
+    public static String getNameColumn() {
+        return NAME_COLUMN;
+    }
+
     public static String getIsFavoriteColumn() {
         return IS_FAVORITE_COLUMN;
     }
@@ -1401,8 +1436,6 @@ public class  MainActivity extends AppCompatActivity {
                 return false;
             }//End of onMenuItemClick method
         });//End of setOnMenuItemClickListener method call
-
-
         Log.d("setUpLowerCategoryMenu","Enter the updateNavMenu method in MainActivity class.");
     }//End of setUpLowerCategoryMenu method
 
@@ -1440,7 +1473,7 @@ public class  MainActivity extends AppCompatActivity {
         return category;
     }//End of getCategoryPositionByID method
 
-//    //Method to update the Nav Menu items when new task list are created or deleted. Used to populate the menu on onCreate method too
+    //Method to update the Nav Menu items when new task list are created or deleted. Used to populate the menu on onCreate method too
     public static int getCategoryPositionByID(int _id) {
         Log.d("getCategoryByName", "Enter the getCategoryByName method in MainActivity class.");
         boolean found = false;
@@ -1455,5 +1488,75 @@ public class  MainActivity extends AppCompatActivity {
         Log.d("getCategoryByName", "Exit the getCategoryByName method in MainActivity class.");
         return i;
     }//End of getCategoryPositionByID method
+    
+
+    //Method to update User Profile Name
+    private void setUserProfileText(int type, final TextView tvUserText){
+        Log.d("Ent_setProfName","Enter setUserProfileName method in the MainActivity class.");
+        //Declare and instantiate a new EditText object
+        final EditText input= new EditText(this);
+        //Set text to empty text
+        //input.setText("");
+        //Populate current name in the input text and get focus
+        final NavigationView navigationView = findViewById(R.id.nav_view);
+        View headerView = navigationView.getHeaderView(0);
+        //TextView tvUserName = (TextView) headerView.findViewById(R.id.tvUserName);
+        input.setText(tvUserText.getText());
+        input.requestFocus();
+        String title = "";
+        String message = "";
+        final String[] dbErrorMessage = {""};
+        final String[] emptyFieldErrorMessage ={""};
+        final String[] columnToBeUpdated ={""};
+        switch(type){
+            case 1:
+                title = getResources().getString(R.string.setUserName);
+                message = getResources().getString(R.string.inputUserName);
+                dbErrorMessage[0] = getResources().getString(R.string.unableUpdateUserName);
+                emptyFieldErrorMessage[0] = getResources().getString(R.string.blankUserName);
+                columnToBeUpdated[0] = NAME_COLUMN;
+                break;
+            case 2:
+                title = getResources().getString(R.string.setUserMessage);
+                message = getResources().getString(R.string.inputUserMessage);
+                dbErrorMessage[0] = getResources().getString(R.string.unableUpdateUserMessage);
+                emptyFieldErrorMessage[0] = getResources().getString(R.string.blankUserMessage);
+                columnToBeUpdated[0] = "Message";
+                break;
+        }
+        //Display a Dialog to ask for the List name (New Category)
+        new AlertDialog.Builder(this)
+                .setTitle(title)//Set title
+                .setMessage(message)// Set the message that clarifies the requested action
+                .setView(input)
+                .setPositiveButton(R.string.dialog_OK,new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog,int whichButton){
+                        String userText = input.getText().toString();
+                        //Check the input field is not empty
+                        if(!userText.trim().equals("")){
+                            //View headerView = navigationView.getHeaderView(0);
+                            //TextView tvUserName = (TextView) headerView.findViewById(R.id.tvUserName);
+                            //Try to update user name on the DB and check result from DB
+                            ContentValues values = new ContentValues();
+                            values.put(ID_COLUMN,accountsDB.getMaxItemIdInTable(MainActivity.getApplogginTable()));
+                            values.put(columnToBeUpdated[0],userText);
+                            if(accountsDB.updateTable(APPLOGGIN_TABLE,values)){
+                                tvUserText.setText(input.getText());
+                            }else{
+                                //Display error message if the boolean received from DB is false
+                                displayToast(MainActivity.this,dbErrorMessage[0],Toast.LENGTH_SHORT,Gravity.CENTER);
+                            }//End of if else statement to update the user data and receive result of that DB action
+                        }else{
+                            //If input field is empty, display an error message
+                            displayToast(MainActivity.this,emptyFieldErrorMessage[0],Toast.LENGTH_SHORT,Gravity.CENTER);
+                            //input.requestFocus();
+                        }//End of if else statement to check the input field is not left blank
+                    }//Define the positive button
+                })//End of AlertDialog Builder
+                .setNegativeButton(R.string.cancel,null)
+                .create()
+                .show();
+        Log.d("Ext_setProfName","Exit setUserProfileName method in the MainActivity class.");
+    }//End of setUserProfileName method
 
 }//End of MainActivity class.

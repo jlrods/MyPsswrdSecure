@@ -189,8 +189,16 @@
     <string name="alertBoxNewPsswrdMssg">Por favor, introduzca una nueva contraseña</string>
     <string name="alertBoxNewPsswrdHint">Escriba la contraseña aquí...</string>
     <string name="generalPermitRqst">Solicitud de permiso</string>
-    <string name="galleryAccesRqst">Sin este permiso la app no podrá accesar sus imagenes en la galería.</string>
-    <string name="cameraAccesRqst">Sin este permiso la app no podrá accesar la cámara.</string>
+    <string name="galleryAccesRqst">Sin este permiso la app no podrá accesar sus imagenes en la galería</string>
+    <string name="cameraAccesRqst">Sin este permiso la app no podrá accesar la cámara</string>
+    <string name="setUserName">Introduzca el nombre de usuario</string>
+    <string name="inputUserName">Por favor, tipee el nombre de su usuario:</string>
+    <string name="unableUpdateUserName">Algo ha ido mal!!! Nombre de usuario no pudo ser actualizado</string>
+    <string name="blankUserName">El nombre de usuario no se puede dejar en blanco. Por favor, tipee un nombre en el campo indicado</string>
+    <string name="setUserMessage">Introduzca el mensaje de usuario</string>
+    <string name="inputUserMessage">Por favor, tipee su mensaje personalizado:</string>
+    <string name="unableUpdateUserMessage">Algo ha ido mal!!! El mensaje de usuario no pudo ser actualizado</string>
+    <string name="blankUserMessage">El mensaje de usuario no se puede dejar en blanco. Por favor, tipee un nombre en el campo indicado</string>
 
     <!--    Snackbar texts-->
     <string name="snackBarUndo">UNDO</string>

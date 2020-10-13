@@ -188,8 +188,18 @@
     <string name="alertBoxNewPsswrdMssg">Please, enter a new password</string>
     <string name="alertBoxNewPsswrdHint">Type password here...</string>
     <string name="generalPermitRqst">Permit request</string>
-    <string name="galleryAccesRqst">Without this permit the app will not be able to load pictures from your gallery.</string>
-    <string name="cameraAccesRqst">Without this permit the app will not be able to load pictures from your camera.</string>
+    <string name="galleryAccesRqst">Without this permit the app will not be able to load pictures from your gallery</string>
+    <string name="cameraAccesRqst">Without this permit the app will not be able to load pictures from your camera</string>
+    <string name="setUserName">Set user name</string>
+    <string name="inputUserName">Please enter your name:</string>
+    <string name="unableUpdateUserName">Something went wrong!!! Unable to update the user name</string>
+    <string name="blankUserName">The user name cannot be left in blank. Please, type a name in the input field</string>
+    <string name="setUserMessage">Set user message</string>
+    <string name="inputUserMessage">Please enter your custom message:</string>
+    <string name="unableUpdateUserMessage">Something went wrong!!! Unable to update the user message</string>
+    <string name="blankUserMessage">The user message cannot be left in blank. Please, type a message in the input field</string>
+
+
 
 
     <!--    Snackbar texts-->

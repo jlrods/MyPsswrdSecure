@@ -115,7 +115,7 @@ public class EditCategoryActivity extends AddCategoryAcitivity {
                         //Store data to be updated on the DB
                         ContentValues values = new ContentValues();
                         values.put(MainActivity.getIdColumn(),this.category.get_id());
-                        values.put("Name",this.category.getName());
+                        values.put(MainActivity.getNameColumn(),this.category.getName());
                         values.put(MainActivity.getIconIdColumn(),this.category.getIcon().get_id());
                         //Run DB query to update new category and check for result
                         if(!this.accountsDB.updateTable(MainActivity.getCategoryTable(),values)){
