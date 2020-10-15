@@ -3,18 +3,42 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
+    <group
+        android:id="@+id/categoryListMenu"
+        android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/home"
             android:title="@string/menu_home" />
         <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="@string/menu_gallery" />
-        <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="@string/menu_slideshow" />
+            android:id="@+id/nav_favorites"
+            android:icon="@android:drawable/btn_star_big_on"
+            android:title="@string/menu_favorites" />
+<!--        <item-->
+<!--            android:id="@+id/nav_slideshow"-->
+<!--            android:icon="@drawable/ic_menu_slideshow"-->
+<!--            android:title="@string/menu_slideshow" />-->
+    </group>
+
+    <group
+        android:id="@+id/categoryMenu"
+        android:checkableBehavior="single"
+        android:orderInCategory="2000">
+        <item android:title="Categories">
+            <menu>
+                <item
+                    android:id="@+id/nav_addCategory"
+                    android:icon="@android:drawable/ic_menu_add"
+                    android:title="Add category" />
+                <item
+                    android:id="@+id/nav_editCategory"
+                    android:icon="@android:drawable/ic_menu_edit"
+                    android:title="Edit Category" />
+                <item
+                    android:id="@+id/nav_deleteCategory"
+                    android:icon="@android:drawable/ic_menu_delete"
+                    android:title="Delete Category" />
+            </menu>
+        </item>
     </group>
 </menu>

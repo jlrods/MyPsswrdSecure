@@ -23,7 +23,7 @@ public class SelectLogoActivity extends AppCompatActivity {
         Log.d("SelLogOnCreate","Enter onCreate method in SelectLogoActivity class.");
         setContentView(R.layout.activity_select_logo);
         final RecyclerView rvLogos = (RecyclerView) findViewById(R.id.layout_rec_view_logo);
-        final IconAdapter iconAdapter = new IconAdapter(this);
+        final IconAdapter iconAdapter = new IconAdapter(this, MainActivity.getAccountsLogos());
         //Extract extra data from Bundle object
         extras = getIntent().getExtras();
         selectedPosition = extras.getInt("selectedImgPosition");

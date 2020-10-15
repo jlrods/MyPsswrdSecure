@@ -180,5 +180,4 @@ public class EditQuestionActivity extends AddQuestionActivity {
         }//End of switch statement
         return result;
     }//End of onOptionsItemSelected method
-
 }//End of EditQuestionActivity class

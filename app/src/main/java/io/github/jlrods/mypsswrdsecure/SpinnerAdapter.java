@@ -49,7 +49,7 @@ public class SpinnerAdapter extends CursorAdapter implements android.widget.Spin
         }else{
             //In the case of not being a resource, print the text retrieved from DB
             //tvItem.setText(stringName);
-            tvItem.setText(cryptographer.decryptText(stringName.getBytes(),cryptographer.getIv()));
+            tvItem.setText(stringName);
         }//End of if else statement
 
         Log.d("Ent_bindView","Exit bindView method to populate spinners in SpinnerAdapter class.");

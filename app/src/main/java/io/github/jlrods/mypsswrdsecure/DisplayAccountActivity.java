@@ -299,7 +299,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         //Call method to setup the Questions Available spinner and populate with data
         this.initQuesitonAvailableListSpinner();
         //Initialize the iconAdapter to be able to communicate with SelectLogoAct and find the selected logo in this Activity
-        this.iconAdapter = new IconAdapter(this);
+        this.iconAdapter = new IconAdapter(this,MainActivity.getAccountsLogos());
         Log.d("OnCreateDispAcc","Exit onCreate method in the DisplayAccountActivity abstract class.");
     }//End of onCreate method
 
@@ -923,12 +923,6 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         }else if(requestCode == MainActivity.getThrowImageCameraReqCode() && resultCode == Activity.RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from Camera intent received by the DisplayAccountActivity class.");
         }//End of if statement that checks the resultCode is OK
-//        else if(requestCode == MainActivity.getThrowImageGalleryReqCode() && resultCode == Activity.RESULT_OK){
-//            //Set the image as per path coming from the intent. The data can be parsed as an uri
-//            String uri = data.getDataString();
-//            this.logo.setLocation(uri);
-//            this.imgAccLogo.setImageURI(Uri.parse(uri));
-//        }//End of if statement that checks the resultCode is OK
         Log.d("onActivityResult","Exit the onActivityResult method in the DisplayAccountActivity class.");
     }//End of onActivityResult method
 

@@ -1,14 +1,11 @@
 package io.github.jlrods.mypsswrdsecure;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -21,6 +18,14 @@ public class AddAccountActivity extends DisplayAccountActivity {
         Log.d("OnCreateDispAcc", "Enter onCreate method in the a AddAccountActivity class.");
         //Set up the Created date
         this.setDateText(this.tvAccDateCreated,System.currentTimeMillis());
+        //Add extras to the intent object, specifically the current category where the add button was pressed from
+        //Extract extra data from owner Activity
+        this.extras = getIntent().getExtras();
+        //Retrieve current category so the correct category can be selected on the category spinner
+        int currentCategoryID = extras.getInt("category");
+        if(currentCategoryID > 0){
+            spCategory.setSelection(MainActivity.getCategoryPositionByID(currentCategoryID)-MainActivity.getIndexToGetLastTaskListItem());
+        }
         Log.d("OnCreateDispAcc", "eXIT onCreate method in the AddAccountActivity class.");
     }//End of onCreate method
 

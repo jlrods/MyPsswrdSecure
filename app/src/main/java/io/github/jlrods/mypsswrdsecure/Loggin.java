@@ -20,7 +20,7 @@ abstract class Loggin {
     //Constructors
     protected Loggin(){
         Log.d("LogginDef_Ent","Enter Loggin Default Constructor");
-        this._id = 0;
+        this._id = -1;
         this.name="";
         this.userName = null;
         this.psswrd = null;

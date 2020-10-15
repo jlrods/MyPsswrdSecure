@@ -19,9 +19,9 @@ public class EditPsswrdActivity extends AddPsswrdActivity {
         super.onCreate(savedInstanceState);
         Log.d("OnCreateEditPsswrd","Enter onCreate method in the EditPsswrdActivity class.");
         this.extras = getIntent().getExtras();
-        //Extract user name by passing in the _id attribute stored in the extras
+        //Extract password by passing in the _id attribute stored in the extras
         this.psswrd = Psswrd.extractPsswrd(this.accountsDB.getPsswrdCursorByID(this.extras.getInt("_id")));
-        //Set the edit text field with the user name value after decryption
+        //Set the edit text field with the password value after decryption
         this.etNewItemField.setText(this.cryptographer.decryptText(this.psswrd.getValue(),new IvParameterSpec(this.psswrd.getIv())));
         this.fabDelete.setVisibility(View.VISIBLE);
         //Set up fab onClick event listener by creating a new object of the sub class which handles this event
@@ -46,7 +46,7 @@ public class EditPsswrdActivity extends AddPsswrdActivity {
         switch (item.getItemId()) {
             case R.id.select_logo_save:
                 Log.d("onOptionsItemSelected","Save option selected on onOptionsItemSelected method in EditPsswrdActivity class.");
-                //Get the new user name text
+                //Get the new password text
                 String psswrdValue = this.etNewItemField.getText().toString().trim();
                 //Check for UI data validity
                 if(this.isDataValid(4,this.psswrd.get_id())){

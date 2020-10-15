@@ -15,7 +15,7 @@ import androidx.appcompat.app.AlertDialog;
 
 public class EditAccountActivity extends DisplayAccountActivity {
     //Attribute definition
-    private Bundle extras;
+    //private Bundle extras;
     final private Intent[] intents = {new Intent()};
     //Method definition
     @Override
@@ -209,28 +209,28 @@ public class EditAccountActivity extends DisplayAccountActivity {
                                 //Any other sub-item, not being used in any account will be removed form DB: This means QuestionList,
                                 //QuestionAssignment, Icon if the icon comes from URI
                                 //Check the QuestionList (if applicable) has to be deleted
-                                if(account.getQuestionList() != null){
-                                    if(accountsDB.getTimesUsedQuestionList(account.getQuestionList().get_id()) <= 1){
-                                        //Delete the question assignments
-                                        accountsDB.deleteRowFromTable(MainActivity.getQuestionassignmentTable(),MainActivity.getQuestionListIdColumn(),account.getQuestionList().get_id());
-                                        //Delete the list
-                                        accountsDB.deleteItem(account.getQuestionList());
-                                    }//End of if statement to check how many times the list is being used
-                                }//End of if statement to check th question list isn't null
-                                //Check the icon, if icon comes from URI, delete from DB if used only once
-                                Icon icon = account.getIcon();
-                                if(icon != null){
-                                    if(!icon.getLocation().equals(MainActivity.getRESOURCES()) && !icon.equals(MainActivity.getMyPsswrdSecureLogo())){
-                                        //Get the number of times used
-                                        if(accountsDB.getAccountsWithSpecifcValue(MainActivity.getIconIdColumn(),icon.get_id()).getCount() <=1){
-                                            //Delete icon from DB
-                                            accountsDB.deleteRowFromTable(MainActivity.getIconTable(),MainActivity.getIdColumn(),icon.get_id());
-                                        }//End of if statement to check the number of times the icon is being used
-                                    }//End of if statement to check the isn't a resource file
-                                }//End of if statement to check the icon isn't null
+//                                if(account.getQuestionList() != null){
+//                                    if(accountsDB.getTimesUsedQuestionList(account.getQuestionList().get_id()) <= 1){
+//                                        //Delete the question assignments
+//                                        accountsDB.deleteRowFromTable(MainActivity.getQuestionassignmentTable(),MainActivity.getQuestionListIdColumn(),account.getQuestionList().get_id());
+//                                        //Delete the list
+//                                        accountsDB.deleteItem(account.getQuestionList());
+//                                    }//End of if statement to check how many times the list is being used
+//                                }//End of if statement to check th question list isn't null
+//                                //Check the icon, if icon comes from URI, delete from DB if used only once
+//                                Icon icon = account.getIcon();
+//                                if(icon != null){
+//                                    if(!icon.getLocation().equals(MainActivity.getRESOURCES()) && !icon.equals(MainActivity.getMyPsswrdSecureLogo())){
+//                                        //Get the number of times used
+//                                        if(accountsDB.getAccountsWithSpecifcValue(MainActivity.getIconIdColumn(),icon.get_id()).getCount() <=1){
+//                                            //Delete icon from DB
+//                                            accountsDB.deleteRowFromTable(MainActivity.getIconTable(),MainActivity.getIdColumn(),icon.get_id());
+//                                        }//End of if statement to check the number of times the icon is being used
+//                                    }//End of if statement to check the isn't a resource file
+//                                }//End of if statement to check the icon isn't null
 
                                 //Now the account can be deleted
-                                if(accountsDB.deleteItem(account)){
+                                if(deleteAccount(accountsDB,account)){
                                     //Call method to update data set displayed on the recycler view and display proper message after adding the grocery to the DB
                                     //Put extra info to transfer to the Main activity
                                     intents[0].putExtra("accountID",-1);
@@ -290,6 +290,42 @@ public class EditAccountActivity extends DisplayAccountActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d("onActivityResult","Enter/Exit the onActivityResult method in the DisplayAccountActivity class.");
+        Log.d("onActivityResult","Enter/Exit the onActivityResult method in the EditAccountActivity class.");
     }//End of onActivityResult method
+
+    //Method to delete the required items not being used by any other account when an account is deleted on its own or as part of category deletion
+    public static boolean deleteAccount(AccountsDB accountsDB,Account account){
+        Log.d("deleteAccount","Enter the deleteAccount static method in the EditAccountActivity class.");
+        boolean isAccountDeleted = false;
+        //If Ok was pressed, call DB method that runs query that deletes an account from Accounts table by passing in it's _id
+        //But, before deleting the account, check the components that make up the account, check if they are not being used
+        //any longer and delete them from the DB if required. User names, passwords, questions, categories and resource icons  are the only
+        //exceptions, where they will be able to exist in DB even when not being used.
+        //Any other sub-item, not being used in any account will be removed form DB: This means QuestionList,
+        //QuestionAssignment, Icon if the icon comes from URI
+        //Check the QuestionList (if applicable) has to be deleted
+        if(account.getQuestionList() != null){
+            if(accountsDB.getTimesUsedQuestionList(account.getQuestionList().get_id()) <= 1){
+                //Delete the question assignments
+                accountsDB.deleteRowFromTable(MainActivity.getQuestionassignmentTable(),MainActivity.getQuestionListIdColumn(),account.getQuestionList().get_id());
+                //Delete the list
+                accountsDB.deleteItem(account.getQuestionList());
+            }//End of if statement to check how many times the list is being used
+        }//End of if statement to check th question list isn't null
+        //Check the icon, if icon comes from URI, delete from DB if used only once
+        Icon icon = account.getIcon();
+        if(icon != null){
+            if(!icon.getLocation().equals(MainActivity.getRESOURCES()) && !icon.equals(MainActivity.getMyPsswrdSecureLogo())){
+                //Get the number of times used
+                if(accountsDB.getAccountsWithSpecifcValue(MainActivity.getIconIdColumn(),icon.get_id()).getCount() <=1){
+                    //Delete icon from DB
+                    accountsDB.deleteRowFromTable(MainActivity.getIconTable(),MainActivity.getIdColumn(),icon.get_id());
+                }//End of if statement to check the number of times the icon is being used
+            }//End of if statement to check the isn't a resource file
+        }//End of if statement to check the icon isn't null
+
+        isAccountDeleted = accountsDB.deleteItem(account);
+        Log.d("deleteAccount","Exit the deleteAccount static method in the EditAccountActivity class.");
+        return isAccountDeleted;
+    }//End of deleteAccount static method
 }//End of EditAccountActivity class

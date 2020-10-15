@@ -32,7 +32,7 @@ public class HomeFragment extends Fragment {
     //Attribute declaration
     //private HomeViewModel homeViewModel;
     private static AccountsDB accountsDB; // Object to manage all DB actions
-    private static RecyclerView rv=null; // RV object to populate data on the Fragment
+    private static RecyclerView rv = null; // RV object to populate data on the Fragment
 
     //Method declaration
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -55,7 +55,7 @@ public class HomeFragment extends Fragment {
         this.rv.setLayoutManager(new LinearLayoutManager(getActivity().getBaseContext()));
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(getActivity().getBaseContext(), DividerItemDecoration.VERTICAL);
         this.rv.addItemDecoration(itemDecoration);
-        this.accountsDB = new AccountsDB(getActivity().getBaseContext());
+        this.accountsDB = MainActivity.getAccountsDB();
 
         Log.d("HomeFragOnCreate","Exit onCreate method in HomeFragment class.");
         return root;
@@ -176,7 +176,7 @@ public class HomeFragment extends Fragment {
         boolean goodResultDelivered = false;
         if (requestCode == MainActivity.getThrowEditAccountActReqCode() && resultCode == Activity.RESULT_OK) {
             Log.d("onActivityResult","Received GOOD result from EditAccountActivity (received by HomeFragment).");
-            ((AccountAdapter) this.rv.getAdapter()).setCursor(accountsDB.getAccountsList());
+            //((AccountAdapter) this.rv.getAdapter()).setCursor(accountsDB.getAccountsList());
             //Define text to display Toast to confirm the account has been added
             //Set variable to display Toast
             goodResultDelivered = true;
@@ -186,7 +186,7 @@ public class HomeFragment extends Fragment {
         }
         //Check if toast would be displayed
         if(goodResultDelivered){
-            this.rv.getAdapter().notifyDataSetChanged();
+            MainActivity.updateRecyclerViewData(this.rv.getAdapter());
             //Move to new account position
             //Display Toast to confirm the account has been added
             MainActivity.displayToast(getContext(),toastText, Toast.LENGTH_LONG, Gravity.CENTER);

@@ -19,68 +19,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:navGraph="@navigation/mobile_navigation">
 
-
-        <!--        <androidx.core.widget.NestedScrollView-->
-        <!--            android:id="@+id/NestedScollView"-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="match_parent"-->
-        <!--            app:layout_behavior="@string/appbar_scrolling_view_behavior"-->
-        <!--            app:defaultNavHost="true"-->
-        <!--            app:navGraph="@navigation/mobile_navigation"-->
-        <!--            tools:layout_editor_absoluteX="-16dp"-->
-        <!--            tools:layout_editor_absoluteY="-225dp">-->
-
-        <!--            <LinearLayout-->
-        <!--                android:layout_width="match_parent"-->
-        <!--                android:layout_height="match_parent"-->
-        <!--                android:orientation="vertical"-->
-        <!--                app:layout_behavior="@string/appbar_scrolling_view_behavior">-->
-
-        <!--                <TextView-->
-        <!--                    android:layout_width="wrap_content"-->
-        <!--                    android:layout_height="wrap_content"-->
-        <!--                    android:text="@string/sample_text" />-->
-
-        <!--            </LinearLayout>-->
-
-        <!--        </androidx.core.widget.NestedScrollView>-->
-
     </fragment>
-
-
-    <!--
-        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/Relative_Layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_marginTop="?android:attr/listPreferredItemHeight">
-    -->
-
-
-
-        <!--<LinearLayout
-            android:id="@+id/tabMenu"
-            android:layout_width="match_parent"
-            android:layout_height="?android:attr/listPreferredItemHeight"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:orientation="horizontal">
-            &lt;!&ndash;        android:background="@drawable/topmenu_linear_layout_background">&ndash;&gt;
-
-        </LinearLayout>-->
-
-       <!-- <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/tabMenu"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
-        </android.support.v7.widget.RecyclerView>-->
-<!--    </RelativeLayout>-->
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>
 
 
