@@ -299,7 +299,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         //Call method to setup the Questions Available spinner and populate with data
         this.initQuesitonAvailableListSpinner();
         //Initialize the iconAdapter to be able to communicate with SelectLogoAct and find the selected logo in this Activity
-        this.iconAdapter = new IconAdapter(this);
+        this.iconAdapter = new IconAdapter(this,MainActivity.getAccountsLogos());
         Log.d("OnCreateDispAcc","Exit onCreate method in the DisplayAccountActivity abstract class.");
     }//End of onCreate method
 

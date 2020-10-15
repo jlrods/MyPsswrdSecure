@@ -211,6 +211,19 @@ public class AccountsDB extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO ICON (Name, Location) VALUES('shield_check','Resources');");
         db.execSQL("INSERT INTO ICON (Name, Location) VALUES('briefcase_search','Resources');");
         db.execSQL("INSERT INTO ICON (Name, Location) VALUES('tools','Resources');");
+        //NavDrawer Resources
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('nav_menu_header_bg','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('nav_menu_header_bg1','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('nav_menu_header_bg2','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('nav_menu_header_bg3','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('nav_menu_header_bg4','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('nav_menu_header_bg5','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('nav_menu_header_bg6','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('nav_menu_header_bg7','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('nav_menu_header_bg8','Resources');");
+        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('nav_menu_header_bg9','Resources');");
+
+
 
         //Populate the Category table with some default category items
         db.execSQL("INSERT INTO CATEGORY (Name,IconID) VALUES('SocialMedia',49);");

@@ -24,7 +24,7 @@ class IconAdapter extends RecyclerView.Adapter<IconAdapter.ViewHolder> {
     private Context context;
 
     // Pass in the contact array into the constructor
-    public IconAdapter(Context context) {
+    public IconAdapter(Context context,String type) {
         Log.d("IconAdapt","Enter IconAdapter Full Constructor");
         this.context = context;
         iconList = new ArrayList<Icon>();// List to hold all Icon objects created from logos in app sources
@@ -36,14 +36,15 @@ class IconAdapter extends RecyclerView.Adapter<IconAdapter.ViewHolder> {
             //Iterate through all the drawable files
             for(Field image: images){
                 //Check the drawable file is a logo
-                if(image.getName().startsWith("logo_")){
+                if(image.getName().startsWith(type)){
                     //Add to the list a new Icon object, passing down the R number as _id, name as value and R number as location
                     Icon icon = accountsDB.getIconByName(image.getName());
                     //icon.set_id(image.getInt(null));
                     icon.setResourceID(image.getInt(null));
                     iconList.add(icon);
-                }
-            }//End of for each loop
+                }//End of if statement to check the string the resource name start with
+            }//End of for each loop to check drawable resources
+            this.context = context;
             Log.d("IconAdapt","Exit successfully IconAdapter Full Constructor in Icon Adapter class.  ");
         }catch(Exception e){
             Log.e("Error","Exit IconAdapter Full Constructor in Icon Adapter class with error: "+ e.getMessage());
@@ -77,7 +78,7 @@ class IconAdapter extends RecyclerView.Adapter<IconAdapter.ViewHolder> {
         //Check if the logo isSelected attribute is true
         if(logo.isSelected()){
             //If that is the case set background color to itemSelected colour from Color values file
-            imgLogo.setBackgroundColor(ContextCompat.getColor(this.context, R.color.itemSelected));
+            imgLogo.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorPrimaryDark));
             //this.selectedPosition = position;
         }else{
             //Otherwise, set background to white background

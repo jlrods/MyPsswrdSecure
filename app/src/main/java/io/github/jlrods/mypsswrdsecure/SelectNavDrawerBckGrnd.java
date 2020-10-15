@@ -1,5 +1,6 @@
 package io.github.jlrods.mypsswrdsecure;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -7,33 +8,22 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
-// Activity class to manage logo selection display
-public class SelectLogoActivity extends AppCompatActivity {
+//Class to handle the nav drawer background selection. Unlike SelectLogoActivity, this activity does not retrieved
+//the current selection or background used at the moment, it displays the list of available backgrounds from the top.
+public class SelectNavDrawerBckGrnd extends AppCompatActivity {
     Icon selectedIcon = null;
-    int selectedPosition = -1;
-    String selectedImgLocation ="";
-    Bundle extras;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("SelLogOnCreate","Enter onCreate method in SelectLogoActivity class.");
+        Log.d("SelBckgrndOnCreate", "Enter onCreate method in SelectNavDrawerBckGrnd class.");
         setContentView(R.layout.activity_select_logo);
         final RecyclerView rvLogos = (RecyclerView) findViewById(R.id.layout_rec_view_logo);
-        final IconAdapter iconAdapter = new IconAdapter(this, MainActivity.getAccountsLogos());
-        //Extract extra data from Bundle object
-        extras = getIntent().getExtras();
-        selectedPosition = extras.getInt("selectedImgPosition");
-        if(selectedPosition >= 0){
-            selectedIcon = iconAdapter.getIconList().get(selectedPosition);
-        }else{
-            selectedIcon = MainActivity.getMyPsswrdSecureLogo();
-        }
-        selectedImgLocation = extras.getString("selectedImgLocation");
-        //Set the logo OnClickListener object so the Logo is selected when clicked on it
+        final IconAdapter iconAdapter = new IconAdapter(this, MainActivity.getNavDrawerBckgrnds());
         iconAdapter.setOnItemClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -47,6 +37,7 @@ public class SelectLogoActivity extends AppCompatActivity {
                     //If that's the case, set it to false
                     iconAdapter.getIconList().get(adapterPosition).setSelected(false);
                 }else{
+                    //Otherwise, set to true and iterate through the rest of the icon list to set any other icon to not selected
                     iconAdapter.getIconList().get(adapterPosition).setSelected(true);
                     for(int i=0;i<iconAdapter.getIconList().size();i++){
                         if(i!=adapterPosition){
@@ -54,7 +45,6 @@ public class SelectLogoActivity extends AppCompatActivity {
                         }//End if statement
                     }// End of for loop
                     selectedIcon = iconAdapter.getIconList().get(adapterPosition);
-                    selectedPosition = adapterPosition;
                 };// End of if else statement to check if logo is selected
 
                 iconAdapter.updateItemIsSelected(adapterPosition,true);
@@ -64,20 +54,12 @@ public class SelectLogoActivity extends AppCompatActivity {
             }//End of OnClick method
         });
         rvLogos.setAdapter(iconAdapter);
-        rvLogos.setLayoutManager(new StaggeredGridLayoutManager(2,RecyclerView.VERTICAL));
-        //Check if RV position is beyond first 6 items
-        if(this.selectedPosition>=5){
-            //If so then check if position is even (right hand side) or odd (left hand side)
-            if(this.selectedPosition%2==0){
-                //If even move rv to that position
-                rvLogos.getLayoutManager().scrollToPosition(selectedPosition);
-            }else{
-                //In case of odd move to position even position before the item to keep all items in the same column
-                rvLogos.getLayoutManager().scrollToPosition(selectedPosition-1);
-            }//End of if else statement
-        }//End of if statement to check position is out of screen
-        Log.d("SelLogOnCreate","Exit  onCreate method in SelectLogoActivity class.");
-    }//End of onCreate
+        rvLogos.setLayoutManager(new LinearLayoutManager(getBaseContext()));
+        RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(getBaseContext(), DividerItemDecoration.VERTICAL);
+        rvLogos.addItemDecoration(itemDecoration);
+        Log.d("SelBckgrndOnCreate", "Exit onCreate method in SelectNavDrawerBckGrnd class.");
+        //Set the logo OnClickListener object so the Logo is selected when clicked on it
+    }//End of onCreate method
 
     //Method to inflate the menu into the addTaskActivity
     @Override
@@ -96,10 +78,11 @@ public class SelectLogoActivity extends AppCompatActivity {
         //Check the id of item selected in menu
         switch (item.getItemId()) {
             case R.id.select_logo_save:
-                intent.putExtra("selectedImgID",this.selectedIcon.get_id());
-                intent.putExtra("selectedImgLocation",this.selectedIcon.getLocation());
-                intent.putExtra("selectedImgPosition",this.selectedPosition);
-                setResult(RESULT_OK, intent);
+                if(selectedIcon != null){
+                    intent.putExtra("selectedImgID",this.selectedIcon.get_id());
+                    intent.putExtra("selectedImgResourceID",this.selectedIcon.getResourceID());
+                    setResult(RESULT_OK, intent);
+                }//End of if statement to check the selected icon isn't null
                 Log.d("onOptionsItemSelected","Save option selected on onOptionsItemSelected method in SelectLogoActivity class.");
                 break;
             case R.id.select_logo_cancel:
@@ -108,9 +91,8 @@ public class SelectLogoActivity extends AppCompatActivity {
                 Log.d("onOptionsItemSelected","Cancel option selected on onOptionsItemSelected method in SelectLogoActivity class.");
                 break;
         }//End of switch statement
-
         Log.d("onOptionsItemSelected","Exit successfully onOptionsItemSelected method in SelectLogoActivity class.");
         finish();
         return result;
-    }
-}//End of SelectLogoActivity class
+    }//End of onOptionsItem selected method
+}//End of SelectNavDrawerBckGrd class

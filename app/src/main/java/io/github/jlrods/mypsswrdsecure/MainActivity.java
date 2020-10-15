@@ -1,6 +1,5 @@
 package io.github.jlrods.mypsswrdsecure;
 
-
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
@@ -26,6 +25,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
@@ -38,7 +38,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
 
@@ -68,18 +67,19 @@ public class  MainActivity extends AppCompatActivity {
     private static String dateFormat = "dd/MMM/yyyy";
 
 
-
-    private static String RESOURCES = "Resources";
-
     private static Cryptographer cryptographer;
 
+    //CONSTANT VALUES
     private final static int INDEX_TO_GET_LAST_TASK_LIST_ITEM = 2;
 
+    //Throw intent codes
     private final static int THROW_IMAGE_GALLERY_REQ_CODE = 1642;
     private final static int THROW_IMAGE_CAMERA_REQ_CODE = 2641;
     private static final int GALLERY_ACCESS_REQUEST = 5196;
     private static final int CAMERA_ACCESS_REQUEST = 3171;
 
+    ///Throw activity request codes
+    //@Fixme: Rename variable to all cap case
     private int throwAddAccountActReqCode = 5566;
     private static int throwAddQuestionActReqCode = 9876;
     private static int throwAddUserNameActReqCode = 5744;
@@ -90,9 +90,14 @@ public class  MainActivity extends AppCompatActivity {
     private int throwEditQuestionActReqCode = 2456;
     private static int throwEditCategoryActReqCode = 2002;
     private static int throwEditAccountActReqCode = 1199;
+    private static int throwSelectNavDrawerBckGrndActReqCode = 4473;
+
+    private static final String ACCOUNTS_LOGOS = "logo_";
+    private static final String NAV_DRAWER_BCKGRNDS = "nav_menu_header_bg";
+    private static String RESOURCES = "Resources";
 
 
-     //DB Table names
+    //CONSTANTS: DB Table names
     private static final String USERNAME_TABLE = "USERNAME";
     private static final String PSSWRD_TABLE = "PSSWRD";
     private static final String QUESTION_TABLE = "QUESTION";
@@ -105,6 +110,7 @@ public class  MainActivity extends AppCompatActivity {
     private static final String APPSTATE_TABLE = "APPSTATE";
     private static final String ACCOUNTS_TABLE = "ACCOUNTS";
 
+    //CONSTANTS: DB Column names
     private static final String CATEGORY_ID_COLUMN ="CategoryID";
     private static final String USER_NAME_ID_COLUMN ="UserNameID";
     private static final String PSSWRD_ID_COLUMN ="PsswrdID";
@@ -125,9 +131,9 @@ public class  MainActivity extends AppCompatActivity {
     private static final String QUESTION = "question";
     private static final String QUESTION_LIST ="question list";
 
+    //Hardcoded categories that cannot be deleted by user
     private static Category homeCategory = null;
     private static Category favCategory = null;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -281,10 +287,19 @@ public class  MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
         this.setUpLowerCategoryMenu(navigationView.getMenu());
         this.updateNavMenu(navigationView.getMenu(),INDEX_TO_GET_LAST_TASK_LIST_ITEM);
-        View headerView = navigationView.getHeaderView(0);
-        //Set up user data on the nav drawer
         //@Fixme: define method in accountsDB class
         Cursor appLoginCursor = accountsDB.getAppLoginCursor(accountsDB.getMaxItemIdInTable(APPLOGGIN_TABLE));
+
+        View headerView = navigationView.getHeaderView(0);
+
+        headerView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                throwSelectNavDrawerBackgroundActivity();
+            }
+        });
+        //Set up user data on the nav drawer
+
         TextView tvUserName = (TextView) headerView.findViewById(R.id.tvUserName);
         tvUserName.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -302,11 +317,14 @@ public class  MainActivity extends AppCompatActivity {
             }
         });
         if(appLoginCursor.moveToNext()){
-//            if(!appLogin.getString().equals("")){
-//                imgUserProfile.setImageURI(Uri.parse(appLogin.getString()));
-//            }
             tvUserName.setText(appLoginCursor.getString(3));
             tvUserMessage.setText(appLoginCursor.getString(5));
+            Icon navDrawerBackground = accountsDB.getIconByID(appLoginCursor.getInt(6));
+            int idRes;
+            Resources r = this.getResources();
+            idRes = r.getIdentifier(navDrawerBackground.getName(),"drawable",this.getPackageName());
+            //imgLogo.setImageResource(idRes);
+            headerView.setBackground(getResources().getDrawable(idRes));
         }else{
             //Create applogin with null username and null password
             //@Fixme: applogin will be created on the very first activity when user login for first time, since I'm not loading anything on the DB side, it can be created programatically here
@@ -314,18 +332,11 @@ public class  MainActivity extends AppCompatActivity {
             appLoggin.setName("Android Studio");
             appLoggin.setEmail("example@android.com");
             appLoggin.setMessage("Test message!");
+            appLoggin.setPicture(accountsDB.getIconByID(62));
             accountsDB.addItem(appLoggin);
         }//End of if statement to check user cursor is not empty
-
     }//End of onCreate method
 
-    public void testRVLogo(){
-        //Declare and instantiate a new intent object
-        Intent i= new Intent(MainActivity.this, SelectLogoActivity.class);
-        //Add extras to the intent object, specifically the current category where the add button was pressed from
-        //Start the addTaskActivity class
-        startActivity(i);
-    }
 
     private void testCriptogrpher(){
         //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
@@ -410,7 +421,7 @@ public class  MainActivity extends AppCompatActivity {
         }else if(adapter instanceof UserNameAdapter){
             cursor = accountsDB.getUserNameList();
             ((UserNameAdapter) adapter).setCursor(cursor);
-        }
+        }//End of if else statement that checks the instance of the adapter
         //Move to first row of cursor if not empty
         if (cursor != null){
             cursor.moveToFirst();
@@ -420,6 +431,7 @@ public class  MainActivity extends AppCompatActivity {
         Log.d("Ext_updateRecViewData","Exit the updateRecyclerViewData method in the MainActivity class.");
     }//End of updateRecyclerViewData method
 
+    //@Fixme: try to compress all the throw activity methods into one generic method
     //Method to throw new AddTaskActivity
     private void throwAddAccountActivity(){
         Log.d("ThrowAddAcc","Enter throwAddAccountActivity method in the MainActivity class.");
@@ -469,7 +481,6 @@ public class  MainActivity extends AppCompatActivity {
         startActivityForResult(i,throwAddCategoryReqCode);
         Log.d("ThrowAddCatt","Exit throwAddCategoryActivity method in the MainActivity class.");
     }//End of throwAddTaskActivity
-
 
     //Method to throw new AddTaskActivity
     private void throwEditAccountActivity(View v){
@@ -570,8 +581,22 @@ public class  MainActivity extends AppCompatActivity {
         Log.d("ThrowEditCat","Exit throwEditCategoryActivity method in the MainActivity class.");
     }//End of throwAddTaskActivity
 
+    //Method to throw the SelectLogoActivity
+    protected void throwSelectNavDrawerBackgroundActivity(){
+        Log.d("throwSelectBckActivity","Enter the throwSelectNavDrawerBackgroundActivity method in the DisplayAccountActivity class.");
+        //Declare and instantiate a new intent object
+        Intent i= new Intent(this, SelectNavDrawerBckGrnd.class);
+        //Add extras to the intent object, specifically the current category where the add button was pressed from
+        // the current logo data which is sent back if select logo is cancel or updated if new logo has been selected
+        i.putExtra("selectedImgPosition",-1);
+        i.putExtra("selectedImgLocation",RESOURCES);
+        //Start the addTaskActivity and wait for result
+        startActivityForResult(i,this.throwSelectNavDrawerBckGrndActReqCode);
+        Log.d("throwSelectBckActivity","Exit the throwSelectNavDrawerBackgroundActivity method in the DisplayAccountActivity class.");
+    }//End of throwSelectLogoActivity method
 
     //Method to receive and handle data coming from other activities such as: SelectLogoActivity,
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -638,8 +663,7 @@ public class  MainActivity extends AppCompatActivity {
                 toastText = data.getExtras().getString("itemDeletedName") + " " + getResources().getString(R.string.userNameDeleted);
             }else{
                 toastText = getResources().getString(R.string.userNameUpdated);
-            }
-            //((UserNameAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getUserNameList());
+            }//End of if else statement to check the boolean value retrieved from extra data
             //Set variable to display Toast
             goodResultDelivered = true;
         }else if(requestCode == throwEditUserNameActReqCode && resultCode == RESULT_CANCELED){
@@ -688,6 +712,17 @@ public class  MainActivity extends AppCompatActivity {
             toastText = data.getExtras().getString("categoryName") + " " + getResources().getString(R.string.catUpdated);
         }else if(requestCode == throwEditCategoryActReqCode && resultCode == Activity.RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from EditCategoryActivity received by MainAcitvity.");
+        }else if(requestCode == throwSelectNavDrawerBckGrndActReqCode && resultCode == Activity.RESULT_OK){
+            Log.d("onActivityResult","Received GOOD result from SelectNavDrawerBckGrnd received by MainAcitvity.");
+            NavigationView navigationView = findViewById(R.id.nav_view);
+            View headerView = navigationView.getHeaderView(0);
+            headerView.setBackground(getResources().getDrawable(data.getExtras().getInt("selectedImgResourceID"),null));
+            ContentValues values = new ContentValues();
+            values.put(ID_COLUMN,accountsDB.getMaxItemIdInTable(APPLOGGIN_TABLE));
+            values.put("PictureID",data.getExtras().getInt("selectedImgID"));
+            accountsDB.updateTable(APPLOGGIN_TABLE,values);
+        }else if(requestCode == throwSelectNavDrawerBckGrndActReqCode && resultCode == Activity.RESULT_CANCELED){
+            Log.d("onActivityResult","Received BAD result from SelectNavDrawerBckGrnd received by MainAcitvity.");
         }//End of if else statement chain to check activity results
 
         if(categoryMenuUpdate){
@@ -734,7 +769,6 @@ public class  MainActivity extends AppCompatActivity {
         Log.d("onActivityResult","Exit the onActivityResult method in the DisplayAccountActivity class.");
     }//End of onActivityResult method
 
-
     //Method to display a generic new Dialog Alert view from any activity.
     public static AlertDialog.Builder displayAlertDialogWithInput(Context context, EditText inputField, String title, String message, String hint){
         Log.d("displayAlertDialog","Enter displayAlertDialog method in the MainActivity class.");
@@ -742,7 +776,7 @@ public class  MainActivity extends AppCompatActivity {
         if(inputField != null && hint != null){
             inputField.setText("");
             inputField.setHint(hint);
-        }
+        }//End of if statement to check the input field and the hint aren't null
         Log.d("displayAlertDialog","Enter displayAlertDialog method in the MainActivity class.");
         return new AlertDialog.Builder(context)
                 .setTitle(title)
@@ -753,8 +787,7 @@ public class  MainActivity extends AppCompatActivity {
 
     //Method to display a generic new Dialog Alert view from any activity.
     public static AlertDialog.Builder displayAlertDialogNoInput(Context context, String title, String message){
-        Log.d("displayAlertDialog","Enter displayAlertDialog method in the MainActivity class.");
-        Log.d("displayAlertDialog","Enter displayAlertDialog method in the MainActivity class.");
+        Log.d("displayAlertDialog","Enter/Exit displayAlertDialog method in the MainActivity class.");
         return new AlertDialog.Builder(context)
                 .setTitle(title)
                 .setMessage(message)
@@ -957,6 +990,14 @@ public class  MainActivity extends AppCompatActivity {
         return INDEX_TO_GET_LAST_TASK_LIST_ITEM;
     }
 
+    public static String getAccountsLogos() {
+        return ACCOUNTS_LOGOS;
+    }
+
+    public static String getNavDrawerBckgrnds() {
+        return NAV_DRAWER_BCKGRNDS;
+    }
+
     public static void displayToast(Context context, String text, int toastLength, int gravity){
         Log.d("displayToast","Enter displayToast method in the MainActivity class.");
         Toast toast = Toast.makeText(context,text,toastLength);
@@ -967,21 +1008,27 @@ public class  MainActivity extends AppCompatActivity {
 
     //Method to set account logo resource image
     public static void setAccountLogoImageFromRes(ImageView imgLogo, Context context, String iconResName){
+        Log.d("setAccLogoFromRes","Enter setAccountLogoImageFromRes method in the MainActivity class.");
         //Extract all the logos from the app resources
         int idRes;
         Resources r = context.getResources();
         idRes = r.getIdentifier(iconResName,"drawable",context.getPackageName());
         imgLogo.setImageResource(idRes);
-    }
+        Log.d("setAccLogoFromRes","Exit setAccountLogoImageFromRes method in the MainActivity class.");
+    }//End of setAccountLogoImageFromRes method
 
     //Method to set account logo resource image
     public static void setAccountLogoImageFromGallery(ImageView imgLogo, String uri){
+        Log.d("setAccLogoFromGal","Enter setAccountLogoImageFromGallery method in the MainActivity class.");
         //Extract all the logos from the app resources
         imgLogo.setImageURI(Uri.parse(uri));
-    }
+        Log.d("setAccLogoFromGal","Exit setAccountLogoImageFromGallery method in the MainActivity class.");
+    }//End of setAccountLogoImageFromGallery method
 
     //Method to be setup within OnClick event listener for the star icon within each Account item
     public static boolean toggleIsFavorite(View v){
+        Log.d("toggleIsFavorite","Enter toggleIsFavorite method in the MainActivity class.");
+        //Declare and initialize vatiables to be used and returned by the method
         boolean update = false;
         RecyclerView recyclerView = HomeFragment.getRv();
         AccountAdapter accountAdapter = (AccountAdapter) recyclerView.getAdapter();
@@ -997,8 +1044,7 @@ public class  MainActivity extends AppCompatActivity {
             account.setFavorite(false);
         }else{
             account.setFavorite(true);
-        }
-        //accountAdapter.updateItemIsFavorite(adapterPosition,account.isFavorite());
+        }//End of if else statement that checks the isFavorite attribute state
         //Call DB method to update the account item in the Accounts table
         ContentValues values = new ContentValues();
         values.put("_id",account.get_id());
@@ -1009,17 +1055,17 @@ public class  MainActivity extends AppCompatActivity {
             recyclerView.scrollToPosition(adapterPosition);
             update = true;
         }else{
+            //@Fixme: Is the prompt to be displayed?
             //Prompt the user about DB problem
             //MainActivity.displayToast(this.getBaseContext(),"DB Error",Toast.LENGTH_SHORT,Gravity.CENTER);
         }//End of if else statement to check the item was updated
-    return update;
+        Log.d("toggleIsFavorite","Exit toggleIsFavorite method in the MainActivity class.");
+        return update;
     }//End of toggleIsFavorite method
 
     //Method to load ad picture from gallery app
     public static void loadPictureFromGallery(Intent intent) {
         Log.d("LoadGalPicture","Enter loadPictureFromGallery method in the MainActivity class.");
-        //Declare a new intent
-        //Intent intent;
         //Check SDK version
         if (Build.VERSION.SDK_INT < 19){
             //Log the current verison
@@ -1033,11 +1079,9 @@ public class  MainActivity extends AppCompatActivity {
             //Log the current version
             Log.i("Build.VERSION", ">= 19");
             //Initialize the intent object and set it up for calling the Gallery app
-            //intent = new Intent();
             intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
             intent.addCategory(Intent.CATEGORY_OPENABLE);
             intent.setType("image/*");
-            //startActivityForResult(intent, RESULT_PROFILE_IMAGE_GALLERY);
         }//End of if else statement that checks the SDK version
         Log.d("LoadGalPicture","Exit loadPictureFromGallery method in the MainActivity class.");
     }//End of loadPicture method
@@ -1045,8 +1089,6 @@ public class  MainActivity extends AppCompatActivity {
     ////Method To take a picture via intent
     public static void loadPictureFromCamera(Intent intent, Activity activity) {
         Log.d("LoadCamPicture","Enter loadPictureFromCamera method in the MainActivity class.");
-            //Declare and initialize a new Intent object to call camera app
-//            intent = new Intent();
             intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
             //Check the PackageManager is not null
             if (intent.resolveActivity(activity.getPackageManager()) != null) {
@@ -1055,7 +1097,6 @@ public class  MainActivity extends AppCompatActivity {
                 uriCameraImage = activity.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, uriCameraImage);
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                //startActivityForResult(intent, RESULT_PROFILE_IMAGE_CAMERA);
             } else {
                 MainActivity.displayToast(activity,"",Toast.LENGTH_LONG,Gravity.BOTTOM);
             }//End of if else statement
@@ -1079,7 +1120,7 @@ public class  MainActivity extends AppCompatActivity {
                                     new String[]{permit}, requestCode);
                         }})
                     .show();
-        } else {
+        }else{
             //Otherwise, proceed to request permission
             ActivityCompat.requestPermissions(activity,
                     new String[]{permit}, requestCode);
@@ -1439,6 +1480,7 @@ public class  MainActivity extends AppCompatActivity {
         Log.d("setUpLowerCategoryMenu","Enter the updateNavMenu method in MainActivity class.");
     }//End of setUpLowerCategoryMenu method
 
+    //@Fixme: Can I merge these three methods in one? they are very similar: isCurrentCategoryInListToBeDeleted, getCategoryInListByID, getCategoryPositionByID
     //Method to update the Nav Menu items when new task list are created or deleted. Used to populate the menu on onCreate method too
     public static boolean isCurrentCategoryInListToBeDeleted(int _id, ArrayList<Category> categoriesToBeDeleted) {
         Log.d("isCatInListToBeDeleted", "Enter the isCurrentCategoryInListToBeDeleted static method in MainActivity class.");
@@ -1448,9 +1490,9 @@ public class  MainActivity extends AppCompatActivity {
             if(categoriesToBeDeleted.get(i).get_id() == _id){
                 found = true;
                 break;
-            }
+            }//End of if statement to check the category id
             i++;
-        }
+        }//End of while loop to iterate through the category list
         Log.d("isCatInListToBeDeleted", "Exit the isCurrentCategoryInListToBeDeleted static method in MainActivity class.");
         return found;
     }//End of isCurrentCategoryInListToBeDeleted method
@@ -1466,9 +1508,9 @@ public class  MainActivity extends AppCompatActivity {
                 category = categoryList.get(i);
                 found = true;
                 break;
-            }
+            }//End of if statement to check the category id
             i++;
-        }
+        }//End of while loop to iterate through the category list
         Log.d("getCategoryPositionByID", "Exit the getCategoryPositionByID method in MainActivity class.");
         return category;
     }//End of getCategoryPositionByID method
@@ -1482,25 +1524,19 @@ public class  MainActivity extends AppCompatActivity {
             if(categoryList.get(i).get_id() == _id){
                 found = true;
                 break;
-            }
+            }//End of if statement to check the category id
             i++;
-        }
+        }//End of while loop to iterate through the category list
         Log.d("getCategoryByName", "Exit the getCategoryByName method in MainActivity class.");
         return i;
     }//End of getCategoryPositionByID method
-    
 
     //Method to update User Profile Name
     private void setUserProfileText(int type, final TextView tvUserText){
         Log.d("Ent_setProfName","Enter setUserProfileName method in the MainActivity class.");
         //Declare and instantiate a new EditText object
         final EditText input= new EditText(this);
-        //Set text to empty text
-        //input.setText("");
         //Populate current name in the input text and get focus
-        final NavigationView navigationView = findViewById(R.id.nav_view);
-        View headerView = navigationView.getHeaderView(0);
-        //TextView tvUserName = (TextView) headerView.findViewById(R.id.tvUserName);
         input.setText(tvUserText.getText());
         input.requestFocus();
         String title = "";
@@ -1534,9 +1570,6 @@ public class  MainActivity extends AppCompatActivity {
                         String userText = input.getText().toString();
                         //Check the input field is not empty
                         if(!userText.trim().equals("")){
-                            //View headerView = navigationView.getHeaderView(0);
-                            //TextView tvUserName = (TextView) headerView.findViewById(R.id.tvUserName);
-                            //Try to update user name on the DB and check result from DB
                             ContentValues values = new ContentValues();
                             values.put(ID_COLUMN,accountsDB.getMaxItemIdInTable(MainActivity.getApplogginTable()));
                             values.put(columnToBeUpdated[0],userText);
