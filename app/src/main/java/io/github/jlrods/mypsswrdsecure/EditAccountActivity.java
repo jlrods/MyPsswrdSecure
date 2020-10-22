@@ -4,6 +4,7 @@ package io.github.jlrods.mypsswrdsecure;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,7 +26,10 @@ public class EditAccountActivity extends DisplayAccountActivity {
         //Extract extra data from owner Activity
         this.extras = getIntent().getExtras();
         //Extract account details by passing in the _id attribute stored in the extras
-        this.account = Account.extractAccount(this.accountsDB.getAccountCursorByID(this.extras.getInt("_id")));
+        Cursor cursorAccount = this.accountsDB.getAccountCursorByID(this.extras.getInt("_id"));
+        if(cursorAccount != null && cursorAccount.getCount() > 0){
+            this.account = Account.extractAccount(cursorAccount);
+        }//End of if statement to check the cursor account isn't null
         //Set the UI data as per the account just extracted
         //Set Account name
         this.etAccountName.setText(this.account.getName());

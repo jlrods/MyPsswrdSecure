@@ -18,5 +18,6 @@
         android:orderInCategory="10"
         android:icon="@android:drawable/ic_menu_search"
         android:title="@string/action_search"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom"
+        android:iconTint="@color/whiteBackground"/>
 </menu>

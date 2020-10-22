@@ -33,7 +33,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -1084,7 +1083,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
                     QuestionList oldSecurityQuestionList = this.account.getQuestionList();
                     if(oldSecurityQuestionList != null){
                         ArrayList listOfAccountsUsingQuestionList = null;
-                        listOfAccountsUsingQuestionList = accountsDB.getAccountsUsingItemWithID(MainActivity.getQuestionList(),oldSecurityQuestionList.get_id());
+                        listOfAccountsUsingQuestionList = accountsDB.getAccountsIDListUsingItemWithID(MainActivity.getQuestionList(),oldSecurityQuestionList.get_id());
                         if(listOfAccountsUsingQuestionList.size() == 0 || (listOfAccountsUsingQuestionList.size() == 1 && (int) listOfAccountsUsingQuestionList.get(0) == this.account.get_id())){
                             //This means the old question list is not being used by other account(s)
                             //Thefore the list and the questionassignments related to this list must be deleted from the DB
@@ -1252,7 +1251,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         boolean isAccNameUsed = false;
         //Cursor cursorListOfAccounts = this.accountsDB.getAccountsList();
         Cursor accountCursor = this.accountsDB.getAccountCursorByName(accountName);
-        if(accountCursor != null){
+        if(accountCursor != null && accountCursor.getCount() > 0){
             Boolean accNameFound = accountName.toLowerCase().trim().equals(accountCursor.getString(1).toLowerCase().trim());
             //In case the _id passed in is not -1, means the EditAccountActivity call method
             //Which means the account name of the account being edited must be ignore from the search, it's ok to have the same account name

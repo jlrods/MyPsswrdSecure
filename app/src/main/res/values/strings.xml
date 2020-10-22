@@ -199,8 +199,22 @@
     <string name="unableUpdateUserMessage">Something went wrong!!! Unable to update the user message</string>
     <string name="blankUserMessage">The user message cannot be left in blank. Please, type a message in the input field</string>
 
+    <!--   Search method-->
+    <string name="searchAccountTitle">Search account</string>
+    <string name="searchUserNameTitle">Search user name</string>
+    <string name="searchPsswrdTitle">Search password</string>
+    <string name="searchQuestionTitle">Search question</string>
+    <string name="hintSearchAccount1">Please, enter the user name you are looking for in the accounts...</string>
+    <string name="hintSearchAccount2">Please, enter the password you are looking for in the accounts...</string>
+    <string name="hintSearchAccount3">Please, enter the account name you are looking for...</string>
+    <string name="hintSearchUserName">Please, enter the user name you are looking for:</string>
+    <string name="hintSearchPsswrd">Please, enter the password you are looking for:</string>
+    <string name="hintSearchQuestion">Please, enter the question you are looking for:</string>
 
-
+    <string name="searchAccountsWithUserNameTextOn">Enabled search Accounts with specific user name</string>
+    <string name="searchAccountsWithUserNameTextOff">Disabled search Accounts with specific user name</string>
+    <string name="searchAccountsWithPsswrdTextOn">Enabled search Accounts with specific password</string>
+    <string name="searchAccountsWithPsswrdTextOff">Disabled search Accounts with specific password</string>
 
     <!--    Snackbar texts-->
     <string name="snackBarUndo">UNDO</string>

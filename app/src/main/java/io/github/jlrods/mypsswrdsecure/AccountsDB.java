@@ -667,13 +667,6 @@ public class AccountsDB extends SQLiteOpenHelper {
     public Cursor getAppLoginCursor(int _id){
         Log.d("getCategoryByID","Enter the getCategoryByID method in the AccountsDB class.");
         Cursor cursor = this.runQuery("SELECT * FROM "+MainActivity.getApplogginTable()+" WHERE "+MainActivity.getIdColumn()+" = "+ _id);
-//        if(cursor.moveToFirst()){
-//            Log.d("getCategoryByID","Exit successfully (category with id " +_id+ " has been found) the getCategoryByID method in the AccountsDB class.");
-//            return Category.extractCategory(cursor);
-//        }else{
-//            Log.d("getCategoryByID","Exit the getCategoryByID method in the AccountsDB class without finding the category with id: "+_id);
-//            return null;
-//        }//End of if else statement
         return cursor;
     }//End of getUserNameByID method
 
@@ -702,13 +695,9 @@ public class AccountsDB extends SQLiteOpenHelper {
             category = includeApostropheEscapeChar(category);
         }
         Cursor cursor = this.runQuery("SELECT * FROM "+ MainActivity.getCategoryTable()+" WHERE Name = "+ "'"+category+"'");
-//        Cursor cursor = this.runQuery("SELECT QUESTION._id, QUESTION.Value AS Q, ANSWER._id AS AnswerID,ANSWER.Value AS Answer, " +
-//                "ANSWER.initVector AS initVector FROM QUESTION  " +
-//                "JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id WHERE QUESTION.Value = '"+  category+"'");
         if(cursor.moveToFirst()){
             Log.d("getCategoryByName","Exit successfully (CATEGORY with value " +category+ " has been found) the getCategoryByName method in the AccountsDB class.");
         }else{
-            cursor = null;
             Log.d("getCategoryByName","Exit the getQuestionByID method in the AccountsDB class without finding the account with value: "+category);
         }//End of if else statement
         return cursor;
@@ -752,11 +741,10 @@ public class AccountsDB extends SQLiteOpenHelper {
                 + accountName.toLowerCase() + "'");
         if(cursor.moveToFirst()){
             Log.d("getAccountCursorByName","Exit successfully (account with name " +accountName+ " has been found) the getAccountCursorByName method in the AccountsDB class.");
-            return cursor;
         }else{
             Log.d("getAccountCursorByName","Exit the getAccountCursorByName method in the AccountsDB class without finding the account with name: "+accountName);
-            return null;
         }//End of if else statement
+        return cursor;
     }//End of getAccountByName method
 
     //Method to get the list of accounts from the DB
@@ -821,14 +809,6 @@ public class AccountsDB extends SQLiteOpenHelper {
         //It's necessary to check a questionList that holds the specific questionID is being used more than once (a questionList can be assigned to multiple accounts)
         if(accountsWithThisQuestionList.moveToFirst()){
             timesUsed = accountsWithThisQuestionList.getCount();
-//            //If that is the case, more than one list holding the question, check for each list how many accounts are using the list
-//            Cursor accountListUsingQuestionList = null;
-//            do{
-//                accountListUsingQuestionList =  this.getAccountsWithSpecifcValue(MainActivity.getQuestionListIdColumn(),accountsWithThisQuestionList.getInt(1)); //this.runQuery("SELECT * FROM ACCOUNTS WHERE QuestionListID = " + );
-//                if(accountListUsingQuestionList.moveToFirst()){
-//                    timesUsed += accountListUsingQuestionList.getCount();
-//                }
-//            }while(accountsWithThisQuestionList.moveToNext());
         }//End of if statement that check the cursor with the question lists move to first position and can be iterated
         Log.d("getTimesUsedIconInAcc","Exit the getTimesUsedIconInAccounts method in the AccountsDB class.");
         return  timesUsed;
@@ -847,15 +827,6 @@ public class AccountsDB extends SQLiteOpenHelper {
         Log.d("getTimesUsedQuestList","Exit the getTimesUsedIconInCategory method in the AccountsDB class.");
         return  timesUsed;
     }//End of getTimesUsedQuestionList method
-
-    //Method to return cursor with rows from the accounts table with specific value in the column name passed in as argument
-    public Cursor getAccountsWithSpecifcValue(String column, int itemID){
-        Log.d("getAccWithSpecifcValue","Enter the getAccountCursorByName method in the AccountsDB class.");
-        Cursor  listOfAccountsThatHoldsASpecificValue = null;
-        listOfAccountsThatHoldsASpecificValue = runQuery("SELECT * FROM "+ MainActivity.getAccountsTable()+ " WHERE " + column + " = " + itemID);
-        Log.d("getAccWithSpecifcValue","Exit the getAccountCursorByName method in the AccountsDB class.");
-        return listOfAccountsThatHoldsASpecificValue;
-    }//End of getAccountsWithSpecifcValue method
 
 
     //Method to retrieve a specific Icon from DB by passing in it's ID
@@ -909,7 +880,6 @@ public class AccountsDB extends SQLiteOpenHelper {
             cursor.moveToFirst();
             Log.d("getUserNameByID","Exit successfully (user name with id " +_id+ " has been found) the getUserNameByID method in the AccountsDB class.");
         }else{
-            cursor = null;
             Log.d("getUserNameByID","Exit the getUserNameByID method in the AccountsDB class without finding the user name with id: "+_id);
         }//End of if else statement
         return cursor;
@@ -935,11 +905,13 @@ public class AccountsDB extends SQLiteOpenHelper {
         //Make ajustments to return proper value based on the found boolean flag
         if(found){
             Log.d("getUserNameByName","Exit successfully (user name with value " +userName + " has been found) the getUserNameByID method in the AccountsDB class.");
+            return this.getUserNameCursorByID(userNameCursor.getInt(0));
         }else{
-            userNameCursor = null;
             Log.d("getUserNameByName","Exit the getUserNameByName method in the AccountsDB class without finding the user name with value: "+userName);
+            //This is a work around to avoid null excemption when the user name being looked for does not exist. Down the road the returned cursor
+            //can be checked that count is > 0.
+            return this.getUserNameCursorByID(-1);
         }//End of if else statement
-        return userNameCursor;
     }//End of getUserNameByID method
 
     //Method to get a specific password, by passing in its DB _id as an argument
@@ -964,7 +936,6 @@ public class AccountsDB extends SQLiteOpenHelper {
             cursor.moveToFirst();
             Log.d("getPsswrdCursorByID","Exit successfully (password with id " +_id+ " has been found) the getPsswrdCursorByID method in the AccountsDB class.");
         }else{
-            cursor = null;
             Log.d("getPsswrdCursorByID","Exit the getUserNameByID method in the AccountsDB class without finding the password with id: "+_id);
         }//End of if else statement
         return cursor;
@@ -989,11 +960,13 @@ public class AccountsDB extends SQLiteOpenHelper {
         }//End of while loop to iterate through list of user names
         if(found){
             Log.d("getPsswrdByName","Exit successfully (password with value " +psswrd + " has been found) the getPsswrdByName method in the AccountsDB class.");
-        }else{
-            psswrdCursor = null;
+            return this.getPsswrdCursorByID(psswrdCursor.getInt(0));
+         }else{
             Log.d("getPsswrdByName","Exit the getPsswrdByName method in the AccountsDB class without finding the password with value: "+psswrd);
+            //This is a work around to avoid null exception when the password being looked for does not exist. Down the road the returned cursor
+            //can be checked that count is > 0.
+            return  this.getPsswrdCursorByID(-1);
         }//End of if else statement
-        return psswrdCursor;
     }//End of getUserNameByID method
 
     //Method to get the list of passwords from the DB
@@ -1264,7 +1237,7 @@ public class AccountsDB extends SQLiteOpenHelper {
         return _id;
     }//End of getSecQuestionListID method
 
-    public ArrayList getAccountsUsingItemWithID(String itemType, int itemID){
+    public ArrayList getAccountsIDListUsingItemWithID(String itemType, int itemID){
         Log.d("getAccUsingItemWithID","Enter the getAccountsUsingItemWithID method in the AccountsDB class.");
         Cursor listOfAccountUsingTheItem = null;
         ArrayList listOfQuestionListIDsUsingTheItem = new ArrayList();
@@ -1308,6 +1281,53 @@ public class AccountsDB extends SQLiteOpenHelper {
         Log.d("getAccUsingItemWithID","Exit the getAccountsUsingItemWithID method in the AccountsDB class.");
         return listOfAccountIDsUsingTheItem;
     }//End of getAccountsUsingItemWithID method
+
+    //Method to return cursor with rows from the accounts table with specific value in the column name passed in as argument
+    public Cursor getAccountsWithSpecifcValue(String column, int itemID){
+        Log.d("getAccWithSpecifcValue","Enter the getAccountCursorByName method in the AccountsDB class.");
+        Cursor  listOfAccountsThatHoldsASpecificValue = null;
+        listOfAccountsThatHoldsASpecificValue = runQuery("SELECT * FROM "+ MainActivity.getAccountsTable()+ " WHERE " + column + " = " + itemID);
+        Log.d("getAccWithSpecifcValue","Exit the getAccountCursorByName method in the AccountsDB class.");
+        return listOfAccountsThatHoldsASpecificValue;
+    }//End of getAccountsWithSpecifcValue method
+
+    //Method to return cursor with rows from the accounts table with specific value in the column name passed in as argument
+    public Cursor getAccountsThatContainsThisTextInName(String searchText,int categoryID){
+        Log.d("getAccWithSpecValInName","Enter the getAccountsThatContainsThisTextInName method in the AccountsDB class.");
+        Cursor  listOfAccountsThatContainsThisTexInName = null;
+        if(categoryID == -1){
+            listOfAccountsThatContainsThisTexInName = runQuery("SELECT * FROM "+ MainActivity.getAccountsTable()+ " WHERE " + MainActivity.getNameColumn() + " LIKE '%" + searchText + "%'");
+        }else if(categoryID ==-2){
+            listOfAccountsThatContainsThisTexInName = runQuery("SELECT * FROM "+ MainActivity.getAccountsTable()+ " WHERE " + MainActivity.getNameColumn() + " LIKE '%" + searchText + "%'"
+                    +" AND "+MainActivity.getIsFavoriteColumn() +"= 1" );
+        }else{
+            listOfAccountsThatContainsThisTexInName = runQuery("SELECT * FROM "+ MainActivity.getAccountsTable()+ " WHERE " + MainActivity.getNameColumn() + " LIKE '%" + searchText + "%'"
+                    +" AND "+MainActivity.getCategoryIdColumn() +" = "+categoryID);
+        }
+
+        Log.d("getAccWithSpecValInName","Exit the getAccountsThatContainsThisTextInName method in the AccountsDB class.");
+        return listOfAccountsThatContainsThisTexInName;
+    }//End of getAccountsWithSpecifcValue method
+
+    //Method to return cursor with rows from the accounts table with specific value in the column name passed in as argument
+    public Cursor getAccountsThatContainsThisTextInNameAndIsFav(String searchText,int categoryID){
+        Log.d("getAccWithSpecValInName","Enter the getAccountsThatContainsThisTextInName method in the AccountsDB class.");
+        Cursor  listOfAccountsThatContainsThisTexInName = null;
+        if(categoryID == -1){
+            listOfAccountsThatContainsThisTexInName = runQuery("SELECT * FROM "+ MainActivity.getAccountsTable()+ " WHERE " + MainActivity.getNameColumn() + " LIKE '%" + searchText + "%'");
+        }else if(categoryID ==-2){
+            listOfAccountsThatContainsThisTexInName = runQuery("SELECT * FROM "+ MainActivity.getAccountsTable()+ " WHERE " + MainActivity.getNameColumn() + " LIKE '%" + searchText + "%'"
+                    +" AND "+MainActivity.getIsFavoriteColumn() +"= 1" );
+        }else{
+            listOfAccountsThatContainsThisTexInName = runQuery("SELECT * FROM "+ MainActivity.getAccountsTable()+ " WHERE " + MainActivity.getNameColumn() + " LIKE '%" + searchText + "%'"
+                    +" AND "+MainActivity.getCategoryIdColumn() +" = "+categoryID);
+        }
+
+        Log.d("getAccWithSpecValInName","Exit the getAccountsThatContainsThisTextInName method in the AccountsDB class.");
+        return listOfAccountsThatContainsThisTexInName;
+    }//End of getAccountsWithSpecifcValue method
+
+
 
     //Method to return rows from a table that meet multiple possible values
     private Cursor getRowsThatMeetMultipleValuesCriteria(String table, String column, ArrayList values){
