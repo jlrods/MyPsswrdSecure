@@ -1,6 +1,8 @@
 package io.github.jlrods.mypsswrdsecure;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
@@ -13,8 +15,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 
-public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHolder>{
+public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHolder> {
     //Attribute definition
+    private static int OPEN_DIRECTORY_REQUEST_CODE = 1111;
     private View.OnClickListener listener;
     //private static SparseBooleanArray itemStateArray= new SparseBooleanArray();
     private Context context;

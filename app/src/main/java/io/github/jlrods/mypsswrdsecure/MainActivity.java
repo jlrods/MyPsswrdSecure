@@ -12,6 +12,7 @@ import android.graphics.PorterDuffColorFilter;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
@@ -344,6 +345,11 @@ public class  MainActivity extends AppCompatActivity {
             appLoggin.setPicture(accountsDB.getIconByID(62));
             accountsDB.addItem(appLoggin);
         }//End of if statement to check user cursor is not empty
+//        Cursor iconsWithURIIcons = accountsDB.runQuery("SELECT * FROM "+ICON_TABLE+" WHERE Location LIKE '%"+EXTERNAL_IMAGE_STORAGE_CLUE+"%'");
+//        if(iconsWithURIIcons.moveToNext()){
+//            //openDirectory(Uri.parse(iconsWithURIIcons.getString(2)));;
+//            openFile(Uri.parse(iconsWithURIIcons.getString(2)));
+//        }
     }//End of onCreate method
 
 
@@ -1148,7 +1154,7 @@ public class  MainActivity extends AppCompatActivity {
             //Initialize the intent object and set it up for calling the Gallery app
             //intent = new Intent();
             intent.setAction(Intent.ACTION_GET_CONTENT);
-            intent.setType("image/*");
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             //startActivityForResult(intent, RESULT_PROFILE_IMAGE_GALLERY);
         } else {
             //Log the current version
@@ -1156,8 +1162,15 @@ public class  MainActivity extends AppCompatActivity {
             //Initialize the intent object and set it up for calling the Gallery app
             intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
             intent.addCategory(Intent.CATEGORY_OPENABLE);
-            intent.setType("image/*");
+            //intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+//            getContentResolver().takePersistableUriPermission(Uri.parse(uri), intent.getFlags());
+//            final int takeFlags = intent.getFlags()
+//                    & (Intent.FLAG_GRANT_READ_URI_PERMISSION
+//                    | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+//            getContentResolver().takePersistableUriPermission(Uri.parse(uri), takeFlags);
         }//End of if else statement that checks the SDK version
+        intent.setType("image/*");
         Log.d("LoadGalPicture","Exit loadPictureFromGallery method in the MainActivity class.");
     }//End of loadPicture method
 
@@ -1172,6 +1185,9 @@ public class  MainActivity extends AppCompatActivity {
                 uriCameraImage = activity.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, uriCameraImage);
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                if (Build.VERSION.SDK_INT >= 19){
+                    intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+                }
             } else {
                 MainActivity.displayToast(activity,"",Toast.LENGTH_LONG,Gravity.BOTTOM);
             }//End of if else statement
@@ -1872,6 +1888,36 @@ public class  MainActivity extends AppCompatActivity {
             this.name = name;
             Log.d("ExtFullCategory","Exit full constructor in the Category class.");
         }//End of Full Category constructor
+    }
+
+    public void openDirectory(Uri uriToLoad) {
+        // Choose a directory using the system's file picker.
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+
+        // Provide read access to files and sub-directories in the user-selected
+        // directory.
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+        // Optionally, specify a URI for the directory that should be opened in
+        // the system file picker when it loads.
+        intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, uriToLoad);
+
+        startActivityForResult(intent, 1111);
+    }
+
+    private void openFile(Uri pickerInitialUri) {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("image/*");
+
+        // Optionally, specify a URI for the file that should appear in the
+        // system file picker when it loads.
+        intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri);
+        final int takeFlags = intent.getFlags()
+                & (Intent.FLAG_GRANT_READ_URI_PERMISSION
+                | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        getContentResolver().takePersistableUriPermission(pickerInitialUri, takeFlags);
+        startActivityForResult(intent, 1111);
     }
 
 

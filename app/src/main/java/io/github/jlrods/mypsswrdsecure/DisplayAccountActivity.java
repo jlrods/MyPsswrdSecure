@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.UriPermission;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -39,6 +40,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
 
@@ -905,6 +907,34 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             Log.d("onActivityResult","Received GOOD result from Gallery intent received by the DisplayAccountActivity class.");
             //Set the image as per path coming from the intent. The data can be parsed as an uri
             String uri = data.getDataString();
+            //Set up the flags required to setup persisted permission for the URI
+            final int takeFlags = data.getFlags()
+                    & (Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            //Get the list of permissions for URIs from thr contentResolver
+            List<UriPermission> permissions = getContentResolver().getPersistedUriPermissions();
+            //Iterate through the list of permissions to check the current URI is present
+            if(permissions != null){
+                int i =0;
+                boolean found = false;
+                while(i<permissions.size() && !found){
+                    //Check each URI stored in the list of permissions
+                    if(permissions.get(i).getUri().toString().equals(uri)){
+                        //if current URI is in the list, check the Persisted access is granted (time > 0)
+                        if(permissions.get(i).getPersistedTime() == UriPermission.INVALID_TIME){
+                            //If access has not been granted, call method to setup persisted permission
+                            getContentResolver().takePersistableUriPermission(Uri.parse(uri), takeFlags);
+                        }//End of if statement to check persisted permission for this URI
+                        //Exit loop even if permit already granted
+                        found = true;
+                    }//End of if statement to check URI value
+                    i++;
+                }//End of while loop
+                //If URI not in the list, include with persisted permission
+                if(!found){
+                    getContentResolver().takePersistableUriPermission(Uri.parse(uri), takeFlags);
+                }
+            }//End of if statement to check permission list isn't null
             this.logo = new Icon("galleryImage_"+System.currentTimeMillis(),uri);
             this.imgAccLogo.setImageURI(Uri.parse(uri));
         }else if(requestCode == MainActivity.getThrowImageGalleryReqCode() && resultCode == Activity.RESULT_CANCELED){
@@ -1360,6 +1390,10 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
                 MainActivity.loadPictureFromGallery(intent);
             }else if(requestCode == MainActivity.getThrowImageCameraReqCode()){
                 MainActivity.loadPictureFromCamera(intent,this);
+//                final int takeFlags = intent.getFlags()
+//                        & (Intent.FLAG_GRANT_READ_URI_PERMISSION
+//                        | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+//                getContentResolver().takePersistableUriPermission(MainActivity.getUriCameraImage(), takeFlags);
             }//End of if else statement to check the request code
             startActivityForResult(intent, requestCode);
         } else {
