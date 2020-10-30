@@ -18,16 +18,16 @@
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
-    <string name="petNameQuestion">What\'s the name of your first pet?</string>
-    <string name="firstCarQuestion">What was the model of your first car?</string>
-    <string name="grannyNameQuestion">What\'s your Granny\'s name?</string>
-    <string name="placeMarryQuestion">Where did you get married</string>
-    <string name="motherNameQuestion">What\'s your mother\'s maiden name?</string>
-    <string name="placeBirthQuestion">What\'s the name of the town where you were born?</string>
-    <string name="phoneNumberQuestion">Which phone number do you remember most from your childhood?</string>
-    <string name="streetNameQuestion">What street did you grow up on?</string>
-    <string name="schoolNameQuestion">What is the name of your first school?</string>
-    <string name="dadMiddleNameQuestion">What is your father\'s middle name?</string>
+    <string name="whatsTheNameOfYourFirstPet">What\'s the name of your first pet?</string>
+    <string name="whatWasTheModelOfYourFirstCar">What was the model of your first car?</string>
+    <string name="whatsYourGrannysName">What\'s your Granny\'s name?</string>
+    <string name="whereDidYouGetMarried">Where did you get married</string>
+    <string name="whatsYourMothersMaidenName">What\'s your mother\'s maiden name?</string>
+    <string name="whatsTheNameOfTheTownWhereYouWereBorn">What\'s the name of the town where you were born?</string>
+    <string name="whichPhoneNumberDoYouRememberMostFromChildhood">Which phone number do you remember most from your childhood?</string>
+    <string name="whatStreetDidYouGrowUpOn">What street did you grow up on?</string>
+    <string name="whatIsTheNameOfYourFirstSchool">What is the name of your first school?</string>
+    <string name="whatsYourFathersMiddleName">What is your father\'s middle name?</string>
     <!--    Category names-->
     <string name="SocialMedia">Social Media</string>
     <string name="Entertainment">Entertainment</string>

@@ -75,16 +75,16 @@ public class AccountsDB extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE QUESTION (_id INTEGER PRIMARY KEY AUTOINCREMENT,Value TEXT,\n" +
                 "AnswerID INTEGER, FOREIGN KEY (AnswerID) REFERENCES ANSWER(_id));");
         //Insert pre-defined suggested security questions in the DB. No answer associated to question yet.
-        db.execSQL("INSERT INTO QUESTION VALUES(null,'petNameQuestion',1);");
-        db.execSQL("INSERT INTO QUESTION VALUES(null,'firstCarQuestion',2);");
-        db.execSQL("INSERT INTO QUESTION VALUES(null,'grannyNameQuestion',3);");
-        db.execSQL("INSERT INTO QUESTION VALUES(null,'placeMarryQuestion',4);");
-        db.execSQL("INSERT INTO QUESTION VALUES(null,'motherNameQuestion',null);");
-        db.execSQL("INSERT INTO QUESTION VALUES(null,'placeBirthQuestion',null);");
-        db.execSQL("INSERT INTO QUESTION VALUES(null,'phoneNumberQuestion',null);");
-        db.execSQL("INSERT INTO QUESTION VALUES(null,'schoolNameQuestion',null);");
-        db.execSQL("INSERT INTO QUESTION VALUES(null,'streetNameQuestion',null);");
-        db.execSQL("INSERT INTO QUESTION VALUES(null,'dadMiddleNameQuestion',null);");
+        db.execSQL("INSERT INTO QUESTION VALUES(null,'whatsTheNameOfYourFirstPet',1);");
+        db.execSQL("INSERT INTO QUESTION VALUES(null,'whatWasTheModelOfYourFirstCar',2);");
+        db.execSQL("INSERT INTO QUESTION VALUES(null,'whatsYourGrannysName',3);");
+        db.execSQL("INSERT INTO QUESTION VALUES(null,'whereDidYouGetMarried',4);");
+        db.execSQL("INSERT INTO QUESTION VALUES(null,'whatsYourMothersMaidenName',null);");
+        db.execSQL("INSERT INTO QUESTION VALUES(null,'whatsTheNameOfTheTownWhereYouWereBorn',null);");
+        db.execSQL("INSERT INTO QUESTION VALUES(null,'whichPhoneNumberDoYouRememberMostFromChildhood',null);");
+        db.execSQL("INSERT INTO QUESTION VALUES(null,'whatStreetDidYouGrowUpOn',null);");
+        db.execSQL("INSERT INTO QUESTION VALUES(null,'whatIsTheNameOfYourFirstSchool',null);");
+        db.execSQL("INSERT INTO QUESTION VALUES(null,'whatsYourFathersMiddleName',null);");
 
 
         //Create intermediate table to associate several questions to one list of questions.
@@ -1291,6 +1291,7 @@ public class AccountsDB extends SQLiteOpenHelper {
         return listOfAccountsThatHoldsASpecificValue;
     }//End of getAccountsWithSpecifcValue method
 
+
     //Method to return cursor with rows from the accounts table with specific value in the column name passed in as argument
     public Cursor getAccountsThatContainsThisTextInName(String searchText,int categoryID){
         Log.d("getAccWithSpecValInName","Enter the getAccountsThatContainsThisTextInName method in the AccountsDB class.");
@@ -1310,6 +1311,16 @@ public class AccountsDB extends SQLiteOpenHelper {
     }//End of getAccountsWithSpecifcValue method
 
     //Method to return cursor with rows from the accounts table with specific value in the column name passed in as argument
+    public Cursor getQuestionsWithThisTextInValue(String searchText){
+        Log.d("getQuestWithSpecValue","Enter the getQuestionsWithThisTextInValue method in the AccountsDB class.");
+        Cursor  listOfQuestionsThatContainsThisTexInValue = null;
+
+        listOfQuestionsThatContainsThisTexInValue = this.runQuery("SELECT QUESTION._id, QUESTION.Value AS Q, ANSWER._id AS AnswerID,ANSWER.Value AS Answer," +
+                "ANSWER.initVector AS initVector FROM QUESTION LEFT JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id WHERE QUESTION.Value LIKE '%"+searchText+"%'");
+        Log.d("getQuestWithSpecValue","Exit the getQuestionsWithThisTextInValue method in the AccountsDB class.");
+        return listOfQuestionsThatContainsThisTexInValue;
+    }//End of getAccountsWithSpecifcValue method
+
     public Cursor getAccountsThatContainsThisTextInNameAndIsFav(String searchText,int categoryID){
         Log.d("getAccWithSpecValInName","Enter the getAccountsThatContainsThisTextInName method in the AccountsDB class.");
         Cursor  listOfAccountsThatContainsThisTexInName = null;
