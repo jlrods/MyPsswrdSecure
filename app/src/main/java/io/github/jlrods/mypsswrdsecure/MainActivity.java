@@ -12,7 +12,6 @@ import android.graphics.PorterDuffColorFilter;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
@@ -482,8 +481,6 @@ public class  MainActivity extends AppCompatActivity {
             //Check the isSearch filter flag to define the correct cursor to retrieve from the DB
             if(isSearchFilter){
                 //Call DB method to retrieve the questions that holds specific value in the question text
-                //@Fixme: The questions value on the DB might require to be change for similar text with key words, so the search still applicable
-                //@Fixme: This wont fix exact match searches, but it will work for contain text search.
                 cursor = accountsDB.getQuestionsWithThisTextInValue(lastSearchText);
             }else{
                 cursor = accountsDB.getListQuestionsAvailableNoAnsw();
