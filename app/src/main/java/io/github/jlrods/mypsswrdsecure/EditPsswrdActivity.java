@@ -2,6 +2,7 @@ package io.github.jlrods.mypsswrdsecure;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -20,7 +21,10 @@ public class EditPsswrdActivity extends AddPsswrdActivity {
         Log.d("OnCreateEditPsswrd","Enter onCreate method in the EditPsswrdActivity class.");
         this.extras = getIntent().getExtras();
         //Extract password by passing in the _id attribute stored in the extras
-        this.psswrd = Psswrd.extractPsswrd(this.accountsDB.getPsswrdCursorByID(this.extras.getInt("_id")));
+        Cursor cursorPsswrd = this.accountsDB.getPsswrdCursorByID(this.extras.getInt("_id"));
+        if(cursorPsswrd != null && cursorPsswrd.getCount() > 0){
+            this.psswrd = Psswrd.extractPsswrd(cursorPsswrd);
+        }
         //Set the edit text field with the password value after decryption
         this.etNewItemField.setText(this.cryptographer.decryptText(this.psswrd.getValue(),new IvParameterSpec(this.psswrd.getIv())));
         this.fabDelete.setVisibility(View.VISIBLE);

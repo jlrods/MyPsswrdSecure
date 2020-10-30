@@ -19,16 +19,16 @@
     <string name="invalid_username">Nombre de usuarion inválido</string>
     <string name="invalid_password">Clave de seguridad debe ser >5 caracteres</string>
     <string name="login_failed">Inicio de sesión fallido</string>
-    <string name="petNameQuestion">Cuál es el nombre de tu mascota favorita?</string>
-    <string name="firstCarQuestion">Cuál fue el modelo de tu primer carro?</string>
-    <string name="grannyNameQuestion">Cuál es el nombre de tu abuela?</string>
-    <string name="placeMarryQuestion">Dónde te casaste?</string>
-    <string name="motherNameQuestion">Cuál es el nombre de soltera de tu mamá?</string>
-    <string name="placeBirthQuestion">En cuál ciudad o pueblo naciste?</string>
-    <string name="phoneNumberQuestion">Cuál número telefónico de tu niñéz recuerdas más?</string>
-    <string name="streetNameQuestion" >Cuál es el nombre de la calle en que creciste?</string>
-    <string name="dadMiddleNameQuestion">Cuál es el segundo nombre de tu papá?</string>
-    <string name="schoolNameQuestion">Cuál es el nomber de tu primera escula?</string>
+    <string name="whatsTheNameOfYourFirstPet">Cuál es el nombre de tu mascota favorita?</string>
+    <string name="whatWasTheModelOfYourFirstCar">Cuál fue el modelo de tu primer carro?</string>
+    <string name="whatsYourGrannysName">Cuál es el nombre de tu abuela?</string>
+    <string name="whereDidYouGetMarried">Dónde te casaste?</string>
+    <string name="whatsYourMothersMaidenName">Cuál es el nombre de soltera de tu mamá?</string>
+    <string name="whatsTheNameOfTheTownWhereYouWereBorn">En cuál ciudad o pueblo naciste?</string>
+    <string name="whichPhoneNumberDoYouRememberMostFromChildhood">Cuál número telefónico de tu niñéz recuerdas más?</string>
+    <string name="whatStreetDidYouGrowUpOn">Cuál es el nombre de la calle en que creciste?</string>
+    <string name="whatsYourFathersMiddleName">Cuál es el segundo nombre de tu papá?</string>
+    <string name="whatIsTheNameOfYourFirstSchool">Cuál es el nomber de tu primera escula?</string>
 
     <!--    Category names-->
     <string name="SocialMedia">Social</string>
@@ -199,6 +199,22 @@
     <string name="inputUserMessage">Por favor, tipee su mensaje personalizado:</string>
     <string name="unableUpdateUserMessage">Algo ha ido mal!!! El mensaje de usuario no pudo ser actualizado</string>
     <string name="blankUserMessage">El mensaje de usuario no se puede dejar en blanco. Por favor, tipee un nombre en el campo indicado</string>
+
+    <!--   Search method-->
+    <string name="searchAccountTitle">Buscar cuenta:</string>
+    <string name="searchUserNameTitle">Buscar usuario:</string>
+    <string name="searchPsswrdTitle">Buscar contraseña:</string>
+    <string name="searchQuestionTitle">Buscar pregunta:</string>
+    <string name="hintSearchAccount1">Por favor, introduza el nombre de usuarion que busca en las cuentas...</string>
+    <string name="hintSearchAccount2">Por favor, introduza la contraseña que busca en las cuentas...</string>
+    <string name="hintSearchAccount3">Por favor, introduza el nombre de la cuenta que está buscando...</string>
+    <string name="hintSearchUserName">Por favor, introduza el nombre de usuario que está buscando:</string>
+    <string name="hintSearchPsswrd">Por favor, introduza la contraseña que está buscando:</string>
+    <string name="hintSearchQuestion">Por favor, introduza la pregunta que está buscando:</string>
+    <string name="searchAccountsWithUserNameTextOn">Activada búsqueda de cuentas con este usuario</string>
+    <string name="searchAccountsWithUserNameTextOff">Desactivada búsqueda de cuentas con este usuario</string>
+    <string name="searchAccountsWithPsswrdTextOn">Activada búsqueda de cuentas con esta contraseña</string>
+    <string name="searchAccountsWithPsswrdTextOff">Desactivada búsqueda de cuentas con esta contraseña</string>
 
     <!--    Snackbar texts-->
     <string name="snackBarUndo">UNDO</string>

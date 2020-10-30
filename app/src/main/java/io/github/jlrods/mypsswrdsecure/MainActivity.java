@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,6 +20,8 @@ import android.view.View;
 import android.view.Menu;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -51,8 +55,8 @@ public class  MainActivity extends AppCompatActivity {
     private static int currentTab = 0;
     private boolean showAllAccounts = true;
     private boolean isFavoriteFilter = false;
-    private boolean isSearchFilter = false;
-    private String lastSearchText ="";
+    private static boolean isSearchFilter = false;
+    private static String lastSearchText ="";
     private int counter=0;
     private byte[] encrypted=null;
     private String decrypted=null;
@@ -195,6 +199,7 @@ public class  MainActivity extends AppCompatActivity {
                                 toggleIsFavorite(v);
                             }
                         });
+                        clearSearchFilter();
                         MainActivity.updateRecyclerViewData(accountAdapter);
                         break;
                     case 1:
@@ -207,6 +212,7 @@ public class  MainActivity extends AppCompatActivity {
                                 throwEditUserNameActivity(v);
                             }//End of onClick method
                         });//End of setOnClickListener
+                        clearSearchFilter();
                         MainActivity.updateRecyclerViewData(userNameAdapter);
                         break;
                     case 2:
@@ -218,10 +224,12 @@ public class  MainActivity extends AppCompatActivity {
                                 throwEditPsswrdActivity(v);
                             }//End of onClick method
                         });//End of setOnClickListener
+                        clearSearchFilter();
                         MainActivity.updateRecyclerViewData(psswrdAdapter);
                         break;
                     case 3:
                         SecurityQuestionAdapter secQuestionAdapter = new SecurityQuestionAdapter(getBaseContext(),null);
+                        clearSearchFilter();
                         MainActivity.updateRecyclerViewData(secQuestionAdapter);
                         secQuestionAdapter.setOnClickListener(new View.OnClickListener(){
                             @Override
@@ -257,7 +265,8 @@ public class  MainActivity extends AppCompatActivity {
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-
+                clearSearchFilter();
+                this.onTabSelected(tab);
             }
         });// End of addOnTabSelectedListener method for tabLayout
 
@@ -335,6 +344,11 @@ public class  MainActivity extends AppCompatActivity {
             appLoggin.setPicture(accountsDB.getIconByID(62));
             accountsDB.addItem(appLoggin);
         }//End of if statement to check user cursor is not empty
+//        Cursor iconsWithURIIcons = accountsDB.runQuery("SELECT * FROM "+ICON_TABLE+" WHERE Location LIKE '%"+EXTERNAL_IMAGE_STORAGE_CLUE+"%'");
+//        if(iconsWithURIIcons.moveToNext()){
+//            //openDirectory(Uri.parse(iconsWithURIIcons.getString(2)));;
+//            openFile(Uri.parse(iconsWithURIIcons.getString(2)));
+//        }
     }//End of onCreate method
 
 
@@ -364,6 +378,24 @@ public class  MainActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_about:
+                return true;
+            case R.id.action_settings:
+                return true;
+            case R.id.action_search:
+                this.search();
+                item.getIcon().setColorFilter(new PorterDuffColorFilter(getColor(R.color.colorAccent),PorterDuff.Mode.SRC_IN));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -396,30 +428,71 @@ public class  MainActivity extends AppCompatActivity {
         return category;
     }// End of getCategoryID method
 
-    public static void updateRecyclerViewData(RecyclerView.Adapter adapter){
+    public static void updateRecyclerViewData(RecyclerView.Adapter adapter,MainActivity.SearchType searchType){
         Log.d("Ent_updateRecViewData","Enter the updateRecyclerViewData method in the MainActivity class.");
         RecyclerView rv = HomeFragment.getRv();
         AccountsDB accountsDB = HomeFragment.getAccountsDB();
         Cursor cursor = null;
-        //Check the class of the adapter passed in as argument
+        //Check the class of the adapter passed in as argument#
         if(adapter instanceof AccountAdapter){
-            //Check current category variable to call method that retrieves proper account list
-            if(MainActivity.getCurrentCategory().get_id() == -1){
-                cursor = accountsDB.getAccountsList();
-            }else if(MainActivity.getCurrentCategory().get_id() == -2){
-                cursor = accountsDB.getAccountsWithSpecifcValue(MainActivity.getIsFavoriteColumn(),1);
+            //Check the isSearch filter flag to define the correct cursor to retrieve from the DB
+            if(isSearchFilter){
+                if(searchType.equals(SearchType.ACCOUNT_WITH_USERNAME)){
+                    Cursor userName = accountsDB.getUserNameByName(lastSearchText);
+                    if(userName != null && userName.getCount() > 0){
+                        cursor = accountsDB.getAccountsWithSpecifcValue(USER_NAME_ID_COLUMN,userName.getInt(0));
+                    }else{
+                        //Work around to get a Non null cursor with no data as null cursor crashes app when getCount method is called by RV
+                        cursor = accountsDB.getAccountsWithSpecifcValue(USER_NAME_ID_COLUMN,-1);
+                    }//En of if else statement to check the user name retrieved isn't null
+                }else if(searchType.equals(SearchType.ACCOUNT_WITH_PSSWRD)){
+                    Cursor psswrd = accountsDB.getPsswrdByName(lastSearchText);
+                    if(psswrd != null && psswrd.getCount() > 0){
+                        cursor = accountsDB.getAccountsWithSpecifcValue(PSSWRD_ID_COLUMN,psswrd.getInt(0));
+                    }else{
+                        //Work around to get a Non null cursor with no data as null cursor crashes app when getCount method is called by RV
+                        cursor = accountsDB.getAccountsWithSpecifcValue(PSSWRD_ID_COLUMN,-1);
+                    }//End of if else statement to check password retrieved isn't nulll
+                }else{
+                    //Since user name and password specific search is not category limited, if the search text is searched in the account name
+                    //include the current category in the search criteria
+                    cursor = accountsDB.getAccountsThatContainsThisTextInName(lastSearchText,currentCategory.get_id());
+                }//End of if else statement to check if the Account special search feature is being used
             }else{
-                cursor = accountsDB.getAccountsWithSpecifcValue(MainActivity.getCategoryIdColumn(),MainActivity.getCurrentCategory().get_id());
-            }
+                //Check current category variable to call method that retrieves proper account list
+                if(MainActivity.getCurrentCategory().get_id() == -1){
+                    cursor = accountsDB.getAccountsList();
+                }else if(MainActivity.getCurrentCategory().get_id() == -2){
+                    cursor = accountsDB.getAccountsWithSpecifcValue(MainActivity.getIsFavoriteColumn(),1);
+                }else{
+                    cursor = accountsDB.getAccountsWithSpecifcValue(MainActivity.getCategoryIdColumn(),MainActivity.getCurrentCategory().get_id());
+                }//End of if else statements to check current category
+            }//End of if else statement to check if the search filter is active
             ((AccountAdapter) adapter).setCursor(cursor);
         }else if(adapter instanceof PsswrdAdapter){
-            cursor = accountsDB.getPsswrdList();
+            //Check the isSearch filter flag to define the correct cursor to retrieve from the DB
+            if(isSearchFilter){
+                cursor = accountsDB.getPsswrdByName(lastSearchText);
+            }else{
+                cursor = accountsDB.getPsswrdList();
+            }
             ((PsswrdAdapter) adapter).setCursor(cursor);
         }else if(adapter instanceof SecurityQuestionAdapter){
-            cursor = accountsDB.getListQuestionsAvailableNoAnsw();
+            //Check the isSearch filter flag to define the correct cursor to retrieve from the DB
+            if(isSearchFilter){
+                //Call DB method to retrieve the questions that holds specific value in the question text
+                cursor = accountsDB.getQuestionsWithThisTextInValue(lastSearchText);
+            }else{
+                cursor = accountsDB.getListQuestionsAvailableNoAnsw();
+            }
             ((SecurityQuestionAdapter) adapter).setCursor(cursor);
         }else if(adapter instanceof UserNameAdapter){
-            cursor = accountsDB.getUserNameList();
+            //Check the isSearch filter flag to define the correct cursor to retrieve from the DB
+            if(isSearchFilter){
+                cursor = accountsDB.getUserNameByName(lastSearchText);
+            }else{
+                cursor = accountsDB.getUserNameList();
+            }
             ((UserNameAdapter) adapter).setCursor(cursor);
         }//End of if else statement that checks the instance of the adapter
         //Move to first row of cursor if not empty
@@ -430,6 +503,10 @@ public class  MainActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
         Log.d("Ext_updateRecViewData","Exit the updateRecyclerViewData method in the MainActivity class.");
     }//End of updateRecyclerViewData method
+
+    public static void updateRecyclerViewData(RecyclerView.Adapter adapter){
+        updateRecyclerViewData(adapter, SearchType.ACCOUNTS);
+    }
 
     //@Fixme: try to compress all the throw activity methods into one generic method
     //Method to throw new AddTaskActivity
@@ -998,6 +1075,14 @@ public class  MainActivity extends AppCompatActivity {
         return NAV_DRAWER_BCKGRNDS;
     }
 
+    public boolean isSearchFilter() {
+        return isSearchFilter;
+    }
+
+    public String getLastSearchText() {
+        return lastSearchText;
+    }
+
     public static void displayToast(Context context, String text, int toastLength, int gravity){
         Log.d("displayToast","Enter displayToast method in the MainActivity class.");
         Toast toast = Toast.makeText(context,text,toastLength);
@@ -1073,7 +1158,7 @@ public class  MainActivity extends AppCompatActivity {
             //Initialize the intent object and set it up for calling the Gallery app
             //intent = new Intent();
             intent.setAction(Intent.ACTION_GET_CONTENT);
-            intent.setType("image/*");
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             //startActivityForResult(intent, RESULT_PROFILE_IMAGE_GALLERY);
         } else {
             //Log the current version
@@ -1081,8 +1166,15 @@ public class  MainActivity extends AppCompatActivity {
             //Initialize the intent object and set it up for calling the Gallery app
             intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
             intent.addCategory(Intent.CATEGORY_OPENABLE);
-            intent.setType("image/*");
+            //intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+//            getContentResolver().takePersistableUriPermission(Uri.parse(uri), intent.getFlags());
+//            final int takeFlags = intent.getFlags()
+//                    & (Intent.FLAG_GRANT_READ_URI_PERMISSION
+//                    | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+//            getContentResolver().takePersistableUriPermission(Uri.parse(uri), takeFlags);
         }//End of if else statement that checks the SDK version
+        intent.setType("image/*");
         Log.d("LoadGalPicture","Exit loadPictureFromGallery method in the MainActivity class.");
     }//End of loadPicture method
 
@@ -1097,6 +1189,9 @@ public class  MainActivity extends AppCompatActivity {
                 uriCameraImage = activity.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, uriCameraImage);
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                if (Build.VERSION.SDK_INT >= 19){
+                    intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+                }
             } else {
                 MainActivity.displayToast(activity,"",Toast.LENGTH_LONG,Gravity.BOTTOM);
             }//End of if else statement
@@ -1150,6 +1245,7 @@ public class  MainActivity extends AppCompatActivity {
                     //But the current category still need to be set to Home category
                     currentCategory = categoryList.get(0);
                     tabLayout.selectTab( tabLayout.getTabAt(0));
+                    clearSearchFilter();
                     return false;
                 }//End of onMenuItemClick method
             });//End of setOnMenuItemClickListener method call
@@ -1171,6 +1267,7 @@ public class  MainActivity extends AppCompatActivity {
                     //But the current category still need to be set to Home category
                     currentCategory = categoryList.get(1);
                     tabLayout.selectTab( tabLayout.getTabAt(0));
+                    clearSearchFilter();
                     return false;
                 }//End of onMenuItemClick method
             });//End of setOnMenuItemClickListener method call
@@ -1226,6 +1323,7 @@ public class  MainActivity extends AppCompatActivity {
                     item.setCheckable(true);
                     //Close the drawer and display the HomeFragment which will load proper data based on the currentCategory variable
                     drawer.closeDrawer(Gravity.LEFT);
+                    clearSearchFilter();
                     Log.d("onMenuItemClick","Exit the onMenuItemClick method defined for each category menu item in the MainActivity class.");
                     return false;
                 }//End of onMenuItemClick method
@@ -1393,7 +1491,7 @@ public class  MainActivity extends AppCompatActivity {
                                                     int i =0;
                                                     while(i< categoriesToBeDeleted.size() && isCategoryDeleteProcessWithoutFault[0]){
                                                         //Get a cursor list of accounts which category is the current one to be deleted
-                                                        ArrayList accountsToBeDeleted = accountsDB.getAccountsUsingItemWithID(MainActivity.getCategoryIdColumn(),categoriesToBeDeleted.get(i).get_id());
+                                                        ArrayList accountsToBeDeleted = accountsDB.getAccountsIDListUsingItemWithID(MainActivity.getCategoryIdColumn(),categoriesToBeDeleted.get(i).get_id());
                                                         int j=0;
                                                         Account account = null;
                                                         while(j<accountsToBeDeleted.size() && isCategoryDeleteProcessWithoutFault[0]){
@@ -1591,5 +1689,211 @@ public class  MainActivity extends AppCompatActivity {
                 .show();
         Log.d("Ext_setProfName","Exit setUserProfileName method in the MainActivity class.");
     }//End of setUserProfileName method
+
+    //Method to filter task or groceries by description content
+    private void search(){
+        Log.d("Ent_serach","Enter the search method in the MainActivity class.");
+        //Declare and instantiate a new View objects to be used on the AlertDialog box: Two switch views and one editText view.
+        //All of them under a LinearLayout parent
+        final LinearLayout linearLayout = new LinearLayout(this);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        //Declare and instantiate the switch to turn on Accounts with specif user name search
+        final Switch isSearchAccountWithUserName = new Switch(this);
+        //Declare and instantiate the switch to turn on Accounts with specif password search
+        final Switch isSearchAccountWithPsswrd = new Switch(this);
+        //Declare and instantiate the EditText object to allow user to input the searched text
+        final EditText input= new EditText(this);
+        if(currentTab == 0){
+            //Set up the proper texts for this switch
+            isSearchAccountWithUserName.setTextOff(getResources().getString(R.string.searchAccountsWithUserNameTextOff));
+            isSearchAccountWithUserName.setTextOn(getResources().getString(R.string.searchAccountsWithUserNameTextOn));
+            isSearchAccountWithUserName.setText(getResources().getString(R.string.searchAccountsWithUserNameTextOff));
+
+            //Set up the proper texts for this switch
+            isSearchAccountWithPsswrd.setTextOff(getResources().getString(R.string.searchAccountsWithPsswrdTextOff));
+            isSearchAccountWithPsswrd.setTextOn(getResources().getString(R.string.searchAccountsWithPsswrdTextOn));
+            isSearchAccountWithPsswrd.setText(getResources().getString(R.string.searchAccountsWithPsswrdTextOff));
+            //Set up the onClick event listener
+            isSearchAccountWithUserName.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Call method to confirm if the switch is checked or onChecked
+                    switchOnOff((Switch) v, isSearchAccountWithPsswrd,input);
+                }//End of onClick method
+            });//End of setOnClickListener method
+
+            //Set up the onClick event listener
+            isSearchAccountWithPsswrd.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Call method to confirm if the switch is checked or onChecked
+                    switchOnOff((Switch) v, isSearchAccountWithUserName,input);
+                }//End of onClick method
+            });//End of setOnClickListener method
+            linearLayout.addView(isSearchAccountWithUserName);
+            linearLayout.addView(isSearchAccountWithPsswrd);
+        }//End of if statement to check the accounts tab is the one selected
+
+        linearLayout.addView(input);
+        //Set text to empty text
+        input.setText("");
+        input.requestFocus();
+        //Check the current tab and category to set up the correct search criteria
+        int searchHintText = -1;
+        int searchTitle = -1;
+        switch(this.tabLayout.getSelectedTabPosition()){
+            default:
+                searchTitle = R.string.searchAccountTitle;
+                if(isSearchAccountWithUserName.isChecked()){
+                    searchHintText = R.string.hintSearchAccount1;
+                }else if(isSearchAccountWithPsswrd.isChecked()){
+                    searchHintText = R.string.hintSearchAccount2;
+                }else{
+                    searchHintText = R.string.hintSearchAccount3;
+                }
+                break;
+            case 1:
+                searchTitle = R.string.searchUserNameTitle;
+                searchHintText = R.string.hintSearchUserName;
+                break;
+            case 2:
+                searchTitle = R.string.searchPsswrdTitle;
+                searchHintText = R.string.hintSearchPsswrd;
+                break;
+            case 3:
+                searchTitle = R.string.searchQuestionTitle;
+                searchHintText = R.string.hintSearchQuestion;
+                break;
+        }//End of switch statement
+        //Set the hint message to be displayed
+        input.setHint(searchHintText);
+        new AlertDialog.Builder(this)
+                .setTitle(searchTitle)
+                .setView(linearLayout)
+                .setPositiveButton(R.string.dialog_OK,new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog,int whichButton){
+                        //Declare and instantiate as null a string object to hold the sql query to run. Depending on the current category, different query will be run
+                        //String searchText = input.getText().toString();
+                        //Add % sign for the sql query using LIKE key word
+                        //searchText+="%";
+                        //Store the search sql for future use (in it's original state, without including escape character for apostrophe)
+                        //lastSearchText = searchText;
+                        //Check if switch views were included
+                        int etViewPosition;
+                        if(linearLayout.getChildCount() > 1){
+                            etViewPosition = 2;
+                        }else{
+                            etViewPosition = 0;
+                        }
+                        lastSearchText = ((EditText) linearLayout.getChildAt(etViewPosition)).getText().toString().trim();
+
+                        if(!lastSearchText.equals("")){
+                            //Set isSearchFilter boolean to true
+                            isSearchFilter = true;
+                            //Check the input text has apostrophe
+                            if(lastSearchText.contains("'")){
+                                //If it does, call method to include escape character
+                                lastSearchText = accountsDB.includeApostropheEscapeChar(lastSearchText);
+                            }//End of if statement to check the search text has apostrophe
+                            //Check the switch statuses to define the type of search to be performed: Accounts with this user, Accounts with this passowrd
+                            //or Accounts with this name
+                            //Check if switch views were added to linearLayout object
+                            if(linearLayout.getChildCount() > 1){
+                                if(((Switch)linearLayout.getChildAt(0)).isChecked()){
+                                    updateRecyclerViewData(HomeFragment.getRv().getAdapter(),SearchType.ACCOUNT_WITH_USERNAME);
+                                }else if(((Switch)linearLayout.getChildAt(1)).isChecked()){
+                                    updateRecyclerViewData(HomeFragment.getRv().getAdapter(),SearchType.ACCOUNT_WITH_PSSWRD);
+                                }else{
+                                    updateRecyclerViewData(HomeFragment.getRv().getAdapter());
+                                }
+                            }else{
+                                updateRecyclerViewData(HomeFragment.getRv().getAdapter());
+                            }
+
+                            //@Fixme: Update App state
+                            //Update app state in DB
+                            //db.updateAppState(currentCategory.getId(),db.toInt(isArchivedSelected),db.toInt(isSearchFilter),db.toInt(cbOnlyChecked.isChecked()),lastSearchText[0],lastSearchText[1]);
+                            //Call method to update the adapter and the recyclerView
+                        }else{
+                            clearSearchFilter();
+                            displayToast(MainActivity.this,"Sorry, the searched text was empty",Toast.LENGTH_SHORT,Gravity.CENTER);
+                        }
+                    }//End of Onclick method
+                })//End of setPossitiveButton method
+                .setNegativeButton(R.string.cancel,new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        clearSearchFilter();
+                    }
+                })
+                .show();
+    }//End of the search method
+
+    //Method to update UI switch when clicked on
+    private void switchOnOff(Switch switchView1, Switch switchView2, EditText input){
+        Log.d("switchOnOff","Enter the switchOnOff method in the MainActivity class.");
+        //Check if the switch is checked
+        if((switchView1).isChecked()){
+            //Set the On Text if checked
+            switchView1.setText(switchView1.getTextOn());
+        }else{
+            //Otherwise, set the Off text
+            switchView1.setText(switchView1.getTextOff());
+        }
+        //Check if the other switch is check, since they are mutually exclusive it must be switched off
+        if(switchView2.isChecked()){
+            switchView2.setChecked(false);
+            switchView2.setText(switchView2.getTextOff());
+        }
+        //Identify if switchView1 is the one for looking for specif user name or specific password
+        if(switchView1.getTextOn().equals(getResources().getString(R.string.searchAccountsWithUserNameTextOn))){
+            //If On text is the one for user name, set proper hint for looking for accounts with specific user name
+            if(switchView1.isChecked()){
+                input.setHint(R.string.hintSearchAccount1);
+            }else{
+                input.setHint(R.string.hintSearchAccount3);
+            }//End of if else statement that checks the switch is on
+        }else if(switchView1.getTextOn().equals(getResources().getString(R.string.searchAccountsWithPsswrdTextOn))){
+            //If On text is the one for password, set proper hint for looking for accounts with specific password
+            if(switchView1.isChecked()){
+                input.setHint(R.string.hintSearchAccount2);
+            }else{
+                input.setHint(R.string.hintSearchAccount3);
+            }//End of if else statement that checks the switch is on
+        }//End of if else statement to identify the two switch views and set up proper input hint text
+        Log.d("switchOnOff","Exit the switchOnOff method in the MainActivity class.");
+    }//End of switchOnOff method
+
+    //Method to clear search filter
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private boolean clearSearchFilter(){
+        Log.d("clearSearchFilter","Enter the clearSearchFilter method in the MainActivity class.");
+        boolean isSearchFilterCleared = false;
+        isSearchFilter = false;
+        lastSearchText = "";
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.getMenu().getItem(0).getIcon().setColorFilter(null);
+        //@Fixme: Update app state on the DB
+        isSearchFilterCleared = true;
+        Log.d("clearSearchFilter","Exit the clearSearchFilter method in the MainActivity class.");
+        return isSearchFilterCleared;
+    }//End of clearSearchFilter method
+
+    public enum SearchType{
+        //Define the possible priorities in this app
+        ACCOUNT_WITH_USERNAME("Account with user name"),
+        ACCOUNT_WITH_PSSWRD("Account with password"),
+        ACCOUNTS("Accounts"),
+        USER_NAME("User name"),
+        PSSWRD("Password");
+
+        String name;
+        //Full constructor
+        SearchType(String name){
+            Log.d("EntFullCategory","Enter full constructor in the Category class.");
+            this.name = name;
+            Log.d("ExtFullCategory","Exit full constructor in the Category class.");
+        }//End of Full Category constructor
+    }
 
 }//End of MainActivity class.

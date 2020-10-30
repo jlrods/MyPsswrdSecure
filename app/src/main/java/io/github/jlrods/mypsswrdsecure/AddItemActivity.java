@@ -366,7 +366,7 @@ public abstract class AddItemActivity extends AppCompatActivity {
             //Check the number of times the item is being used. If greater than 0, then prompt the user the accounts that will get affected
             if(timesUsed != 0){
                 //Get the accounts name where the item is being used
-                listOfAccountsUsingTheItem = accountsDB.getAccountsUsingItemWithID(itemType,itemID);
+                listOfAccountsUsingTheItem = accountsDB.getAccountsIDListUsingItemWithID(itemType,itemID);
                 listOfAccountsUsingTheItemArray[0] = listOfAccountsUsingTheItem;
                 if(timesUsed > 1){
                     alertDialogMessage += "\nThe "+ itemType+ " is being used " + timesUsed + " times.\nThe item will be removed from the following accounts:";
