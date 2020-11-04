@@ -132,6 +132,7 @@ public class AccountsDB extends SQLiteOpenHelper {
         //Create table to store app state
         db.execSQL("CREATE TABLE APPSTATE(_id INTEGER PRIMARY KEY AUTOINCREMENT,currentCategoryID INTEGER,\n" +
                 "currentTab INTEGER,showAllAccounts INTEGER,isFavoriteFilter INTEGER,isSearchFilter INTEGER,\n" +
+                "isSearchUserInAccountsFilter INTEGER, isSearchPsswrdInAccountsFilter INTEGER,\n"+
                 "lastSearch TEXT, FOREIGN KEY (currentCategoryID) REFERENCES CATEGORY(_id));");
         //Populate default state of app
         db.execSQL("INSERT INTO APPSTATE VALUES(null,null,1,1,0,0,'');");
@@ -402,9 +403,11 @@ public class AccountsDB extends SQLiteOpenHelper {
         }//End of try catch block
     }//End of runQuery method
 
+
+
     //Methods to update the DB
     //Method to update AppState in DB
-    public boolean updateAppState(int currentCategory,int currentTab,int showAllAccounts,int isFavoriteFilter,int isSearchFilter, String lastSearchText){
+    public boolean updateAppStateOld(int currentCategory, int currentTab, int showAllAccounts, int isFavoriteFilter, int isSearchFilter, String lastSearchText){
         Log.d("UpdateState","Enter the updateAppState method in the AccountsDB class.");
         boolean success = false;
         Cursor appState;
@@ -426,6 +429,7 @@ public class AccountsDB extends SQLiteOpenHelper {
                 " lastSearch = '" + lastSearchText+ "'";
         //String to hold the where part of the query
         String whereId = " WHERE _id = ";
+        String whereClause = "_id = ";
         //String to hold the complete sql query
         String sql = "";
         //get next app state (only one should be saved)
@@ -448,6 +452,37 @@ public class AccountsDB extends SQLiteOpenHelper {
         }//End of try and catch block
     }//End of updateAppState
 
+    //Method to update AppState in DB
+    public boolean updateAppState(int currentCategory, int currentTab, int showAllAccounts, int isFavoriteFilter, int isSearchFilter, String lastSearchText){
+        Log.d("UpdateState","Enter the updateAppState method in the AccountsDB class.");
+        boolean updated = false;
+        int _id = -1;
+        String whereClause = "_id = ";
+        boolean success = false;
+        //Declare and instantiate a new database object to handle the database operations
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("currentCategoryID",currentCategory);
+        values.put("currentTab",currentTab);
+        values.put("showAllAccounts",showAllAccounts);
+        values.put("isFavoriteFilter",isFavoriteFilter);
+        values.put("isSearchFilter",isSearchFilter);
+        values.put("lastSearch",lastSearchText);
+        try{
+            _id = this.getMaxItemIdInTable(MainActivity.getAppstateTable());
+            whereClause += _id;
+            if(db.update(MainActivity.getAppstateTable(),values,whereClause,null) > 0){
+                updated = true;
+            }
+            Log.d("updateTable","Exit successfully the updateTable  method in the Accounts class.");
+        }catch (Exception e){
+            Log.d("updateTable","Exit the updateTable  method in the Accounts class with exception "+e.getMessage());
+        }finally{
+            db.close();
+            return updated;
+        }//End of try catch block
+    }//End of updateAppState
+
     public boolean updateTable(String table, ContentValues values){
         Log.d("updateTable","Enter the updateTable method in the AccountsDB class.");
         boolean updated = false;
@@ -458,8 +493,9 @@ public class AccountsDB extends SQLiteOpenHelper {
         try{
             _id = values.getAsInteger("_id");
             whereClause += _id;
-            db.update(table,values,whereClause,null);
-            updated = true;
+            if(db.update(table,values,whereClause,null) > 0){
+                updated = true;
+            }
             Log.d("updateTable","Exit successfully the updateTable  method in the Accounts class.");
         }catch (Exception e){
             Log.d("updateTable","Exit the updateTable  method in the Accounts class with exception "+e.getMessage());
@@ -662,6 +698,18 @@ public class AccountsDB extends SQLiteOpenHelper {
     public Cursor getIconList(){
         return  this.runQuery("SELECT * FROM ICON");
     }
+
+    //Method to get tha app state cursor
+    public Cursor getAppState(){
+        Log.d("getAppState","Enter the getAppState method in the AccountsDB class.");
+        Cursor cursor = this.runQuery("SELECT * FROM "+MainActivity.getAppstateTable() +" WHERE "+MainActivity.getIdColumn() +" = "
+                + this.getMaxItemIdInTable(MainActivity.getAppstateTable()));
+        if(cursor != null && cursor.getCount()>0){
+            cursor.moveToFirst();
+        }
+        Log.d("getAppState","Exit the getAppState method in the AccountsDB class.");
+        return cursor;
+    }//End of getAppState method
 
     //Method to get a specific Category, by passing in its DB _id as an argument
     public Cursor getAppLoginCursor(int _id){

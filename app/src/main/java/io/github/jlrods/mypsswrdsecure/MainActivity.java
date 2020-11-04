@@ -51,20 +51,27 @@ public class  MainActivity extends AppCompatActivity {
     private CoordinatorLayout coordinatorLayout;
 
     //Declare and initialize variables to define the current app state saved on DB
+    private static Cursor appState = null;
     private static Category currentCategory = null;
     private static int currentTab = 0;
     private boolean showAllAccounts = true;
     private boolean isFavoriteFilter = false;
     private static boolean isSearchFilter = false;
+    private static boolean isSearchUserNameFilter = false;
+    private static boolean isSearchPsswrdFilter = false;
     private static String lastSearchText ="";
+    private static boolean isFirstRun = false;
     private int counter=0;
     private byte[] encrypted=null;
     private String decrypted=null;
-    private TabLayout tabLayout = null;
+    private static  TabLayout tabLayout = null;
     private int idRes;
     private static Icon myPsswrdSecureLogo = null;
     private static AccountsDB accountsDB = null;
     private static ArrayList<Category> categoryList = null;
+    //Hardcoded categories that cannot be deleted by user
+    private static Category homeCategory = null;
+    private static Category favCategory = null;
     private static ArrayList<QuestionList> listOfQuestionLists = null;
 
 
@@ -126,6 +133,14 @@ public class  MainActivity extends AppCompatActivity {
     private static final String ID_COLUMN = "_id";
     private static final String IS_FAVORITE_COLUMN = "IsFavorite";
     private static final String NAME_COLUMN = "Name";
+    private static final String CURRENT_CATEGORY_ID_COLUMN="currentCategoryID";
+    private static final String CURRENT_TAB_COLUMN = "currentTab";
+    private static final String SHOW_ALL_ACCOUNTS_COLUMN ="showAllAccounts";
+    private static final String IS_FAVORITE_FILTER_COLUMN ="isFavoriteFilter";
+    private static final String IS_SEARCH_FILTER_COLUMN ="isSearchFilter";
+    private static final String IS_SEARCH_USER_FILTER_COLUMN ="isSearchUserInAccountsFilter";
+    private static final String IS_SEARCH_PSSWRD_FILTER_COLUMN ="isSearchPsswrdInAccountsFilter";
+    private static final String LAST_SEARCH_TEXT_COLUMN ="lastSearch";
 
     private static Uri uriCameraImage = null;
     private static final String EXTERNAL_IMAGE_STORAGE_CLUE = "content://";
@@ -135,9 +150,7 @@ public class  MainActivity extends AppCompatActivity {
     private static final String QUESTION = "question";
     private static final String QUESTION_LIST ="question list";
 
-    //Hardcoded categories that cannot be deleted by user
-    private static Category homeCategory = null;
-    private static Category favCategory = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -199,7 +212,9 @@ public class  MainActivity extends AppCompatActivity {
                                 toggleIsFavorite(v);
                             }
                         });
-                        clearSearchFilter();
+                        if(!isFirstRun){
+                            clearSearchFilter();
+                        }
                         MainActivity.updateRecyclerViewData(accountAdapter);
                         break;
                     case 1:
@@ -212,7 +227,9 @@ public class  MainActivity extends AppCompatActivity {
                                 throwEditUserNameActivity(v);
                             }//End of onClick method
                         });//End of setOnClickListener
-                        clearSearchFilter();
+                        if(!isFirstRun){
+                            clearSearchFilter();
+                        }
                         MainActivity.updateRecyclerViewData(userNameAdapter);
                         break;
                     case 2:
@@ -224,12 +241,16 @@ public class  MainActivity extends AppCompatActivity {
                                 throwEditPsswrdActivity(v);
                             }//End of onClick method
                         });//End of setOnClickListener
-                        clearSearchFilter();
+                        if(!isFirstRun){
+                            clearSearchFilter();
+                        }
                         MainActivity.updateRecyclerViewData(psswrdAdapter);
                         break;
                     case 3:
                         SecurityQuestionAdapter secQuestionAdapter = new SecurityQuestionAdapter(getBaseContext(),null);
-                        clearSearchFilter();
+                        if(!isFirstRun){
+                            clearSearchFilter();
+                        }
                         MainActivity.updateRecyclerViewData(secQuestionAdapter);
                         secQuestionAdapter.setOnClickListener(new View.OnClickListener(){
                             @Override
@@ -240,16 +261,27 @@ public class  MainActivity extends AppCompatActivity {
                         break;
                 }// End of switch statement
                 currentTab = tab.getPosition();
-                boolean appStateUpdated = accountsDB.updateAppState(-1,tab.getPosition(), accountsDB.toInt(showAllAccounts) , accountsDB.toInt(isFavoriteFilter), accountsDB.toInt(isSearchFilter),"HelloWorld'BaBay");
 
+                //boolean appStateUpdated = accountsDB.updateAppStateOld(-1,tab.getPosition(), accountsDB.toInt(showAllAccounts) , accountsDB.toInt(isFavoriteFilter), accountsDB.toInt(isSearchFilter),"HelloWorld'BaBay");
+                ContentValues appStateValues = new ContentValues();
+                appStateValues.put(ID_COLUMN,accountsDB.getMaxItemIdInTable(APPSTATE_TABLE));
+//                appStateValues.put(CATEGORY_ID_COLUMN,currentCategory.get_id());
+                appStateValues.put(CURRENT_TAB_COLUMN,currentTab);
+//                appStateValues.put(SHOW_ALL_ACCOUNTS_COLUMN,showAllAccounts);
+//                appStateValues.put(IS_FAVORITE_FILTER_COLUMN,isFavoriteFilter);
+//                appStateValues.put(IS_SEARCH_FILTER_COLUMN,isSearchFilter);
+//                appStateValues.put(IS_SEARCH_USER_FILTER_COLUMN,isSearchUserNameFilter);
+//                appStateValues.put(IS_SEARCH_PSSWRD_FILTER_COLUMN,isSearchPsswrdFilter);
+//                appStateValues.put(LAST_SEARCH_TEXT_COLUMN,lastSearchText);
+                boolean appStateUpdated = accountsDB.updateTable(APPSTATE_TABLE,appStateValues);
                 if(appStateUpdated){
                     Cursor c = accountsDB.runQuery("SELECT * FROM "+ APPSTATE_TABLE);
                     c.moveToFirst();
-                    int cat = c.getInt(1);
-                    int tabP = c.getInt(2);
-                    int showAll = c.getInt(3);
-                    int isFab = c.getInt(4);
-                    int isSearch = c.getInt(5);
+//                    int cat = c.getInt(1);
+//                    int tabP = c.getInt(2);
+//                    int showAll = c.getInt(3);
+//                    int isFab = c.getInt(4);
+//                    int isSearch = c.getInt(5);
                     String search = c.getString(6);
                     Snackbar snackbar = Snackbar.make(coordinatorLayout, search, Snackbar.LENGTH_LONG);
                     snackbar.setAction("Action", null).show();
@@ -283,7 +315,44 @@ public class  MainActivity extends AppCompatActivity {
         this.favCategory = new Category(-2,"Favorites",new Icon("Favorites",MainActivity.getRESOURCES(),android.R.drawable.star_big_on));
         this.categoryList = accountsDB.getCategoryList();
         //Set the Home category as the default one
-        this.currentCategory = categoryList.get(0);
+        //this.currentCategory = categoryList.get(0);
+        //@Fixme:Retrieve App state from DB and update app variable appropriately
+        this.appState = accountsDB.getAppState();
+        if(this.appState != null && this.appState.getCount() > 0){
+            this.currentCategory = this.getCategoryByID(this.appState.getInt(1));
+            //@Fixme: Update the nav drawer to display appropriate item in the menu
+            this.currentTab = this.appState.getInt(2);
+            this.showAllAccounts =  this.accountsDB.toBoolean(this.appState.getInt(3));
+            this.isFavoriteFilter = this.accountsDB.toBoolean(this.appState.getInt(4));
+//            if(this.currentCategory.get_id() < 0){
+//                //Check
+//                if(this.showAllAccounts){
+//                    this.currentCategory = this.categoryList.get(0);
+//                }else if(this.isFavoriteFilter){
+//                    this.currentCategory = this.categoryList.get(1);
+//                }
+//            }
+            this.isSearchFilter = this.accountsDB.toBoolean(this.appState.getInt(5));
+            this.isSearchUserNameFilter = this.accountsDB.toBoolean(this.appState.getInt(6));
+            this.isSearchPsswrdFilter = this.accountsDB.toBoolean(this.appState.getInt(7));
+            this.lastSearchText = this.appState.getString(8);
+            if(currentTab != 0){
+                isFirstRun = true;
+            }
+//            if(){
+//
+//            }else{
+//            }
+        }else{
+            //Set default app state values
+            this.currentCategory =  this.getCategoryByID(0);
+            this.showAllAccounts = true;
+            this.isFavoriteFilter = false;
+            this.isSearchFilter = false;
+            this.isSearchUserNameFilter =false;
+            this.isSearchPsswrdFilter = false;
+            this.lastSearchText = "";
+        }//End of if statement to check and extract the app state from dB
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -296,6 +365,14 @@ public class  MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
         this.setUpLowerCategoryMenu(navigationView.getMenu());
         this.updateNavMenu(navigationView.getMenu(),INDEX_TO_GET_LAST_TASK_LIST_ITEM);
+        //Once the nave menu has been fully set up, select the item that represents the current category and deselect the Home item, which is selected by default
+        if(currentCategory.get_id() != -1){
+            navigationView.getMenu().getItem(0).setCheckable(false);
+            navigationView.getMenu().getItem(0).setChecked(false);
+            navigationView.getMenu().getItem(getCategoryPositionByID(currentCategory.get_id())).setCheckable(true);
+            navigationView.getMenu().getItem(getCategoryPositionByID(currentCategory.get_id())).setChecked(true);
+        }//End of if statement to check the category to be selected
+
         //@Fixme: define method in accountsDB class
         Cursor appLoginCursor = accountsDB.getAppLoginCursor(accountsDB.getMaxItemIdInTable(APPLOGGIN_TABLE));
 
@@ -344,11 +421,6 @@ public class  MainActivity extends AppCompatActivity {
             appLoggin.setPicture(accountsDB.getIconByID(62));
             accountsDB.addItem(appLoggin);
         }//End of if statement to check user cursor is not empty
-//        Cursor iconsWithURIIcons = accountsDB.runQuery("SELECT * FROM "+ICON_TABLE+" WHERE Location LIKE '%"+EXTERNAL_IMAGE_STORAGE_CLUE+"%'");
-//        if(iconsWithURIIcons.moveToNext()){
-//            //openDirectory(Uri.parse(iconsWithURIIcons.getString(2)));;
-//            openFile(Uri.parse(iconsWithURIIcons.getString(2)));
-//        }
     }//End of onCreate method
 
 
@@ -377,10 +449,12 @@ public class  MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        if(this.isSearchFilter){
+            menu.getItem(0).getIcon().setTint(getColor(R.color.colorAccent));
+        }
         return true;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         // Handle item selection
@@ -391,7 +465,7 @@ public class  MainActivity extends AppCompatActivity {
                 return true;
             case R.id.action_search:
                 this.search();
-                item.getIcon().setColorFilter(new PorterDuffColorFilter(getColor(R.color.colorAccent),PorterDuff.Mode.SRC_IN));
+                item.getIcon().setTint(getColor(R.color.colorAccent));// .setColorFilter(new PorterDuffColorFilter(getColor(R.color.colorAccent),PorterDuff.Mode.SRC_IN));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -501,6 +575,7 @@ public class  MainActivity extends AppCompatActivity {
         }
         rv.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+        isFirstRun = false;
         Log.d("Ext_updateRecViewData","Exit the updateRecyclerViewData method in the MainActivity class.");
     }//End of updateRecyclerViewData method
 
@@ -1075,12 +1150,28 @@ public class  MainActivity extends AppCompatActivity {
         return NAV_DRAWER_BCKGRNDS;
     }
 
-    public boolean isSearchFilter() {
+    public static TabLayout getTabLayout() {
+        return tabLayout;
+    }
+
+    public static boolean isSearchFilter() {
         return isSearchFilter;
     }
 
     public String getLastSearchText() {
         return lastSearchText;
+    }
+
+    public static boolean isSearchUserNameFilter() {
+        return isSearchUserNameFilter;
+    }
+
+    public static boolean isSearchPsswrdFilter() {
+        return isSearchPsswrdFilter;
+    }
+
+    public static boolean isFirstRun() {
+        return isFirstRun;
     }
 
     public static void displayToast(Context context, String text, int toastLength, int gravity){
@@ -1226,7 +1317,6 @@ public class  MainActivity extends AppCompatActivity {
     //Method to update the Nav Menu items when new task list are created or deleted. Used to populate the menu on onCreate method too
     private void updateNavMenu(final Menu navMenu, int startPosition){
         Log.d("Ent_UpdateNaveMenu","Enter the updateNavMenu method in MainActivity class.");
-
         if(startPosition == INDEX_TO_GET_LAST_TASK_LIST_ITEM){
             //Set up onclick listeners for the first two items (home and favorites, which cannot be removed)
             navMenu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
@@ -1245,8 +1335,11 @@ public class  MainActivity extends AppCompatActivity {
                     //But the current category still need to be set to Home category
                     currentCategory = categoryList.get(0);
                     tabLayout.selectTab( tabLayout.getTabAt(0));
+                    DrawerLayout drawer = findViewById(R.id.drawer_layout);
+                    //Close the drawer and display the HomeFragment which will load proper data based on the currentCategory variable
+                    drawer.closeDrawer(Gravity.LEFT);
                     clearSearchFilter();
-                    return false;
+                    return updateCategoryInAppState();
                 }//End of onMenuItemClick method
             });//End of setOnMenuItemClickListener method call
             navMenu.getItem(1).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
@@ -1267,8 +1360,12 @@ public class  MainActivity extends AppCompatActivity {
                     //But the current category still need to be set to Home category
                     currentCategory = categoryList.get(1);
                     tabLayout.selectTab( tabLayout.getTabAt(0));
+                    //Get the drawer from layout
+                    DrawerLayout drawer = findViewById(R.id.drawer_layout);
+                    //Close the drawer and display the HomeFragment which will load proper data based on the currentCategory variable
+                    drawer.closeDrawer(Gravity.LEFT);
                     clearSearchFilter();
-                    return false;
+                    return updateCategoryInAppState();
                 }//End of onMenuItemClick method
             });//End of setOnMenuItemClickListener method call
         }//End of if statement that check start position variable
@@ -1325,7 +1422,7 @@ public class  MainActivity extends AppCompatActivity {
                     drawer.closeDrawer(Gravity.LEFT);
                     clearSearchFilter();
                     Log.d("onMenuItemClick","Exit the onMenuItemClick method defined for each category menu item in the MainActivity class.");
-                    return false;
+                    return updateCategoryInAppState();
                 }//End of onMenuItemClick method
             });//End of setOnMenuItemClickListener method call
             startPosition++;
@@ -1812,6 +1909,14 @@ public class  MainActivity extends AppCompatActivity {
 
                             //@Fixme: Update App state
                             //Update app state in DB
+                            ContentValues values = new ContentValues();
+                            values.put(ID_COLUMN,accountsDB.getMaxItemIdInTable(APPSTATE_TABLE));
+                            values.put(IS_SEARCH_FILTER_COLUMN,accountsDB.toInt(isSearchFilter));
+                            values.put(IS_SEARCH_USER_FILTER_COLUMN, accountsDB.toInt(isSearchAccountWithUserName.isChecked()));
+                            values.put(IS_SEARCH_PSSWRD_FILTER_COLUMN,accountsDB.toInt(isSearchAccountWithPsswrd.isChecked()));
+                            values.put(LAST_SEARCH_TEXT_COLUMN,lastSearchText);
+                            //Log.d("updateCatInAppState","Exit updateCategoryInAppState method in the MainActivity class.");
+                            accountsDB.updateTable(APPSTATE_TABLE,values);
                             //db.updateAppState(currentCategory.getId(),db.toInt(isArchivedSelected),db.toInt(isSearchFilter),db.toInt(cbOnlyChecked.isChecked()),lastSearchText[0],lastSearchText[1]);
                             //Call method to update the adapter and the recyclerView
                         }else{
@@ -1865,16 +1970,26 @@ public class  MainActivity extends AppCompatActivity {
     }//End of switchOnOff method
 
     //Method to clear search filter
-    @RequiresApi(api = Build.VERSION_CODES.M)
     private boolean clearSearchFilter(){
         Log.d("clearSearchFilter","Enter the clearSearchFilter method in the MainActivity class.");
         boolean isSearchFilterCleared = false;
-        isSearchFilter = false;
-        lastSearchText = "";
+        this.isSearchFilter = false;
+        this.isSearchUserNameFilter = false;
+        this.isSearchPsswrdFilter = false;
+        this.lastSearchText = "";
         Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.getMenu().getItem(0).getIcon().setColorFilter(null);
-        //@Fixme: Update app state on the DB
-        isSearchFilterCleared = true;
+        if(toolbar.getMenu().size() > 0){
+            toolbar.getMenu().getItem(0).getIcon().setTintList(null);//.setColorFilter(null);
+        }
+        //Update app state to remove all search related fields
+        ContentValues values = new ContentValues();
+        values.put(this.ID_COLUMN,accountsDB.getMaxItemIdInTable(APPSTATE_TABLE));
+        values.put(this.IS_SEARCH_FILTER_COLUMN,this.isSearchFilter);
+        values.put(this.IS_SEARCH_USER_FILTER_COLUMN,this.isSearchPsswrdFilter);
+        values.put(this.LAST_SEARCH_TEXT_COLUMN, this.lastSearchText);
+        if(this.accountsDB.updateTable(APPSTATE_TABLE,values)){
+            isSearchFilterCleared = true;
+        }//End of if statement to check the app state has been successfully updated
         Log.d("clearSearchFilter","Exit the clearSearchFilter method in the MainActivity class.");
         return isSearchFilterCleared;
     }//End of clearSearchFilter method
@@ -1894,6 +2009,15 @@ public class  MainActivity extends AppCompatActivity {
             this.name = name;
             Log.d("ExtFullCategory","Exit full constructor in the Category class.");
         }//End of Full Category constructor
-    }
+    }//End of SearchType enum
+
+    private boolean updateCategoryInAppState(){
+        Log.d("updateCatInAppState","Enter updateCategoryInAppState method in the MainActivity class.");
+        ContentValues values = new ContentValues();
+        values.put(ID_COLUMN,accountsDB.getMaxItemIdInTable(APPSTATE_TABLE));
+        values.put(CURRENT_CATEGORY_ID_COLUMN,currentCategory.get_id());
+        Log.d("updateCatInAppState","Exit updateCategoryInAppState method in the MainActivity class.");
+        return accountsDB.updateTable(APPSTATE_TABLE,values);
+    }//End of updateCategoryInAppState method
 
 }//End of MainActivity class.
