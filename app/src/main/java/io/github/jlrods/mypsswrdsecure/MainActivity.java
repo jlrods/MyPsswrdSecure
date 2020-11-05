@@ -1882,11 +1882,7 @@ public class  MainActivity extends AppCompatActivity {
                 .setPositiveButton(R.string.dialog_OK,new DialogInterface.OnClickListener(){
                     public void onClick(DialogInterface dialog,int whichButton){
                         //Declare and instantiate as null a string object to hold the sql query to run. Depending on the current category, different query will be run
-                        //String searchText = input.getText().toString();
-                        //Add % sign for the sql query using LIKE key word
-                        //searchText+="%";
-                        //Store the search sql for future use (in it's original state, without including escape character for apostrophe)
-                        //lastSearchText = searchText;
+
                         //Check if switch views were included
                         int etViewPosition;
                         if(linearLayout.getChildCount() > 1){
@@ -1897,7 +1893,7 @@ public class  MainActivity extends AppCompatActivity {
                         lastSearchText = ((EditText) linearLayout.getChildAt(etViewPosition)).getText().toString().trim();
 
                         if(!lastSearchText.equals("")){
-                            //Set isSearchFilter boolean to true
+                            //Set isSearchFilter, isSearchAccountWithUserName and isSearchAccountWithPsswrd boolean to true if applicable
                             isSearchFilter = true;
                             if(isSearchAccountWithUserName.isChecked()){
                                 isSearchUserNameFilter = true;
@@ -1920,17 +1916,20 @@ public class  MainActivity extends AppCompatActivity {
                             //Check if switch views were added to linearLayout object
                             if(linearLayout.getChildCount() > 1){
                                 if(((Switch)linearLayout.getChildAt(0)).isChecked()){
+                                    //Call method to update the adapter and the recyclerView
                                     updateRecyclerViewData(HomeFragment.getRv().getAdapter(),SearchType.ACCOUNT_WITH_USERNAME);
                                 }else if(((Switch)linearLayout.getChildAt(1)).isChecked()){
+                                    //Call method to update the adapter and the recyclerView
                                     updateRecyclerViewData(HomeFragment.getRv().getAdapter(),SearchType.ACCOUNT_WITH_PSSWRD);
                                 }else{
+                                    //Call method to update the adapter and the recyclerView
                                     updateRecyclerViewData(HomeFragment.getRv().getAdapter());
                                 }
                             }else{
+                                //Call method to update the adapter and the recyclerView
                                 updateRecyclerViewData(HomeFragment.getRv().getAdapter());
-                            }
+                            }//End of if else statement to check the children count in the linear layout, this defines what tab is being used
 
-                            //@Fixme: Update App state
                             //Update app state in DB
                             ContentValues values = new ContentValues();
                             values.put(ID_COLUMN,accountsDB.getMaxItemIdInTable(APPSTATE_TABLE));
@@ -1940,8 +1939,6 @@ public class  MainActivity extends AppCompatActivity {
                             values.put(LAST_SEARCH_TEXT_COLUMN,lastSearchText);
                             //Log.d("updateCatInAppState","Exit updateCategoryInAppState method in the MainActivity class.");
                             accountsDB.updateTable(APPSTATE_TABLE,values);
-                            //db.updateAppState(currentCategory.getId(),db.toInt(isArchivedSelected),db.toInt(isSearchFilter),db.toInt(cbOnlyChecked.isChecked()),lastSearchText[0],lastSearchText[1]);
-                            //Call method to update the adapter and the recyclerView
                         }else{
                             clearSearchFilter();
                             displayToast(MainActivity.this,"Sorry, the searched text was empty",Toast.LENGTH_SHORT,Gravity.CENTER);
@@ -1951,9 +1948,14 @@ public class  MainActivity extends AppCompatActivity {
                 .setNegativeButton(R.string.cancel,new DialogInterface.OnClickListener(){
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        clearSearchFilter();
-                    }
-                })
+                        //Check if search filter has already been made active. If that the case, clear search and update RV
+                        if(isSearchFilter){
+                            clearSearchFilter();
+                            //Update the RV list
+                            updateRecyclerViewData(HomeFragment.getRv().getAdapter());
+                        }//End of if statement to check the search filter is active
+                    }//End of onClick method
+                })//End of set negative button
                 .show();
     }//End of the search method
 
