@@ -509,12 +509,11 @@ public class  MainActivity extends AppCompatActivity {
         Cursor cursor = null;
         //Check the class of the adapter passed in as argument#
         if(adapter instanceof AccountAdapter){
-            //Check the isSearch filter flag to define the correct cursor to retrieve from the DB
             if(isSearchFilter){
                 if(searchType.equals(SearchType.ACCOUNT_WITH_USERNAME)){
                     Cursor userName = accountsDB.getUserNameByName(lastSearchText);
                     if(userName != null && userName.getCount() > 0){
-                        cursor = accountsDB.getAccountsWithSpecifcValue(USER_NAME_ID_COLUMN,userName.getInt(0));
+                        cursor = accountsDB.getAccountsWithSpecifcValueAndCategory(USER_NAME_ID_COLUMN,userName.getInt(0),MainActivity.getCurrentCategory().get_id());
                     }else{
                         //Work around to get a Non null cursor with no data as null cursor crashes app when getCount method is called by RV
                         cursor = accountsDB.getAccountsWithSpecifcValue(USER_NAME_ID_COLUMN,-1);
@@ -522,7 +521,7 @@ public class  MainActivity extends AppCompatActivity {
                 }else if(searchType.equals(SearchType.ACCOUNT_WITH_PSSWRD)){
                     Cursor psswrd = accountsDB.getPsswrdByName(lastSearchText);
                     if(psswrd != null && psswrd.getCount() > 0){
-                        cursor = accountsDB.getAccountsWithSpecifcValue(PSSWRD_ID_COLUMN,psswrd.getInt(0));
+                        cursor = accountsDB.getAccountsWithSpecifcValueAndCategory(PSSWRD_ID_COLUMN,psswrd.getInt(0),MainActivity.getCurrentCategory().get_id());
                     }else{
                         //Work around to get a Non null cursor with no data as null cursor crashes app when getCount method is called by RV
                         cursor = accountsDB.getAccountsWithSpecifcValue(PSSWRD_ID_COLUMN,-1);
@@ -534,14 +533,16 @@ public class  MainActivity extends AppCompatActivity {
                 }//End of if else statement to check if the Account special search feature is being used
             }else{
                 //Check current category variable to call method that retrieves proper account list
-                if(MainActivity.getCurrentCategory().get_id() == -1){
-                    cursor = accountsDB.getAccountsList();
-                }else if(MainActivity.getCurrentCategory().get_id() == -2){
-                    cursor = accountsDB.getAccountsWithSpecifcValue(MainActivity.getIsFavoriteColumn(),1);
-                }else{
-                    cursor = accountsDB.getAccountsWithSpecifcValue(MainActivity.getCategoryIdColumn(),MainActivity.getCurrentCategory().get_id());
-                }//End of if else statements to check current category
+                    if(MainActivity.getCurrentCategory().get_id() == -1){
+                        cursor = accountsDB.getAccountsList();
+                    }else if(MainActivity.getCurrentCategory().get_id() == -2){
+                        cursor = accountsDB.getAccountsWithSpecifcValue(MainActivity.getIsFavoriteColumn(),1);
+                    }else{
+                        cursor = accountsDB.getAccountsWithSpecifcValue(MainActivity.getCategoryIdColumn(),MainActivity.getCurrentCategory().get_id());
+                    }//End of if else statements to check current category
             }//End of if else statement to check if the search filter is active
+            //Check the isSearch filter flag to define the correct cursor to retrieve from the DB
+
             ((AccountAdapter) adapter).setCursor(cursor);
         }else if(adapter instanceof PsswrdAdapter){
             //Check the isSearch filter flag to define the correct cursor to retrieve from the DB
@@ -1800,6 +1801,19 @@ public class  MainActivity extends AppCompatActivity {
         final Switch isSearchAccountWithPsswrd = new Switch(this);
         //Declare and instantiate the EditText object to allow user to input the searched text
         final EditText input= new EditText(this);
+        if(this.isSearchFilter){
+            input.setText(this.lastSearchText);
+            if(this.isSearchUserNameFilter){
+                //switchOnOff(isSearchAccountWithUserName, isSearchAccountWithPsswrd,input);
+                isSearchAccountWithUserName.setChecked(true);
+            }else if(this.isSearchPsswrdFilter){
+                //switchOnOff(isSearchAccountWithPsswrd,isSearchAccountWithUserName,input);
+                isSearchAccountWithPsswrd.setChecked(true);
+            }
+        }else{
+            //Set text to empty text
+            input.setText("");
+        }
         if(currentTab == 0){
             //Set up the proper texts for this switch
             isSearchAccountWithUserName.setTextOff(getResources().getString(R.string.searchAccountsWithUserNameTextOff));
@@ -1832,8 +1846,6 @@ public class  MainActivity extends AppCompatActivity {
         }//End of if statement to check the accounts tab is the one selected
 
         linearLayout.addView(input);
-        //Set text to empty text
-        input.setText("");
         input.requestFocus();
         //Check the current tab and category to set up the correct search criteria
         int searchHintText = -1;
@@ -1887,6 +1899,17 @@ public class  MainActivity extends AppCompatActivity {
                         if(!lastSearchText.equals("")){
                             //Set isSearchFilter boolean to true
                             isSearchFilter = true;
+                            if(isSearchAccountWithUserName.isChecked()){
+                                isSearchUserNameFilter = true;
+                            }else{
+                                isSearchUserNameFilter = false;
+                            }
+
+                            if(isSearchAccountWithPsswrd.isChecked()){
+                                isSearchPsswrdFilter = true;
+                            }else{
+                                isSearchPsswrdFilter = false;
+                            }
                             //Check the input text has apostrophe
                             if(lastSearchText.contains("'")){
                                 //If it does, call method to include escape character

@@ -1339,6 +1339,22 @@ public class AccountsDB extends SQLiteOpenHelper {
         return listOfAccountsThatHoldsASpecificValue;
     }//End of getAccountsWithSpecifcValue method
 
+    //Method to return cursor with rows from the accounts table with specific value in the column name passed in as argument
+    public Cursor getAccountsWithSpecifcValueAndCategory(String column, int itemID, int categoryID){
+        Log.d("getAccWithSpecifcValue","Enter the getAccountCursorByName method in the AccountsDB class.");
+        Cursor  listOfAccountsThatHoldsASpecificValue = null;
+        if(categoryID == -1){
+            listOfAccountsThatHoldsASpecificValue = runQuery("SELECT * FROM "+ MainActivity.getAccountsTable()+ " WHERE " + column + " = " + itemID);
+        }else if(categoryID ==-2){
+            listOfAccountsThatHoldsASpecificValue = runQuery("SELECT * FROM "+ MainActivity.getAccountsTable()+ " WHERE " + column + " = " + itemID
+                    + " AND "+MainActivity.getIsFavoriteColumn() +"= 1" );
+        }else{
+            listOfAccountsThatHoldsASpecificValue = runQuery("SELECT * FROM "+ MainActivity.getAccountsTable()+ " WHERE " + column + " = " + itemID
+                    +" AND "+MainActivity.getCategoryIdColumn() +" = "+categoryID);
+        }
+        Log.d("getAccWithSpecifcValue","Exit the getAccountCursorByName method in the AccountsDB class.");
+        return listOfAccountsThatHoldsASpecificValue;
+    }//End of getAccountsWithSpecifcValue method
 
     //Method to return cursor with rows from the accounts table with specific value in the column name passed in as argument
     public Cursor getAccountsThatContainsThisTextInName(String searchText,int categoryID){
@@ -1353,7 +1369,6 @@ public class AccountsDB extends SQLiteOpenHelper {
             listOfAccountsThatContainsThisTexInName = runQuery("SELECT * FROM "+ MainActivity.getAccountsTable()+ " WHERE " + MainActivity.getNameColumn() + " LIKE '%" + searchText + "%'"
                     +" AND "+MainActivity.getCategoryIdColumn() +" = "+categoryID);
         }
-
         Log.d("getAccWithSpecValInName","Exit the getAccountsThatContainsThisTextInName method in the AccountsDB class.");
         return listOfAccountsThatContainsThisTexInName;
     }//End of getAccountsWithSpecifcValue method
