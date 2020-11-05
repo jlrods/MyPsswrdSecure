@@ -76,7 +76,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
         }else{
             holder.imgFavoriteStar.setImageResource(android.R.drawable.btn_star_big_off);
         }
-        //Set the isFav star onclik event listener
+        //Set the isFav star onclick event listener
         holder.imgFavoriteStar.setOnClickListener(this.starImgOnClickListener);
         //Set the account name
         holder.tvAccountName.setText(account.getName());

@@ -261,27 +261,16 @@ public class  MainActivity extends AppCompatActivity {
                         break;
                 }// End of switch statement
                 currentTab = tab.getPosition();
-
-                //boolean appStateUpdated = accountsDB.updateAppStateOld(-1,tab.getPosition(), accountsDB.toInt(showAllAccounts) , accountsDB.toInt(isFavoriteFilter), accountsDB.toInt(isSearchFilter),"HelloWorld'BaBay");
+                //Declare and instantiate values object to store the app state attributes to be passed into table update method
                 ContentValues appStateValues = new ContentValues();
                 appStateValues.put(ID_COLUMN,accountsDB.getMaxItemIdInTable(APPSTATE_TABLE));
-//                appStateValues.put(CATEGORY_ID_COLUMN,currentCategory.get_id());
                 appStateValues.put(CURRENT_TAB_COLUMN,currentTab);
-//                appStateValues.put(SHOW_ALL_ACCOUNTS_COLUMN,showAllAccounts);
-//                appStateValues.put(IS_FAVORITE_FILTER_COLUMN,isFavoriteFilter);
-//                appStateValues.put(IS_SEARCH_FILTER_COLUMN,isSearchFilter);
-//                appStateValues.put(IS_SEARCH_USER_FILTER_COLUMN,isSearchUserNameFilter);
-//                appStateValues.put(IS_SEARCH_PSSWRD_FILTER_COLUMN,isSearchPsswrdFilter);
-//                appStateValues.put(LAST_SEARCH_TEXT_COLUMN,lastSearchText);
+                //Call DB update method
                 boolean appStateUpdated = accountsDB.updateTable(APPSTATE_TABLE,appStateValues);
+                //If update goes well, get values from DB???
                 if(appStateUpdated){
                     Cursor c = accountsDB.runQuery("SELECT * FROM "+ APPSTATE_TABLE);
                     c.moveToFirst();
-//                    int cat = c.getInt(1);
-//                    int tabP = c.getInt(2);
-//                    int showAll = c.getInt(3);
-//                    int isFab = c.getInt(4);
-//                    int isSearch = c.getInt(5);
                     String search = c.getString(6);
                     Snackbar snackbar = Snackbar.make(coordinatorLayout, search, Snackbar.LENGTH_LONG);
                     snackbar.setAction("Action", null).show();
@@ -319,6 +308,7 @@ public class  MainActivity extends AppCompatActivity {
         //@Fixme:Retrieve App state from DB and update app variable appropriately
         this.appState = accountsDB.getAppState();
         if(this.appState != null && this.appState.getCount() > 0){
+            //@Fixme: Since current cat is being stored in DB, even Home and Fav, which are not defined in the Category table, must ensure the proper CatID is being stoted
             this.currentCategory = this.getCategoryByID(this.appState.getInt(1));
             //@Fixme: Update the nav drawer to display appropriate item in the menu
             this.currentTab = this.appState.getInt(2);
@@ -336,13 +326,12 @@ public class  MainActivity extends AppCompatActivity {
             this.isSearchUserNameFilter = this.accountsDB.toBoolean(this.appState.getInt(6));
             this.isSearchPsswrdFilter = this.accountsDB.toBoolean(this.appState.getInt(7));
             this.lastSearchText = this.appState.getString(8);
+            //Set boolean flag to identify first run of the onCreate method
+            //This flag is a work around to avoid clearSearch filter when calling onTabSelected method when
+            //Chaging tab during first run of program
             if(currentTab != 0){
                 isFirstRun = true;
             }
-//            if(){
-//
-//            }else{
-//            }
         }else{
             //Set default app state values
             this.currentCategory =  this.getCategoryByID(0);
@@ -450,6 +439,7 @@ public class  MainActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         if(this.isSearchFilter){
+            //@Fixme: Check what is best: setTint or setColourFilter
             menu.getItem(0).getIcon().setTint(getColor(R.color.colorAccent));
         }
         return true;
@@ -465,6 +455,7 @@ public class  MainActivity extends AppCompatActivity {
                 return true;
             case R.id.action_search:
                 this.search();
+                //@Fixme: Check what is best: setTint or setColourFilter
                 item.getIcon().setTint(getColor(R.color.colorAccent));// .setColorFilter(new PorterDuffColorFilter(getColor(R.color.colorAccent),PorterDuff.Mode.SRC_IN));
                 return true;
             default:
@@ -1228,7 +1219,18 @@ public class  MainActivity extends AppCompatActivity {
         values.put("isFavorite",account.isFavorite());
         if(accountsDB.updateTable(ACCOUNTS_TABLE,values)){
             //If DB update was successful, call method to update the recyclerview
-            updateRecyclerViewData(accountAdapter);
+            if(isSearchFilter){
+                if(isSearchUserNameFilter){
+                    updateRecyclerViewData(accountAdapter,SearchType.ACCOUNT_WITH_USERNAME);
+                }else if(isSearchPsswrdFilter){
+                    updateRecyclerViewData(accountAdapter,SearchType.ACCOUNT_WITH_PSSWRD);
+                }else{
+                    updateRecyclerViewData(accountAdapter);
+                }
+            }else{
+                updateRecyclerViewData(accountAdapter);
+            }//End of if else statement to check the search filter is active
+
             recyclerView.scrollToPosition(adapterPosition);
             update = true;
         }else{
