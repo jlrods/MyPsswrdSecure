@@ -66,8 +66,6 @@ public class EditQuestionActivity extends AddQuestionActivity {
         switch (item.getItemId()) {
             case R.id.select_logo_save:
                 Log.d("onOptionsItemSelected","Save option selected on onOptionsItemSelected method in EditQuestionActivity class.");
-                //Get the new user name text
-                String userNameValue = this.etNewItemField.getText().toString().trim();
                 //Check for UI data validity
                 //As Question ID is passed in as extra to the activity, use that value to create a new question object
                 //Then compare the answer and question texts to make sure at least one changed
@@ -78,7 +76,15 @@ public class EditQuestionActivity extends AddQuestionActivity {
                 boolean questionAndAnswerAreValid = false;
                 //Boolean flags to know what changed, the question, the answer or both
                 boolean questionChanged = !this.question.getValue().equals(newQuestionValue);
-                boolean answerChanged = !this.cryptographer.decryptText(this.answer.getValue(),new IvParameterSpec(this.answer.getIv())).equals(newAnswerValue);
+                boolean answerChanged = false;
+                if(this.answer != null && this.answer.getValue() != null){
+                    answerChanged = !this.cryptographer.decryptText(this.answer.getValue(),new IvParameterSpec(this.answer.getIv())).equals(newAnswerValue);
+                }else{
+                    if(!newAnswerValue.equals("")){
+                        answerChanged = true;
+                    }//End of if statement to check the input value for answer isn't empty
+                }//End of if else statement to check the answer in DB isn't empty (null)
+
                 //Check if question is preloaded
                 if(!this.isPreloadedQuestion){
                     //Check at least one value changed in the UI
@@ -121,20 +127,27 @@ public class EditQuestionActivity extends AddQuestionActivity {
                     //Flag to make sure all data was added on DB
                     boolean answerDbTransCompleted = false;
                     boolean questionDbTransCompleted = false;
-                    boolean questionUpdatedRequired = false;
+                    //variable to store answer id when new answer has to be added to the DB (Preloaded questions with empty answer)
+                    int newAnswerID = -1;
                     //Store the  new question value and answer encrypted value and IV in the respective objects
                     if(answerChanged){
                         this.answer.setValue(this.cryptographer.encryptText(this.etAnswer.getText().toString()));
                         this.answer.setIv(this.cryptographer.getIv().getIV());
                         //Store the values to be updated in the DB
-                        ContentValues values = new ContentValues();
-                        values.put("_id",this.answer.get_id());
-                        values.put("Value",this.answer.getValue());
-                        values.put("initVector",this.answer.getIv());
                         //Update the new answer in the DB
-                        if(this.accountsDB.updateTable(MainActivity.getAnswerTable(),values)){
-                            answerDbTransCompleted = true;
-                        }
+                        ContentValues values = new ContentValues();
+                        if(this.answer.get_id() > 0){
+                            values.put("_id",this.answer.get_id());
+                            values.put("Value",this.answer.getValue());
+                            values.put("initVector",this.answer.getIv());
+                            answerDbTransCompleted = this.accountsDB.updateTable(MainActivity.getAnswerTable(),values);
+                        }else{
+                            newAnswerID = this.accountsDB.addItem(this.answer);
+                            if(newAnswerID > 0){
+                                this.answer.set_id(newAnswerID);
+                                answerDbTransCompleted = true;
+                            }//End of if statement that checks the new answer was successfully added to the DB
+                        }//End of if else statement that checks the answer object has a valid DB _id, any value greater than 0 means it exists in DB
                     }else{
                         answerDbTransCompleted = true;
                     }//End of if else statement to check the answer changed
@@ -144,16 +157,14 @@ public class EditQuestionActivity extends AddQuestionActivity {
                     if(!this.isPreloadedQuestion && questionChanged && answerDbTransCompleted){
                         this.question.setValue(this.etNewItemField.getText().toString());
                         //Store the values to be updated in the DB
-                        values.put("_id",this.question.get_id());
+                        values.put(MainActivity.getIdColumn(),this.question.get_id());
                         values.put("Value",this.question.getValue());
-                        questionUpdatedRequired = true;
-                    }//End of if statement to check for preloaded questions
-
-                    if(questionUpdatedRequired){
-                        questionDbTransCompleted = this.accountsDB.updateTable(MainActivity.getQuestionTable(),values);
                     }else{
-                        questionDbTransCompleted = true;
-                    }
+                        //In case the preloaded questions, if new answer was added, update the question record in the DB
+                        values.put(MainActivity.getIdColumn(),this.question.get_id());
+                        values.put("AnswerID",this.answer.get_id());
+                    }//End of if statement to check for preloaded questions
+                    questionDbTransCompleted = this.accountsDB.updateTable(MainActivity.getQuestionTable(),values);
                     //Update the new question in the DB
                     if(questionDbTransCompleted && answerDbTransCompleted){
                         //Go back to previous activity
