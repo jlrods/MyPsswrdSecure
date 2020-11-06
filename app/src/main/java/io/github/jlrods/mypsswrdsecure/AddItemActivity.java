@@ -338,6 +338,7 @@ public abstract class AddItemActivity extends AppCompatActivity {
         public void onClick(View v) {
             Log.d("FabOnClickEHandOnClick","Enter the onClick method in FabOnClickEventHandler inner class of the AddQuestionActivity abstract class.");
             int timesUsed = 0;
+            final int[] timesUsedList = {timesUsed};
             int itemID = -1;
             final int[] itemIDs = {itemID};
             String itemType = "";
@@ -472,24 +473,28 @@ public abstract class AddItemActivity extends AppCompatActivity {
                         }//End of while loop that iterates through list of QuestionLists that hold the question to be deleted
                     }else{
                         //Path used for items to be deleted other that questions (User names and passwords)
+
+                        if(timesUsedList[0] != 0){
+                            for(int i=0; i < listOfAccountsUsingTheItemArray[0].size();i++){
+                                //Rest the values object every time a new iteration begins
+                                values = new ContentValues();
+                                //Assign the _id column to the current account id value
+                                values.put("_id",(int)listOfAccountsUsingTheItemArray[0].get(i));
+                                //Check if item is an instance of question class so the answer can be deleted first
+                                if(item instanceof Psswrd){
+                                    //Set password column to null
+                                    values.put("PsswrdID","NULL");
+                                }else if(item instanceof UserName){
+                                    //Set user name column to
+                                    values.put("UserNameID","NULL");
+                                }//End of if else statement to check what type of object the item is
+                                //Update the current account and set item column to nll
+                                accountsDB.updateTable(MainActivity.getAccountsTable(),values);
+                            }//End of for loop to iterate through list of Accounts holding the item to be deleted
+                        }
                         //If item to delete isn't a question, start iterating through list of accounts that hold the item to be deleted
-                        for(int i=0; i < listOfAccountsUsingTheItemArray[0].size();i++){
-                            //Rest the values object every time a new iteration begins
-                            values = new ContentValues();
-                            //Assign the _id column to the current account id value
-                            values.put("_id",(int)listOfAccountsUsingTheItemArray[0].get(i));
-                            //Check if item is an instance of question class so the answer can be deleted first
-                            if(item instanceof Psswrd){
-                                //Set password column to null
-                                values.put("PsswrdID","NULL");
-                            }else if(item instanceof UserName){
-                                //Set user name column to
-                                values.put("UserNameID","NULL");
-                            }//End of if else statement to check what type of object the item is
-                            //Update the current account and set item column to nll
-                            accountsDB.updateTable(MainActivity.getAccountsTable(),values);
-                        }//End of for loop to iterate through list of Accounts holding the item to be deleted
-                    }//End of if else statement to check if item is a Question
+
+                    }//End of if else statement to check if item is a Question or any type of object
 
                     //All different paths merge here, final deletion of the item and preparation of result transfer to caller method
                     accountsDB.deleteItem(item);
