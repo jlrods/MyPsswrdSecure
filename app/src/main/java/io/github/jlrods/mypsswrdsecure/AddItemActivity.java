@@ -473,7 +473,8 @@ public abstract class AddItemActivity extends AppCompatActivity {
                         }//End of while loop that iterates through list of QuestionLists that hold the question to be deleted
                     }else{
                         //Path used for items to be deleted other that questions (User names and passwords)
-
+                        //Check the number of times the user or password are being used. If greater than 0, proceed to update each account using the object
+                        //Otherwise, ignore this section
                         if(timesUsedList[0] != 0){
                             for(int i=0; i < listOfAccountsUsingTheItemArray[0].size();i++){
                                 //Rest the values object every time a new iteration begins
