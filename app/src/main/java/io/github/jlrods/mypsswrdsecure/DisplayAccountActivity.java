@@ -1318,7 +1318,6 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
                                 break;
                             case 1:
                                 //Call method to set up an image from the phone gallery
-//                                setGalleryImageAsAccLogo();
                                 setExternalImageAsAccLogo(Manifest.permission.READ_EXTERNAL_STORAGE,getResources().getString(R.string.galleryAccesRqst),
                                                             MainActivity.getThrowImageGalleryReqCode(),MainActivity.getGalleryAccessRequest());
                                 break;
@@ -1413,7 +1412,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         //Check the account icon isn't null
         if(account.getIcon()!=null){
             //Check the icon doesn't come from app resources or isn't the default app logo
-            if(account.getIcon().getLocation()!= MainActivity.getRESOURCES() && account.getIcon()!= MainActivity.getMyPsswrdSecureLogo()){
+            if(!account.getIcon().getLocation().equals(MainActivity.getRESOURCES())  && !account.getIcon().equals(MainActivity.getMyPsswrdSecureLogo())){
                 //If icon isn't coming from either option, save the logo uri in the DB
                 logoID = this.accountsDB.addItem(account.getIcon());
                 //Check the DB insertion was successful

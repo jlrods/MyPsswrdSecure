@@ -149,9 +149,8 @@ public class EditAccountActivity extends DisplayAccountActivity {
                                                             values.put("QuestionListID",newAccount.getQuestionList().get_id());
                                                         }//End of if else statements to catch null lists
                                                     }//End of if statement to check the question list are the same
-                                                    if(!this.isAddIconRequired(newAccount)){
-                                                        newAccount.setIcon(MainActivity.getMyPsswrdSecureLogo());
-                                                    }
+                                                    //Call method to add icon into DB if required
+                                                    this.isAddIconRequired(newAccount);
                                                     values.put("IconID",newAccount.getIcon().get_id());
                                                     values.put("IsFavorite",newAccount.isFavorite());
                                                     //values.put("DateCreated",this.account.getDateCreated());
