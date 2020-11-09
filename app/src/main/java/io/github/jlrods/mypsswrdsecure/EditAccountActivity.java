@@ -125,8 +125,8 @@ public class EditAccountActivity extends DisplayAccountActivity {
                                                 if(!(this.account.getName().equals(newAccount.getName())
                                                         && this.account.getIcon().get_id() == newAccount.getIcon().get_id()
                                                         && this.account.getCategory().get_id() == newAccount.getCategory().get_id()
-                                                        && this.account.getUserName().get_id() == newAccount.getUserName().get_id()
-                                                        && this.account.getPsswrd().get_id() == newAccount.getPsswrd().get_id()
+                                                        && this.isItemTheSame(this.account.getUserName(),newAccount.getUserName())
+                                                        && this.isItemTheSame(this.account.getPsswrd(),newAccount.getPsswrd())
                                                         //@Fixme: improve the way question lists are checked and recorded on DB
                                                         && this.isQuestionListTheSame(this.account.getQuestionList(),newAccount.getQuestionList())
                                                         && this.account.isFavorite() == newAccount.isFavorite()
@@ -238,6 +238,30 @@ public class EditAccountActivity extends DisplayAccountActivity {
         Log.d("onOptionsItemSelected","Exit successfully onOptionsItemSelected method in EditAccountActivity class.");
         return result;
     }//End of onOptionsItemSelected method
+
+    //Method to check two accounts have different question list (including null list)
+    private boolean isItemTheSame(UserName item1,UserName item2){
+        Log.d("isItemTheSame","Enter the isItemTheSame method in EditAccountActivity class.");
+        //Declare boolean flag to be returned by method
+        boolean isTheSame;
+        //Check both lists are null
+        if(item1 == null && item2 == null){
+            isTheSame = true;
+        }else if(item1 == null && item2 != null){
+            //If list1 is null and the other doesn't, they aren't the same
+            isTheSame = false;
+        }else if(item1 != null && item2 == null){
+            //If list2 is null and the other doesn't, they aren't the same
+            isTheSame = false;
+        }else if(item1.get_id() == item2.get_id()){
+            isTheSame = true;
+        }else{
+            //Any other case return false
+            isTheSame = false;
+        }//End of if else statements to check list status and ids
+        Log.d("isItemTheSame","Exit the isItemTheSame method in EditAccountActivity class.");
+        return isTheSame;
+    }//End of isQuestionListTheSame method
 
     //Method to check two accounts have different question list (including null list)
     private boolean isQuestionListTheSame(QuestionList list1, QuestionList list2){
