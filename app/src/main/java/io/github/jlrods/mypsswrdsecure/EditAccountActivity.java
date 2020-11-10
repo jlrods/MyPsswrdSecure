@@ -100,6 +100,7 @@ public class EditAccountActivity extends DisplayAccountActivity {
                 //Check the name entered is not empty
                 if(!accountName.equals("")){
                     //Check account name is available but first check if it contains apostrophe so the sql query contains scape character
+                    //Fixme: it might be possible to remove this as nadroid update method manages the apostrophe issue
                     if(accountName.contains("'")){
                         accountName = accountsDB.includeApostropheEscapeChar(accountName);
                     }//End of if to check the name contains apostrophe

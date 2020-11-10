@@ -935,7 +935,13 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
                     getContentResolver().takePersistableUriPermission(Uri.parse(uri), takeFlags);
                 }
             }//End of if statement to check permission list isn't null
-            this.logo = new Icon("galleryImage_"+System.currentTimeMillis(),uri);
+            //Check if external file is already in use within the app, and files location is already saved on DB
+            Icon selectedLogo = this.accountsDB.getIconByUriLocation(uri);
+            if(selectedLogo == null){
+                this.logo = new Icon("galleryImage_"+System.currentTimeMillis(),uri);
+            }else{
+                this.logo = selectedLogo;
+            }
             this.imgAccLogo.setImageURI(Uri.parse(uri));
         }else if(requestCode == MainActivity.getThrowImageGalleryReqCode() && resultCode == Activity.RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from Gallery intent received by the DisplayAccountActivity class.");
@@ -944,7 +950,13 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             //Set the image as per path coming from the intent. The data can be parsed as an uri
             Uri uri = MainActivity.getUriCameraImage();
             if(uri != null && !uri.equals("")){
-                this.logo = new Icon("CameraImage_"+System.currentTimeMillis(),uri.toString());
+                //Check if external file is already in use within the app, and files location is already saved on DB
+                Icon selectedLogo = this.accountsDB.getIconByUriLocation(uri.toString());
+                if(selectedLogo == null){
+                    this.logo = new Icon("CameraImage_"+System.currentTimeMillis(),uri.toString());
+                }else{
+                    this.logo = selectedLogo;
+                }
                 this.imgAccLogo.setImageURI(uri);
             }else{
                 MainActivity.displayToast(this,"Error with camera", Toast.LENGTH_SHORT, Gravity.BOTTOM);
@@ -1389,10 +1401,6 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
                 MainActivity.loadPictureFromGallery(intent);
             }else if(requestCode == MainActivity.getThrowImageCameraReqCode()){
                 MainActivity.loadPictureFromCamera(intent,this);
-//                final int takeFlags = intent.getFlags()
-//                        & (Intent.FLAG_GRANT_READ_URI_PERMISSION
-//                        | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-//                getContentResolver().takePersistableUriPermission(MainActivity.getUriCameraImage(), takeFlags);
             }//End of if else statement to check the request code
             startActivityForResult(intent, requestCode);
         } else {
@@ -1404,23 +1412,29 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
     }//End of setGalleryImageAsAccLogo method
 
     //Method to add new icon into the DB if icon isn't the app logo or comes from the app resources
-    protected boolean isAddIconRequired(Account account){
+    protected int isAddIconRequired(Account account){
         Log.d("isAddIconRequired", "Enter isAddIconRequired method in DisplayAccountActivity abstract class.");
         //Declare and initialize variables to be used in method and the return variable
         int logoID = -1;
-        boolean isIconAddedToDB = false;
+        //int isIconAddedToDB = false;
         //Check the account icon isn't null
         if(account.getIcon()!=null){
             //Check the icon doesn't come from app resources or isn't the default app logo
             if(!account.getIcon().getLocation().equals(MainActivity.getRESOURCES())  && !account.getIcon().equals(MainActivity.getMyPsswrdSecureLogo())){
-                //If icon isn't coming from either option, save the logo uri in the DB
-                logoID = this.accountsDB.addItem(account.getIcon());
+                //Check if external file is already in use within the app, and files location is already saved on DB
+                Icon selectedLogo = this.logo; //This was defined on the onActivityResult method when logo is received from Galley or Camera Intent
+                if(selectedLogo.get_id() == -1){
+                    //If icon isn't coming from either option, and id is -1 save the logo uri in the DB
+                    logoID = this.accountsDB.addItem(account.getIcon());
+                }else{
+                    logoID = selectedLogo.get_id();
+                }
                 //Check the DB insertion was successful
                 if(logoID != -1){
                     //Update the account object Icon ID
                     account.getIcon().set_id(logoID);
                     //Set boolean flag to true, to denote the icon had to be inserted in DB
-                    isIconAddedToDB = true;
+                    //isIconAddedToDB = true;
                 }else{
                     //Otherwise, set the account attribute's icon id for the account object
                     account.getIcon().set_id(this.account.getIcon().get_id());
@@ -1428,6 +1442,6 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             }//End of if statement to check the icon doesn't come from resources or isn't the app logo
         }//End of if statement to check the icon isn't null
         Log.d("isAddIconRequired", "Exit isAddIconRequired method in DisplayAccountActivity abstract class.");
-        return isIconAddedToDB;
+        return logoID;
     }//End of isAddIconRequired
 }//End of AddAccountActivity

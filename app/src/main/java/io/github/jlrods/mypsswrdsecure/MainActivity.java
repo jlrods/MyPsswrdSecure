@@ -1260,13 +1260,7 @@ public class  MainActivity extends AppCompatActivity {
             //Initialize the intent object and set it up for calling the Gallery app
             intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
             intent.addCategory(Intent.CATEGORY_OPENABLE);
-            //intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
-//            getContentResolver().takePersistableUriPermission(Uri.parse(uri), intent.getFlags());
-//            final int takeFlags = intent.getFlags()
-//                    & (Intent.FLAG_GRANT_READ_URI_PERMISSION
-//                    | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-//            getContentResolver().takePersistableUriPermission(Uri.parse(uri), takeFlags);
         }//End of if else statement that checks the SDK version
         intent.setType("image/*");
         Log.d("LoadGalPicture","Exit loadPictureFromGallery method in the MainActivity class.");

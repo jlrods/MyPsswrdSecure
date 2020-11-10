@@ -905,6 +905,20 @@ public class AccountsDB extends SQLiteOpenHelper {
         }//End of if else statement
     }//End of getIconByID method
 
+    //Method to retrieve a specific Icon from DB by passing in it's ID
+    public Icon getIconByUriLocation(String uri){
+        Log.d("getIconByID","Enter the getIconByUriLocation method in the AccountsDB class.");
+        Cursor cursor = this.runQuery("SELECT * FROM "+ MainActivity.getIconTable() +"  WHERE Location = '"+ uri + "'");
+        if(cursor.moveToFirst()){
+            //cursor.moveToFirst();
+            Log.d("getIconByID","Exit successfully (icon with location: " +uri+ " has been found) the getIconByUriLocation method in the AccountsDB class.");
+            return Icon.extractIcon(cursor);
+        }else{
+            Log.d("getIconByID","Exit the getIconByUriLocation method in the AccountsDB class without finding the account with name: "+uri);
+            return null;
+        }//End of if else statement
+    }//End of getIconByID method
+
 
     //Method to get a specific user name, by passing in its DB _id as an argument
     public UserName getUserNameByID(int _id){
