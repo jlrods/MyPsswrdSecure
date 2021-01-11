@@ -50,6 +50,7 @@ public class  MainActivity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
     private CoordinatorLayout coordinatorLayout;
 
+
     //Declare and initialize variables to define the current app state saved on DB
     private static Cursor appState = null;
     private static Category currentCategory = null;
@@ -74,8 +75,8 @@ public class  MainActivity extends AppCompatActivity {
     private static Category favCategory = null;
     private static ArrayList<QuestionList> listOfQuestionLists = null;
 
-
     private static String dateFormat = "dd/MMM/yyyy";
+
 
 
     private static Cryptographer cryptographer;
@@ -1944,12 +1945,12 @@ public class  MainActivity extends AppCompatActivity {
                 .setNegativeButton(R.string.cancel,new DialogInterface.OnClickListener(){
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //Check if search filter has already been made active. If that the case, clear search and update RV
+                        //Call clear search filter method
+                        clearSearchFilter();
+                        //Update the RV list
                         if(isSearchFilter){
-                            clearSearchFilter();
-                            //Update the RV list
                             updateRecyclerViewData(HomeFragment.getRv().getAdapter());
-                        }//End of if statement to check the search filter is active
+                        }
                     }//End of onClick method
                 })//End of set negative button
                 .show();
@@ -2000,6 +2001,7 @@ public class  MainActivity extends AppCompatActivity {
         this.lastSearchText = "";
         Toolbar toolbar = findViewById(R.id.toolbar);
         if(toolbar.getMenu().size() > 0){
+            //@Fixme: use different methond that setTintList?
             toolbar.getMenu().getItem(0).getIcon().setTintList(null);//.setColorFilter(null);
         }
         //Update app state to remove all search related fields
