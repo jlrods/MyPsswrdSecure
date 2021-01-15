@@ -7,8 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -61,6 +59,8 @@ public class  MainActivity extends AppCompatActivity {
     private static boolean isSearchUserNameFilter = false;
     private static boolean isSearchPsswrdFilter = false;
     private static String lastSearchText ="";
+    private static boolean isSortFilter = false;
+    private static SortFilter currentSortFilter = null;
     private static boolean isFirstRun = false;
     private int counter=0;
     private byte[] encrypted=null;
@@ -142,6 +142,10 @@ public class  MainActivity extends AppCompatActivity {
     private static final String IS_SEARCH_USER_FILTER_COLUMN ="isSearchUserInAccountsFilter";
     private static final String IS_SEARCH_PSSWRD_FILTER_COLUMN ="isSearchPsswrdInAccountsFilter";
     private static final String LAST_SEARCH_TEXT_COLUMN ="lastSearch";
+    private static final String ASC = "ASC";
+    private static final String DESC = "DESC";
+    private static final String DATE_CREATED_COLUMN = "DateCreated";
+    private static final String VALUE_COLUMN = "Value";
 
     private static Uri uriCameraImage = null;
     private static final String EXTERNAL_IMAGE_STORAGE_CLUE = "content://";
@@ -215,6 +219,7 @@ public class  MainActivity extends AppCompatActivity {
                         });
                         if(!isFirstRun){
                             clearSearchFilter();
+                            clearSortFilter();
                         }
                         MainActivity.updateRecyclerViewData(accountAdapter);
                         break;
@@ -230,6 +235,7 @@ public class  MainActivity extends AppCompatActivity {
                         });//End of setOnClickListener
                         if(!isFirstRun){
                             clearSearchFilter();
+                            clearSortFilter();
                         }
                         MainActivity.updateRecyclerViewData(userNameAdapter);
                         break;
@@ -244,6 +250,7 @@ public class  MainActivity extends AppCompatActivity {
                         });//End of setOnClickListener
                         if(!isFirstRun){
                             clearSearchFilter();
+                            clearSortFilter();
                         }
                         MainActivity.updateRecyclerViewData(psswrdAdapter);
                         break;
@@ -251,6 +258,7 @@ public class  MainActivity extends AppCompatActivity {
                         SecurityQuestionAdapter secQuestionAdapter = new SecurityQuestionAdapter(getBaseContext(),null);
                         if(!isFirstRun){
                             clearSearchFilter();
+                            clearSortFilter();
                         }
                         MainActivity.updateRecyclerViewData(secQuestionAdapter);
                         secQuestionAdapter.setOnClickListener(new View.OnClickListener(){
@@ -454,6 +462,10 @@ public class  MainActivity extends AppCompatActivity {
                 return true;
             case R.id.action_settings:
                 return true;
+            case R.id.action_sort:
+                this.sort();
+                item.getIcon().setTint(getColor(R.color.colorAccent));
+                return true;
             case R.id.action_search:
                 this.search();
                 //@Fixme: Check what is best: setTint or setColourFilter
@@ -523,6 +535,18 @@ public class  MainActivity extends AppCompatActivity {
                     //include the current category in the search criteria
                     cursor = accountsDB.getAccountsThatContainsThisTextInName(lastSearchText,currentCategory.get_id());
                 }//End of if else statement to check if the Account special search feature is being used
+            }else if(isSortFilter) {
+                if(currentSortFilter == SortFilter.ALPHA_ASC){
+                    cursor = accountsDB.getAccountsSortedByColumnUpOrDown(NAME_COLUMN,ASC);
+                }else if(currentSortFilter == SortFilter.ALPHA_DES){
+                    cursor = accountsDB.getAccountsSortedByColumnUpOrDown(NAME_COLUMN, DESC);
+                }else if(currentSortFilter == SortFilter.DATE_ASC){
+                    cursor = accountsDB.getAccountsSortedByColumnUpOrDown(DATE_CREATED_COLUMN,ASC);
+                }else if(currentSortFilter == SortFilter.DATE_DES){
+                    cursor = accountsDB.getAccountsSortedByColumnUpOrDown(DATE_CREATED_COLUMN,DESC);
+                }else if(currentSortFilter == SortFilter.CATEGORY){
+                    cursor = accountsDB.getAccountsSortedByColumnUpOrDown(CATEGORY_ID_COLUMN,ASC);
+                }
             }else{
                 //Check current category variable to call method that retrieves proper account list
                     if(MainActivity.getCurrentCategory().get_id() == -1){
@@ -540,6 +564,14 @@ public class  MainActivity extends AppCompatActivity {
             //Check the isSearch filter flag to define the correct cursor to retrieve from the DB
             if(isSearchFilter){
                 cursor = accountsDB.getPsswrdByName(lastSearchText);
+            }else if(isSortFilter){
+                if(currentSortFilter == SortFilter.DATE_ASC){
+                    cursor = accountsDB.getPsswrdsSortedColumnUpDown(DATE_CREATED_COLUMN,ASC);
+                }else if(currentSortFilter == SortFilter.DATE_DES){
+                    cursor = accountsDB.getPsswrdsSortedColumnUpDown(DATE_CREATED_COLUMN,DESC);
+                }else if(currentSortFilter == SortFilter.TIMES_USED){
+                    cursor = null;
+                }
             }else{
                 cursor = accountsDB.getPsswrdList();
             }
@@ -549,6 +581,14 @@ public class  MainActivity extends AppCompatActivity {
             if(isSearchFilter){
                 //Call DB method to retrieve the questions that holds specific value in the question text
                 cursor = accountsDB.getQuestionsWithThisTextInValue(lastSearchText);
+            }else if(isSortFilter) {
+                if(currentSortFilter == SortFilter.ALPHA_ASC){
+                    cursor = accountsDB.getQuestionsSortedColumnUpDown(VALUE_COLUMN,ASC);
+                }else if(currentSortFilter == SortFilter.ALPHA_DES){
+                    cursor = accountsDB.getQuestionsSortedColumnUpDown(VALUE_COLUMN, DESC);
+                }else if(currentSortFilter == SortFilter.TIMES_USED){
+                    cursor = null;
+                }
             }else{
                 cursor = accountsDB.getListQuestionsAvailableNoAnsw();
             }
@@ -557,6 +597,14 @@ public class  MainActivity extends AppCompatActivity {
             //Check the isSearch filter flag to define the correct cursor to retrieve from the DB
             if(isSearchFilter){
                 cursor = accountsDB.getUserNameByName(lastSearchText);
+            }else if(isSortFilter){
+                if(currentSortFilter == SortFilter.DATE_ASC){
+                    cursor = accountsDB.getUserNamesSortedColumnUpDown(DATE_CREATED_COLUMN,ASC);
+                }else if(currentSortFilter == SortFilter.DATE_DES){
+                    cursor = accountsDB.getUserNamesSortedColumnUpDown(DATE_CREATED_COLUMN,DESC);
+                }else if(currentSortFilter == SortFilter.TIMES_USED){
+                    cursor = null;
+                }
             }else{
                 cursor = accountsDB.getUserNameList();
             }
@@ -1471,7 +1519,7 @@ public class  MainActivity extends AppCompatActivity {
                 }//End of for loop to populate the taskList array
                 //Create a dialog box to display the grocery types
                 new AlertDialog.Builder(MainActivity.this)
-                        .setTitle("Select Category to edit")
+                        .setTitle(getString(R.string.editCategoryTitle))
                         .setSingleChoiceItems(categories, 0, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -1526,7 +1574,7 @@ public class  MainActivity extends AppCompatActivity {
                 }//End of for loop to populate the taskList array
                 //Create a dialog box to display the grocery types
                 new AlertDialog.Builder(MainActivity.this)
-                        .setTitle("Select Category to edit")
+                        .setTitle(getString(R.string.deleteCategoryTitle))
                         .setMultiChoiceItems(categories, deletableCategories, new DialogInterface.OnMultiChoiceClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
@@ -1786,6 +1834,141 @@ public class  MainActivity extends AppCompatActivity {
     }//End of setUserProfileName method
 
     //Method to filter task or groceries by description content
+    private void sort(){
+        Log.d("Ent_sort","Enter the sort method in the MainActivity class.");
+        //Clear serach filter if applied
+//        if(this.isSearchFilter){
+//            this.clearSearchFilter();
+//        }
+        final int[] selectedSortCriteriID = {0};
+        final int[] positionInList ={0};
+        final CharSequence[] sortCriteria;
+        if(this.currentTab == 0){
+            sortCriteria = new CharSequence[5];
+            sortCriteria[0] = getString(R.string.sort_alpha_up);
+            sortCriteria[1] = getString(R.string.sort_alpha_down);
+            sortCriteria[2] = getString(R.string.sort_date_up);
+            sortCriteria[3] = getString(R.string.sort_date_down);
+            sortCriteria[4] = getString(R.string.sort_category);
+        }else if(this.currentTab == 1 || this.currentTab == 2){
+            sortCriteria = new CharSequence[3];
+            sortCriteria[0] = getString(R.string.sort_date_up);
+            sortCriteria[1] = getString(R.string.sort_date_down);
+            sortCriteria[2] = getString(R.string.sort_times_used);
+        }else{
+            sortCriteria = new CharSequence[3];
+            sortCriteria[0] = getString(R.string.sort_alpha_up);
+            sortCriteria[1] = getString(R.string.sort_alpha_down);
+            sortCriteria[2] = getString(R.string.sort_times_used);
+        }//End of if else statement to define the sort criteria options based on the current tab selected
+        //Check if the sort filter is already in use. If that is the case, select the that one as the checked item when creating the dialog
+        int checkedItem = 0;
+        if(isSortFilter){
+            //Then check current filter selected
+            if(currentSortFilter.equals(SortFilter.ALPHA_ASC)){
+                checkedItem = 0;
+            }else if(currentSortFilter.equals(SortFilter.ALPHA_DES)){
+                checkedItem = 1;
+            }else if(currentSortFilter.equals(SortFilter.CATEGORY)){
+                checkedItem = 4;
+            }else if(currentSortFilter.equals(SortFilter.DATE_ASC)){
+                if(currentTab == 0){
+                    checkedItem = 2;
+                }else{
+                    checkedItem = 0;
+                }
+            }else if(currentSortFilter.equals(SortFilter.DATE_DES)){
+                if(currentTab == 0){
+                    checkedItem = 3;
+                }else{
+                    checkedItem = 1;
+                }
+            }//End of if else chain to check current sort filter selected
+        }//End of if statement to check the sort filter is in use
+        //Display alert dialog to select sor filter type
+        new AlertDialog.Builder(MainActivity.this)
+                .setTitle(getString(R.string.sort_title))
+                .setSingleChoiceItems(sortCriteria, checkedItem, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        positionInList[0] = which;
+                    }
+                })
+                .setPositiveButton(R.string.dialog_OK,new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog,int whichButton){
+                        switch(positionInList[0]){
+                            case 0:
+                                if(currentTab == 1 || currentTab == 2){
+                                    currentSortFilter = SortFilter.DATE_ASC;
+                                }else{
+                                    currentSortFilter = SortFilter.ALPHA_ASC;
+                                }
+                                break;
+                            case 1:
+                                if(currentTab == 1 || currentTab == 2){
+                                    currentSortFilter = SortFilter.DATE_DES;
+                                }else{
+                                    currentSortFilter = SortFilter.ALPHA_DES;
+                                }
+                                break;
+                            case 2:
+                                if(currentTab == 0){
+                                    currentSortFilter = SortFilter.DATE_ASC;
+                                }else{
+                                    currentSortFilter = SortFilter.TIMES_USED;
+                                }
+                                break;
+                            case 3:
+                                if(currentTab == 0){
+                                    currentSortFilter = SortFilter.DATE_DES;
+                                }else{
+                                    currentSortFilter = null;
+                                }
+                                break;
+                            case 4:
+                                if(currentTab == 0){
+                                    currentSortFilter = SortFilter.CATEGORY;
+                                }else{
+                                    currentSortFilter = null;
+                                }
+                                break;
+                            default:
+                                currentSortFilter = null;
+                                break;
+                        }
+                        //Clear Sort filter if applied
+                        if(isSearchFilter){
+                            clearSearchFilter();
+                        }
+                        isSortFilter = true;
+                        //Call method to update RV data
+                        //Call method to update the adapter and the recyclerView
+                        updateRecyclerViewData(HomeFragment.getRv().getAdapter());
+                    }
+
+                })
+                .setNegativeButton(R.string.cancel,new DialogInterface.OnClickListener(){
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //Call clear search filter method
+                                clearSortFilter();
+                                //Update the RV list
+//                                //@Fixme: There's an issue here. Test to remember
+//                                if(isSearchFilter){
+//                                    updateRecyclerViewData(HomeFragment.getRv().getAdapter());
+//                                }
+                            }//End of onClick method)
+                })//End of set negative button
+                .create()
+                .show();
+        //Iterate through the sort criteria list to transform into a charsequence list
+
+        Log.d("Ent_sort","Exit the sort method in the MainActivity class.");
+    }//End of the sort method
+
+
+
+    //Method to filter task or groceries by description content
     private void search(){
         Log.d("Ent_serach","Enter the search method in the MainActivity class.");
         //Declare and instantiate a new View objects to be used on the AlertDialog box: Two switch views and one editText view.
@@ -1908,6 +2091,10 @@ public class  MainActivity extends AppCompatActivity {
                                 //If it does, call method to include escape character
                                 lastSearchText = accountsDB.includeApostropheEscapeChar(lastSearchText);
                             }//End of if statement to check the search text has apostrophe
+                            //Clear Sort filter if applied
+                            if(isSortFilter){
+                                clearSortFilter();
+                            }
                             //Check the switch statuses to define the type of search to be performed: Accounts with this user, Accounts with this passowrd
                             //or Accounts with this name
                             //Check if switch views were added to linearLayout object
@@ -1948,6 +2135,7 @@ public class  MainActivity extends AppCompatActivity {
                         //Call clear search filter method
                         clearSearchFilter();
                         //Update the RV list
+                        //@Fixme: There's an issue here. Test to remember
                         if(isSearchFilter){
                             updateRecyclerViewData(HomeFragment.getRv().getAdapter());
                         }
@@ -2015,6 +2203,22 @@ public class  MainActivity extends AppCompatActivity {
         }//End of if statement to check the app state has been successfully updated
         Log.d("clearSearchFilter","Exit the clearSearchFilter method in the MainActivity class.");
         return isSearchFilterCleared;
+    }//End of clearSearchFilter method
+
+    //Method to clear search filter
+    private boolean clearSortFilter(){
+        boolean isSortFilterCleared = false;
+        Log.d("clearSortFilter","Enter the clearSortFilter method in the MainActivity class.");
+        this.isSortFilter = false;
+        this.currentSortFilter = null;
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        if(toolbar.getMenu().size() > 0){
+            //@Fixme: use different method that setTintList?
+            toolbar.getMenu().getItem(1).getIcon().setTintList(null);//.setColorFilter(null);
+        }
+        Log.d("clearSortFilter","Exit the clearSortFilter method in the MainActivity class.");
+        isSortFilterCleared = true;
+        return isSortFilterCleared;
     }//End of clearSearchFilter method
 
     public enum SearchType{

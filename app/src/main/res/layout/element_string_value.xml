@@ -60,13 +60,14 @@
                     android:text="@string/strVal_times_used"
                     android:layout_alignParentTop="true"
                     android:layout_toRightOf="@+id/tvStringValue"
-                    android:layout_alignParentRight="true" />
+                    android:textSize="14dp"/>
                 <TextView
                     android:id="@+id/tvStrValTimesUsed"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="5"
                     android:layout_below="@+id/tvStrValTimesTag"
+                    android:textSize="14dp"
                     android:layout_marginLeft="5dp"/>
             </LinearLayout>
             <LinearLayout
@@ -80,15 +81,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/strVal_date_created"
-                    android:layout_below="@+id/tvStringValue" />
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textSize="14dp"/>
                 <TextView
                     android:id="@+id/tvStrValDate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="10-June-1983"
-                    android:layout_toRightOf="@+id/tvStrValDateTag"
-                    android:layout_below="@+id/tvStringValue"
-                    android:layout_marginLeft="5dp"/>
+                    android:text="10-Jan-1983"
+                    android:layout_marginLeft="5dp"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textSize="14dp"/>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

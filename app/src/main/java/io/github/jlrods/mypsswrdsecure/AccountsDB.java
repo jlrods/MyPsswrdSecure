@@ -135,7 +135,7 @@ public class AccountsDB extends SQLiteOpenHelper {
                 "isSearchUserInAccountsFilter INTEGER, isSearchPsswrdInAccountsFilter INTEGER,\n"+
                 "lastSearch TEXT, FOREIGN KEY (currentCategoryID) REFERENCES CATEGORY(_id));");
         //Populate default state of app
-        db.execSQL("INSERT INTO APPSTATE VALUES(null,null,1,1,0,0,'');");
+        db.execSQL("INSERT INTO APPSTATE VALUES(null,1,1,1,0,0,0,0,'');");
 
         //Create a table to store the accounts items
         // Leave empty as user has to create their accounts.
@@ -594,6 +594,7 @@ public class AccountsDB extends SQLiteOpenHelper {
             table = MainActivity.getApplogginTable();
             fields.put(MainActivity.getNameColumn(),((AppLoggin)item).getName());
             fields.put("Message",((AppLoggin)item).getMessage());
+            fields.put("PictureID",((AppLoggin)item).getPicture().get_id());
             Log.d("addAppLoggin","AppLoggin to be added in the addItem method in AccountsDB class.");
         }else if(item instanceof Account){
             table = MainActivity.getAccountsTable();
@@ -713,7 +714,7 @@ public class AccountsDB extends SQLiteOpenHelper {
 
     //Method to get a specific Category, by passing in its DB _id as an argument
     public Cursor getAppLoginCursor(int _id){
-        Log.d("getCategoryByID","Enter the getCategoryByID method in the AccountsDB class.");
+        Log.d("getAppLogin","Enter the getCategoryByID method in the AccountsDB class.");
         Cursor cursor = this.runQuery("SELECT * FROM "+MainActivity.getApplogginTable()+" WHERE "+MainActivity.getIdColumn()+" = "+ _id);
         return cursor;
     }//End of getUserNameByID method
@@ -976,6 +977,15 @@ public class AccountsDB extends SQLiteOpenHelper {
         }//End of if else statement
     }//End of getUserNameByID method
 
+    //Method to get a specific user name, by passing in its DB _id as an argument
+    public Cursor getUserNamesSortedColumnUpDown(String column, String order){
+        Log.d("getUserSorted","Enter the getUserNamesSortedColumnUpDown method in the AccountsDB class.");
+        Cursor  listOfUserNamesSorted = null;
+        listOfUserNamesSorted = runQuery("SELECT * FROM "+ MainActivity.getUsernameTable()+ " ORDER BY " + column + " " +order);
+        Log.d("getUserSorted","Exit the getUserNamesSortedColumnUpDown method in the AccountsDB class.");
+        return listOfUserNamesSorted;
+    }//End of getUserNameByID method
+
     //Method to get a specific password, by passing in its DB _id as an argument
     public Psswrd getPsswrdByID(int _id){
         Log.d("getPsswrdByID","Enter the getPsswrdByID method in the AccountsDB class.");
@@ -1029,6 +1039,39 @@ public class AccountsDB extends SQLiteOpenHelper {
             //can be checked that count is > 0.
             return  this.getPsswrdCursorByID(-1);
         }//End of if else statement
+    }//End of getUserNameByID method
+
+    //Method to get a specific user name, by passing in its DB _id as an argument
+    public Cursor getPsswrdsSortedColumnUpDown(String column, String order){
+        Log.d("getPsswrdsSorted","Enter the getPsswrdsSortedColumnUpDown method in the AccountsDB class.");
+        Cursor  listOfAccountsSortedAlpha = null;
+        listOfAccountsSortedAlpha = runQuery("SELECT * FROM "+ MainActivity.getPsswrdTable()+ " ORDER BY " + column + " " +order);
+        Log.d("getPsswrdsSorted","Exit the getPsswrdsSortedColumnUpDown method in the AccountsDB class.");
+        return listOfAccountsSortedAlpha;
+//        Log.d("getPsswrdsSorted","Enter the getUserNameByName method in the AccountsDB class.");
+//        //Declare and initialize a boolean flag to inform the name was found
+//        boolean found = false;
+//        String psswrdDecrypted = "";
+//        //Get all data from PSSWRD table
+//        Cursor psswrdCursor = this.runQuery("SELECT * FROM PSSWRD");
+//        //Iterate through it, decrypt user name values and compare against value passed in as parameter
+//        while(!found && psswrdCursor.moveToNext()){
+//            //Decrypt the user name value coming form DB
+//            psswrdDecrypted = cryptographer.decryptText(psswrdCursor.getBlob(1),new IvParameterSpec(psswrdCursor.getBlob(2)));
+//            //Compare the decrypted user name user name being looked for
+//            if(psswrd.trim().equals(psswrdDecrypted.trim())){
+//                found = true;
+//            }//End of if statement to compare user names
+//        }//End of while loop to iterate through list of user names
+//        if(found){
+//            Log.d("getPsswrdByName","Exit successfully (password with value " +psswrd + " has been found) the getPsswrdByName method in the AccountsDB class.");
+//            return this.getPsswrdCursorByID(psswrdCursor.getInt(0));
+//        }else{
+//            Log.d("getPsswrdByName","Exit the getPsswrdByName method in the AccountsDB class without finding the password with value: "+psswrd);
+//            //This is a work around to avoid null exception when the password being looked for does not exist. Down the road the returned cursor
+//            //can be checked that count is > 0.
+//            return  this.getPsswrdCursorByID(-1);
+//        }//End of if else statement
     }//End of getUserNameByID method
 
     //Method to get the list of passwords from the DB
@@ -1299,6 +1342,17 @@ public class AccountsDB extends SQLiteOpenHelper {
         return _id;
     }//End of getSecQuestionListID method
 
+    //Method to get a specific user name, by passing in its DB _id as an argument
+    public Cursor getQuestionsSortedColumnUpDown(String column, String order){
+        Log.d("getQuestSorted","Enter the getQuestionsSortedColumnUpDown method in the AccountsDB class.");
+        Cursor  listOfAccountsSortedAlpha = null;
+
+        listOfAccountsSortedAlpha = runQuery("SELECT QUESTION._id, QUESTION.Value AS Q, ANSWER._id AS AnswerID,ANSWER.Value AS Answer," +
+                "ANSWER.initVector AS initVector FROM QUESTION LEFT JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id ORDER BY QUESTION.Value "+order);
+        Log.d("getQuestSorted","Exit the getQuestionsSortedColumnUpDown method in the AccountsDB class.");
+        return listOfAccountsSortedAlpha;
+    }//End of getUserNameByID method
+
     public ArrayList getAccountsIDListUsingItemWithID(String itemType, int itemID){
         Log.d("getAccUsingItemWithID","Enter the getAccountsUsingItemWithID method in the AccountsDB class.");
         Cursor listOfAccountUsingTheItem = null;
@@ -1368,6 +1422,15 @@ public class AccountsDB extends SQLiteOpenHelper {
         }
         Log.d("getAccWithSpecifcValue","Exit the getAccountCursorByName method in the AccountsDB class.");
         return listOfAccountsThatHoldsASpecificValue;
+    }//End of getAccountsWithSpecifcValue method
+
+    //Method to return cursor with rows from the accounts table with specific value in the column name passed in as argument
+    public Cursor getAccountsSortedByColumnUpOrDown(String column, String order){
+        Log.d("getAccountsSortedAlpUp","Enter the getAccountsSortedAlphaUp method in the AccountsDB class.");
+        Cursor  listOfAccountsSortedAlpha = null;
+        listOfAccountsSortedAlpha = runQuery("SELECT * FROM "+ MainActivity.getAccountsTable()+ " ORDER BY " + column + " " +order);
+        Log.d("getAccountsSortedAlpUp","Exit the getAccountsSortedAlphaUp method in the AccountsDB class.");
+        return listOfAccountsSortedAlpha;
     }//End of getAccountsWithSpecifcValue method
 
     //Method to return cursor with rows from the accounts table with specific value in the column name passed in as argument
