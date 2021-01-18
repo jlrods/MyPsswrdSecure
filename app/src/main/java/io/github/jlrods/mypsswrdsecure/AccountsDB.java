@@ -133,9 +133,9 @@ public class AccountsDB extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE APPSTATE(_id INTEGER PRIMARY KEY AUTOINCREMENT,currentCategoryID INTEGER,\n" +
                 "currentTab INTEGER,showAllAccounts INTEGER,isFavoriteFilter INTEGER,isSearchFilter INTEGER,\n" +
                 "isSearchUserInAccountsFilter INTEGER, isSearchPsswrdInAccountsFilter INTEGER,\n"+
-                "lastSearch TEXT, FOREIGN KEY (currentCategoryID) REFERENCES CATEGORY(_id));");
+                "lastSearch TEXT,isSortFilter INTEGER,currentSortFilter INTEGER, FOREIGN KEY (currentCategoryID) REFERENCES CATEGORY(_id));");
         //Populate default state of app
-        db.execSQL("INSERT INTO APPSTATE VALUES(null,1,1,1,0,0,0,0,'');");
+        db.execSQL("INSERT INTO APPSTATE VALUES(null,1,1,1,0,0,0,0,'',0,-1);");
 
         //Create a table to store the accounts items
         // Leave empty as user has to create their accounts.

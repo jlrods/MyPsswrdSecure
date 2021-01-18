@@ -142,6 +142,8 @@ public class  MainActivity extends AppCompatActivity {
     private static final String IS_SEARCH_USER_FILTER_COLUMN ="isSearchUserInAccountsFilter";
     private static final String IS_SEARCH_PSSWRD_FILTER_COLUMN ="isSearchPsswrdInAccountsFilter";
     private static final String LAST_SEARCH_TEXT_COLUMN ="lastSearch";
+    private static final String IS_SORT_FILTER_COLUMN = "isSortFilter";
+    private static final String CURRENT_SORT_FILTER_COLUMN =  "currentSortFilter";
     private static final String ASC = "ASC";
     private static final String DESC = "DESC";
     private static final String DATE_CREATED_COLUMN = "DateCreated";
@@ -278,6 +280,7 @@ public class  MainActivity extends AppCompatActivity {
                 boolean appStateUpdated = accountsDB.updateTable(APPSTATE_TABLE,appStateValues);
                 //If update goes well, get values from DB???
                 if(appStateUpdated){
+                    //@FIXME: Define method in AccountsDB
                     Cursor c = accountsDB.runQuery("SELECT * FROM "+ APPSTATE_TABLE);
                     c.moveToFirst();
                     String search = c.getString(6);
@@ -317,7 +320,7 @@ public class  MainActivity extends AppCompatActivity {
         //@Fixme:Retrieve App state from DB and update app variable appropriately
         this.appState = accountsDB.getAppState();
         if(this.appState != null && this.appState.getCount() > 0){
-            //@Fixme: Since current cat is being stored in DB, even Home and Fav, which are not defined in the Category table, must ensure the proper CatID is being stoted
+            //@Fixme: Since current cat is being stored in DB, even Home and Fav, which are not defined in the Category table, must ensure the proper CatID is being stored
             this.currentCategory = this.getCategoryByID(this.appState.getInt(1));
             //@Fixme: Update the nav drawer to display appropriate item in the menu
             this.currentTab = this.appState.getInt(2);
@@ -335,9 +338,11 @@ public class  MainActivity extends AppCompatActivity {
             this.isSearchUserNameFilter = this.accountsDB.toBoolean(this.appState.getInt(6));
             this.isSearchPsswrdFilter = this.accountsDB.toBoolean(this.appState.getInt(7));
             this.lastSearchText = this.appState.getString(8);
+            this.isSortFilter = this.accountsDB.toBoolean(this.appState.getInt(9));
+            this.currentSortFilter = SortFilter.getSortFilterByOrdinal(this.appState.getInt(10));
             //Set boolean flag to identify first run of the onCreate method
             //This flag is a work around to avoid clearSearch filter when calling onTabSelected method when
-            //Chaging tab during first run of program
+            //Changing tab during first run of program
             if(currentTab != 0){
                 isFirstRun = true;
             }
@@ -350,6 +355,8 @@ public class  MainActivity extends AppCompatActivity {
             this.isSearchUserNameFilter =false;
             this.isSearchPsswrdFilter = false;
             this.lastSearchText = "";
+            this.isSortFilter = false;
+            this.currentSortFilter = null;
         }//End of if statement to check and extract the app state from dB
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -450,6 +457,9 @@ public class  MainActivity extends AppCompatActivity {
         if(this.isSearchFilter){
             //@Fixme: Check what is best: setTint or setColourFilter
             menu.getItem(0).getIcon().setTint(getColor(R.color.colorAccent));
+        }else if(this.isSortFilter){
+            //@Fixme: Check what is best: setTint or setColourFilter
+            menu.getItem(1).getIcon().setTint(getColor(R.color.colorAccent));
         }
         return true;
     }
@@ -1944,6 +1954,8 @@ public class  MainActivity extends AppCompatActivity {
                         //Call method to update RV data
                         //Call method to update the adapter and the recyclerView
                         updateRecyclerViewData(HomeFragment.getRv().getAdapter());
+                        //Update App State
+                        updateSortFilterInAppState();
                     }
 
                 })
@@ -2216,6 +2228,8 @@ public class  MainActivity extends AppCompatActivity {
             //@Fixme: use different method that setTintList?
             toolbar.getMenu().getItem(1).getIcon().setTintList(null);//.setColorFilter(null);
         }
+        //Update sort filter in app state
+        this.updateSortFilterInAppState();
         Log.d("clearSortFilter","Exit the clearSortFilter method in the MainActivity class.");
         isSortFilterCleared = true;
         return isSortFilterCleared;
@@ -2238,6 +2252,7 @@ public class  MainActivity extends AppCompatActivity {
         }//End of Full Category constructor
     }//End of SearchType enum
 
+    //Method to update the current category in the app state
     private boolean updateCategoryInAppState(){
         Log.d("updateCatInAppState","Enter updateCategoryInAppState method in the MainActivity class.");
         ContentValues values = new ContentValues();
@@ -2246,5 +2261,22 @@ public class  MainActivity extends AppCompatActivity {
         Log.d("updateCatInAppState","Exit updateCategoryInAppState method in the MainActivity class.");
         return accountsDB.updateTable(APPSTATE_TABLE,values);
     }//End of updateCategoryInAppState method
+
+    //Method to update the sort filter selectection and the current sort filter in the app state
+    private boolean updateSortFilterInAppState(){
+        Log.d("updateSortInAppState","Enter updateSortFilterInAppState method in the MainActivity class.");
+        //Update app state in DB
+        ContentValues values = new ContentValues();
+        values.put(ID_COLUMN,accountsDB.getMaxItemIdInTable(this.APPSTATE_TABLE));
+        values.put(IS_SORT_FILTER_COLUMN,accountsDB.toInt(this.isSortFilter));
+        if(this.currentSortFilter != null){
+            values.put(CURRENT_SORT_FILTER_COLUMN,this.currentSortFilter.ordinal());
+        }else{
+            values.put(CURRENT_SORT_FILTER_COLUMN,-1);
+        }
+        //Log.d("updateCatInAppState","Exit updateCategoryInAppState method in the MainActivity class.");
+        Log.d("updateSortInAppState","Exit updateSortFilterInAppState method in the MainActivity class.");
+        return  accountsDB.updateTable(APPSTATE_TABLE,values);
+    }//End of updateSortFilterInAppState method
 
 }//End of MainActivity class.
