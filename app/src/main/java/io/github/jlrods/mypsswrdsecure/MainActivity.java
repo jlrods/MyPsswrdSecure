@@ -170,6 +170,7 @@ public class  MainActivity extends AppCompatActivity {
         //Get the tool bar off layout
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setTitle("jlrods");
         final FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -370,6 +371,7 @@ public class  MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
         this.setUpLowerCategoryMenu(navigationView.getMenu());
         this.updateNavMenu(navigationView.getMenu(),INDEX_TO_GET_LAST_TASK_LIST_ITEM);
+        toolbar.setTitle("jlrods2");
         //Once the nave menu has been fully set up, select the item that represents the current category and deselect the Home item, which is selected by default
         if(currentCategory.get_id() != -1){
             navigationView.getMenu().getItem(0).setCheckable(false);
@@ -1391,6 +1393,9 @@ public class  MainActivity extends AppCompatActivity {
                     //But the current category still need to be set to Home category
                     currentCategory = categoryList.get(0);
                     tabLayout.selectTab( tabLayout.getTabAt(0));
+                    Toolbar toolbar = findViewById(R.id.toolbar);
+                    setSupportActionBar(toolbar);
+                    toolbar.setTitle(R.string.menu_home);
                     DrawerLayout drawer = findViewById(R.id.drawer_layout);
                     //Close the drawer and display the HomeFragment which will load proper data based on the currentCategory variable
                     drawer.closeDrawer(Gravity.LEFT);
@@ -1416,6 +1421,9 @@ public class  MainActivity extends AppCompatActivity {
                     //But the current category still need to be set to Home category
                     currentCategory = categoryList.get(1);
                     tabLayout.selectTab( tabLayout.getTabAt(0));
+                    Toolbar toolbar = findViewById(R.id.toolbar);
+                    setSupportActionBar(toolbar);
+                    toolbar.setTitle(R.string.menu_favorites);
                     //Get the drawer from layout
                     DrawerLayout drawer = findViewById(R.id.drawer_layout);
                     //Close the drawer and display the HomeFragment which will load proper data based on the currentCategory variable
@@ -1466,6 +1474,9 @@ public class  MainActivity extends AppCompatActivity {
                     tabLayout.selectTab( tabLayout.getTabAt(0));
                     //Ask nav controller to load the HomeFragment class
                     navController.navigate(R.id.nav_home);
+                    Toolbar toolbar = findViewById(R.id.toolbar);
+                    setSupportActionBar(toolbar);
+                    toolbar.setTitle(item.getTitle());
                     //Get the drawer from layout
                     DrawerLayout drawer = findViewById(R.id.drawer_layout);
                     //Since the navigation item controls the Home menu item, it's necessary to overwrite it's bahaviour and set the home item as not selected
