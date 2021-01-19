@@ -580,7 +580,7 @@ public class  MainActivity extends AppCompatActivity {
                 }else if(currentSortFilter == SortFilter.DATE_DES){
                     cursor = accountsDB.getPsswrdsSortedColumnUpDown(DATE_CREATED_COLUMN,DESC);
                 }else if(currentSortFilter == SortFilter.TIMES_USED){
-                    cursor = null;
+                    cursor = accountsDB.getPsswrdsSortedByTimesUsed();
                 }
             }else{
                 cursor = accountsDB.getPsswrdList();
@@ -597,7 +597,7 @@ public class  MainActivity extends AppCompatActivity {
                 }else if(currentSortFilter == SortFilter.ALPHA_DES){
                     cursor = accountsDB.getQuestionsSortedColumnUpDown(VALUE_COLUMN, DESC);
                 }else if(currentSortFilter == SortFilter.TIMES_USED){
-                    cursor = null;
+                    cursor = accountsDB.getQuestionsSortedByTimesUsed();
                 }
             }else{
                 cursor = accountsDB.getListQuestionsAvailableNoAnsw();
@@ -613,7 +613,7 @@ public class  MainActivity extends AppCompatActivity {
                 }else if(currentSortFilter == SortFilter.DATE_DES){
                     cursor = accountsDB.getUserNamesSortedColumnUpDown(DATE_CREATED_COLUMN,DESC);
                 }else if(currentSortFilter == SortFilter.TIMES_USED){
-                    cursor = null;
+                    cursor = accountsDB.getUserNameCursorSortedByTimesUsed();
                 }
             }else{
                 cursor = accountsDB.getUserNameList();
@@ -1846,10 +1846,6 @@ public class  MainActivity extends AppCompatActivity {
     //Method to filter task or groceries by description content
     private void sort(){
         Log.d("Ent_sort","Enter the sort method in the MainActivity class.");
-        //Clear serach filter if applied
-//        if(this.isSearchFilter){
-//            this.clearSearchFilter();
-//        }
         final int[] selectedSortCriteriID = {0};
         final int[] positionInList ={0};
         final CharSequence[] sortCriteria;
@@ -1893,8 +1889,13 @@ public class  MainActivity extends AppCompatActivity {
                 }else{
                     checkedItem = 1;
                 }
+            }else if(currentSortFilter.equals(SortFilter.TIMES_USED)){
+                if(currentTab != 0){
+                    checkedItem = 2;
+                }
             }//End of if else chain to check current sort filter selected
         }//End of if statement to check the sort filter is in use
+        positionInList[0] = checkedItem;
         //Display alert dialog to select sor filter type
         new AlertDialog.Builder(MainActivity.this)
                 .setTitle(getString(R.string.sort_title))

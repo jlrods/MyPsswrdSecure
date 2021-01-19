@@ -798,18 +798,41 @@ public class AccountsDB extends SQLiteOpenHelper {
 
     //Method to get the list of accounts from the DB
     public Cursor getAccountsList(){
+        Log.d("getAccountsList","Enter/Exit the getAccountsList method in the AccountsDB class.");
         return  this.runQuery("SELECT * FROM ACCOUNTS");
     }
 
     //Method to get the number of times a specific user name is being used in different accounts as per the DB
     public int getTimesUsedUserName(int userNameID){
+        Log.d("getTimesUsedUserName","Enter/Exit the getTimesUsedUserName method in the AccountsDB class.");
         return this.runQuery("SELECT * FROM ACCOUNTS WHERE UserNameID = "+userNameID).getCount();
     }
 
+    //Method to return a cursor with all the UserNames items sorted by number of times used
+    public Cursor getUserNameCursorSortedByTimesUsed(){
+        Log.d("getUserNameSorted","Enter/Exit the getUserNameCursorSortedByTimesUsed method in the AccountsDB class.");
+        return this.runQuery("SELECT USERNAME.*, COUNT(ACCOUNTS.UserNameID) AS times_used\n" +
+                "FROM USERNAME LEFT JOIN ACCOUNTS \n" +
+                "ON ACCOUNTS.UserNameID =  USERNAME._id\n" +
+                "GROUP BY USERNAME._id\n" +
+                "ORDER BY times_used DESC");
+    }//End of getUserNameCursorSortedByTimesUsed method
+
     //Method to get the number of times a specific password is being used in different accounts as per the DB
     public int getTimesUsedPsswrd(int psswrdID){
+        Log.d("getTimesUsedPsswrd","Enter/Exit the getTimesUsedPsswrd method in the AccountsDB class.");
         return this.runQuery("SELECT * FROM ACCOUNTS WHERE PsswrdID = "+psswrdID).getCount();
     }
+
+    //Method to return a cursor with all the UserNames items sorted by number of times used
+    public Cursor getPsswrdsSortedByTimesUsed(){
+        Log.d("getPsswrdSorted","Enter/Exit the getPsswrdsSortedByTimesUsed method in the AccountsDB class.");
+        return this.runQuery("SELECT PSSWRD.*,COUNT(ACCOUNTS.PsswrdID) AS times_used\n" +
+                "FROM PSSWRD LEFT JOIN ACCOUNTS\n" +
+                "ON PSSWRD._id =  ACCOUNTS.PsswrdID\n" +
+                "GROUP BY PSSWRD._id\n" +
+                "ORDER BY times_used DESC");
+    }//End of getUserNameCursorSortedByTimesUsed method
 
     //Method to get the number of times a specific question is being used in different accounts as per the DB
     public int getTimesUsedQuestion(int questionID){
@@ -847,6 +870,19 @@ public class AccountsDB extends SQLiteOpenHelper {
         Log.d("getTimesUsedQuestList","Exit the getTimesUsedQuestionList method in the AccountsDB class.");
         return  timesUsed;
     }//End of getTimesUsedQuestionList method
+
+    //Method to return a cursor with all the UserNames items sorted by number of times used
+    public Cursor getQuestionsSortedByTimesUsed(){
+        Log.d("getQuestSorted","Enter/Exit the getQuestionsSortedByTimesUsed method in the AccountsDB class.");
+        return this.runQuery("SELECT *, COUNT(QUESTIONASSIGNMENT.QuestionID) AS times_used\n" +
+                "FROM (SELECT QUESTION._id AS id, QUESTION.Value AS Q, ANSWER._id AS AnswerID,ANSWER.Value AS Answer, \n" +
+                "ANSWER.initVector AS initVector \n" +
+                "FROM QUESTION LEFT JOIN ANSWER \n" +
+                "ON QUESTION.AnswerID = ANSWER._id) LEFT JOIN QUESTIONASSIGNMENT\n" +
+                "ON id =  QUESTIONASSIGNMENT.QuestionID\n" +
+                "GROUP BY id\n" +
+                "ORDER BY times_used DESC");
+    }//End of getUserNameCursorSortedByTimesUsed method
 
     //Method to get the number of times a specific question list is being used in different accounts as per the DB
     public int getTimesUsedIconInAccounts(int iconID){
