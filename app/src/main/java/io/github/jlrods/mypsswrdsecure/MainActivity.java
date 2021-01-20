@@ -170,7 +170,7 @@ public class  MainActivity extends AppCompatActivity {
         //Get the tool bar off layout
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setTitle("jlrods");
+        //toolbar.setTitle("jlrods");
         final FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -371,7 +371,7 @@ public class  MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
         this.setUpLowerCategoryMenu(navigationView.getMenu());
         this.updateNavMenu(navigationView.getMenu(),INDEX_TO_GET_LAST_TASK_LIST_ITEM);
-        toolbar.setTitle("jlrods2");
+        //toolbar.setTitle("jlrods2");
         //Once the nave menu has been fully set up, select the item that represents the current category and deselect the Home item, which is selected by default
         if(currentCategory.get_id() != -1){
             navigationView.getMenu().getItem(0).setCheckable(false);

@@ -14,6 +14,8 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
+import java.lang.reflect.Field;
+
 public class EditAccountActivity extends DisplayAccountActivity {
     //Attribute definition
     //private Bundle extras;
@@ -39,6 +41,18 @@ public class EditAccountActivity extends DisplayAccountActivity {
             //Call static method that will get the resource by passing in it's name and set it as the resource image of the ImageView passed in
             MainActivity.setAccountLogoImageFromRes(this.imgAccLogo,getBaseContext(),account.getIcon().getName());
             this.logo = this.accountsDB.getIconByName(account.getIcon().getName());
+            //Set selectedPosition to correct value of selected logo in the Icon adapter
+            IconAdapter iconAdapter = new IconAdapter(this,MainActivity.getAccountsLogos());
+            //Find the current logo in the iconList stored in the iconAdapter and store its location
+            boolean found = false;
+            int i =0;
+            while(!found && i< iconAdapter.getIconList().size()){
+                if(iconAdapter.getIconList().get(i).getName().equals(this.logo.getName())){
+                    this.selectedPosition = i;
+                    found =true;
+                }
+                i++;
+            }
         }else if(this.account.getIcon().getLocation().equals(String.valueOf(R.mipmap.ic_my_psswrd_secure))){
             //Setup the app logo if required
             this.imgAccLogo.setImageResource(R.mipmap.ic_my_psswrd_secure);
