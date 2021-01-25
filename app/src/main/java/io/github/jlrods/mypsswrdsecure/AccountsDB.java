@@ -1464,7 +1464,21 @@ public class AccountsDB extends SQLiteOpenHelper {
     public Cursor getAccountsSortedByColumnUpOrDown(String column, String order){
         Log.d("getAccountsSortedAlpUp","Enter the getAccountsSortedAlphaUp method in the AccountsDB class.");
         Cursor  listOfAccountsSortedAlpha = null;
-        listOfAccountsSortedAlpha = runQuery("SELECT * FROM "+ MainActivity.getAccountsTable()+ " ORDER BY " + column + " " +order);
+        Category currentCategory = MainActivity.getCurrentCategory();
+        switch(currentCategory.get_id()){
+            case -2:
+                listOfAccountsSortedAlpha = runQuery("SELECT * FROM "+ MainActivity.getAccountsTable()+  " WHERE "+ MainActivity.getIsFavoriteColumn() +" = 1"
+                        +" ORDER BY " + column + " " +order);
+                break;
+            case -1:
+                listOfAccountsSortedAlpha = runQuery("SELECT * FROM "+ MainActivity.getAccountsTable()+" ORDER BY " + column + " " +order);
+                break;
+            default:
+                listOfAccountsSortedAlpha = runQuery("SELECT * FROM "+ MainActivity.getAccountsTable()+  " WHERE "+ MainActivity.getCategoryIdColumn() +" = "
+                        +MainActivity.getCurrentCategory().get_id()+" ORDER BY " + column + " " +order);
+                break;
+        }
+
         Log.d("getAccountsSortedAlpUp","Exit the getAccountsSortedAlphaUp method in the AccountsDB class.");
         return listOfAccountsSortedAlpha;
     }//End of getAccountsWithSpecifcValue method
