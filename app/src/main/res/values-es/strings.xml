@@ -164,6 +164,7 @@
     <string name="catNotAdded">Lo siento, la catgoría no fue guardada</string>
 
     <!--    EditCategory Activity   -->
+    <string name="editCategoryTitle">Seleccione la categoría a editar:</string>
     <string name="catNotChanged">Lo siento, la catgoría no ha sido cambiada</string>
     <string name="categoryAndIconNoTChanged">Lo siento, al menos un ítem debe ser cambiado (nombre de la categoría o el ícono)</string>
     <string name="catUpdated">La categoría ha sido actualizada</string>
@@ -172,6 +173,7 @@
     <string name="catDeleteMssg">Está seguro que desea eliminar esta categoría?</string>
 
     <!--    Delete Category AlertDialog box   -->
+    <string name="deleteCategoryTitle">Seleccione la categoría que desea eliminar:</string>
     <string name="noCatSelected">Lo siento, Sorry, no ha seleccionado ninguna categoría en la lista</string>
     <string name="wantToDeleteCatList">Está seguro que desea eliminar la siguiente lista de categor</string>
     <string name="deleteCategory">Eliminar categoría</string>
@@ -233,4 +235,16 @@
     <string name="gallery">&#127966; Galería</string>
     <string name="appResources">&#x1F4F1; Recursos</string>
     <string name="defaultLog">&#x1F50F; App logo</string>
+
+    <!--    Sort Criteria Tex-->
+    <string name="action_sort">Ordenar</string>
+    <string name="sort_alpha_up">Alfabéticamente  ⬆</string>
+    <string name="sort_alpha_down">Alfabéticamente  ⬇</string>
+    <string name="sort_date_up">Fecha de creación ⬆</string>
+    <string name="sort_date_down">Fecha de creación ⬇</string>
+    <string name="sort_times_used">Veces usado</string>
+    <string name="sort_category">Categoría</string>
+    <string name="sort_title">Seleccione un filtro:</string>
+
+
 </resources>

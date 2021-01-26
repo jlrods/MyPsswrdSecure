@@ -132,9 +132,10 @@ public class AccountsDB extends SQLiteOpenHelper {
         //Create table to store app state
         db.execSQL("CREATE TABLE APPSTATE(_id INTEGER PRIMARY KEY AUTOINCREMENT,currentCategoryID INTEGER,\n" +
                 "currentTab INTEGER,showAllAccounts INTEGER,isFavoriteFilter INTEGER,isSearchFilter INTEGER,\n" +
-                "lastSearch TEXT, FOREIGN KEY (currentCategoryID) REFERENCES CATEGORY(_id));");
+                "isSearchUserInAccountsFilter INTEGER, isSearchPsswrdInAccountsFilter INTEGER,\n"+
+                "lastSearch TEXT,isSortFilter INTEGER,currentSortFilter INTEGER, FOREIGN KEY (currentCategoryID) REFERENCES CATEGORY(_id));");
         //Populate default state of app
-        db.execSQL("INSERT INTO APPSTATE VALUES(null,null,1,1,0,0,'');");
+        db.execSQL("INSERT INTO APPSTATE VALUES(null,1,1,1,0,0,0,0,'',0,-1);");
 
         //Create a table to store the accounts items
         // Leave empty as user has to create their accounts.
@@ -402,9 +403,11 @@ public class AccountsDB extends SQLiteOpenHelper {
         }//End of try catch block
     }//End of runQuery method
 
+
+
     //Methods to update the DB
     //Method to update AppState in DB
-    public boolean updateAppState(int currentCategory,int currentTab,int showAllAccounts,int isFavoriteFilter,int isSearchFilter, String lastSearchText){
+    public boolean updateAppStateOld(int currentCategory, int currentTab, int showAllAccounts, int isFavoriteFilter, int isSearchFilter, String lastSearchText){
         Log.d("UpdateState","Enter the updateAppState method in the AccountsDB class.");
         boolean success = false;
         Cursor appState;
@@ -426,6 +429,7 @@ public class AccountsDB extends SQLiteOpenHelper {
                 " lastSearch = '" + lastSearchText+ "'";
         //String to hold the where part of the query
         String whereId = " WHERE _id = ";
+        String whereClause = "_id = ";
         //String to hold the complete sql query
         String sql = "";
         //get next app state (only one should be saved)
@@ -448,6 +452,37 @@ public class AccountsDB extends SQLiteOpenHelper {
         }//End of try and catch block
     }//End of updateAppState
 
+    //Method to update AppState in DB
+    public boolean updateAppState(int currentCategory, int currentTab, int showAllAccounts, int isFavoriteFilter, int isSearchFilter, String lastSearchText){
+        Log.d("UpdateState","Enter the updateAppState method in the AccountsDB class.");
+        boolean updated = false;
+        int _id = -1;
+        String whereClause = "_id = ";
+        boolean success = false;
+        //Declare and instantiate a new database object to handle the database operations
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("currentCategoryID",currentCategory);
+        values.put("currentTab",currentTab);
+        values.put("showAllAccounts",showAllAccounts);
+        values.put("isFavoriteFilter",isFavoriteFilter);
+        values.put("isSearchFilter",isSearchFilter);
+        values.put("lastSearch",lastSearchText);
+        try{
+            _id = this.getMaxItemIdInTable(MainActivity.getAppstateTable());
+            whereClause += _id;
+            if(db.update(MainActivity.getAppstateTable(),values,whereClause,null) > 0){
+                updated = true;
+            }
+            Log.d("updateTable","Exit successfully the updateTable  method in the Accounts class.");
+        }catch (Exception e){
+            Log.d("updateTable","Exit the updateTable  method in the Accounts class with exception "+e.getMessage());
+        }finally{
+            db.close();
+            return updated;
+        }//End of try catch block
+    }//End of updateAppState
+
     public boolean updateTable(String table, ContentValues values){
         Log.d("updateTable","Enter the updateTable method in the AccountsDB class.");
         boolean updated = false;
@@ -458,8 +493,9 @@ public class AccountsDB extends SQLiteOpenHelper {
         try{
             _id = values.getAsInteger("_id");
             whereClause += _id;
-            db.update(table,values,whereClause,null);
-            updated = true;
+            if(db.update(table,values,whereClause,null) > 0){
+                updated = true;
+            }
             Log.d("updateTable","Exit successfully the updateTable  method in the Accounts class.");
         }catch (Exception e){
             Log.d("updateTable","Exit the updateTable  method in the Accounts class with exception "+e.getMessage());
@@ -558,6 +594,7 @@ public class AccountsDB extends SQLiteOpenHelper {
             table = MainActivity.getApplogginTable();
             fields.put(MainActivity.getNameColumn(),((AppLoggin)item).getName());
             fields.put("Message",((AppLoggin)item).getMessage());
+            fields.put("PictureID",((AppLoggin)item).getPicture().get_id());
             Log.d("addAppLoggin","AppLoggin to be added in the addItem method in AccountsDB class.");
         }else if(item instanceof Account){
             table = MainActivity.getAccountsTable();
@@ -663,9 +700,21 @@ public class AccountsDB extends SQLiteOpenHelper {
         return  this.runQuery("SELECT * FROM ICON");
     }
 
+    //Method to get tha app state cursor
+    public Cursor getAppState(){
+        Log.d("getAppState","Enter the getAppState method in the AccountsDB class.");
+        Cursor cursor = this.runQuery("SELECT * FROM "+MainActivity.getAppstateTable() +" WHERE "+MainActivity.getIdColumn() +" = "
+                + this.getMaxItemIdInTable(MainActivity.getAppstateTable()));
+        if(cursor != null && cursor.getCount()>0){
+            cursor.moveToFirst();
+        }
+        Log.d("getAppState","Exit the getAppState method in the AccountsDB class.");
+        return cursor;
+    }//End of getAppState method
+
     //Method to get a specific Category, by passing in its DB _id as an argument
     public Cursor getAppLoginCursor(int _id){
-        Log.d("getCategoryByID","Enter the getCategoryByID method in the AccountsDB class.");
+        Log.d("getAppLogin","Enter the getCategoryByID method in the AccountsDB class.");
         Cursor cursor = this.runQuery("SELECT * FROM "+MainActivity.getApplogginTable()+" WHERE "+MainActivity.getIdColumn()+" = "+ _id);
         return cursor;
     }//End of getUserNameByID method
@@ -749,18 +798,41 @@ public class AccountsDB extends SQLiteOpenHelper {
 
     //Method to get the list of accounts from the DB
     public Cursor getAccountsList(){
+        Log.d("getAccountsList","Enter/Exit the getAccountsList method in the AccountsDB class.");
         return  this.runQuery("SELECT * FROM ACCOUNTS");
     }
 
     //Method to get the number of times a specific user name is being used in different accounts as per the DB
     public int getTimesUsedUserName(int userNameID){
+        Log.d("getTimesUsedUserName","Enter/Exit the getTimesUsedUserName method in the AccountsDB class.");
         return this.runQuery("SELECT * FROM ACCOUNTS WHERE UserNameID = "+userNameID).getCount();
     }
 
+    //Method to return a cursor with all the UserNames items sorted by number of times used
+    public Cursor getUserNameCursorSortedByTimesUsed(){
+        Log.d("getUserNameSorted","Enter/Exit the getUserNameCursorSortedByTimesUsed method in the AccountsDB class.");
+        return this.runQuery("SELECT USERNAME.*, COUNT(ACCOUNTS.UserNameID) AS times_used\n" +
+                "FROM USERNAME LEFT JOIN ACCOUNTS \n" +
+                "ON ACCOUNTS.UserNameID =  USERNAME._id\n" +
+                "GROUP BY USERNAME._id\n" +
+                "ORDER BY times_used DESC");
+    }//End of getUserNameCursorSortedByTimesUsed method
+
     //Method to get the number of times a specific password is being used in different accounts as per the DB
     public int getTimesUsedPsswrd(int psswrdID){
+        Log.d("getTimesUsedPsswrd","Enter/Exit the getTimesUsedPsswrd method in the AccountsDB class.");
         return this.runQuery("SELECT * FROM ACCOUNTS WHERE PsswrdID = "+psswrdID).getCount();
     }
+
+    //Method to return a cursor with all the UserNames items sorted by number of times used
+    public Cursor getPsswrdsSortedByTimesUsed(){
+        Log.d("getPsswrdSorted","Enter/Exit the getPsswrdsSortedByTimesUsed method in the AccountsDB class.");
+        return this.runQuery("SELECT PSSWRD.*,COUNT(ACCOUNTS.PsswrdID) AS times_used\n" +
+                "FROM PSSWRD LEFT JOIN ACCOUNTS\n" +
+                "ON PSSWRD._id =  ACCOUNTS.PsswrdID\n" +
+                "GROUP BY PSSWRD._id\n" +
+                "ORDER BY times_used DESC");
+    }//End of getUserNameCursorSortedByTimesUsed method
 
     //Method to get the number of times a specific question is being used in different accounts as per the DB
     public int getTimesUsedQuestion(int questionID){
@@ -798,6 +870,19 @@ public class AccountsDB extends SQLiteOpenHelper {
         Log.d("getTimesUsedQuestList","Exit the getTimesUsedQuestionList method in the AccountsDB class.");
         return  timesUsed;
     }//End of getTimesUsedQuestionList method
+
+    //Method to return a cursor with all the UserNames items sorted by number of times used
+    public Cursor getQuestionsSortedByTimesUsed(){
+        Log.d("getQuestSorted","Enter/Exit the getQuestionsSortedByTimesUsed method in the AccountsDB class.");
+        return this.runQuery("SELECT *, COUNT(QUESTIONASSIGNMENT.QuestionID) AS times_used\n" +
+                "FROM (SELECT QUESTION._id AS id, QUESTION.Value AS Q, ANSWER._id AS AnswerID,ANSWER.Value AS Answer, \n" +
+                "ANSWER.initVector AS initVector \n" +
+                "FROM QUESTION LEFT JOIN ANSWER \n" +
+                "ON QUESTION.AnswerID = ANSWER._id) LEFT JOIN QUESTIONASSIGNMENT\n" +
+                "ON id =  QUESTIONASSIGNMENT.QuestionID\n" +
+                "GROUP BY id\n" +
+                "ORDER BY times_used DESC");
+    }//End of getUserNameCursorSortedByTimesUsed method
 
     //Method to get the number of times a specific question list is being used in different accounts as per the DB
     public int getTimesUsedIconInAccounts(int iconID){
@@ -853,6 +938,20 @@ public class AccountsDB extends SQLiteOpenHelper {
             return Icon.extractIcon(cursor);
         }else{
             Log.d("getIconByID","Exit the getIconByID method in the AccountsDB class without finding the account with name: "+name);
+            return null;
+        }//End of if else statement
+    }//End of getIconByID method
+
+    //Method to retrieve a specific Icon from DB by passing in it's ID
+    public Icon getIconByUriLocation(String uri){
+        Log.d("getIconByID","Enter the getIconByUriLocation method in the AccountsDB class.");
+        Cursor cursor = this.runQuery("SELECT * FROM "+ MainActivity.getIconTable() +"  WHERE Location = '"+ uri + "'");
+        if(cursor.moveToFirst()){
+            //cursor.moveToFirst();
+            Log.d("getIconByID","Exit successfully (icon with location: " +uri+ " has been found) the getIconByUriLocation method in the AccountsDB class.");
+            return Icon.extractIcon(cursor);
+        }else{
+            Log.d("getIconByID","Exit the getIconByUriLocation method in the AccountsDB class without finding the account with name: "+uri);
             return null;
         }//End of if else statement
     }//End of getIconByID method
@@ -914,6 +1013,15 @@ public class AccountsDB extends SQLiteOpenHelper {
         }//End of if else statement
     }//End of getUserNameByID method
 
+    //Method to get a specific user name, by passing in its DB _id as an argument
+    public Cursor getUserNamesSortedColumnUpDown(String column, String order){
+        Log.d("getUserSorted","Enter the getUserNamesSortedColumnUpDown method in the AccountsDB class.");
+        Cursor  listOfUserNamesSorted = null;
+        listOfUserNamesSorted = runQuery("SELECT * FROM "+ MainActivity.getUsernameTable()+ " ORDER BY " + column + " " +order);
+        Log.d("getUserSorted","Exit the getUserNamesSortedColumnUpDown method in the AccountsDB class.");
+        return listOfUserNamesSorted;
+    }//End of getUserNameByID method
+
     //Method to get a specific password, by passing in its DB _id as an argument
     public Psswrd getPsswrdByID(int _id){
         Log.d("getPsswrdByID","Enter the getPsswrdByID method in the AccountsDB class.");
@@ -967,6 +1075,39 @@ public class AccountsDB extends SQLiteOpenHelper {
             //can be checked that count is > 0.
             return  this.getPsswrdCursorByID(-1);
         }//End of if else statement
+    }//End of getUserNameByID method
+
+    //Method to get a specific user name, by passing in its DB _id as an argument
+    public Cursor getPsswrdsSortedColumnUpDown(String column, String order){
+        Log.d("getPsswrdsSorted","Enter the getPsswrdsSortedColumnUpDown method in the AccountsDB class.");
+        Cursor  listOfAccountsSortedAlpha = null;
+        listOfAccountsSortedAlpha = runQuery("SELECT * FROM "+ MainActivity.getPsswrdTable()+ " ORDER BY " + column + " " +order);
+        Log.d("getPsswrdsSorted","Exit the getPsswrdsSortedColumnUpDown method in the AccountsDB class.");
+        return listOfAccountsSortedAlpha;
+//        Log.d("getPsswrdsSorted","Enter the getUserNameByName method in the AccountsDB class.");
+//        //Declare and initialize a boolean flag to inform the name was found
+//        boolean found = false;
+//        String psswrdDecrypted = "";
+//        //Get all data from PSSWRD table
+//        Cursor psswrdCursor = this.runQuery("SELECT * FROM PSSWRD");
+//        //Iterate through it, decrypt user name values and compare against value passed in as parameter
+//        while(!found && psswrdCursor.moveToNext()){
+//            //Decrypt the user name value coming form DB
+//            psswrdDecrypted = cryptographer.decryptText(psswrdCursor.getBlob(1),new IvParameterSpec(psswrdCursor.getBlob(2)));
+//            //Compare the decrypted user name user name being looked for
+//            if(psswrd.trim().equals(psswrdDecrypted.trim())){
+//                found = true;
+//            }//End of if statement to compare user names
+//        }//End of while loop to iterate through list of user names
+//        if(found){
+//            Log.d("getPsswrdByName","Exit successfully (password with value " +psswrd + " has been found) the getPsswrdByName method in the AccountsDB class.");
+//            return this.getPsswrdCursorByID(psswrdCursor.getInt(0));
+//        }else{
+//            Log.d("getPsswrdByName","Exit the getPsswrdByName method in the AccountsDB class without finding the password with value: "+psswrd);
+//            //This is a work around to avoid null exception when the password being looked for does not exist. Down the road the returned cursor
+//            //can be checked that count is > 0.
+//            return  this.getPsswrdCursorByID(-1);
+//        }//End of if else statement
     }//End of getUserNameByID method
 
     //Method to get the list of passwords from the DB
@@ -1237,6 +1378,17 @@ public class AccountsDB extends SQLiteOpenHelper {
         return _id;
     }//End of getSecQuestionListID method
 
+    //Method to get a specific user name, by passing in its DB _id as an argument
+    public Cursor getQuestionsSortedColumnUpDown(String column, String order){
+        Log.d("getQuestSorted","Enter the getQuestionsSortedColumnUpDown method in the AccountsDB class.");
+        Cursor  listOfAccountsSortedAlpha = null;
+
+        listOfAccountsSortedAlpha = runQuery("SELECT QUESTION._id, QUESTION.Value AS Q, ANSWER._id AS AnswerID,ANSWER.Value AS Answer," +
+                "ANSWER.initVector AS initVector FROM QUESTION LEFT JOIN ANSWER ON QUESTION.AnswerID = ANSWER._id ORDER BY QUESTION.Value "+order);
+        Log.d("getQuestSorted","Exit the getQuestionsSortedColumnUpDown method in the AccountsDB class.");
+        return listOfAccountsSortedAlpha;
+    }//End of getUserNameByID method
+
     public ArrayList getAccountsIDListUsingItemWithID(String itemType, int itemID){
         Log.d("getAccUsingItemWithID","Enter the getAccountsUsingItemWithID method in the AccountsDB class.");
         Cursor listOfAccountUsingTheItem = null;
@@ -1291,6 +1443,45 @@ public class AccountsDB extends SQLiteOpenHelper {
         return listOfAccountsThatHoldsASpecificValue;
     }//End of getAccountsWithSpecifcValue method
 
+    //Method to return cursor with rows from the accounts table with specific value in the column name passed in as argument
+    public Cursor getAccountsWithSpecifcValueAndCategory(String column, int itemID, int categoryID){
+        Log.d("getAccWithSpecifcValue","Enter the getAccountCursorByName method in the AccountsDB class.");
+        Cursor  listOfAccountsThatHoldsASpecificValue = null;
+        if(categoryID == -1){
+            listOfAccountsThatHoldsASpecificValue = runQuery("SELECT * FROM "+ MainActivity.getAccountsTable()+ " WHERE " + column + " = " + itemID);
+        }else if(categoryID ==-2){
+            listOfAccountsThatHoldsASpecificValue = runQuery("SELECT * FROM "+ MainActivity.getAccountsTable()+ " WHERE " + column + " = " + itemID
+                    + " AND "+MainActivity.getIsFavoriteColumn() +"= 1" );
+        }else{
+            listOfAccountsThatHoldsASpecificValue = runQuery("SELECT * FROM "+ MainActivity.getAccountsTable()+ " WHERE " + column + " = " + itemID
+                    +" AND "+MainActivity.getCategoryIdColumn() +" = "+categoryID);
+        }
+        Log.d("getAccWithSpecifcValue","Exit the getAccountCursorByName method in the AccountsDB class.");
+        return listOfAccountsThatHoldsASpecificValue;
+    }//End of getAccountsWithSpecifcValue method
+
+    //Method to return cursor with rows from the accounts table with specific value in the column name passed in as argument
+    public Cursor getAccountsSortedByColumnUpOrDown(String column, String order){
+        Log.d("getAccountsSortedAlpUp","Enter the getAccountsSortedAlphaUp method in the AccountsDB class.");
+        Cursor  listOfAccountsSortedAlpha = null;
+        Category currentCategory = MainActivity.getCurrentCategory();
+        switch(currentCategory.get_id()){
+            case -2:
+                listOfAccountsSortedAlpha = runQuery("SELECT * FROM "+ MainActivity.getAccountsTable()+  " WHERE "+ MainActivity.getIsFavoriteColumn() +" = 1"
+                        +" ORDER BY " + column + " " +order);
+                break;
+            case -1:
+                listOfAccountsSortedAlpha = runQuery("SELECT * FROM "+ MainActivity.getAccountsTable()+" ORDER BY " + column + " " +order);
+                break;
+            default:
+                listOfAccountsSortedAlpha = runQuery("SELECT * FROM "+ MainActivity.getAccountsTable()+  " WHERE "+ MainActivity.getCategoryIdColumn() +" = "
+                        +MainActivity.getCurrentCategory().get_id()+" ORDER BY " + column + " " +order);
+                break;
+        }
+
+        Log.d("getAccountsSortedAlpUp","Exit the getAccountsSortedAlphaUp method in the AccountsDB class.");
+        return listOfAccountsSortedAlpha;
+    }//End of getAccountsWithSpecifcValue method
 
     //Method to return cursor with rows from the accounts table with specific value in the column name passed in as argument
     public Cursor getAccountsThatContainsThisTextInName(String searchText,int categoryID){
@@ -1305,7 +1496,6 @@ public class AccountsDB extends SQLiteOpenHelper {
             listOfAccountsThatContainsThisTexInName = runQuery("SELECT * FROM "+ MainActivity.getAccountsTable()+ " WHERE " + MainActivity.getNameColumn() + " LIKE '%" + searchText + "%'"
                     +" AND "+MainActivity.getCategoryIdColumn() +" = "+categoryID);
         }
-
         Log.d("getAccWithSpecValInName","Exit the getAccountsThatContainsThisTextInName method in the AccountsDB class.");
         return listOfAccountsThatContainsThisTexInName;
     }//End of getAccountsWithSpecifcValue method

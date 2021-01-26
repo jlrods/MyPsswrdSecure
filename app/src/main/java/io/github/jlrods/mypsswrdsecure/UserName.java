@@ -63,8 +63,13 @@ class UserName extends StringValue {
         UserName userName = null;
         //Call common method to extract basic StringValue object data from a cursor
         ArrayList<Object> attributes = extractStrValue(c);
-        //Create a new Icon object by calling full constructor
-        userName = new UserName((int) attributes.get(0), (byte[]) attributes.get(1),(byte[]) attributes.get(2));
+        //Create a new user name object by calling full constructor, but check date created value first
+        if(c.getLong(3) > 0){
+            userName = new UserName((int) attributes.get(0), (byte[]) attributes.get(1),(byte[]) attributes.get(2), c.getLong(3));
+        }else{
+            userName = new UserName((int) attributes.get(0), (byte[]) attributes.get(1),(byte[]) attributes.get(2));
+        }
+
         Log.d("Ext_ExtractUser","Exit extractUserName method in the UserName class.");
         return userName;
     }// End of extractPsswrd method

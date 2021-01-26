@@ -55,6 +55,10 @@ public class AddAccountActivity extends DisplayAccountActivity {
                 //Check all data input is valid and correct (Account name not in use and valid password renew date, as most data come from dropdown menus which are already valid)
                 //Check the name entered is not empty
                 if(!accountName.equals("")){
+                    //Check account name is available but first check if it contains apostrophe so the sql query contains scape character
+                    if(accountName.contains("'")){
+                        accountName = accountsDB.includeApostropheEscapeChar(accountName);
+                    }//End of if to check the name contains apostrophe
                     //Check account name is available
                     if(!isAccNameUsed(accountName)){
                         //If Account name not in use

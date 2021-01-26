@@ -14,6 +14,8 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
+import java.lang.reflect.Field;
+
 public class EditAccountActivity extends DisplayAccountActivity {
     //Attribute definition
     //private Bundle extras;
@@ -39,6 +41,18 @@ public class EditAccountActivity extends DisplayAccountActivity {
             //Call static method that will get the resource by passing in it's name and set it as the resource image of the ImageView passed in
             MainActivity.setAccountLogoImageFromRes(this.imgAccLogo,getBaseContext(),account.getIcon().getName());
             this.logo = this.accountsDB.getIconByName(account.getIcon().getName());
+            //Set selectedPosition to correct value of selected logo in the Icon adapter
+            IconAdapter iconAdapter = new IconAdapter(this,MainActivity.getAccountsLogos());
+            //Find the current logo in the iconList stored in the iconAdapter and store its location
+            boolean found = false;
+            int i =0;
+            while(!found && i< iconAdapter.getIconList().size()){
+                if(iconAdapter.getIconList().get(i).getName().equals(this.logo.getName())){
+                    this.selectedPosition = i;
+                    found =true;
+                }
+                i++;
+            }
         }else if(this.account.getIcon().getLocation().equals(String.valueOf(R.mipmap.ic_my_psswrd_secure))){
             //Setup the app logo if required
             this.imgAccLogo.setImageResource(R.mipmap.ic_my_psswrd_secure);
@@ -94,11 +108,16 @@ public class EditAccountActivity extends DisplayAccountActivity {
         switch (item.getItemId()) {
             case R.id.select_logo_save:
                 Log.d("onOptionsItemSelected","The save button was selected by user in EditAccountActivity class.");
-                final String accountName = this.etAccountName.getText().toString();
+                String accountName = this.etAccountName.getText().toString();
                 long psswrdRenewDate = this.getPsswrdRenewDate();
                 //Check all data input is valid and correct (Account name not in use and valid password renew date, as most data come from dropdown menus which are already valid)
                 //Check the name entered is not empty
                 if(!accountName.equals("")){
+                    //Check account name is available but first check if it contains apostrophe so the sql query contains scape character
+                    //Fixme: it might be possible to remove this as nadroid update method manages the apostrophe issue
+                    if(accountName.contains("'")){
+                        accountName = accountsDB.includeApostropheEscapeChar(accountName);
+                    }//End of if to check the name contains apostrophe
                     //Check account name is available
                     if(!isAccNameUsed(accountName,this.account.get_id())){
                         //If Account name not in use
@@ -121,8 +140,8 @@ public class EditAccountActivity extends DisplayAccountActivity {
                                                 if(!(this.account.getName().equals(newAccount.getName())
                                                         && this.account.getIcon().get_id() == newAccount.getIcon().get_id()
                                                         && this.account.getCategory().get_id() == newAccount.getCategory().get_id()
-                                                        && this.account.getUserName().get_id() == newAccount.getUserName().get_id()
-                                                        && this.account.getPsswrd().get_id() == newAccount.getPsswrd().get_id()
+                                                        && this.isItemTheSame(this.account.getUserName(),newAccount.getUserName())
+                                                        && this.isItemTheSame(this.account.getPsswrd(),newAccount.getPsswrd())
                                                         //@Fixme: improve the way question lists are checked and recorded on DB
                                                         && this.isQuestionListTheSame(this.account.getQuestionList(),newAccount.getQuestionList())
                                                         && this.account.isFavorite() == newAccount.isFavorite()
@@ -145,9 +164,8 @@ public class EditAccountActivity extends DisplayAccountActivity {
                                                             values.put("QuestionListID",newAccount.getQuestionList().get_id());
                                                         }//End of if else statements to catch null lists
                                                     }//End of if statement to check the question list are the same
-                                                    if(!this.isAddIconRequired(newAccount)){
-                                                        newAccount.setIcon(MainActivity.getMyPsswrdSecureLogo());
-                                                    }
+                                                    //Call method to add icon into DB if required
+                                                    this.isAddIconRequired(newAccount);
                                                     values.put("IconID",newAccount.getIcon().get_id());
                                                     values.put("IsFavorite",newAccount.isFavorite());
                                                     //values.put("DateCreated",this.account.getDateCreated());
@@ -207,32 +225,6 @@ public class EditAccountActivity extends DisplayAccountActivity {
                             //Handle the onclick event for the dialog alert buttons, Ok and cancel
                             public void onClick(DialogInterface dialog, int which) {
                                 //If Ok was pressed, call DB method that runs query that deletes an account from Accounts table by passing in it's _id
-                                //But, before deleting the account, check the components that make up the account, check if they are not being used
-                                //any longer and delete them from the DB if required. User names, passwords, questions, categories and resource icons  are the only
-                                //exceptions, where they will be able to exist in DB even when not being used.
-                                //Any other sub-item, not being used in any account will be removed form DB: This means QuestionList,
-                                //QuestionAssignment, Icon if the icon comes from URI
-                                //Check the QuestionList (if applicable) has to be deleted
-//                                if(account.getQuestionList() != null){
-//                                    if(accountsDB.getTimesUsedQuestionList(account.getQuestionList().get_id()) <= 1){
-//                                        //Delete the question assignments
-//                                        accountsDB.deleteRowFromTable(MainActivity.getQuestionassignmentTable(),MainActivity.getQuestionListIdColumn(),account.getQuestionList().get_id());
-//                                        //Delete the list
-//                                        accountsDB.deleteItem(account.getQuestionList());
-//                                    }//End of if statement to check how many times the list is being used
-//                                }//End of if statement to check th question list isn't null
-//                                //Check the icon, if icon comes from URI, delete from DB if used only once
-//                                Icon icon = account.getIcon();
-//                                if(icon != null){
-//                                    if(!icon.getLocation().equals(MainActivity.getRESOURCES()) && !icon.equals(MainActivity.getMyPsswrdSecureLogo())){
-//                                        //Get the number of times used
-//                                        if(accountsDB.getAccountsWithSpecifcValue(MainActivity.getIconIdColumn(),icon.get_id()).getCount() <=1){
-//                                            //Delete icon from DB
-//                                            accountsDB.deleteRowFromTable(MainActivity.getIconTable(),MainActivity.getIdColumn(),icon.get_id());
-//                                        }//End of if statement to check the number of times the icon is being used
-//                                    }//End of if statement to check the isn't a resource file
-//                                }//End of if statement to check the icon isn't null
-
                                 //Now the account can be deleted
                                 if(deleteAccount(accountsDB,account)){
                                     //Call method to update data set displayed on the recycler view and display proper message after adding the grocery to the DB
@@ -260,6 +252,30 @@ public class EditAccountActivity extends DisplayAccountActivity {
         Log.d("onOptionsItemSelected","Exit successfully onOptionsItemSelected method in EditAccountActivity class.");
         return result;
     }//End of onOptionsItemSelected method
+
+    //Method to check two accounts have different question list (including null list)
+    private boolean isItemTheSame(UserName item1,UserName item2){
+        Log.d("isItemTheSame","Enter the isItemTheSame method in EditAccountActivity class.");
+        //Declare boolean flag to be returned by method
+        boolean isTheSame;
+        //Check both lists are null
+        if(item1 == null && item2 == null){
+            isTheSame = true;
+        }else if(item1 == null && item2 != null){
+            //If list1 is null and the other doesn't, they aren't the same
+            isTheSame = false;
+        }else if(item1 != null && item2 == null){
+            //If list2 is null and the other doesn't, they aren't the same
+            isTheSame = false;
+        }else if(item1.get_id() == item2.get_id()){
+            isTheSame = true;
+        }else{
+            //Any other case return false
+            isTheSame = false;
+        }//End of if else statements to check list status and ids
+        Log.d("isItemTheSame","Exit the isItemTheSame method in EditAccountActivity class.");
+        return isTheSame;
+    }//End of isQuestionListTheSame method
 
     //Method to check two accounts have different question list (including null list)
     private boolean isQuestionListTheSame(QuestionList list1, QuestionList list2){

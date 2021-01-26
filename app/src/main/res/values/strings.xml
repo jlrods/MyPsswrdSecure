@@ -163,6 +163,7 @@
     <string name="catNotAdded">Sorry, the category was not saved</string>
 
     <!--    EditCategory Activity   -->
+    <string name="editCategoryTitle">Select category to edit:</string>
     <string name="catNotChanged">Sorry, the category has not been changed</string>
     <string name="categoryAndIconNoTChanged">Sorry, at least one value must be changed (category name or icon)</string>
     <string name="catUpdated">category has been updated</string>
@@ -171,6 +172,7 @@
     <string name="catDeleteMssg">Are you sure you want to delete this category?</string>
 
     <!--    Delete Category AlertDialog box   -->
+    <string name="deleteCategoryTitle">Select category to be deleted:</string>
     <string name="noCatSelected">Sorry, no category has been selected</string>
     <string name="wantToDeleteCatList">Are you sure you want to delete the following categor</string>
     <string name="deleteCategory">Delete Category</string>
@@ -234,5 +236,19 @@
     <string name="gallery">&#127966; Gallery</string>
     <string name="appResources">&#x1F4F1; Resources</string>
     <string name="defaultLog">&#x1F50F; App logo</string>
+
+
+
+    <!--    Sort Criteria Tex-->
+    <string name="action_sort">Sort</string>
+    <string name="sort_alpha_up">Alphabetical  ⬆</string>
+    <string name="sort_alpha_down">Alphabetical  ⬇</string>
+    <string name="sort_date_up">Date Created ⬆</string>
+    <string name="sort_date_down">Date Created ⬇</string>
+    <string name="sort_times_used">Times used</string>
+    <string name="sort_category">Category</string>
+    <string name="sort_title">Select Sort filter:</string>
+
+
 
 </resources>

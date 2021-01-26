@@ -29,6 +29,7 @@ public class SelectLogoActivity extends AppCompatActivity {
         selectedPosition = extras.getInt("selectedImgPosition");
         if(selectedPosition >= 0){
             selectedIcon = iconAdapter.getIconList().get(selectedPosition);
+            iconAdapter.getIconList().get(this.selectedPosition).setSelected(true);
         }else{
             selectedIcon = MainActivity.getMyPsswrdSecureLogo();
         }
@@ -70,12 +71,13 @@ public class SelectLogoActivity extends AppCompatActivity {
             //If so then check if position is even (right hand side) or odd (left hand side)
             if(this.selectedPosition%2==0){
                 //If even move rv to that position
-                rvLogos.getLayoutManager().scrollToPosition(selectedPosition);
+                rvLogos.getLayoutManager().scrollToPosition(this.selectedPosition);
             }else{
                 //In case of odd move to position even position before the item to keep all items in the same column
-                rvLogos.getLayoutManager().scrollToPosition(selectedPosition-1);
+                rvLogos.getLayoutManager().scrollToPosition(this.selectedPosition-1);
             }//End of if else statement
         }//End of if statement to check position is out of screen
+
         Log.d("SelLogOnCreate","Exit  onCreate method in SelectLogoActivity class.");
     }//End of onCreate
 

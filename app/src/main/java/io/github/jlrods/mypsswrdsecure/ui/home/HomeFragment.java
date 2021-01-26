@@ -3,6 +3,8 @@ package io.github.jlrods.mypsswrdsecure.ui.home;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -10,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,6 +20,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.tabs.TabLayout;
 
 import io.github.jlrods.mypsswrdsecure.Account;
 import io.github.jlrods.mypsswrdsecure.AccountAdapter;
@@ -94,7 +99,18 @@ public class HomeFragment extends Fragment {
                 MainActivity.toggleIsFavorite(v);
             }
         });
-        MainActivity.updateRecyclerViewData(accountAdapter);
+        //Check if current tab retrieved form DB on MainActivity has been changed
+        if(MainActivity.getCurrentTabID() != 0){
+            MainActivity.getTabLayout().selectTab(MainActivity.getTabLayout().getTabAt(MainActivity.getCurrentTabID()));
+        }else {
+            if(MainActivity.isSearchUserNameFilter()){
+                MainActivity.updateRecyclerViewData(accountAdapter,MainActivity.SearchType.ACCOUNT_WITH_USERNAME);
+            }else if(MainActivity.isSearchPsswrdFilter()){
+                MainActivity.updateRecyclerViewData(accountAdapter,MainActivity.SearchType.ACCOUNT_WITH_PSSWRD);
+            }else{
+                MainActivity.updateRecyclerViewData(accountAdapter);
+            }
+        }//End of if else statement that checks the tab to be displayed
     }//End of onActivityCreated method
 
     //Getters and setters method

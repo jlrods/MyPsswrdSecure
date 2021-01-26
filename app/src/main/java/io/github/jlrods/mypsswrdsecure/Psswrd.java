@@ -67,7 +67,11 @@ class Psswrd extends UserName{
         //Call common method from parent class to extract basic StringValue object data from a cursor
         ArrayList<Object> attributes = extractStrValue(c);
         //Create a new psswrd object by calling full constructor
-        psswrd = new Psswrd((int) attributes.get(0), (byte[]) attributes.get(1), (byte[]) attributes.get(2),c.getInt(3),PsswrdStrength.VERY_STRONG);
+        if(c.getLong(3) > 0){
+            psswrd = new Psswrd((int) attributes.get(0), (byte[]) attributes.get(1), (byte[]) attributes.get(2), c.getLong(3),PsswrdStrength.VERY_STRONG);
+        }else{
+            psswrd = new Psswrd((int) attributes.get(0), (byte[]) attributes.get(1), (byte[]) attributes.get(2),PsswrdStrength.VERY_STRONG);
+        }
 
         Log.d("Ext_ExtractPsswrd","Exit extractPsswrd method in the Psswrd class.");
         return psswrd;
