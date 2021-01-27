@@ -4,10 +4,11 @@ import android.util.Log;
 
 enum PsswrdStrength {
     //Define the possible priorities in this app
+    VERY_WEEK("Very weak"),
     WEAK("Weak"),
     MEDIUM("Medium"),
     STRONG("Strong"),
-    VERY_STRONG("Very Strong");
+    VERY_STRONG("Very strong");
 
     //Attributes definition
     private String name;
@@ -41,13 +42,17 @@ enum PsswrdStrength {
         return this.ordinal()+1;
     }
 
-    //Find a system by receiving the ordinal
+    //Find a strength enum by passing in the ordinal value
     public static PsswrdStrength findPsswrdStrengthById(int ordinal){
         Log.d("FindStrengthById","Ent findPsswrdStrengthById method in the PsswrdStrength enum.");
-        //Declare and instantiate Unit_System object to be returned by method
+        //Declare and instantiate strength object to be returned by method
         PsswrdStrength strength = null;
+        //Define
         //Check the ordinal against the possible ordinals corresponding to each enum item
         switch (ordinal){
+            case 1:
+                strength = PsswrdStrength.WEAK;
+                break;
             case 2:
                 strength = PsswrdStrength.MEDIUM;
                 break;
@@ -58,7 +63,7 @@ enum PsswrdStrength {
                 strength = PsswrdStrength.VERY_STRONG;
                 break;
             default:
-                strength = PsswrdStrength.WEAK;
+                strength = PsswrdStrength.VERY_WEEK;
                 break;
         }//End of switch statement
         Log.d("FindStrengthById","Exit findPsswrdStrengthById method in the PsswrdStrength enum.");
