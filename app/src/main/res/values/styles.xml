@@ -6,7 +6,55 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
+
+    <style name="AppThemeIronMan" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimaryIronMan</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkIronMan</item>
+        <item name="colorAccent">@color/colorAccentIronMan</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppThemeCapAmerica" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimaryCapAmerica</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkCapAmerica</item>
+        <item name="colorAccent">@color/colorAccentCapAmerica</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppThemeHulk" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimaryHulk</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkHulk</item>
+        <item name="colorAccent">@color/colorAccentHulk</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppThemeCapMarvel" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimaryCapMarvel</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkCapMarvel</item>
+        <item name="colorAccent">@color/colorAccentCapMarvel</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppThemeBatman" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimaryBatman</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkBatman</item>
+        <item name="colorAccent">@color/colorAccentBatman</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>

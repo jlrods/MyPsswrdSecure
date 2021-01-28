@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <androidx.preference.PreferenceCategory
+        android:key="appPreference"
+        android:title="@string/appPreferences">
+        <ListPreference
+            android:key="appTheme"
+            android:title="@string/appThemeSelection"
+            android:summary="@string/appThemeDescription"
+            android:entries="@array/appTheme"
+            android:entryValues="@array/appThemeValues"
+            android:defaultValue="0"/>
+        <ListPreference
+            android:key="languages"
+            android:title="@string/changeLang"
+            android:summary="@string/changeLangDescription"
+            android:entries="@array/languages"
+            android:entryValues="@array/languagesValues"
+            android:defaultValue="0"/>
+<!--        <ListPreference-->
+<!--            android:key="dateFormat"-->
+<!--            android:title="@string/dateFormatSelection"-->
+<!--            android:summary="@string/dateFormatDescription"-->
+<!--            android:entries="@array/dateFormats"-->
+<!--            android:entryValues="@array/dateFormatsValues"-->
+<!--            android:defaultValue="0"/>-->
+    </androidx.preference.PreferenceCategory>
+</PreferenceScreen>

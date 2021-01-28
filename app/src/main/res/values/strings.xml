@@ -249,6 +249,15 @@
     <string name="sort_category">Category</string>
     <string name="sort_title">Select Sort filter:</string>
 
+    <!--    Preferences menu-->
+    <string name="appPreferences">App Preferences</string>
+    <string name="appThemeSelection">App colour theme</string>
+    <string name="appThemeDescription">Select the colour combination for your app.</string>
+    <string name="english">English</string>
+    <string name="spanish">Spanish</string>
+    <string name="changeLang">Language</string>
+    <string name="changeLangDescription">Change the app language.</string>
+
 
 
 </resources>

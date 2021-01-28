@@ -5,13 +5,16 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,6 +29,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
+
+import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
@@ -43,7 +48,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
 
-public class  MainActivity extends AppCompatActivity {
+public class  MainActivity extends AppCompatActivity implements ThemeHandler{
 
     private AppBarConfiguration mAppBarConfiguration;
     private CoordinatorLayout coordinatorLayout;
@@ -161,6 +166,11 @@ public class  MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //Get default current app theme from preferences
+        int appThemeSelected = setAppTheme(this);
+        //Set the theme by passing theme id number coming from preferences
+        setTheme(appThemeSelected);
+
         //Call super on create
         super.onCreate(savedInstanceState);
         //Set the main activity layout
@@ -198,6 +208,12 @@ public class  MainActivity extends AppCompatActivity {
         });//End of set on click listener method
         //Get the tablayout from layout
         tabLayout=(TabLayout)findViewById(R.id.tabs);
+        final Context mainActivityContext;
+        if(this instanceof ThemeHandler){
+             mainActivityContext = this;
+        }else{
+            mainActivityContext = getBaseContext();
+        }
         //Set up the onclick behaviour for each tab in the tablayout object
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -242,7 +258,7 @@ public class  MainActivity extends AppCompatActivity {
                         MainActivity.updateRecyclerViewData(userNameAdapter);
                         break;
                     case 2:
-                        PsswrdAdapter psswrdAdapter = new PsswrdAdapter(getBaseContext(),null);
+                        PsswrdAdapter psswrdAdapter = new PsswrdAdapter(mainActivityContext,null);
                         //Setup the onclick event listener
                         psswrdAdapter.setOnClickListener(new View.OnClickListener(){
                             @Override
@@ -472,6 +488,7 @@ public class  MainActivity extends AppCompatActivity {
             case R.id.action_about:
                 return true;
             case R.id.action_settings:
+                this.callPrefernces(null);
                 return true;
             case R.id.action_sort:
                 this.sort();
@@ -2246,6 +2263,31 @@ public class  MainActivity extends AppCompatActivity {
         return isSortFilterCleared;
     }//End of clearSearchFilter method
 
+    @Override
+    public int fetchThemeColor(String colorName) {
+        //        TypedValue typedValue = new TypedValue();
+        int attributeColor = 0;
+        switch(colorName){
+            case "colorAccent":
+                attributeColor = R.attr.colorAccent;
+                break;
+            case "colorPrimary":
+                attributeColor = R.attr.colorPrimary;
+                break;
+            case "colorPrimaryDark":
+                attributeColor = R.attr.colorPrimaryDark;
+                break;
+        }
+//        TypedArray a = this.context.obtainStyledAttributes(typedValue.data, new int[] {attributeColor });
+//        int color = a.getColor(0, 0);
+//        a.recycle();
+//        return color;
+        //attributeColor = context.getResources().getIdentifier(colorName, "attr", context.getPackageName());
+        TypedValue value = new TypedValue ();
+        this.getTheme().resolveAttribute (attributeColor, value, true);
+        return value.data;
+    }
+
     public enum SearchType{
         //Define the possible priorities in this app
         ACCOUNT_WITH_USERNAME("Account with user name"),
@@ -2289,5 +2331,65 @@ public class  MainActivity extends AppCompatActivity {
         Log.d("updateSortInAppState","Exit updateSortFilterInAppState method in the MainActivity class.");
         return  accountsDB.updateTable(APPSTATE_TABLE,values);
     }//End of updateSortFilterInAppState method
+
+    //Method to call the Preferences screen
+    private void callPrefernces(View view){
+        Log.d("Ent_callPrefernce","Enter the callPreferences method in MainActivity.");
+        //Declare and instantiate a new Intent object, passing the PreferencesActivity class as argument
+        Intent i = new Intent(this, PreferencesActivity.class);
+        //Start the activity by passin in the intent
+        startActivity(i);
+        Log.d("Ext_callPrefernce","Exit the callPreferences method in MainActivity.");
+    }// End of callPreferences method
+
+    public static int setAppTheme(Context context){
+        Log.d("Ent_setAppTheme","Enter setAppTheme method in MainActivity class.");
+        SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(context);
+        String preferedThemeID = pref.getString("appTheme","0");
+        int themeId;
+        switch(preferedThemeID){
+            case "1":
+                themeId = R.style.AppThemeIronMan;
+                break;
+            case "2":
+                themeId = R.style.AppThemeCapAmerica;
+                break;
+            case "3":
+                themeId = R.style.AppThemeHulk;
+                break;
+            case "4":
+                themeId = R.style.AppThemeCapMarvel;
+                break;
+            case "5":
+                themeId = R.style.AppThemeBatman;
+                break;
+            default:
+                themeId = R.style.AppTheme;
+                break;
+        }//End of switch statement to check
+//
+//        if(preferedThemeID.equals("1")){
+//            themeId = R.style.AppTheme;
+//            //doneHighlighter = context.getResources().getString(R.color.colorAccent1);
+//        }else if(preferedThemeID.equals("2")){
+//            themeId = R.style.AppThemeIronMan;
+//            //doneHighlighter = context.getResources().getString(R.color.colorAccent2);
+//        }else if(preferedThemeID.equals("3")){
+//            themeId = R.style.AppThemeCapAmerica;
+//        }else if(preferedThemeID.equals("4")){
+//            themeId = R.style.AppThemeHulk;
+//        }else if(preferedThemeID.equals("5")){
+//            themeId = R.style.AppThemeCapMarvel;
+//        }else if(preferedThemeID.equals("6")){
+//            themeId = R.style.AppThemeBatman;
+//        }
+//        else{
+//            themeId = R.style.AppTheme;
+//            //doneHighlighter = context.getResources().getString(R.color.colorAccent);
+//        }
+        Log.d("Ext_setAppTheme","Exit setAppTheme method in MainActivity class.");
+        return themeId;
+    }//End of setAppTheme method
+
 
 }//End of MainActivity class.

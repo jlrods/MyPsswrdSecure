@@ -48,6 +48,9 @@
             android:name=".EditCategoryActivity" />
         <activity
             android:name=".SelectNavDrawerBckGrnd" />
+        <activity
+            android:name=".PreferencesActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
 
     </application>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
