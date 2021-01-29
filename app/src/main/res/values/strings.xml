@@ -8,7 +8,6 @@
     <string name="action_settings">Settings</string>
     <string name="menu_home">Home</string>
     <string name="menu_favorites">Favorites</string>
-    <string name="menu_slideshow">Show</string>
     <string name="home_second">Home Second</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
@@ -252,11 +251,11 @@
     <!--    Preferences menu-->
     <string name="appPreferences">App Preferences</string>
     <string name="appThemeSelection">App colour theme</string>
-    <string name="appThemeDescription">Select the colour combination for your app.</string>
+    <string name="appThemeDescription">Select the colour combination for your app</string>
     <string name="english">English</string>
     <string name="spanish">Spanish</string>
     <string name="changeLang">Language</string>
-    <string name="changeLangDescription">Change the app language.</string>
+    <string name="changeLangDescription">Change the app language</string>
 
 
 

@@ -8,8 +8,7 @@
     <string name="nav_header_desc">Menú de navegación</string>
     <string name="action_settings">Configuración</string>
     <string name="menu_home">Home</string>
-    <string name="menu_gallery">Galería</string>
-    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_favorites">Favoritos</string>
     <string name="home_second">Casa</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Clave</string>
@@ -245,6 +244,15 @@
     <string name="sort_times_used">Veces usado</string>
     <string name="sort_category">Categoría</string>
     <string name="sort_title">Seleccione un filtro:</string>
+
+    <!--    Preferences menu-->
+    <string name="appPreferences">Preferencias</string>
+    <string name="appThemeSelection">Temas</string>
+    <string name="appThemeDescription">Selecione la combinacióm de colores de su preferencia para la app</string>
+    <string name="english">Inglés</string>
+    <string name="spanish">Español</string>
+    <string name="changeLang">Idioma</string>
+    <string name="changeLangDescription">Cambie el idioma de la app</string>
 
 
 </resources>

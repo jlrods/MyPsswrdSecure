@@ -2278,7 +2278,7 @@ public class  MainActivity extends AppCompatActivity implements ThemeHandler{
         this.currentSortFilter = null;
         Toolbar toolbar = findViewById(R.id.toolbar);
         if(toolbar.getMenu().size() > 0){
-            //@Fixme: use different method that setTintList?
+            //@Fixme: use different method that setTintList?=
             toolbar.getMenu().getItem(1).getIcon().setTintList(null);//.setColorFilter(null);
         }
         //Update sort filter in app state
