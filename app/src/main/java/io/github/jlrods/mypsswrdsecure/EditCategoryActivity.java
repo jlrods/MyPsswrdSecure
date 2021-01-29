@@ -61,7 +61,7 @@ public class EditCategoryActivity extends AddCategoryAcitivity {
         this.imgSelectedIcon = this.findIconImageByName(this.category.getIcon().getName());
         //Set up the selection color to the new selected icon
         if(this.imgSelectedIcon != null){
-            this.imgSelectedIcon.setColorFilter(this.fetchThemeColor("colorAccent"), android.graphics.PorterDuff.Mode.SRC_IN);
+            this.imgSelectedIcon.setColorFilter(this.themeUpdater.fetchThemeColor("colorAccent"), android.graphics.PorterDuff.Mode.SRC_IN);
             //this.imgSelectedIcon.setColorFilter(ContextCompat.getColor(this, R.color.colorPrimaryDark), android.graphics.PorterDuff.Mode.SRC_IN);
             this.categoryIcon = new Icon(getResources().getResourceEntryName(this.imgSelectedIcon.getId()),MainActivity.getRESOURCES(),true, this.imgSelectedIcon.getId());
         }//End of if statement to check the image selected image view isn't null

@@ -16,13 +16,14 @@ import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 
-public class AddCategoryAcitivity extends AddItemActivity implements ThemeHandler{
+public class AddCategoryAcitivity extends AddItemActivity{
     //Attribute definition
     protected ImageView imgSelectedIcon = null;
     protected LinearLayout catIconListSubLayout = null;
     protected TableLayout categoryIconTable = null;
     protected Category category = null;
     protected Icon categoryIcon = null;
+    protected ThemeUpdater themeUpdater;
     //Method definiton
 
     //Method definition
@@ -32,6 +33,7 @@ public class AddCategoryAcitivity extends AddItemActivity implements ThemeHandle
         Log.d("OnCreateAddQuest","Enter onCreate method in the AddUserNameActivity class.");
         //Set activity title
         getSupportActionBar().setTitle(R.string.addCatTitle);
+        this.themeUpdater = new ThemeUpdater(this);
         //Update layout fields according to Add Security question layout
         this.categoryIcon = new Icon();
         this.imgAddActivityIcon.setImageResource(R.drawable.format_list_bulleted);
@@ -41,7 +43,7 @@ public class AddCategoryAcitivity extends AddItemActivity implements ThemeHandle
         ScrollView catIconList = findViewById(R.id.categoryIconScrallView);
         this.categoryIconTable = findViewById(R.id.categoryIconTable);
         this.imgSelectedIcon = findViewById(R.id.format_list_bulleted);
-        this.imgSelectedIcon.setColorFilter(this.fetchThemeColor("colorAccent"), android.graphics.PorterDuff.Mode.SRC_IN);
+        this.imgSelectedIcon.setColorFilter(this.themeUpdater.fetchThemeColor("colorAccent"), android.graphics.PorterDuff.Mode.SRC_IN);
         //this.imgSelectedIcon.setColorFilter(ContextCompat.getColor(this, R.color.colorPrimaryDark), android.graphics.PorterDuff.Mode.SRC_IN);
         for(int i=0;i< categoryIconTable.getChildCount();i++){
             TableRow row = (TableRow) categoryIconTable.getChildAt(i);
@@ -125,7 +127,7 @@ public class AddCategoryAcitivity extends AddItemActivity implements ThemeHandle
             this.categoryIcon.setName(getResources().getResourceEntryName(v.getId()));
             this.categoryIcon.setResourceID(v.getId());
             //@Fixme: setColorFilter method does not required min API21, this might fix the setTintFilter issue in other activities
-            ((ImageView) v).setColorFilter(this.fetchThemeColor("colorAccent"), android.graphics.PorterDuff.Mode.SRC_IN);
+            ((ImageView) v).setColorFilter(this.themeUpdater.fetchThemeColor("colorAccent"), android.graphics.PorterDuff.Mode.SRC_IN);
             //((ImageView) v).setColorFilter(ContextCompat.getColor(this, R.color.colorPrimaryDark), android.graphics.PorterDuff.Mode.SRC_IN);
             imgSelectedIcon.setColorFilter(ContextCompat.getColor(this, R.color.colorBlack), android.graphics.PorterDuff.Mode.SRC_IN);
             imgSelectedIcon = (ImageView) v;
@@ -134,7 +136,7 @@ public class AddCategoryAcitivity extends AddItemActivity implements ThemeHandle
     }//End of toggleCatIconSelection method
 
     protected boolean isIconAssigned(){
-        Log.d("toggleCatIconSelection","Enter toggleCatIconSelection method in AddCategoryActivity class.");
+        Log.d("isIconAssigned","Enter isIconAssigned method in AddCategoryActivity class.");
         boolean isIconAssigned = false;
         int iconID = -1;
         Icon iconInUse;
@@ -149,35 +151,7 @@ public class AddCategoryAcitivity extends AddItemActivity implements ThemeHandle
                 isIconAssigned = true;
             }//End of if else statement to check the icon insertion was successful
         }//End of if else statement tha checks whether the icons is being used or not
-        Log.d("toggleCatIconSelection","Enter toggleCatIconSelection method in AddCategoryActivity class.");
+        Log.d("isIconAssigned","Enter isIconAssigned method in AddCategoryActivity class.");
         return isIconAssigned;
-    }
-
-
-    @Override
-    //Method to retrieve the theme color resource id of the color name passed in as argument
-    public int fetchThemeColor(String colorName) {
-        Log.d("fetchThemeColor","Enter the fetchThemeColor method in the MainActivity class.");
-        //Declare and initialize attribute color id
-        int attributeColor = 0;
-        //Check color name passed in as argument and assign it resource id to attributeColor variable
-        switch(colorName){
-            case "colorAccent":
-                attributeColor = R.attr.colorAccent;
-                break;
-            case "colorPrimary":
-                attributeColor = R.attr.colorPrimary;
-                break;
-            case "colorPrimaryDark":
-                attributeColor = R.attr.colorPrimaryDark;
-                break;
-        }//End of switch statement
-        //Create TypedValue object to hold the theme attribute data
-        TypedValue value = new TypedValue ();
-        //Call method to retrieve theme attribute data
-        this.getTheme().resolveAttribute (attributeColor, value, true);
-        Log.d("fetchThemeColor","Exit the fetchThemeColor method in the MainActivity class.");
-        //return the data for the color required
-        return value.data;
-    }//End of fetchThemeColor method
+    }//End of isIconAssigned method
 }//End of AddCategoryAcitivity class

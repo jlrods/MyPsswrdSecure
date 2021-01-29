@@ -21,12 +21,11 @@ import java.util.Date;
 import javax.crypto.spec.IvParameterSpec;
 
 public class PsswrdAdapter extends UserNameAdapter {
-    private ThemeHandler themeHandler;
+    private ThemeUpdater themeUpdater;
     public PsswrdAdapter(Context context, Cursor cursor) {
         super(context, cursor);
-        if(context instanceof ThemeHandler){
-            this.themeHandler = (ThemeHandler) context;
-        }
+        //Set up theme updater object to retrieve theme colors
+        this.themeUpdater = new ThemeUpdater(context);
     }
 
     @Override
@@ -51,25 +50,18 @@ public class PsswrdAdapter extends UserNameAdapter {
         holder.tvStrength.setVisibility(View.VISIBLE);
         //Change colour based on password strength
         holder.tvStrength.setText(psswrd.getStrength().toString());
-//        TypedValue typedValue = new TypedValue();
-//        Resources.Theme theme = context.getTheme();
-//        theme.resolveAttribute(R.attr.colorAccent, typedValue, true);
-        @ColorInt int colorAccent = this.themeHandler.fetchThemeColor("colorAccent");
-//        theme.resolveAttribute(R.attr.colorPrimary, typedValue, true);
-        @ColorInt int colorPrimary =  this.themeHandler.fetchThemeColor("colorPrimary");
-//        theme.resolveAttribute(R.attr.colorPrimary, typedValue, true);
-        @ColorInt int colorPrimaryDark =  this.themeHandler.fetchThemeColor("colorPrimaryDark");
+        //Retrieve and store current theme color IDs
+        @ColorInt int colorAccent = this.themeUpdater.fetchThemeColor("colorAccent");
+        @ColorInt int colorPrimary =  this.themeUpdater.fetchThemeColor("colorPrimary");
+        @ColorInt int colorPrimaryDark =  this.themeUpdater.fetchThemeColor("colorPrimaryDark");
 
         if(psswrd.getStrength().equals(PsswrdStrength.VERY_WEEK) || psswrd.getStrength().equals(PsswrdStrength.WEAK)){
             holder.tvStrength.setTextColor(Color.RED);
         }else if(psswrd.getStrength().equals(PsswrdStrength.MEDIUM)){
-            //holder.tvStrength.setTextColor(getContext().getResources().getColor(R.color.colorPrimaryDark));
             holder.tvStrength.setTextColor(colorPrimaryDark);
         }else if((psswrd.getStrength().equals(PsswrdStrength.STRONG))){
-            //holder.tvStrength.setTextColor(getContext().getResources().getColor(R.color.colorPrimary));
             holder.tvStrength.setTextColor(colorPrimary);
         }else{
-            //holder.tvStrength.setTextColor(getContext().getResources().getColor(R.color.colorAccent));
             holder.tvStrength.setTextColor(colorAccent);
         }//End of if else chain to change colour tv password strength
         //Set image for password icon
@@ -84,28 +76,4 @@ public class PsswrdAdapter extends UserNameAdapter {
         holder.tvTimesUsed.setText(String.valueOf(timesUsed));
         Log.d("PsswrdOnBindVH","Exit onBindViewHolder method in PsswrdAdapter class.");
     }//End of onBindViewHolder method
-
-    private int fetchColor(String colorName) {
-//        TypedValue typedValue = new TypedValue();
-        int attributeColor = 0;
-        switch(colorName){
-            case "colorAccent":
-                attributeColor = R.attr.colorAccent;
-                break;
-            case "colorPrimary":
-                attributeColor = R.attr.colorPrimary;
-                break;
-            case "colorPrimaryDark":
-                attributeColor = R.attr.colorPrimaryDark;
-                break;
-        }
-//        TypedArray a = this.context.obtainStyledAttributes(typedValue.data, new int[] {attributeColor });
-//        int color = a.getColor(0, 0);
-//        a.recycle();
-//        return color;
-        //attributeColor = context.getResources().getIdentifier(colorName, "attr", context.getPackageName());
-        TypedValue value = new TypedValue ();
-        context.getTheme().resolveAttribute (attributeColor, value, true);
-        return value.data;
-    }
-}
+}//End of PsswrdAdapter class

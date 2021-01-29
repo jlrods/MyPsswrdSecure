@@ -30,8 +30,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
-
-import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
@@ -49,7 +47,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
 
-public class  MainActivity extends AppCompatActivity implements ThemeHandler{
+public class  MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
     private CoordinatorLayout coordinatorLayout;
@@ -162,7 +160,8 @@ public class  MainActivity extends AppCompatActivity implements ThemeHandler{
     private static final String PASSWORD = "password";
     private static final String QUESTION = "question";
     private static final String QUESTION_LIST ="question list";
-
+    //Object used to retrieve theme colors
+    private static ThemeUpdater themeUpdater;
 
 
     @Override
@@ -171,6 +170,8 @@ public class  MainActivity extends AppCompatActivity implements ThemeHandler{
         int appThemeSelected = setAppTheme(this);
         //Set the theme by passing theme id number coming from preferences
         setTheme(appThemeSelected);
+
+        this.themeUpdater = new ThemeUpdater(this);
 
         //Call super on create
         super.onCreate(savedInstanceState);
@@ -182,10 +183,9 @@ public class  MainActivity extends AppCompatActivity implements ThemeHandler{
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         final FloatingActionButton fab = findViewById(R.id.fab);
-        //fab.setRippleColor(this.fetchThemeColor("colorPrimary"));
-        //Changa fab + icon color based on app theme
+        //Change fab + icon color based on app theme
         //@Fixme: Fix setTintList issue here
-        fab.setImageTintList(ColorStateList.valueOf(this.fetchThemeColor("colorPrimary")));
+        fab.setImageTintList(ColorStateList.valueOf(themeUpdater.fetchThemeColor("colorPrimary")));
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -213,12 +213,9 @@ public class  MainActivity extends AppCompatActivity implements ThemeHandler{
         });//End of set on click listener method
         //Get the tablayout from layout
         tabLayout=(TabLayout)findViewById(R.id.tabs);
-        final Context mainActivityContext;
-        if(this instanceof ThemeHandler){
-             mainActivityContext = this;
-        }else{
-            mainActivityContext = getBaseContext();
-        }
+        //Declare and initialize a context object to hold the MainActivity context whithin ghte onTabSelectedListener method
+        //Used to update password strength colors based on app theme
+        final Context mainActivityContext = this;
         //Set up the onclick behaviour for each tab in the tablayout object
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -497,15 +494,12 @@ public class  MainActivity extends AppCompatActivity implements ThemeHandler{
                 return true;
             case R.id.action_sort:
                 this.sort();
-                //item.getIcon().setTint(getColor(R.color.colorAccent));
-                //item.getIcon().setTint(getColor(this.fetchThemeColor("colorAccent")));
-                item.getIcon().setTintList(ColorStateList.valueOf(this.fetchThemeColor("colorAccent")));
+                item.getIcon().setTintList(ColorStateList.valueOf(themeUpdater.fetchThemeColor("colorAccent")));
                 return true;
             case R.id.action_search:
                 this.search();
                 //@Fixme: Check what is best: setTint or setColourFilter
-                //item.getIcon().setTint(getColor(this.fetchThemeColor("colorAccent")));// .setColorFilter(new PorterDuffColorFilter(getColor(R.color.colorAccent),PorterDuff.Mode.SRC_IN));
-                item.getIcon().setTintList(ColorStateList.valueOf(this.fetchThemeColor("colorAccent")));
+                item.getIcon().setTintList(ColorStateList.valueOf(themeUpdater.fetchThemeColor("colorAccent")));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -2287,35 +2281,6 @@ public class  MainActivity extends AppCompatActivity implements ThemeHandler{
         isSortFilterCleared = true;
         return isSortFilterCleared;
     }//End of clearSearchFilter method
-
-    @Override
-    //Method to retrieve the theme color resource id of the color name passed in as argument
-    public int fetchThemeColor(String colorName) {
-        Log.d("fetchThemeColor","Enter the fetchThemeColor method in the MainActivity class.");
-        //Declare and initialize attribute color id
-        int attributeColor = 0;
-        //Check color name passed in as argument and assign it resource id to attributeColor variable
-        switch(colorName){
-            case "colorAccent":
-                attributeColor = R.attr.colorAccent;
-                break;
-            case "colorPrimary":
-                attributeColor = R.attr.colorPrimary;
-                break;
-            case "colorPrimaryDark":
-                attributeColor = R.attr.colorPrimaryDark;
-                break;
-        }//End of switch statement
-        //Create TypedValue object to hold the theme attribute data
-        TypedValue value = new TypedValue ();
-        //Call method to retrieve theme attribute data
-        this.getTheme().resolveAttribute (attributeColor, value, true);
-        Log.d("fetchThemeColor","Exit the fetchThemeColor method in the MainActivity class.");
-        //return the data for the color required
-        return value.data;
-    }//End of fetchThemeColor method
-
-
 
     //Method to update the current category in the app state
     private boolean updateCategoryInAppState(){
