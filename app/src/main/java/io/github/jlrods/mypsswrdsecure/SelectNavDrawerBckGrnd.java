@@ -26,6 +26,8 @@ public class SelectNavDrawerBckGrnd extends AppCompatActivity implements ThemeHa
         int appThemeSelected = MainActivity.setAppTheme(this);
         //Set the theme by passing theme id number coming from preferences
         setTheme(appThemeSelected);
+        //Set activity title
+        getSupportActionBar().setTitle(R.string.selectBckgrd);
         setContentView(R.layout.activity_select_logo);
         final RecyclerView rvLogos = (RecyclerView) findViewById(R.id.layout_rec_view_logo);
         final IconAdapter iconAdapter = new IconAdapter(this, MainActivity.getNavDrawerBckgrnds());

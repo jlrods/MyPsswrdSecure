@@ -20,6 +20,8 @@ public class EditPsswrdActivity extends AddPsswrdActivity {
         super.onCreate(savedInstanceState);
         Log.d("OnCreateEditPsswrd","Enter onCreate method in the EditPsswrdActivity class.");
         this.extras = getIntent().getExtras();
+        //Set activity title
+        getSupportActionBar().setTitle(R.string.editPsswrdTitle);
         //Extract password by passing in the _id attribute stored in the extras
         Cursor cursorPsswrd = this.accountsDB.getPsswrdCursorByID(this.extras.getInt("_id"));
         if(cursorPsswrd != null && cursorPsswrd.getCount() > 0){

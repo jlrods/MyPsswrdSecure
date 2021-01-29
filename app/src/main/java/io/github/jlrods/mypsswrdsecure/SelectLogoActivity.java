@@ -27,6 +27,8 @@ public class SelectLogoActivity extends AppCompatActivity implements ThemeHandle
         //Set the theme by passing theme id number coming from preferences
         setTheme(appThemeSelected);
         setContentView(R.layout.activity_select_logo);
+        //Set activity title
+        getSupportActionBar().setTitle(R.string.addLogoTitle);
         final RecyclerView rvLogos = (RecyclerView) findViewById(R.id.layout_rec_view_logo);
         final IconAdapter iconAdapter = new IconAdapter(this, MainActivity.getAccountsLogos());
         //Extract extra data from Bundle object

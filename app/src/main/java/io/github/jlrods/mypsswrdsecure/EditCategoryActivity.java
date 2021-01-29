@@ -26,6 +26,8 @@ public class EditCategoryActivity extends AddCategoryAcitivity {
         Log.d("OnCreateEditCat", "Enter onCreate method in the EditCategoryActivity class.");
         //Get data from caller activity
         this.extras = getIntent().getExtras();
+        //Set activity title
+        getSupportActionBar().setTitle(R.string.editCatTitle);
         //Extract category by passing in the category _id sent by caller activity
         this.category = this.accountsDB.getCategoryByID(extras.getInt(MainActivity.getIdColumn()));
         //Set up UI with category data

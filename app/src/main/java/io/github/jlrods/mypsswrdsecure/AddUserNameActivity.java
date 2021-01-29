@@ -19,6 +19,8 @@ public class AddUserNameActivity extends AddItemActivity{
         //Update layout fields according to Add Security question layout
         this.imgAddActivityIcon.setImageResource(R.mipmap.ic_account_black_48dp);
         this.tvAddActivityTag.setText(R.string.account_userName);
+        //Set activity title
+        getSupportActionBar().setTitle(R.string.addUserTitle);
         Log.d("OnCreateAddQuest","Exit onCreate method in the AddUserNameActivity class.");
     }//End of onCreate method
 

@@ -26,6 +26,8 @@ public class EditUserNameActivity extends AddUserNameActivity {
         super.onCreate(savedInstanceState);
         Log.d("OnCreateEditUser","Enter onCreate method in the EditUserNameActivity class.");
         this.extras = getIntent().getExtras();
+        //Set activity title
+        getSupportActionBar().setTitle(R.string.editUserTitle);
         //Extract user name by passing in the _id attribute stored in the extras
         this.userName = UserName.extractUserName(this.accountsDB.getUserNameCursorByID(this.extras.getInt("_id")));
         //Set the edit text field with the user name value after decryption

@@ -30,7 +30,8 @@ public class AddCategoryAcitivity extends AddItemActivity implements ThemeHandle
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("OnCreateAddQuest","Enter onCreate method in the AddUserNameActivity class.");
-
+        //Set activity title
+        getSupportActionBar().setTitle(R.string.addCatTitle);
         //Update layout fields according to Add Security question layout
         this.categoryIcon = new Icon();
         this.imgAddActivityIcon.setImageResource(R.drawable.format_list_bulleted);

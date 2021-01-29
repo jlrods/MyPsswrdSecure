@@ -27,6 +27,7 @@
     <string name="whatStreetDidYouGrowUpOn">What street did you grow up on?</string>
     <string name="whatIsTheNameOfYourFirstSchool">What is the name of your first school?</string>
     <string name="whatsYourFathersMiddleName">What is your father\'s middle name?</string>
+
     <!--    Category names-->
     <string name="SocialMedia">Social Media</string>
     <string name="Entertainment">Entertainment</string>
@@ -87,6 +88,7 @@
     <string name="delete">Delete</string>
 
     <!--    Select Logo Activity-->
+    <string name="addLogoTitle">Select Logo</string>
     <string name="logo_list_header">Pick a logo for your account:</string>
 
     <!--    User/Password Recyclerviewer elements layout -->
@@ -95,6 +97,7 @@
 
 
     <!--    Add Account Activity-->
+    <string name="addAccTitle">Add Account</string>
     <string name="addEditAccName">Enter the account name...</string>
     <string name="selectCatHint">Select a Category...</string>
     <string name="selectUserHint">Select a User name...</string>
@@ -108,6 +111,7 @@
     <string name="accountAdded"> account has been added to your list!</string>
 
     <!--    Edit Account Activity-->
+    <string name="editAccTitle">Edit Account</string>
     <string name="accountNotChanged">Sorry, the account attributes have not been changed. Please, updated one of the values at least</string>
     <string name="accountUpdated"> account has been updated!</string>
     <string name="accountUpdateError">Sorry, the DB failed to record the changes in the account!</string>
@@ -116,10 +120,12 @@
     <string name="accountDeleted"> account has been deleted!</string>
 
     <!--    AddUserName Activity-->
+    <string name="addUserTitle">Add User Name</string>
     <string name="userNameAdded">New user name added successfully!</string>
     <string name="userNameNotEntered">Sorry, no user name entered in the input field</string>
 
     <!--    EditUserName Activity   -->
+    <string name="editUserTitle">Edit User name</string>
     <string name="userNameNotChanged">Sorry, the user name value has not been changed</string>
     <string name="userNameUpdated">The user name has been updated</string>
     <string name="userNameDeleted"> user name has been deleted</string>
@@ -128,10 +134,12 @@
 
 
     <!--    AddPsswrd Activity-->
+    <string name="addPsswrdTitle">Add Password</string>
     <string name="psswrdAdded">New password added successfully!</string>
     <string name="psswrdNotEntered">Sorry, no password entered in the input field</string>
 
     <!--    EditPsswrd Activity   -->
+    <string name="editPsswrdTitle">Edit Password</string>
     <string name="psswrdNotChanged">Sorry, the password value has not been changed</string>
     <string name="psswrdUpdated">The password has been updated</string>
     <string name="psswrdDeleted">password has been deleted</string>
@@ -140,6 +148,7 @@
 
 
     <!--    AddQuestion Activity    -->
+    <string name="addQuestTitle">Add Question</string>
     <string name="addQuestQuestionTag">Security question</string>
     <string name="addQuestQuestionHint">Type the new question here...</string>
     <string name="addQuestAnswerHint">Type the new answer here...</string>
@@ -148,6 +157,7 @@
     <string name="answerNotEntered">Sorry, no answer entered in the input field</string>
 
     <!--    EditQuestion Activity-->
+    <string name="editQuestTitle">Edit Question</string>
     <string name="answerNoTChanged">Sorry, the answer value has not been changed</string>
     <string name="questionAnswerNoTChanged">Sorry, at least one value must be changed (question or answer)</string>
     <string name="questionUpdated">The question has been updated</string>
@@ -156,12 +166,14 @@
     <string name="questionDeleteMssg">Are you sure you want to delete this question?</string>
 
     <!--    AddCategory Activity-->
+    <string name="addCatTitle">Add Category</string>
     <string name="catAdded">category added successfully!</string>
     <string name="catNotEntered">Sorry, no category entered in the input field</string>
     <string name="catExists">Sorry, the category already exists</string>
     <string name="catNotAdded">Sorry, the category was not saved</string>
 
     <!--    EditCategory Activity   -->
+    <string name="editCatTitle">Edit Category</string>
     <string name="editCategoryTitle">Select category to edit:</string>
     <string name="catNotChanged">Sorry, the category has not been changed</string>
     <string name="categoryAndIconNoTChanged">Sorry, at least one value must be changed (category name or icon)</string>
@@ -256,6 +268,9 @@
     <string name="spanish">Spanish</string>
     <string name="changeLang">Language</string>
     <string name="changeLangDescription">Change the app language</string>
+
+    <!--    Select background Activity-->
+    <string name="selectBckgrd">Select background</string>
 
 
 

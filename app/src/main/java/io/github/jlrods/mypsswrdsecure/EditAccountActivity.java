@@ -27,6 +27,8 @@ public class EditAccountActivity extends DisplayAccountActivity {
         Log.d("OnCreateEditAcc","Enter onCreate method in the EditAccountActivity abstract class.");
         //Extract extra data from owner Activity
         this.extras = getIntent().getExtras();
+        //Set activity title
+        getSupportActionBar().setTitle(R.string.editAccTitle);
         //Extract account details by passing in the _id attribute stored in the extras
         Cursor cursorAccount = this.accountsDB.getAccountCursorByID(this.extras.getInt("_id"));
         if(cursorAccount != null && cursorAccount.getCount() > 0){
