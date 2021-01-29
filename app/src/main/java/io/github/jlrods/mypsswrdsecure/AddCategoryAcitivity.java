@@ -3,6 +3,7 @@ package io.github.jlrods.mypsswrdsecure;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,7 +16,7 @@ import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 
-public class AddCategoryAcitivity extends AddItemActivity{
+public class AddCategoryAcitivity extends AddItemActivity implements ThemeHandler{
     //Attribute definition
     protected ImageView imgSelectedIcon = null;
     protected LinearLayout catIconListSubLayout = null;
@@ -29,6 +30,7 @@ public class AddCategoryAcitivity extends AddItemActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("OnCreateAddQuest","Enter onCreate method in the AddUserNameActivity class.");
+
         //Update layout fields according to Add Security question layout
         this.categoryIcon = new Icon();
         this.imgAddActivityIcon.setImageResource(R.drawable.format_list_bulleted);
@@ -38,7 +40,8 @@ public class AddCategoryAcitivity extends AddItemActivity{
         ScrollView catIconList = findViewById(R.id.categoryIconScrallView);
         this.categoryIconTable = findViewById(R.id.categoryIconTable);
         this.imgSelectedIcon = findViewById(R.id.format_list_bulleted);
-        this.imgSelectedIcon.setColorFilter(ContextCompat.getColor(this, R.color.colorPrimaryDark), android.graphics.PorterDuff.Mode.SRC_IN);
+        this.imgSelectedIcon.setColorFilter(this.fetchThemeColor("colorAccent"), android.graphics.PorterDuff.Mode.SRC_IN);
+        //this.imgSelectedIcon.setColorFilter(ContextCompat.getColor(this, R.color.colorPrimaryDark), android.graphics.PorterDuff.Mode.SRC_IN);
         for(int i=0;i< categoryIconTable.getChildCount();i++){
             TableRow row = (TableRow) categoryIconTable.getChildAt(i);
             for(int j=0;j< row.getChildCount();j++){
@@ -120,7 +123,9 @@ public class AddCategoryAcitivity extends AddItemActivity{
         if(imgSelectedIcon.getId() != v.getId()){
             this.categoryIcon.setName(getResources().getResourceEntryName(v.getId()));
             this.categoryIcon.setResourceID(v.getId());
-            ((ImageView) v).setColorFilter(ContextCompat.getColor(this, R.color.colorPrimaryDark), android.graphics.PorterDuff.Mode.SRC_IN);
+            //@Fixme: setColorFilter method does not required min API21, this might fix the setTintFilter issue in other activities
+            ((ImageView) v).setColorFilter(this.fetchThemeColor("colorAccent"), android.graphics.PorterDuff.Mode.SRC_IN);
+            //((ImageView) v).setColorFilter(ContextCompat.getColor(this, R.color.colorPrimaryDark), android.graphics.PorterDuff.Mode.SRC_IN);
             imgSelectedIcon.setColorFilter(ContextCompat.getColor(this, R.color.colorBlack), android.graphics.PorterDuff.Mode.SRC_IN);
             imgSelectedIcon = (ImageView) v;
         }//End of if statement to check the selected image isn't the same
@@ -148,4 +153,30 @@ public class AddCategoryAcitivity extends AddItemActivity{
     }
 
 
+    @Override
+    //Method to retrieve the theme color resource id of the color name passed in as argument
+    public int fetchThemeColor(String colorName) {
+        Log.d("fetchThemeColor","Enter the fetchThemeColor method in the MainActivity class.");
+        //Declare and initialize attribute color id
+        int attributeColor = 0;
+        //Check color name passed in as argument and assign it resource id to attributeColor variable
+        switch(colorName){
+            case "colorAccent":
+                attributeColor = R.attr.colorAccent;
+                break;
+            case "colorPrimary":
+                attributeColor = R.attr.colorPrimary;
+                break;
+            case "colorPrimaryDark":
+                attributeColor = R.attr.colorPrimaryDark;
+                break;
+        }//End of switch statement
+        //Create TypedValue object to hold the theme attribute data
+        TypedValue value = new TypedValue ();
+        //Call method to retrieve theme attribute data
+        this.getTheme().resolveAttribute (attributeColor, value, true);
+        Log.d("fetchThemeColor","Exit the fetchThemeColor method in the MainActivity class.");
+        //return the data for the color required
+        return value.data;
+    }//End of fetchThemeColor method
 }//End of AddCategoryAcitivity class

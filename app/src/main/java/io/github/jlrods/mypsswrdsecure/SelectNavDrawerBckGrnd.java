@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,13 +15,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 //Class to handle the nav drawer background selection. Unlike SelectLogoActivity, this activity does not retrieved
 //the current selection or background used at the moment, it displays the list of available backgrounds from the top.
-public class SelectNavDrawerBckGrnd extends AppCompatActivity {
+public class SelectNavDrawerBckGrnd extends AppCompatActivity implements ThemeHandler {
     Icon selectedIcon = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("SelBckgrndOnCreate", "Enter onCreate method in SelectNavDrawerBckGrnd class.");
+        //Get default current app theme from preferences
+        int appThemeSelected = MainActivity.setAppTheme(this);
+        //Set the theme by passing theme id number coming from preferences
+        setTheme(appThemeSelected);
         setContentView(R.layout.activity_select_logo);
         final RecyclerView rvLogos = (RecyclerView) findViewById(R.id.layout_rec_view_logo);
         final IconAdapter iconAdapter = new IconAdapter(this, MainActivity.getNavDrawerBckgrnds());
@@ -95,4 +100,31 @@ public class SelectNavDrawerBckGrnd extends AppCompatActivity {
         finish();
         return result;
     }//End of onOptionsItem selected method
+
+    @Override
+    //Method to retrieve the theme color resource id of the color name passed in as argument
+    public int fetchThemeColor(String colorName) {
+        Log.d("fetchThemeColor","Enter the fetchThemeColor method in the MainActivity class.");
+        //Declare and initialize attribute color id
+        int attributeColor = 0;
+        //Check color name passed in as argument and assign it resource id to attributeColor variable
+        switch(colorName){
+            case "colorAccent":
+                attributeColor = R.attr.colorAccent;
+                break;
+            case "colorPrimary":
+                attributeColor = R.attr.colorPrimary;
+                break;
+            case "colorPrimaryDark":
+                attributeColor = R.attr.colorPrimaryDark;
+                break;
+        }//End of switch statement
+        //Create TypedValue object to hold the theme attribute data
+        TypedValue value = new TypedValue ();
+        //Call method to retrieve theme attribute data
+        this.getTheme().resolveAttribute (attributeColor, value, true);
+        Log.d("fetchThemeColor","Exit the fetchThemeColor method in the MainActivity class.");
+        //return the data for the color required
+        return value.data;
+    }//End of fetchThemeColor method
 }//End of SelectNavDrawerBckGrd class

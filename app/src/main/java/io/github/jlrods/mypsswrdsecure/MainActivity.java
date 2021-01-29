@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
@@ -181,6 +182,10 @@ public class  MainActivity extends AppCompatActivity implements ThemeHandler{
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         final FloatingActionButton fab = findViewById(R.id.fab);
+        //fab.setRippleColor(this.fetchThemeColor("colorPrimary"));
+        //Changa fab + icon color based on app theme
+        //@Fixme: Fix setTintList issue here
+        fab.setImageTintList(ColorStateList.valueOf(this.fetchThemeColor("colorPrimary")));
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -492,12 +497,15 @@ public class  MainActivity extends AppCompatActivity implements ThemeHandler{
                 return true;
             case R.id.action_sort:
                 this.sort();
-                item.getIcon().setTint(getColor(R.color.colorAccent));
+                //item.getIcon().setTint(getColor(R.color.colorAccent));
+                //item.getIcon().setTint(getColor(this.fetchThemeColor("colorAccent")));
+                item.getIcon().setTintList(ColorStateList.valueOf(this.fetchThemeColor("colorAccent")));
                 return true;
             case R.id.action_search:
                 this.search();
                 //@Fixme: Check what is best: setTint or setColourFilter
-                item.getIcon().setTint(getColor(R.color.colorAccent));// .setColorFilter(new PorterDuffColorFilter(getColor(R.color.colorAccent),PorterDuff.Mode.SRC_IN));
+                //item.getIcon().setTint(getColor(this.fetchThemeColor("colorAccent")));// .setColorFilter(new PorterDuffColorFilter(getColor(R.color.colorAccent),PorterDuff.Mode.SRC_IN));
+                item.getIcon().setTintList(ColorStateList.valueOf(this.fetchThemeColor("colorAccent")));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -657,7 +665,7 @@ public class  MainActivity extends AppCompatActivity implements ThemeHandler{
     private void throwAddAccountActivity(){
         Log.d("ThrowAddAcc","Enter throwAddAccountActivity method in the MainActivity class.");
         //Declare and instantiate a new intent object
-        Intent i= new Intent(MainActivity.this,AddAccountActivity.class);
+        Intent i= new Intent(getBaseContext(),AddAccountActivity.class);
         //Add extras to the intent object, specifically the current category where the add button was pressed from
         i.putExtra("category",this.currentCategory.get_id());
         //i.putExtra("sql",this.getSQLForRecyclerView());
@@ -2006,6 +2014,23 @@ public class  MainActivity extends AppCompatActivity implements ThemeHandler{
         Log.d("Ent_sort","Exit the sort method in the MainActivity class.");
     }//End of the sort method
 
+    //Inner Enum to define the possible searches available for the search filter
+    public enum SearchType{
+        //Define the possible priorities in this app
+        ACCOUNT_WITH_USERNAME("Account with user name"),
+        ACCOUNT_WITH_PSSWRD("Account with password"),
+        ACCOUNTS("Accounts"),
+        USER_NAME("User name"),
+        PSSWRD("Password");
+
+        String name;
+        //Full constructor
+        SearchType(String name){
+            Log.d("EntFullCategory","Enter full constructor in the Category class.");
+            this.name = name;
+            Log.d("ExtFullCategory","Exit full constructor in the Category class.");
+        }//End of Full Category constructor
+    }//End of SearchType enum
 
 
     //Method to filter task or groceries by description content
@@ -2264,9 +2289,12 @@ public class  MainActivity extends AppCompatActivity implements ThemeHandler{
     }//End of clearSearchFilter method
 
     @Override
+    //Method to retrieve the theme color resource id of the color name passed in as argument
     public int fetchThemeColor(String colorName) {
-        //        TypedValue typedValue = new TypedValue();
+        Log.d("fetchThemeColor","Enter the fetchThemeColor method in the MainActivity class.");
+        //Declare and initialize attribute color id
         int attributeColor = 0;
+        //Check color name passed in as argument and assign it resource id to attributeColor variable
         switch(colorName){
             case "colorAccent":
                 attributeColor = R.attr.colorAccent;
@@ -2277,33 +2305,17 @@ public class  MainActivity extends AppCompatActivity implements ThemeHandler{
             case "colorPrimaryDark":
                 attributeColor = R.attr.colorPrimaryDark;
                 break;
-        }
-//        TypedArray a = this.context.obtainStyledAttributes(typedValue.data, new int[] {attributeColor });
-//        int color = a.getColor(0, 0);
-//        a.recycle();
-//        return color;
-        //attributeColor = context.getResources().getIdentifier(colorName, "attr", context.getPackageName());
+        }//End of switch statement
+        //Create TypedValue object to hold the theme attribute data
         TypedValue value = new TypedValue ();
+        //Call method to retrieve theme attribute data
         this.getTheme().resolveAttribute (attributeColor, value, true);
+        Log.d("fetchThemeColor","Exit the fetchThemeColor method in the MainActivity class.");
+        //return the data for the color required
         return value.data;
-    }
+    }//End of fetchThemeColor method
 
-    public enum SearchType{
-        //Define the possible priorities in this app
-        ACCOUNT_WITH_USERNAME("Account with user name"),
-        ACCOUNT_WITH_PSSWRD("Account with password"),
-        ACCOUNTS("Accounts"),
-        USER_NAME("User name"),
-        PSSWRD("Password");
 
-        String name;
-        //Full constructor
-        SearchType(String name){
-            Log.d("EntFullCategory","Enter full constructor in the Category class.");
-            this.name = name;
-            Log.d("ExtFullCategory","Exit full constructor in the Category class.");
-        }//End of Full Category constructor
-    }//End of SearchType enum
 
     //Method to update the current category in the app state
     private boolean updateCategoryInAppState(){
@@ -2342,54 +2354,62 @@ public class  MainActivity extends AppCompatActivity implements ThemeHandler{
         Log.d("Ext_callPrefernce","Exit the callPreferences method in MainActivity.");
     }// End of callPreferences method
 
-    public static int setAppTheme(Context context){
-        Log.d("Ent_setAppTheme","Enter setAppTheme method in MainActivity class.");
-        SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(context);
-        String preferedThemeID = pref.getString("appTheme","0");
+    public static int setAppTheme(Context context) {
+        Log.d("Ent_setAppTheme", "Enter setAppTheme method in MainActivity class.");
+        //Get prefered app theme from preferences xml file
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        String preferedThemeID = pref.getString("appTheme", "0");
+        //Declare int variable to return the theme id
         int themeId;
-        switch(preferedThemeID){
-            case "1":
-                themeId = R.style.AppThemeIronMan;
-                break;
-            case "2":
-                themeId = R.style.AppThemeCapAmerica;
-                break;
-            case "3":
-                themeId = R.style.AppThemeHulk;
-                break;
-            case "4":
-                themeId = R.style.AppThemeCapMarvel;
-                break;
-            case "5":
-                themeId = R.style.AppThemeBatman;
-                break;
-            default:
-                themeId = R.style.AppTheme;
-                break;
-        }//End of switch statement to check
-//
-//        if(preferedThemeID.equals("1")){
-//            themeId = R.style.AppTheme;
-//            //doneHighlighter = context.getResources().getString(R.color.colorAccent1);
-//        }else if(preferedThemeID.equals("2")){
-//            themeId = R.style.AppThemeIronMan;
-//            //doneHighlighter = context.getResources().getString(R.color.colorAccent2);
-//        }else if(preferedThemeID.equals("3")){
-//            themeId = R.style.AppThemeCapAmerica;
-//        }else if(preferedThemeID.equals("4")){
-//            themeId = R.style.AppThemeHulk;
-//        }else if(preferedThemeID.equals("5")){
-//            themeId = R.style.AppThemeCapMarvel;
-//        }else if(preferedThemeID.equals("6")){
-//            themeId = R.style.AppThemeBatman;
-//        }
-//        else{
-//            themeId = R.style.AppTheme;
-//            //doneHighlighter = context.getResources().getString(R.color.colorAccent);
-//        }
-        Log.d("Ext_setAppTheme","Exit setAppTheme method in MainActivity class.");
+        //Check if method got called by MainActivity or any other activity
+        if (context instanceof MainActivity) {
+            //If called by MainActivty, set up theme with NoActionBar
+            switch (preferedThemeID) {
+                case "1":
+                    themeId = R.style.AppThemeIronMan;
+                    break;
+                case "2":
+                    themeId = R.style.AppThemeCapAmerica;
+                    break;
+                case "3":
+                    themeId = R.style.AppThemeHulk;
+                    break;
+                case "4":
+                    themeId = R.style.AppThemeCapMarvel;
+                    break;
+                case "5":
+                    themeId = R.style.AppThemeBatman;
+                    break;
+                default:
+                    themeId = R.style.AppTheme;
+                    break;
+            }//End of switch statement to check
+
+        } else {
+            //Otherwise, if any other activity called the method, set up theme with action bar
+            switch (preferedThemeID) {
+                case "1":
+                    themeId = R.style.AppThemeIronManOthers;
+                    break;
+                case "2":
+                    themeId = R.style.AppThemeCapAmericaOthers;
+                    break;
+                case "3":
+                    themeId = R.style.AppThemeHulkOthers;
+                    break;
+                case "4":
+                    themeId = R.style.AppThemeCapMarvelOthers;
+                    break;
+                case "5":
+                    themeId = R.style.AppThemeBatmanOthers;
+                    break;
+                default:
+                    themeId = R.style.AppThemeOthers;
+                    break;
+            }//End of switch statement
+        }//End of if else statement to check what activity called the method
+        Log.d("Ext_setAppTheme", "Exit setAppTheme method in MainActivity class.");
         return themeId;
     }//End of setAppTheme method
-
 
 }//End of MainActivity class.

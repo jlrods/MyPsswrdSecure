@@ -21,7 +21,7 @@ import java.util.Date;
 import javax.crypto.spec.IvParameterSpec;
 
 public class PsswrdAdapter extends UserNameAdapter {
-    ThemeHandler themeHandler;
+    private ThemeHandler themeHandler;
     public PsswrdAdapter(Context context, Cursor cursor) {
         super(context, cursor);
         if(context instanceof ThemeHandler){
