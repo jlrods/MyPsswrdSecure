@@ -11,18 +11,22 @@
             android:entryValues="@array/appThemeValues"
             android:defaultValue="0"/>
         <ListPreference
+            android:key="dateFormat"
+            android:title="@string/dateFormatSelection"
+            android:summary="@string/dateFormatDescription"
+            android:entries="@array/dateFormats"
+            android:entryValues="@array/dateFormatsValues"
+            android:defaultValue="0"/>
+    </androidx.preference.PreferenceCategory>
+    <PreferenceCategory
+        android:key="language"
+        android:title="@string/changeLang">
+        <ListPreference
             android:key="languages"
             android:title="@string/changeLang"
             android:summary="@string/changeLangDescription"
             android:entries="@array/languages"
             android:entryValues="@array/languagesValues"
             android:defaultValue="0"/>
-<!--        <ListPreference-->
-<!--            android:key="dateFormat"-->
-<!--            android:title="@string/dateFormatSelection"-->
-<!--            android:summary="@string/dateFormatDescription"-->
-<!--            android:entries="@array/dateFormats"-->
-<!--            android:entryValues="@array/dateFormatsValues"-->
-<!--            android:defaultValue="0"/>-->
-    </androidx.preference.PreferenceCategory>
+    </PreferenceCategory>
 </PreferenceScreen>

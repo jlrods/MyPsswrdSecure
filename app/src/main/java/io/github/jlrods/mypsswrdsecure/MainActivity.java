@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
@@ -14,6 +15,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -45,6 +47,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Locale;
+
 import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
 
 public class  MainActivity extends AppCompatActivity {
@@ -170,11 +174,12 @@ public class  MainActivity extends AppCompatActivity {
         int appThemeSelected = setAppTheme(this);
         //Set the theme by passing theme id number coming from preferences
         setTheme(appThemeSelected);
-
         this.themeUpdater = new ThemeUpdater(this);
-
         //Call super on create
         super.onCreate(savedInstanceState);
+        Log.d("Ent_onCreateMain","Enter onCreate method in MainActivity class.");
+        //Call method to setup language based on app preferences
+        this.setAppLanguage();
         //Set the main activity layout
         setContentView(R.layout.activity_main);
         //Get the coordinator layout off layout
@@ -445,6 +450,7 @@ public class  MainActivity extends AppCompatActivity {
             appLoggin.setPicture(accountsDB.getIconByID(62));
             accountsDB.addItem(appLoggin);
         }//End of if statement to check user cursor is not empty
+        Log.d("Ext_onCreateMain","Exit onCreate method in MainActivity class.");
     }//End of onCreate method
 
 
@@ -2375,6 +2381,28 @@ public class  MainActivity extends AppCompatActivity {
         }//End of if else statement to check what activity called the method
         Log.d("Ext_setAppTheme", "Exit setAppTheme method in MainActivity class.");
         return themeId;
+    }//End of setAppTheme method
+
+    public void setAppLanguage(){
+        Log.d("Ent_setAppLang","Enter setAppLanguage method in MainActivity class.");
+        SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(this);
+        String languageValue = pref.getString("languages","0");
+        String language;
+        if(languageValue.equals("0")){
+            language = "en";
+        }else{
+            language = "es";
+        }
+        // Change locale settings in the app.
+        Resources res = this.getResources();
+        DisplayMetrics dm = res.getDisplayMetrics();
+        Configuration conf = res.getConfiguration();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            conf.setLocale(new Locale(language.toLowerCase())); // API 17+ only.
+        }
+        // Use conf.locale = new Locale(...) if targeting lower versions
+        res.updateConfiguration(conf, dm);
+        Log.d("Ext_setAppLang","Exit setAppLanguage method in MainActivity class.");
     }//End of setAppTheme method
 
 }//End of MainActivity class.

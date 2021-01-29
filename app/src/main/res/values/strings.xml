@@ -268,6 +268,8 @@
     <string name="spanish">Spanish</string>
     <string name="changeLang">Language</string>
     <string name="changeLangDescription">Change the app language</string>
+    <string name="dateFormatSelection">Date format to be displayed</string>
+    <string name="dateFormatDescription">Select the date format for your app.</string>
 
     <!--    Select background Activity-->
     <string name="selectBckgrd">Select background</string>
