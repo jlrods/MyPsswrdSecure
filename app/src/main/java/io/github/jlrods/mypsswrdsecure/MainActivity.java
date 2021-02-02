@@ -17,7 +17,6 @@ import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -83,7 +82,7 @@ public class  MainActivity extends AppCompatActivity {
     private static Category favCategory = null;
     private static ArrayList<QuestionList> listOfQuestionLists = null;
 
-    private static String dateFormat = "dd/MMM/yyyy";
+    private static String dateFormat;
 
 
 
@@ -180,6 +179,8 @@ public class  MainActivity extends AppCompatActivity {
         Log.d("Ent_onCreateMain","Enter onCreate method in MainActivity class.");
         //Call method to setup language based on app preferences
         this.setAppLanguage();
+        //Call method to setup date format based on app preferences
+        dateFormat = this.themeUpdater.getDateFormat();
         //Set the main activity layout
         setContentView(R.layout.activity_main);
         //Get the coordinator layout off layout
@@ -2404,5 +2405,6 @@ public class  MainActivity extends AppCompatActivity {
         res.updateConfiguration(conf, dm);
         Log.d("Ext_setAppLang","Exit setAppLanguage method in MainActivity class.");
     }//End of setAppTheme method
+
 
 }//End of MainActivity class.

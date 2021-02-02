@@ -21,11 +21,9 @@ import java.util.Date;
 import javax.crypto.spec.IvParameterSpec;
 
 public class PsswrdAdapter extends UserNameAdapter {
-    private ThemeUpdater themeUpdater;
+
     public PsswrdAdapter(Context context, Cursor cursor) {
         super(context, cursor);
-        //Set up theme updater object to retrieve theme colors
-        this.themeUpdater = new ThemeUpdater(context);
     }
 
     @Override
@@ -69,7 +67,7 @@ public class PsswrdAdapter extends UserNameAdapter {
         //Decrypt the password and displayed on text view
         holder.tvStringValue.setText(cryptographer.decryptText(psswrd.getValue(),new IvParameterSpec(psswrd.getIv())));
         Date date = new Date(psswrd.getDateCreated());
-        SimpleDateFormat format = new SimpleDateFormat(MainActivity.getDateFormat());
+        SimpleDateFormat format = new SimpleDateFormat(this.themeUpdater.getDateFormat());
         holder.tvDateCreated.setText(format.format(date));
         //Calculate the number of times the password has been used and display it
         int timesUsed = accountsDB.getTimesUsedPsswrd(psswrd.get_id());

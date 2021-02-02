@@ -1,6 +1,8 @@
 package io.github.jlrods.mypsswrdsecure;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.TypedValue;
 
@@ -35,4 +37,17 @@ public class ThemeUpdater  implements ThemeHandler{
         //return the data for the color required
         return value.data;
     }//End of fetchThemeColor method
+
+    @Override
+    public String getDateFormat(){
+        Log.d("Ent_setDateFormat","Enter setDateFormat method in MainActivity class.");
+        //Get shared references info
+        SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(this.context);
+        //Get the preference selected for date format
+        String preferredDateFormat = pref.getString("dateFormat","0");
+        Log.d("Ext_setDateFormat","Exit setDateFormat method in MainActivity class.");
+        //Assign the preferred value to the global variable
+        return this.context.getResources().getStringArray(R.array.dateFormats)[Integer.parseInt(preferredDateFormat)];
+    }//End of setDateFormat method
+
 }//End of ThemeUpdater class

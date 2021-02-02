@@ -36,6 +36,7 @@
         <item>yyyy/MM/dd</item>
         <item>dd-MM-yy</item>
         <item>dd-MMM-yy</item>
+        <item>dd-MMM-yyyy</item>
     </string-array>
     <string-array name="dateFormatsValues">
         <item>0</item>
@@ -43,6 +44,7 @@
         <item>2</item>
         <item>3</item>
         <item>4</item>
+        <item>5</item>
     </string-array>
 
     <string-array name="languages">
