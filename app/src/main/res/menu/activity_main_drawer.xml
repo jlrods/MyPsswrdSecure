@@ -29,15 +29,15 @@
                 <item
                     android:id="@+id/nav_addCategory"
                     android:icon="@android:drawable/ic_menu_add"
-                    android:title="Add category" />
+                    android:title="@string/addCatTitle" />
                 <item
                     android:id="@+id/nav_editCategory"
                     android:icon="@android:drawable/ic_menu_edit"
-                    android:title="Edit Category" />
+                    android:title="@string/editCatTitle" />
                 <item
                     android:id="@+id/nav_deleteCategory"
                     android:icon="@android:drawable/ic_menu_delete"
-                    android:title="Delete Category" />
+                    android:title="@string/deleteCategory" />
             </menu>
         </item>
     </group>

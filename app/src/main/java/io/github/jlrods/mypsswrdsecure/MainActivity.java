@@ -173,14 +173,14 @@ public class  MainActivity extends AppCompatActivity {
         int appThemeSelected = setAppTheme(this);
         //Set the theme by passing theme id number coming from preferences
         setTheme(appThemeSelected);
-        this.themeUpdater = new ThemeUpdater(this);
+        themeUpdater = new ThemeUpdater(this);
         //Call super on create
         super.onCreate(savedInstanceState);
         Log.d("Ent_onCreateMain","Enter onCreate method in MainActivity class.");
         //Call method to setup language based on app preferences
         this.setAppLanguage();
         //Call method to setup date format based on app preferences
-        dateFormat = this.themeUpdater.getDateFormat();
+        dateFormat = themeUpdater.getDateFormat();
         //Set the main activity layout
         setContentView(R.layout.activity_main);
         //Get the coordinator layout off layout

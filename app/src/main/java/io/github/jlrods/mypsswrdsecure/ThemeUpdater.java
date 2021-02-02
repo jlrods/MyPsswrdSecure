@@ -40,12 +40,12 @@ public class ThemeUpdater  implements ThemeHandler{
 
     @Override
     public String getDateFormat(){
-        Log.d("Ent_setDateFormat","Enter setDateFormat method in MainActivity class.");
+        Log.d("Ent_setDateFormat","Enter setDateFormat method in ThemeUpdater class.");
         //Get shared references info
         SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(this.context);
         //Get the preference selected for date format
         String preferredDateFormat = pref.getString("dateFormat","0");
-        Log.d("Ext_setDateFormat","Exit setDateFormat method in MainActivity class.");
+        Log.d("Ext_setDateFormat","Exit setDateFormat method in ThemeUpdater class.");
         //Assign the preferred value to the global variable
         return this.context.getResources().getStringArray(R.array.dateFormats)[Integer.parseInt(preferredDateFormat)];
     }//End of setDateFormat method
