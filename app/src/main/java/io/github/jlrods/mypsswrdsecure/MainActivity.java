@@ -178,7 +178,7 @@ public class  MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.d("Ent_onCreateMain","Enter onCreate method in MainActivity class.");
         //Call method to setup language based on app preferences
-        this.setAppLanguage();
+        setAppLanguage(this);
         //Call method to setup date format based on app preferences
         dateFormat = themeUpdater.getDateFormat();
         //Set the main activity layout
@@ -395,14 +395,27 @@ public class  MainActivity extends AppCompatActivity {
         this.setUpLowerCategoryMenu(navigationView.getMenu());
         this.updateNavMenu(navigationView.getMenu(),INDEX_TO_GET_LAST_TASK_LIST_ITEM);
         //Once the nave menu has been fully set up, select the item that represents the current category and deselect the Home item, which is selected by default
+
         if(this.currentCategory.get_id() != -1){
             navigationView.getMenu().getItem(0).setCheckable(false);
             navigationView.getMenu().getItem(0).setChecked(false);
             navigationView.getMenu().getItem(getCategoryPositionByID(currentCategory.get_id())).setCheckable(true);
             navigationView.getMenu().getItem(getCategoryPositionByID(currentCategory.get_id())).setChecked(true);
-        }//End of if statement to check the category to be selected
-        //Set toolbar title based on current category
-        toolbar.setTitle(this.currentCategory.getName());
+            //Check if if current category is favorites
+            if(this.currentCategory.get_id() == -2){
+                //For favorite set toolbar name directly
+                toolbar.setTitle(R.string.menu_favorites);
+            }else{
+                //Otherwise, set the toolbar title by getting translation when available
+                toolbar.setTitle(getCategoryNameFromRes(currentCategory.getName()));
+            }//End of if statement to check the category to be selected
+        }else{
+            //Set toolbar title based on home category
+            toolbar.setTitle(R.string.menu_home);
+        }
+
+
+
         //@Fixme: define method in accountsDB class
         Cursor appLoginCursor = accountsDB.getAppLoginCursor(accountsDB.getMaxItemIdInTable(APPLOGGIN_TABLE));
 
@@ -453,6 +466,23 @@ public class  MainActivity extends AppCompatActivity {
         }//End of if statement to check user cursor is not empty
         Log.d("Ext_onCreateMain","Exit onCreate method in MainActivity class.");
     }//End of onCreate method
+
+    private String getCategoryNameFromRes(String name) {
+        Log.d("getCategoryNameFromRes","Enter getCategoryNameFromRes method in MainActivity class.");
+        //Declare and instantiate an int to hold the string id from resources and a String variable to hold the actual category name
+        int textID = getResources().getIdentifier(name,"string",getPackageName());
+        String categoryName = "";
+        //If textID is 0, means it's not stored in the app resources, which means it won't be translated but it will be displayed as saved on DB
+        if(textID > 0){
+            //If res id number exists, set the category name as per the string text, not the string ID
+            categoryName = getResources().getString(textID);
+        }else{
+            //In the case of not being a resource, print the text retrieved from DB
+            categoryName = name;
+        }//End of if else statement
+        Log.d("getCategoryNameFromRes","Exit getCategoryNameFromRes method in MainActivity class.");
+        return categoryName;
+    }//End of getCategoryNameFromRes method
 
 
     private void testCriptogrpher(){
@@ -1602,16 +1632,17 @@ public class  MainActivity extends AppCompatActivity {
                 //Fixme: error out of index due the index to get last taks list item
                 for(int i=INDEX_TO_GET_LAST_TASK_LIST_ITEM;i<categoryList.size();i++){
                     //For each item in the list, extract name and save it in the string array
-                    int textID = getResources().getIdentifier(categoryList.get(i).getName(),"string",getPackageName());
+//                    int textID = getResources().getIdentifier(categoryList.get(i).getName(),"string",getPackageName());
                     CharSequence categoryName = "";
-                    //Get the name from the cursor
-                    if(textID > 0){
-                        //If res id number exists, set the category name as per the string text, not the string ID
-                        categoryName = getResources().getString(textID);
-                    }else{
-                        //In the case of not being a resource, print the text retrieved from DB
-                        categoryName = MainActivity.getCategoryList().get(i).getName();
-                    }//End of if else statement
+//                    //Get the name from the cursor
+//                    if(textID > 0){
+//                        //If res id number exists, set the category name as per the string text, not the string ID
+//                        categoryName = getResources().getString(textID);
+//                    }else{
+//                        //In the case of not being a resource, print the text retrieved from DB
+//                        categoryName = MainActivity.getCategoryList().get(i).getName();
+//                    }//End of if else statement
+                    categoryName = getCategoryNameFromRes(categoryList.get(i).getName());
                     //String categoryName = categoryList.get(i).getName();
                     //Save the name into the array to be passed into the AlertDialog constructor
                     categories[i-INDEX_TO_GET_LAST_TASK_LIST_ITEM]=  categoryName;
@@ -2384,9 +2415,9 @@ public class  MainActivity extends AppCompatActivity {
         return themeId;
     }//End of setAppTheme method
 
-    public void setAppLanguage(){
+    public static void setAppLanguage(Context context){
         Log.d("Ent_setAppLang","Enter setAppLanguage method in MainActivity class.");
-        SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(context);
         String languageValue = pref.getString("languages","0");
         String language;
         if(languageValue.equals("0")){
@@ -2395,7 +2426,7 @@ public class  MainActivity extends AppCompatActivity {
             language = "es";
         }
         // Change locale settings in the app.
-        Resources res = this.getResources();
+        Resources res = context.getResources();
         DisplayMetrics dm = res.getDisplayMetrics();
         Configuration conf = res.getConfiguration();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {

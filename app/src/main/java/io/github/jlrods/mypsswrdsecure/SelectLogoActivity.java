@@ -26,6 +26,8 @@ public class SelectLogoActivity extends AppCompatActivity {
         int appThemeSelected = MainActivity.setAppTheme(this);
         //Set the theme by passing theme id number coming from preferences
         setTheme(appThemeSelected);
+        //Set language as per preferences
+        MainActivity.setAppLanguage(this);
         setContentView(R.layout.activity_select_logo);
         //Set activity title
         getSupportActionBar().setTitle(R.string.addLogoTitle);

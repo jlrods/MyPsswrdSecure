@@ -26,6 +26,8 @@ public class SelectNavDrawerBckGrnd extends AppCompatActivity {
         int appThemeSelected = MainActivity.setAppTheme(this);
         //Set the theme by passing theme id number coming from preferences
         setTheme(appThemeSelected);
+        //Set language as per preferences
+        MainActivity.setAppLanguage(this);
         //Set activity title
         getSupportActionBar().setTitle(R.string.selectBckgrd);
         setContentView(R.layout.activity_select_logo);

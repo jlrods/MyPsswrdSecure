@@ -27,6 +27,8 @@ public class PreferencesActivity extends AppCompatActivity {
         setTheme(themeId);*/
         //setTheme(R.style.AppThemeHulk);
         setTheme( MainActivity.setAppTheme(this));
+        //Set language as per preferences
+        MainActivity.setAppLanguage(this);
         //Call super method
         super.onCreate(savedInstanceState);
         //set fragment for preferences

@@ -128,6 +128,8 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         int appThemeSelected = MainActivity.setAppTheme(this);
         //Set the theme by passing theme id number coming from preferences
         setTheme(appThemeSelected);
+        //Set correct language
+        MainActivity.setAppLanguage(this);
         //Set layout for this activity
         setContentView(R.layout.activity_add_account);
         ActionBar toolbar = getActionBar();

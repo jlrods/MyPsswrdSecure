@@ -51,6 +51,8 @@ public abstract class AddItemActivity extends AppCompatActivity {
         int appThemeSelected = MainActivity.setAppTheme(this);
         //Set the theme by passing theme id number coming from preferences
         setTheme(appThemeSelected);
+        //Set language as per preferences
+        MainActivity.setAppLanguage(this);
         //Set layout for this activity
         setContentView(R.layout.activity_add_item);
         this.accountsDB = HomeFragment.getAccountsDB();
