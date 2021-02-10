@@ -47,7 +47,7 @@
     <!--    TabBar Menu texts-->
     <string name="about">Acerca...</string>
     <string name="action_search">Buscar</string>
-    <string name="action_accounts">List de cuentas</string>
+    <string name="action_accounts">Lista de cuentas</string>
     <string name="action_userNames">Nombres de usuario</string>
     <string name="action_psswrds">Lista de contraseñas</string>
     <string name="action_secQuestions">Preguntas de seguridad</string>
@@ -269,6 +269,7 @@
 
     <!--    Select background Activity-->
     <string name="selectBckgrd">Selección de fondo</string>
+    <string name="selectBckgrdHeading">Elija un fondo para la bandeja de navigación</string>
 
     <!--    About activity-->
     <string name="downloads"><a href="https://jlrods.github.io/Downloads.html">Click aquí!</a></string>
@@ -280,6 +281,7 @@
     <string name="visitWebsiteTag">Visite nuestra web:</string>
     <string name="moreAppsTag">Para más apps:</string>
     <string name="softwareInfoTitle">Información sobre el software</string>
+
 
 
 </resources>

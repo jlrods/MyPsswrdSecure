@@ -10,6 +10,7 @@ import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -532,13 +533,10 @@ public class  MainActivity extends AppCompatActivity {
                 this.callPrefernces(null);
                 return true;
             case R.id.action_sort:
-                this.sort();
-                item.getIcon().setTintList(ColorStateList.valueOf(themeUpdater.fetchThemeColor("colorAccent")));
+                this.sort(item);
                 return true;
             case R.id.action_search:
-                this.search();
-                //@Fixme: Check what is best: setTint or setColourFilter
-                item.getIcon().setTintList(ColorStateList.valueOf(themeUpdater.fetchThemeColor("colorAccent")));
+                this.search(item);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -1923,7 +1921,7 @@ public class  MainActivity extends AppCompatActivity {
     }//End of setUserProfileName method
 
     //Method to filter task or groceries by description content
-    private void sort(){
+    private void sort(final MenuItem item){
         Log.d("Ent_sort","Enter the sort method in the MainActivity class.");
         final int[] selectedSortCriteriID = {0};
         final int[] positionInList ={0};
@@ -2034,6 +2032,8 @@ public class  MainActivity extends AppCompatActivity {
                         //Call method to update RV data
                         //Call method to update the adapter and the recyclerView
                         updateRecyclerViewData(HomeFragment.getRv().getAdapter());
+                        //@Fixme: Check what is best: setTint or setColourFilter
+                        item.getIcon().setTintList(ColorStateList.valueOf(themeUpdater.fetchThemeColor("colorAccent")));
                         //Update App State
                         updateSortFilterInAppState();
                     }
@@ -2043,7 +2043,7 @@ public class  MainActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 //Call clear search filter method
-                                clearSortFilter();
+                                //clearSortFilter();
                                 //Update the RV list
 //                                //@Fixme: There's an issue here. Test to remember
 //                                if(isSearchFilter){
@@ -2078,7 +2078,7 @@ public class  MainActivity extends AppCompatActivity {
 
 
     //Method to filter task or groceries by description content
-    private void search(){
+    private void search(final MenuItem item){
         Log.d("Ent_serach","Enter the search method in the MainActivity class.");
         //Declare and instantiate a new View objects to be used on the AlertDialog box: Two switch views and one editText view.
         //All of them under a LinearLayout parent
@@ -2170,8 +2170,6 @@ public class  MainActivity extends AppCompatActivity {
                 .setView(linearLayout)
                 .setPositiveButton(R.string.dialog_OK,new DialogInterface.OnClickListener(){
                     public void onClick(DialogInterface dialog,int whichButton){
-                        //Declare and instantiate as null a string object to hold the sql query to run. Depending on the current category, different query will be run
-
                         //Check if switch views were included
                         int etViewPosition;
                         if(linearLayout.getChildCount() > 1){
@@ -2222,7 +2220,8 @@ public class  MainActivity extends AppCompatActivity {
                                 //Call method to update the adapter and the recyclerView
                                 updateRecyclerViewData(HomeFragment.getRv().getAdapter());
                             }//End of if else statement to check the children count in the linear layout, this defines what tab is being used
-
+                            //@Fixme: Check what is best: setTint or setColourFilter
+                            item.getIcon().setTintList(ColorStateList.valueOf(themeUpdater.fetchThemeColor("colorAccent")));
                             //Update app state in DB
                             ContentValues values = new ContentValues();
                             values.put(ID_COLUMN,accountsDB.getMaxItemIdInTable(APPSTATE_TABLE));
@@ -2242,7 +2241,7 @@ public class  MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         //Call clear search filter method
-                        clearSearchFilter();
+                        //clearSearchFilter();
                         //Update the RV list
                         //@Fixme: There's an issue here. Test to remember
                         if(isSearchFilter){
@@ -2298,8 +2297,9 @@ public class  MainActivity extends AppCompatActivity {
         this.lastSearchText = "";
         Toolbar toolbar = findViewById(R.id.toolbar);
         if(toolbar.getMenu().size() > 0){
-            //@Fixme: use different methond that setTintList?
-            toolbar.getMenu().getItem(0).getIcon().setTintList(null);//.setColorFilter(null);
+            //@Fixme: use different method that setTintList?
+//            toolbar.getMenu().getItem(0).getIcon().setColorFilter(null);//.setColorFilter(null);
+            toolbar.getMenu().getItem(0).getIcon().setTintList(null);
         }
         //Update app state to remove all search related fields
         ContentValues values = new ContentValues();

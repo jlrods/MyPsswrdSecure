@@ -273,6 +273,7 @@
 
     <!--    Select background Activity-->
     <string name="selectBckgrd">Select background</string>
+    <string name="selectBckgrdHeading">Pick a background for your Navigation Drawer</string>
 
     <!--    About activity-->
     <string name="jlrodsWeb" tools:ignore="MissingTranslation"><a href="https://jlrods.github.io/">https://www.jlrods.com</a></string>
@@ -291,4 +292,5 @@
     <string name="visitWebsiteTag">Visit our website:</string>
     <string name="moreAppsTag">For more apps:</string>
     <string name="softwareInfoTitle">Software information</string>
+
 </resources>
