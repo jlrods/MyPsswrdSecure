@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">MyPsswrdSecure</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -274,6 +274,21 @@
     <!--    Select background Activity-->
     <string name="selectBckgrd">Select background</string>
 
-
-
+    <!--    About activity-->
+    <string name="jlrodsWeb" tools:ignore="MissingTranslation"><a href="https://jlrods.github.io/">https://www.jlrods.com</a></string>
+    <string name="downloads"><a href="https://jlrods.github.io/Downloads.html">Click here!</a></string>
+    <string name="authorEmail" tools:ignore="MissingTranslation"><a href="https://jlrods.github.io/Downloads.html">jlrods@gmail.com</a></string>
+    <string name="targetApi">Target API:</string>
+    <string name="targetApiValue" tools:ignore="MissingTranslation">29 - Android 10</string>
+    <string name="minRequiredApi">Min. required API:</string>
+    <string name="minReqApiValue" tools:ignore="MissingTranslation">19 - KitKat</string>
+    <string name="appVersion" >Version:</string>
+    <string name="appVersionValue" tools:ignore="MissingTranslation">V1.0.0.0</string>
+    <string name="aboutAuthorTag">About the author</string>
+    <string name="appPropertyOf">Property of:</string>
+    <string name="author" tools:ignore="MissingTranslation">@jlrods ™</string>
+    <string name="email" tools:ignore="MissingTranslation">E-mail:</string>
+    <string name="visitWebsiteTag">Visit our website:</string>
+    <string name="moreAppsTag">For more apps:</string>
+    <string name="softwareInfoTitle">Software information</string>
 </resources>

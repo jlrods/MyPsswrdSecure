@@ -270,5 +270,16 @@
     <!--    Select background Activity-->
     <string name="selectBckgrd">Selección de fondo</string>
 
+    <!--    About activity-->
+    <string name="downloads"><a href="https://jlrods.github.io/Downloads.html">Click aquí!</a></string>
+    <string name="targetApi">API Objetivo:</string>
+    <string name="minRequiredApi">Min. API requerido:</string>
+    <string name="appVersion">Versión:</string>
+    <string name="aboutAuthorTag">Acerca del autor</string>
+    <string name="appPropertyOf">Propiedad de:</string>
+    <string name="visitWebsiteTag">Visite nuestra web:</string>
+    <string name="moreAppsTag">Para más apps:</string>
+    <string name="softwareInfoTitle">Información sobre el software</string>
+
 
 </resources>

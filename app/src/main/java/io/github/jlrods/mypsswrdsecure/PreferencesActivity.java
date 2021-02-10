@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment;
  * Created by rodjose1 on 18/07/2018.
  */
 
-//Activity to handle the About app info
+//Activity to handle the AboutActivity app info
 public class PreferencesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {

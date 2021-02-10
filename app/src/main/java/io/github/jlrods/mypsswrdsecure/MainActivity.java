@@ -525,6 +525,8 @@ public class  MainActivity extends AppCompatActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_about:
+                //Call method to throw AboutActivity activity
+                throwAboutActivity();
                 return true;
             case R.id.action_settings:
                 this.callPrefernces(null);
@@ -854,6 +856,16 @@ public class  MainActivity extends AppCompatActivity {
         startActivityForResult(i,this.throwSelectNavDrawerBckGrndActReqCode);
         Log.d("throwSelectBckActivity","Exit the throwSelectNavDrawerBackgroundActivity method in the DisplayAccountActivity class.");
     }//End of throwSelectLogoActivity method
+
+    //Method to throw new AddTaskActivity
+    private void throwAboutActivity(){
+        Log.d("ThrowAbout","Enter throwAboutActivity method in the MainActivity class.");
+        //Declare and instantiate a new intent object
+        Intent i= new Intent(getBaseContext(),AboutActivity.class);
+        //Start the addTaskActivity class
+        startActivity(i);
+        Log.d("ThrowAbout","Exit throwAboutActivity method in the MainActivity class.");
+    }//End of throwAddTaskActivity
 
     //Method to receive and handle data coming from other activities such as: SelectLogoActivity,
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
