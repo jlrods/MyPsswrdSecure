@@ -2,25 +2,19 @@ package io.github.jlrods.mypsswrdsecure;
 
 import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.util.Log;
 import android.util.SparseBooleanArray;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.crypto.spec.IvParameterSpec;
-
-import static androidx.core.app.ActivityCompat.startActivityForResult;
 
 
 public class UserNameAdapter extends RecyclerView.Adapter<UserNameAdapter.ViewHolder> {
@@ -32,13 +26,15 @@ public class UserNameAdapter extends RecyclerView.Adapter<UserNameAdapter.ViewHo
     protected Cryptographer cryptographer;
     //protected AdapterView.OnItemClickListener onItemClickListener;
     protected static SparseBooleanArray itemStateArray= new SparseBooleanArray();
-
+    protected ThemeUpdater themeUpdater;
     // Pass in the contact array into the constructor
     public UserNameAdapter(Context context, Cursor cursor) {
         Log.d("UserNameAdapt","Enter Full Constructor in UserNameAdapter class.");
         this.context = context;
         this.cursor = cursor;
         this.cryptographer = MainActivity.getCryptographer();
+        //Set up theme updater object to retrieve theme colors and date format
+        this.themeUpdater = new ThemeUpdater(context);
         //Extract all the user/password from the app resources
         try{
             Log.d("UserNameAdapt","Exit successfully Full Constructor in UserNameAdapter class.  ");
@@ -75,7 +71,7 @@ public class UserNameAdapter extends RecyclerView.Adapter<UserNameAdapter.ViewHo
         holder.imgIcon.setImageResource(R.mipmap.ic_account_black_48dp);
         holder.tvStringValue.setText(cryptographer.decryptText(userName.getValue(),new IvParameterSpec(userName.getIv())));
         Date date = new Date(userName.getDateCreated());
-        SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy");
+        SimpleDateFormat format = new SimpleDateFormat(this.themeUpdater.getDateFormat());
         holder.tvDateCreated.setText(format.format(date));
         int timesUsed = accountsDB.getTimesUsedUserName(userName.get_id());
         holder.tvTimesUsed.setText(String.valueOf(timesUsed));

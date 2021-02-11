@@ -23,6 +23,8 @@ public class EditQuestionActivity extends AddQuestionActivity {
         super.onCreate(savedInstanceState);
         Log.d("OnCreateEditUser","Enter onCreate method in the EditQuestionActivity class.");
         this.extras = getIntent().getExtras();
+        //Set activity title
+        getSupportActionBar().setTitle(R.string.editQuestTitle);
         //Extract user name by passing in the _id attribute stored in the extras
         this.question = Question.extractQuestion(this.accountsDB.getQuestionCursorByID(this.extras.getInt("_id")));
         this.answer = question.getAnswer();

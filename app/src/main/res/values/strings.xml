@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">MyPsswrdSecure</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -8,7 +8,6 @@
     <string name="action_settings">Settings</string>
     <string name="menu_home">Home</string>
     <string name="menu_favorites">Favorites</string>
-    <string name="menu_slideshow">Show</string>
     <string name="home_second">Home Second</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
@@ -28,6 +27,7 @@
     <string name="whatStreetDidYouGrowUpOn">What street did you grow up on?</string>
     <string name="whatIsTheNameOfYourFirstSchool">What is the name of your first school?</string>
     <string name="whatsYourFathersMiddleName">What is your father\'s middle name?</string>
+
     <!--    Category names-->
     <string name="SocialMedia">Social Media</string>
     <string name="Entertainment">Entertainment</string>
@@ -88,6 +88,7 @@
     <string name="delete">Delete</string>
 
     <!--    Select Logo Activity-->
+    <string name="addLogoTitle">Select Logo</string>
     <string name="logo_list_header">Pick a logo for your account:</string>
 
     <!--    User/Password Recyclerviewer elements layout -->
@@ -96,6 +97,7 @@
 
 
     <!--    Add Account Activity-->
+    <string name="addAccTitle">Add Account</string>
     <string name="addEditAccName">Enter the account name...</string>
     <string name="selectCatHint">Select a Category...</string>
     <string name="selectUserHint">Select a User name...</string>
@@ -109,6 +111,7 @@
     <string name="accountAdded"> account has been added to your list!</string>
 
     <!--    Edit Account Activity-->
+    <string name="editAccTitle">Edit Account</string>
     <string name="accountNotChanged">Sorry, the account attributes have not been changed. Please, updated one of the values at least</string>
     <string name="accountUpdated"> account has been updated!</string>
     <string name="accountUpdateError">Sorry, the DB failed to record the changes in the account!</string>
@@ -117,10 +120,12 @@
     <string name="accountDeleted"> account has been deleted!</string>
 
     <!--    AddUserName Activity-->
+    <string name="addUserTitle">Add User Name</string>
     <string name="userNameAdded">New user name added successfully!</string>
     <string name="userNameNotEntered">Sorry, no user name entered in the input field</string>
 
     <!--    EditUserName Activity   -->
+    <string name="editUserTitle">Edit User name</string>
     <string name="userNameNotChanged">Sorry, the user name value has not been changed</string>
     <string name="userNameUpdated">The user name has been updated</string>
     <string name="userNameDeleted"> user name has been deleted</string>
@@ -129,10 +134,12 @@
 
 
     <!--    AddPsswrd Activity-->
+    <string name="addPsswrdTitle">Add Password</string>
     <string name="psswrdAdded">New password added successfully!</string>
     <string name="psswrdNotEntered">Sorry, no password entered in the input field</string>
 
     <!--    EditPsswrd Activity   -->
+    <string name="editPsswrdTitle">Edit Password</string>
     <string name="psswrdNotChanged">Sorry, the password value has not been changed</string>
     <string name="psswrdUpdated">The password has been updated</string>
     <string name="psswrdDeleted">password has been deleted</string>
@@ -141,6 +148,7 @@
 
 
     <!--    AddQuestion Activity    -->
+    <string name="addQuestTitle">Add Question</string>
     <string name="addQuestQuestionTag">Security question</string>
     <string name="addQuestQuestionHint">Type the new question here...</string>
     <string name="addQuestAnswerHint">Type the new answer here...</string>
@@ -149,6 +157,7 @@
     <string name="answerNotEntered">Sorry, no answer entered in the input field</string>
 
     <!--    EditQuestion Activity-->
+    <string name="editQuestTitle">Edit Question</string>
     <string name="answerNoTChanged">Sorry, the answer value has not been changed</string>
     <string name="questionAnswerNoTChanged">Sorry, at least one value must be changed (question or answer)</string>
     <string name="questionUpdated">The question has been updated</string>
@@ -157,12 +166,14 @@
     <string name="questionDeleteMssg">Are you sure you want to delete this question?</string>
 
     <!--    AddCategory Activity-->
+    <string name="addCatTitle">Add Category</string>
     <string name="catAdded">category added successfully!</string>
     <string name="catNotEntered">Sorry, no category entered in the input field</string>
     <string name="catExists">Sorry, the category already exists</string>
     <string name="catNotAdded">Sorry, the category was not saved</string>
 
     <!--    EditCategory Activity   -->
+    <string name="editCatTitle">Edit Category</string>
     <string name="editCategoryTitle">Select category to edit:</string>
     <string name="catNotChanged">Sorry, the category has not been changed</string>
     <string name="categoryAndIconNoTChanged">Sorry, at least one value must be changed (category name or icon)</string>
@@ -249,6 +260,37 @@
     <string name="sort_category">Category</string>
     <string name="sort_title">Select Sort filter:</string>
 
+    <!--    Preferences menu-->
+    <string name="appPreferences">App Preferences</string>
+    <string name="appThemeSelection">App colour theme</string>
+    <string name="appThemeDescription">Select the colour combination for your app</string>
+    <string name="english">English</string>
+    <string name="spanish">Spanish</string>
+    <string name="changeLang">Language</string>
+    <string name="changeLangDescription">Change the app language</string>
+    <string name="dateFormatSelection">Date format to be displayed</string>
+    <string name="dateFormatDescription">Select the date format for your app.</string>
 
+    <!--    Select background Activity-->
+    <string name="selectBckgrd">Select background</string>
+    <string name="selectBckgrdHeading">Pick a background for your Navigation Drawer</string>
+
+    <!--    About activity-->
+    <string name="jlrodsWeb" tools:ignore="MissingTranslation"><a href="https://jlrods.github.io/">https://www.jlrods.com</a></string>
+    <string name="downloads"><a href="https://jlrods.github.io/Downloads.html">Click here!</a></string>
+    <string name="authorEmail" tools:ignore="MissingTranslation"><a href="https://jlrods.github.io/Downloads.html">jlrods@gmail.com</a></string>
+    <string name="targetApi">Target API:</string>
+    <string name="targetApiValue" tools:ignore="MissingTranslation">29 - Android 10</string>
+    <string name="minRequiredApi">Min. required API:</string>
+    <string name="minReqApiValue" tools:ignore="MissingTranslation">19 - KitKat</string>
+    <string name="appVersion" >Version:</string>
+    <string name="appVersionValue" tools:ignore="MissingTranslation">V1.0.0.0</string>
+    <string name="aboutAuthorTag">About the author</string>
+    <string name="appPropertyOf">Property of:</string>
+    <string name="author" tools:ignore="MissingTranslation">@jlrods ™</string>
+    <string name="email" tools:ignore="MissingTranslation">E-mail:</string>
+    <string name="visitWebsiteTag">Visit our website:</string>
+    <string name="moreAppsTag">For more apps:</string>
+    <string name="softwareInfoTitle">Software information</string>
 
 </resources>

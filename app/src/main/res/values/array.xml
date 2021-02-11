@@ -12,4 +12,48 @@
         <item>2</item>
         <item>3</item>
     </string-array>
+
+    <string-array name="appTheme">
+        <item>Android</item>
+        <item>Ironman</item>
+        <item>Captain America</item>
+        <item>The Hulk</item>
+        <item>Captain Marvel</item>
+        <item>Lego Batman</item>
+    </string-array>
+    <string-array name="appThemeValues">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+
+    <string-array name="dateFormats">
+        <item>MMM dd yyyy</item>
+        <item>dd/MM/yyyy</item>
+        <item>yyyy/MM/dd</item>
+        <item>dd-MM-yy</item>
+        <item>dd-MMM-yy</item>
+        <item>dd-MMM-yyyy</item>
+    </string-array>
+    <string-array name="dateFormatsValues">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+
+    <string-array name="languages">
+        <item>@string/english</item>
+        <item>@string/spanish</item>
+    </string-array>
+    <string-array name="languagesValues">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
 </resources>

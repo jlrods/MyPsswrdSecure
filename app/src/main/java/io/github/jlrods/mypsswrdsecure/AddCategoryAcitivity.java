@@ -3,6 +3,7 @@ package io.github.jlrods.mypsswrdsecure;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,6 +23,7 @@ public class AddCategoryAcitivity extends AddItemActivity{
     protected TableLayout categoryIconTable = null;
     protected Category category = null;
     protected Icon categoryIcon = null;
+    protected ThemeUpdater themeUpdater;
     //Method definiton
 
     //Method definition
@@ -29,6 +31,9 @@ public class AddCategoryAcitivity extends AddItemActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("OnCreateAddQuest","Enter onCreate method in the AddUserNameActivity class.");
+        //Set activity title
+        getSupportActionBar().setTitle(R.string.addCatTitle);
+        this.themeUpdater = new ThemeUpdater(this);
         //Update layout fields according to Add Security question layout
         this.categoryIcon = new Icon();
         this.imgAddActivityIcon.setImageResource(R.drawable.format_list_bulleted);
@@ -38,7 +43,8 @@ public class AddCategoryAcitivity extends AddItemActivity{
         ScrollView catIconList = findViewById(R.id.categoryIconScrallView);
         this.categoryIconTable = findViewById(R.id.categoryIconTable);
         this.imgSelectedIcon = findViewById(R.id.format_list_bulleted);
-        this.imgSelectedIcon.setColorFilter(ContextCompat.getColor(this, R.color.colorPrimaryDark), android.graphics.PorterDuff.Mode.SRC_IN);
+        this.imgSelectedIcon.setColorFilter(this.themeUpdater.fetchThemeColor("colorAccent"), android.graphics.PorterDuff.Mode.SRC_IN);
+        //this.imgSelectedIcon.setColorFilter(ContextCompat.getColor(this, R.color.colorPrimaryDark), android.graphics.PorterDuff.Mode.SRC_IN);
         for(int i=0;i< categoryIconTable.getChildCount();i++){
             TableRow row = (TableRow) categoryIconTable.getChildAt(i);
             for(int j=0;j< row.getChildCount();j++){
@@ -120,7 +126,9 @@ public class AddCategoryAcitivity extends AddItemActivity{
         if(imgSelectedIcon.getId() != v.getId()){
             this.categoryIcon.setName(getResources().getResourceEntryName(v.getId()));
             this.categoryIcon.setResourceID(v.getId());
-            ((ImageView) v).setColorFilter(ContextCompat.getColor(this, R.color.colorPrimaryDark), android.graphics.PorterDuff.Mode.SRC_IN);
+            //@Fixme: setColorFilter method does not required min API21, this might fix the setTintFilter issue in other activities
+            ((ImageView) v).setColorFilter(this.themeUpdater.fetchThemeColor("colorAccent"), android.graphics.PorterDuff.Mode.SRC_IN);
+            //((ImageView) v).setColorFilter(ContextCompat.getColor(this, R.color.colorPrimaryDark), android.graphics.PorterDuff.Mode.SRC_IN);
             imgSelectedIcon.setColorFilter(ContextCompat.getColor(this, R.color.colorBlack), android.graphics.PorterDuff.Mode.SRC_IN);
             imgSelectedIcon = (ImageView) v;
         }//End of if statement to check the selected image isn't the same
@@ -128,7 +136,7 @@ public class AddCategoryAcitivity extends AddItemActivity{
     }//End of toggleCatIconSelection method
 
     protected boolean isIconAssigned(){
-        Log.d("toggleCatIconSelection","Enter toggleCatIconSelection method in AddCategoryActivity class.");
+        Log.d("isIconAssigned","Enter isIconAssigned method in AddCategoryActivity class.");
         boolean isIconAssigned = false;
         int iconID = -1;
         Icon iconInUse;
@@ -143,9 +151,7 @@ public class AddCategoryAcitivity extends AddItemActivity{
                 isIconAssigned = true;
             }//End of if else statement to check the icon insertion was successful
         }//End of if else statement tha checks whether the icons is being used or not
-        Log.d("toggleCatIconSelection","Enter toggleCatIconSelection method in AddCategoryActivity class.");
+        Log.d("isIconAssigned","Enter isIconAssigned method in AddCategoryActivity class.");
         return isIconAssigned;
-    }
-
-
+    }//End of isIconAssigned method
 }//End of AddCategoryAcitivity class

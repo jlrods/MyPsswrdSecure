@@ -4,9 +4,12 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -21,7 +24,17 @@ public class SelectNavDrawerBckGrnd extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("SelBckgrndOnCreate", "Enter onCreate method in SelectNavDrawerBckGrnd class.");
+        //Get default current app theme from preferences
+        int appThemeSelected = MainActivity.setAppTheme(this);
+        //Set the theme by passing theme id number coming from preferences
+        setTheme(appThemeSelected);
+        //Set language as per preferences
+        MainActivity.setAppLanguage(this);
+        //Set activity title
+        getSupportActionBar().setTitle(R.string.selectBckgrd);
         setContentView(R.layout.activity_select_logo);
+        TextView tvHeading = findViewById(R.id.tvLogoHeading);
+        tvHeading.setText(R.string.selectBckgrdHeading);
         final RecyclerView rvLogos = (RecyclerView) findViewById(R.id.layout_rec_view_logo);
         final IconAdapter iconAdapter = new IconAdapter(this, MainActivity.getNavDrawerBckgrnds());
         iconAdapter.setOnItemClickListener(new View.OnClickListener() {

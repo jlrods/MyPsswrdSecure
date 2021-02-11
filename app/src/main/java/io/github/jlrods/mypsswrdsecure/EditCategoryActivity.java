@@ -26,6 +26,8 @@ public class EditCategoryActivity extends AddCategoryAcitivity {
         Log.d("OnCreateEditCat", "Enter onCreate method in the EditCategoryActivity class.");
         //Get data from caller activity
         this.extras = getIntent().getExtras();
+        //Set activity title
+        getSupportActionBar().setTitle(R.string.editCatTitle);
         //Extract category by passing in the category _id sent by caller activity
         this.category = this.accountsDB.getCategoryByID(extras.getInt(MainActivity.getIdColumn()));
         //Set up UI with category data
@@ -59,7 +61,8 @@ public class EditCategoryActivity extends AddCategoryAcitivity {
         this.imgSelectedIcon = this.findIconImageByName(this.category.getIcon().getName());
         //Set up the selection color to the new selected icon
         if(this.imgSelectedIcon != null){
-            this.imgSelectedIcon.setColorFilter(ContextCompat.getColor(this, R.color.colorPrimaryDark), android.graphics.PorterDuff.Mode.SRC_IN);
+            this.imgSelectedIcon.setColorFilter(this.themeUpdater.fetchThemeColor("colorAccent"), android.graphics.PorterDuff.Mode.SRC_IN);
+            //this.imgSelectedIcon.setColorFilter(ContextCompat.getColor(this, R.color.colorPrimaryDark), android.graphics.PorterDuff.Mode.SRC_IN);
             this.categoryIcon = new Icon(getResources().getResourceEntryName(this.imgSelectedIcon.getId()),MainActivity.getRESOURCES(),true, this.imgSelectedIcon.getId());
         }//End of if statement to check the image selected image view isn't null
         Log.d("OnCreateEditCat", "Enter onCreate method in the EditCategoryActivity class.");

@@ -6,4 +6,34 @@
     <color name="colorBlack">#000000</color>
     <color name="whiteBackground">#FAFAFA</color>
     <color name="itemSelected">#ECF0F1</color>
+
+    <!--    Iron Man -->
+    <color name="colorPrimaryIronMan">#E30022</color>
+    <color name="colorPrimaryDarkIronMan">#CC0000</color>
+    <color name="colorAccentIronMan">#D3AF37</color>
+    <color name="colorAccentIronMan2">#FCC200</color>
+
+    <!--    Captain America -->
+    <color name="colorPrimaryCapAmerica">#0000FF</color>
+    <color name="colorPrimaryDarkCapAmerica">#002D5C</color>
+    <color name="colorAccentCapAmerica">#870000</color>
+    <color name="colorAccentCapAmerica2">#A5A5AB</color>
+
+    <!--    Hulk    -->
+    <color name="colorPrimaryHulk">#A2CD48</color>
+    <color name="colorPrimaryDarkHulk">#437124</color>
+    <color name="colorAccentHulk">#875094</color>
+
+    <!--    Captain Marvel    -->
+    <color name="colorPrimaryCapMarvel">#CC4224</color>
+    <color name="colorPrimaryDarkCapMarvel">#2A75B3</color>
+    <color name="colorAccentCapMarvel">#F3D403</color>
+
+    <!--    Batman -->
+    <color name="colorPrimaryBatman">#080808</color>
+    <color name="colorPrimaryDarkBatman">#515155</color>
+    <color name="colorAccentBatman">#FFDF01</color>
+
+
+
 </resources>

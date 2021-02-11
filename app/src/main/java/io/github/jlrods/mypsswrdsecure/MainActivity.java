@@ -5,12 +5,18 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -41,6 +47,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Locale;
+
 import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
 
 public class  MainActivity extends AppCompatActivity {
@@ -75,7 +83,7 @@ public class  MainActivity extends AppCompatActivity {
     private static Category favCategory = null;
     private static ArrayList<QuestionList> listOfQuestionLists = null;
 
-    private static String dateFormat = "dd/MMM/yyyy";
+    private static String dateFormat;
 
 
 
@@ -156,13 +164,24 @@ public class  MainActivity extends AppCompatActivity {
     private static final String PASSWORD = "password";
     private static final String QUESTION = "question";
     private static final String QUESTION_LIST ="question list";
-
+    //Object used to retrieve theme colors
+    private static ThemeUpdater themeUpdater;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //Get default current app theme from preferences
+        int appThemeSelected = setAppTheme(this);
+        //Set the theme by passing theme id number coming from preferences
+        setTheme(appThemeSelected);
+        themeUpdater = new ThemeUpdater(this);
         //Call super on create
         super.onCreate(savedInstanceState);
+        Log.d("Ent_onCreateMain","Enter onCreate method in MainActivity class.");
+        //Call method to setup language based on app preferences
+        setAppLanguage(this);
+        //Call method to setup date format based on app preferences
+        dateFormat = themeUpdater.getDateFormat();
         //Set the main activity layout
         setContentView(R.layout.activity_main);
         //Get the coordinator layout off layout
@@ -171,6 +190,9 @@ public class  MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         final FloatingActionButton fab = findViewById(R.id.fab);
+        //Change fab + icon color based on app theme
+        //@Fixme: Fix setTintList issue here
+        fab.setImageTintList(ColorStateList.valueOf(themeUpdater.fetchThemeColor("colorPrimary")));
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -198,6 +220,9 @@ public class  MainActivity extends AppCompatActivity {
         });//End of set on click listener method
         //Get the tablayout from layout
         tabLayout=(TabLayout)findViewById(R.id.tabs);
+        //Declare and initialize a context object to hold the MainActivity context whithin ghte onTabSelectedListener method
+        //Used to update password strength colors based on app theme
+        final Context mainActivityContext = this;
         //Set up the onclick behaviour for each tab in the tablayout object
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -242,7 +267,7 @@ public class  MainActivity extends AppCompatActivity {
                         MainActivity.updateRecyclerViewData(userNameAdapter);
                         break;
                     case 2:
-                        PsswrdAdapter psswrdAdapter = new PsswrdAdapter(getBaseContext(),null);
+                        PsswrdAdapter psswrdAdapter = new PsswrdAdapter(mainActivityContext,null);
                         //Setup the onclick event listener
                         psswrdAdapter.setOnClickListener(new View.OnClickListener(){
                             @Override
@@ -371,14 +396,27 @@ public class  MainActivity extends AppCompatActivity {
         this.setUpLowerCategoryMenu(navigationView.getMenu());
         this.updateNavMenu(navigationView.getMenu(),INDEX_TO_GET_LAST_TASK_LIST_ITEM);
         //Once the nave menu has been fully set up, select the item that represents the current category and deselect the Home item, which is selected by default
+
         if(this.currentCategory.get_id() != -1){
             navigationView.getMenu().getItem(0).setCheckable(false);
             navigationView.getMenu().getItem(0).setChecked(false);
             navigationView.getMenu().getItem(getCategoryPositionByID(currentCategory.get_id())).setCheckable(true);
             navigationView.getMenu().getItem(getCategoryPositionByID(currentCategory.get_id())).setChecked(true);
-        }//End of if statement to check the category to be selected
-        //Set toolbar title based on current category
-        toolbar.setTitle(this.currentCategory.getName());
+            //Check if if current category is favorites
+            if(this.currentCategory.get_id() == -2){
+                //For favorite set toolbar name directly
+                toolbar.setTitle(R.string.menu_favorites);
+            }else{
+                //Otherwise, set the toolbar title by getting translation when available
+                toolbar.setTitle(getCategoryNameFromRes(currentCategory.getName()));
+            }//End of if statement to check the category to be selected
+        }else{
+            //Set toolbar title based on home category
+            toolbar.setTitle(R.string.menu_home);
+        }
+
+
+
         //@Fixme: define method in accountsDB class
         Cursor appLoginCursor = accountsDB.getAppLoginCursor(accountsDB.getMaxItemIdInTable(APPLOGGIN_TABLE));
 
@@ -427,7 +465,25 @@ public class  MainActivity extends AppCompatActivity {
             appLoggin.setPicture(accountsDB.getIconByID(62));
             accountsDB.addItem(appLoggin);
         }//End of if statement to check user cursor is not empty
+        Log.d("Ext_onCreateMain","Exit onCreate method in MainActivity class.");
     }//End of onCreate method
+
+    private String getCategoryNameFromRes(String name) {
+        Log.d("getCategoryNameFromRes","Enter getCategoryNameFromRes method in MainActivity class.");
+        //Declare and instantiate an int to hold the string id from resources and a String variable to hold the actual category name
+        int textID = getResources().getIdentifier(name,"string",getPackageName());
+        String categoryName = "";
+        //If textID is 0, means it's not stored in the app resources, which means it won't be translated but it will be displayed as saved on DB
+        if(textID > 0){
+            //If res id number exists, set the category name as per the string text, not the string ID
+            categoryName = getResources().getString(textID);
+        }else{
+            //In the case of not being a resource, print the text retrieved from DB
+            categoryName = name;
+        }//End of if else statement
+        Log.d("getCategoryNameFromRes","Exit getCategoryNameFromRes method in MainActivity class.");
+        return categoryName;
+    }//End of getCategoryNameFromRes method
 
 
     private void testCriptogrpher(){
@@ -470,17 +526,17 @@ public class  MainActivity extends AppCompatActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_about:
+                //Call method to throw AboutActivity activity
+                throwAboutActivity();
                 return true;
             case R.id.action_settings:
+                this.callPrefernces(null);
                 return true;
             case R.id.action_sort:
-                this.sort();
-                item.getIcon().setTint(getColor(R.color.colorAccent));
+                this.sort(item);
                 return true;
             case R.id.action_search:
-                this.search();
-                //@Fixme: Check what is best: setTint or setColourFilter
-                item.getIcon().setTint(getColor(R.color.colorAccent));// .setColorFilter(new PorterDuffColorFilter(getColor(R.color.colorAccent),PorterDuff.Mode.SRC_IN));
+                this.search(item);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -640,7 +696,7 @@ public class  MainActivity extends AppCompatActivity {
     private void throwAddAccountActivity(){
         Log.d("ThrowAddAcc","Enter throwAddAccountActivity method in the MainActivity class.");
         //Declare and instantiate a new intent object
-        Intent i= new Intent(MainActivity.this,AddAccountActivity.class);
+        Intent i= new Intent(getBaseContext(),AddAccountActivity.class);
         //Add extras to the intent object, specifically the current category where the add button was pressed from
         i.putExtra("category",this.currentCategory.get_id());
         //i.putExtra("sql",this.getSQLForRecyclerView());
@@ -798,6 +854,16 @@ public class  MainActivity extends AppCompatActivity {
         startActivityForResult(i,this.throwSelectNavDrawerBckGrndActReqCode);
         Log.d("throwSelectBckActivity","Exit the throwSelectNavDrawerBackgroundActivity method in the DisplayAccountActivity class.");
     }//End of throwSelectLogoActivity method
+
+    //Method to throw new AddTaskActivity
+    private void throwAboutActivity(){
+        Log.d("ThrowAbout","Enter throwAboutActivity method in the MainActivity class.");
+        //Declare and instantiate a new intent object
+        Intent i= new Intent(getBaseContext(),AboutActivity.class);
+        //Start the addTaskActivity class
+        startActivity(i);
+        Log.d("ThrowAbout","Exit throwAboutActivity method in the MainActivity class.");
+    }//End of throwAddTaskActivity
 
     //Method to receive and handle data coming from other activities such as: SelectLogoActivity,
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -1576,16 +1642,17 @@ public class  MainActivity extends AppCompatActivity {
                 //Fixme: error out of index due the index to get last taks list item
                 for(int i=INDEX_TO_GET_LAST_TASK_LIST_ITEM;i<categoryList.size();i++){
                     //For each item in the list, extract name and save it in the string array
-                    int textID = getResources().getIdentifier(categoryList.get(i).getName(),"string",getPackageName());
+//                    int textID = getResources().getIdentifier(categoryList.get(i).getName(),"string",getPackageName());
                     CharSequence categoryName = "";
-                    //Get the name from the cursor
-                    if(textID > 0){
-                        //If res id number exists, set the category name as per the string text, not the string ID
-                        categoryName = getResources().getString(textID);
-                    }else{
-                        //In the case of not being a resource, print the text retrieved from DB
-                        categoryName = MainActivity.getCategoryList().get(i).getName();
-                    }//End of if else statement
+//                    //Get the name from the cursor
+//                    if(textID > 0){
+//                        //If res id number exists, set the category name as per the string text, not the string ID
+//                        categoryName = getResources().getString(textID);
+//                    }else{
+//                        //In the case of not being a resource, print the text retrieved from DB
+//                        categoryName = MainActivity.getCategoryList().get(i).getName();
+//                    }//End of if else statement
+                    categoryName = getCategoryNameFromRes(categoryList.get(i).getName());
                     //String categoryName = categoryList.get(i).getName();
                     //Save the name into the array to be passed into the AlertDialog constructor
                     categories[i-INDEX_TO_GET_LAST_TASK_LIST_ITEM]=  categoryName;
@@ -1854,7 +1921,7 @@ public class  MainActivity extends AppCompatActivity {
     }//End of setUserProfileName method
 
     //Method to filter task or groceries by description content
-    private void sort(){
+    private void sort(final MenuItem item){
         Log.d("Ent_sort","Enter the sort method in the MainActivity class.");
         final int[] selectedSortCriteriID = {0};
         final int[] positionInList ={0};
@@ -1965,6 +2032,8 @@ public class  MainActivity extends AppCompatActivity {
                         //Call method to update RV data
                         //Call method to update the adapter and the recyclerView
                         updateRecyclerViewData(HomeFragment.getRv().getAdapter());
+                        //@Fixme: Check what is best: setTint or setColourFilter
+                        item.getIcon().setTintList(ColorStateList.valueOf(themeUpdater.fetchThemeColor("colorAccent")));
                         //Update App State
                         updateSortFilterInAppState();
                     }
@@ -1974,7 +2043,7 @@ public class  MainActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 //Call clear search filter method
-                                clearSortFilter();
+                                //clearSortFilter();
                                 //Update the RV list
 //                                //@Fixme: There's an issue here. Test to remember
 //                                if(isSearchFilter){
@@ -1989,10 +2058,27 @@ public class  MainActivity extends AppCompatActivity {
         Log.d("Ent_sort","Exit the sort method in the MainActivity class.");
     }//End of the sort method
 
+    //Inner Enum to define the possible searches available for the search filter
+    public enum SearchType{
+        //Define the possible priorities in this app
+        ACCOUNT_WITH_USERNAME("Account with user name"),
+        ACCOUNT_WITH_PSSWRD("Account with password"),
+        ACCOUNTS("Accounts"),
+        USER_NAME("User name"),
+        PSSWRD("Password");
+
+        String name;
+        //Full constructor
+        SearchType(String name){
+            Log.d("EntFullCategory","Enter full constructor in the Category class.");
+            this.name = name;
+            Log.d("ExtFullCategory","Exit full constructor in the Category class.");
+        }//End of Full Category constructor
+    }//End of SearchType enum
 
 
     //Method to filter task or groceries by description content
-    private void search(){
+    private void search(final MenuItem item){
         Log.d("Ent_serach","Enter the search method in the MainActivity class.");
         //Declare and instantiate a new View objects to be used on the AlertDialog box: Two switch views and one editText view.
         //All of them under a LinearLayout parent
@@ -2084,8 +2170,6 @@ public class  MainActivity extends AppCompatActivity {
                 .setView(linearLayout)
                 .setPositiveButton(R.string.dialog_OK,new DialogInterface.OnClickListener(){
                     public void onClick(DialogInterface dialog,int whichButton){
-                        //Declare and instantiate as null a string object to hold the sql query to run. Depending on the current category, different query will be run
-
                         //Check if switch views were included
                         int etViewPosition;
                         if(linearLayout.getChildCount() > 1){
@@ -2136,7 +2220,8 @@ public class  MainActivity extends AppCompatActivity {
                                 //Call method to update the adapter and the recyclerView
                                 updateRecyclerViewData(HomeFragment.getRv().getAdapter());
                             }//End of if else statement to check the children count in the linear layout, this defines what tab is being used
-
+                            //@Fixme: Check what is best: setTint or setColourFilter
+                            item.getIcon().setTintList(ColorStateList.valueOf(themeUpdater.fetchThemeColor("colorAccent")));
                             //Update app state in DB
                             ContentValues values = new ContentValues();
                             values.put(ID_COLUMN,accountsDB.getMaxItemIdInTable(APPSTATE_TABLE));
@@ -2156,7 +2241,7 @@ public class  MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         //Call clear search filter method
-                        clearSearchFilter();
+                        //clearSearchFilter();
                         //Update the RV list
                         //@Fixme: There's an issue here. Test to remember
                         if(isSearchFilter){
@@ -2212,8 +2297,9 @@ public class  MainActivity extends AppCompatActivity {
         this.lastSearchText = "";
         Toolbar toolbar = findViewById(R.id.toolbar);
         if(toolbar.getMenu().size() > 0){
-            //@Fixme: use different methond that setTintList?
-            toolbar.getMenu().getItem(0).getIcon().setTintList(null);//.setColorFilter(null);
+            //@Fixme: use different method that setTintList?
+//            toolbar.getMenu().getItem(0).getIcon().setColorFilter(null);//.setColorFilter(null);
+            toolbar.getMenu().getItem(0).getIcon().setTintList(null);
         }
         //Update app state to remove all search related fields
         ContentValues values = new ContentValues();
@@ -2236,7 +2322,7 @@ public class  MainActivity extends AppCompatActivity {
         this.currentSortFilter = null;
         Toolbar toolbar = findViewById(R.id.toolbar);
         if(toolbar.getMenu().size() > 0){
-            //@Fixme: use different method that setTintList?
+            //@Fixme: use different method that setTintList?=
             toolbar.getMenu().getItem(1).getIcon().setTintList(null);//.setColorFilter(null);
         }
         //Update sort filter in app state
@@ -2245,23 +2331,6 @@ public class  MainActivity extends AppCompatActivity {
         isSortFilterCleared = true;
         return isSortFilterCleared;
     }//End of clearSearchFilter method
-
-    public enum SearchType{
-        //Define the possible priorities in this app
-        ACCOUNT_WITH_USERNAME("Account with user name"),
-        ACCOUNT_WITH_PSSWRD("Account with password"),
-        ACCOUNTS("Accounts"),
-        USER_NAME("User name"),
-        PSSWRD("Password");
-
-        String name;
-        //Full constructor
-        SearchType(String name){
-            Log.d("EntFullCategory","Enter full constructor in the Category class.");
-            this.name = name;
-            Log.d("ExtFullCategory","Exit full constructor in the Category class.");
-        }//End of Full Category constructor
-    }//End of SearchType enum
 
     //Method to update the current category in the app state
     private boolean updateCategoryInAppState(){
@@ -2289,5 +2358,96 @@ public class  MainActivity extends AppCompatActivity {
         Log.d("updateSortInAppState","Exit updateSortFilterInAppState method in the MainActivity class.");
         return  accountsDB.updateTable(APPSTATE_TABLE,values);
     }//End of updateSortFilterInAppState method
+
+    //Method to call the Preferences screen
+    private void callPrefernces(View view){
+        Log.d("Ent_callPrefernce","Enter the callPreferences method in MainActivity.");
+        //Declare and instantiate a new Intent object, passing the PreferencesActivity class as argument
+        Intent i = new Intent(this, PreferencesActivity.class);
+        //Start the activity by passin in the intent
+        startActivity(i);
+        Log.d("Ext_callPrefernce","Exit the callPreferences method in MainActivity.");
+    }// End of callPreferences method
+
+    public static int setAppTheme(Context context) {
+        Log.d("Ent_setAppTheme", "Enter setAppTheme method in MainActivity class.");
+        //Get prefered app theme from preferences xml file
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        String preferedThemeID = pref.getString("appTheme", "0");
+        //Declare int variable to return the theme id
+        int themeId;
+        //Check if method got called by MainActivity or any other activity
+        if (context instanceof MainActivity) {
+            //If called by MainActivty, set up theme with NoActionBar
+            switch (preferedThemeID) {
+                case "1":
+                    themeId = R.style.AppThemeIronMan;
+                    break;
+                case "2":
+                    themeId = R.style.AppThemeCapAmerica;
+                    break;
+                case "3":
+                    themeId = R.style.AppThemeHulk;
+                    break;
+                case "4":
+                    themeId = R.style.AppThemeCapMarvel;
+                    break;
+                case "5":
+                    themeId = R.style.AppThemeBatman;
+                    break;
+                default:
+                    themeId = R.style.AppTheme;
+                    break;
+            }//End of switch statement to check
+
+        } else {
+            //Otherwise, if any other activity called the method, set up theme with action bar
+            switch (preferedThemeID) {
+                case "1":
+                    themeId = R.style.AppThemeIronManOthers;
+                    break;
+                case "2":
+                    themeId = R.style.AppThemeCapAmericaOthers;
+                    break;
+                case "3":
+                    themeId = R.style.AppThemeHulkOthers;
+                    break;
+                case "4":
+                    themeId = R.style.AppThemeCapMarvelOthers;
+                    break;
+                case "5":
+                    themeId = R.style.AppThemeBatmanOthers;
+                    break;
+                default:
+                    themeId = R.style.AppThemeOthers;
+                    break;
+            }//End of switch statement
+        }//End of if else statement to check what activity called the method
+        Log.d("Ext_setAppTheme", "Exit setAppTheme method in MainActivity class.");
+        return themeId;
+    }//End of setAppTheme method
+
+    public static void setAppLanguage(Context context){
+        Log.d("Ent_setAppLang","Enter setAppLanguage method in MainActivity class.");
+        SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(context);
+        String languageValue = pref.getString("languages","0");
+        String language;
+        if(languageValue.equals("0")){
+            language = "en";
+        }else{
+            language = "es";
+        }
+        // Change locale settings in the app.
+        Resources res = context.getResources();
+        DisplayMetrics dm = res.getDisplayMetrics();
+        Configuration conf = res.getConfiguration();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            conf.setLocale(new Locale(language.toLowerCase())); // API 17+ only.
+        }
+        // Use conf.locale = new Locale(...) if targeting lower versions
+        res.updateConfiguration(conf, dm);
+        Log.d("Ext_setAppLang","Exit setAppLanguage method in MainActivity class.");
+    }//End of setAppTheme method
+
 
 }//End of MainActivity class.

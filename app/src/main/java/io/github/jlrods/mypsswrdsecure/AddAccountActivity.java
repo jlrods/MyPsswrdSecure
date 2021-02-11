@@ -26,6 +26,8 @@ public class AddAccountActivity extends DisplayAccountActivity {
         if(currentCategoryID > 0){
             spCategory.setSelection(MainActivity.getCategoryPositionByID(currentCategoryID)-MainActivity.getIndexToGetLastTaskListItem());
         }
+        //Set activity title
+        getSupportActionBar().setTitle(R.string.addAccTitle);
         Log.d("OnCreateDispAcc", "eXIT onCreate method in the AddAccountActivity class.");
     }//End of onCreate method
 

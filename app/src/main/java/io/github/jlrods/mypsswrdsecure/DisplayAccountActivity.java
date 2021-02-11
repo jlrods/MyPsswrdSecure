@@ -1,6 +1,7 @@
 package io.github.jlrods.mypsswrdsecure;
 
 import android.Manifest;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
@@ -31,6 +32,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
 
@@ -122,8 +124,15 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("OnCreateDispAcc","Enter onCreate method in the DisplayAccountActivity abstract class.");
+        //Get default current app theme from preferences
+        int appThemeSelected = MainActivity.setAppTheme(this);
+        //Set the theme by passing theme id number coming from preferences
+        setTheme(appThemeSelected);
+        //Set correct language
+        MainActivity.setAppLanguage(this);
         //Set layout for this activity
         setContentView(R.layout.activity_add_account);
+        ActionBar toolbar = getActionBar();
         //Get DB handler cass from the home fragment
         this.accountsDB = HomeFragment.getAccountsDB();
         cryptographer = MainActivity.getCryptographer();

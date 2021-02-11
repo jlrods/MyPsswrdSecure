@@ -23,11 +23,14 @@ class IconAdapter extends RecyclerView.Adapter<IconAdapter.ViewHolder> {
     private View.OnClickListener listener;
     private static SparseBooleanArray itemStateArray= new SparseBooleanArray();
     private Context context;
+    private ThemeUpdater themeUpdater;
 
     // Pass in the contact array into the constructor
     public IconAdapter(Context context,String type) {
         Log.d("IconAdapt","Enter IconAdapter Full Constructor");
         this.context = context;
+        //Initialize themeUpdater object to setup selected icon color as per current theme
+        this.themeUpdater = new ThemeUpdater(this.context);
         iconList = new ArrayList<Icon>();// List to hold all Icon objects created from logos in app sources
         //Extract all the logos from the app resources
         Field[] images = io.github.jlrods.mypsswrdsecure.R.drawable.class.getFields();
@@ -79,7 +82,8 @@ class IconAdapter extends RecyclerView.Adapter<IconAdapter.ViewHolder> {
         //Check if the logo isSelected attribute is true
         if(logo.isSelected()){
             //If that is the case set background color to itemSelected colour from Color values file
-            imgLogo.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorPrimaryDark));
+            imgLogo.setBackgroundColor(this.themeUpdater.fetchThemeColor("colorAccent"));
+            //imgLogo.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorPrimaryDark));
             //this.selectedPosition = position;
         }else{
             //Otherwise, set background to white background
