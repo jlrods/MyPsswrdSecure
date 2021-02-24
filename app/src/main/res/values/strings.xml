@@ -9,14 +9,7 @@
     <string name="menu_home">Home</string>
     <string name="menu_favorites">Favorites</string>
     <string name="home_second">Home Second</string>
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="welcome">"Welcome !"</string>
-    <string name="invalid_username">Not a valid username</string>
-    <string name="invalid_password">Password must be >5 characters</string>
-    <string name="login_failed">"Login failed"</string>
+
     <string name="whatsTheNameOfYourFirstPet">What\'s the name of your first pet?</string>
     <string name="whatWasTheModelOfYourFirstCar">What was the model of your first car?</string>
     <string name="whatsYourGrannysName">What\'s your Granny\'s name?</string>
@@ -292,5 +285,22 @@
     <string name="visitWebsiteTag">Visit our website:</string>
     <string name="moreAppsTag">For more apps:</string>
     <string name="softwareInfoTitle">Software information</string>
+
+    <!--    Login Activity-->
+    <string name="prompt_enterUserID">Enter your user name</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="prompt_passwordConfirm">Confirm password</string>
+    <string name="prompt_enterUserName">Enter your name</string>
+    <string name="prompt_userMssg">Type your custom message</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="action_sign_up">Sign up</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="signUp"><a href="">Sign Up?</a></string>
+
 
 </resources>

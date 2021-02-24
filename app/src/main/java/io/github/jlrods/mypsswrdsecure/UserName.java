@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import javax.crypto.spec.IvParameterSpec;
 
 //Class to handle UsenName object definition
-class UserName extends StringValue {
+public class UserName extends StringValue {
     //Attribute definition
     protected long dateCreated;
 

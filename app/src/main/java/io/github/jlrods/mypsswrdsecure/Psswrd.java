@@ -10,8 +10,10 @@ import java.util.ArrayList;
 
 import javax.crypto.spec.IvParameterSpec;
 
+import io.github.jlrods.mypsswrdsecure.login.LoginActivity;
+
 // Class to handle Psswrd object definition
-class Psswrd extends UserName{
+public class Psswrd extends UserName{
     //Attribute definition
     PsswrdStrength strength;// Attribute that handles how strong a password is
     //Method definition
@@ -91,7 +93,7 @@ class Psswrd extends UserName{
         int strengthRating = 0;
         int minLength = 10;
         //Declare and initialize cryptographer object to decrypt password passed in as argument
-        Cryptographer cryptographer = MainActivity.getCryptographer();
+        Cryptographer cryptographer = LoginActivity.getCryptographer();
         String password = cryptographer.decryptText(value,new IvParameterSpec(iv));
         //Check password length
         if(password.length() >= minLength){

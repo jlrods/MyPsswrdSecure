@@ -1,8 +1,13 @@
 package io.github.jlrods.mypsswrdsecure;
 
+import android.database.Cursor;
 import android.util.Log;
 
-class AppLoggin extends Loggin {
+import java.util.ArrayList;
+
+import io.github.jlrods.mypsswrdsecure.login.LoginActivity;
+
+public class AppLoggin extends Loggin {
 
     //Attribute expansion definition
 
@@ -66,5 +71,41 @@ class AppLoggin extends Loggin {
 
     public void setPicture(Icon picture) {
         this.picture = picture;
+    }
+
+    //Other methods
+
+    public static AppLoggin extractAppLoggin(Cursor c) {
+        Log.d("Ent_ExtractLoggin", "Enter extractLoggin method in the AppLoggin  class.");
+        AccountsDB accountsDB = LoginActivity.getAccountsDB();
+        //Initialize local variables
+        AppLoggin appLoggin = null;
+        int _id;
+        String name="";
+        int userNameID;
+        int psswrdID;
+        String email = "";
+        String message = "";
+        int pictureID;
+        //Retrieve the values from the cursor and assign them appropriately
+        _id = c.getInt(0);
+        userNameID = c.getInt(1);
+        psswrdID = c.getInt(2);
+        name = c.getString(3);
+        email = c.getString(4);
+        message = c.getString(5);
+        pictureID = c.getInt(6);
+
+        //Call common method to extract basic StringValue object data from a cursor
+        //ArrayList<Object> attributes = Loggin.extractLoggin(c);
+        try{
+            appLoggin = new AppLoggin(_id,name,accountsDB.getUserNameByID(userNameID),accountsDB.getPsswrdByID(psswrdID),email,message,accountsDB.getIconByID(pictureID));
+        }
+        catch (Exception e){
+            appLoggin = null;
+            Log.d("Ext_ExtractLoggin", "Error while extracting appLogin on extractLoggin method in the AppLoggin class. Error: "+e.getMessage());
+        }
+        Log.d("Ext_ExtractLoggin", "Exit extractLoggin method in the AppLoggin  class.");
+        return appLoggin;
     }
 }// End of AppUser

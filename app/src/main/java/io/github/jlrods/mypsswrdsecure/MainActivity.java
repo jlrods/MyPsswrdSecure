@@ -10,7 +10,6 @@ import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
-import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -37,6 +36,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
+import androidx.navigation.ActivityNavigator;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -48,7 +48,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Locale;
-
+import io.github.jlrods.mypsswrdsecure.login.LoginActivity;
 import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
 
 public class  MainActivity extends AppCompatActivity {
@@ -156,6 +156,9 @@ public class  MainActivity extends AppCompatActivity {
     private static final String DESC = "DESC";
     private static final String DATE_CREATED_COLUMN = "DateCreated";
     private static final String VALUE_COLUMN = "Value";
+    private static final String MESSAGE_COLUMN = "Message";
+    private static final String PICTUREID_COLUMN = "PictureID";
+
 
     private static Uri uriCameraImage = null;
     private static final String EXTERNAL_IMAGE_STORAGE_CLUE = "content://";
@@ -166,6 +169,8 @@ public class  MainActivity extends AppCompatActivity {
     private static final String QUESTION_LIST ="question list";
     //Object used to retrieve theme colors
     private static ThemeUpdater themeUpdater;
+    private Bundle extras;
+    private AppLoggin currentAppLoggin;
 
 
     @Override
@@ -186,6 +191,9 @@ public class  MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         //Get the coordinator layout off layout
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
+        //Get extras comming from LogginActivity (AppLoggin ID)
+        //Extract extra data from owner Activity
+        this.extras = getIntent().getExtras();
         //Get the tool bar off layout
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -330,12 +338,13 @@ public class  MainActivity extends AppCompatActivity {
 
         //Create and set default logo for accounts
         myPsswrdSecureLogo = new Icon(R.mipmap.ic_my_psswrd_secure,"MyPsswrdSecureIcon",String.valueOf(R.mipmap.ic_my_psswrd_secure),false);
-        cryptographer = new Cryptographer();
+        //@Fixme: Gett cryptog and accountsDB from LoginActivity
+        cryptographer = LoginActivity.getCryptographer();
         //Dummy encryption to get IV created
-        byte[] testEncrypted = cryptographer.encryptText("DummyEncryption");
-        String test2 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
+        //byte[] testEncrypted = cryptographer.encryptText("DummyEncryption");
+        //String test2 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
         //Create a new object to manage all DB interaction
-        accountsDB = new AccountsDB(this);
+        accountsDB = LoginActivity.getAccountsDB();
         //Get the category list from DB
         this.homeCategory = new Category("Home",new Icon("Home",MainActivity.getRESOURCES(),R.drawable.home));
         this.favCategory = new Category(-2,"Favorites",new Icon("Favorites",MainActivity.getRESOURCES(),android.R.drawable.star_big_on));
@@ -417,8 +426,9 @@ public class  MainActivity extends AppCompatActivity {
 
 
 
-        //@Fixme: define method in accountsDB class
-        Cursor appLoginCursor = accountsDB.getAppLoginCursor(accountsDB.getMaxItemIdInTable(APPLOGGIN_TABLE));
+        //@Fixme: get AppLoggin by passing in _id comming from LogginActivity
+        //Cursor appLoginCursor = accountsDB.getAppLoginCursor(accountsDB.getMaxItemIdInTable(APPLOGGIN_TABLE));
+        this.currentAppLoggin = AppLoggin.extractAppLoggin(accountsDB.getAppLoginCursor(extras.getInt("appLoginID")));
 
         View headerView = navigationView.getHeaderView(0);
 
@@ -446,18 +456,18 @@ public class  MainActivity extends AppCompatActivity {
                 setUserProfileText(2,(TextView)v);
             }
         });
-        if(appLoginCursor.moveToNext()){
-            tvUserName.setText(appLoginCursor.getString(3));
-            tvUserMessage.setText(appLoginCursor.getString(5));
-            Icon navDrawerBackground = accountsDB.getIconByID(appLoginCursor.getInt(6));
+        if(this.currentAppLoggin != null){
+            tvUserName.setText(this.currentAppLoggin.getName());
+            tvUserMessage.setText(this.currentAppLoggin.getMessage());
+            Icon navDrawerBackground = accountsDB.getIconByID(this.currentAppLoggin.getPicture().get_id());
             int idRes;
             Resources r = this.getResources();
             idRes = r.getIdentifier(navDrawerBackground.getName(),"drawable",this.getPackageName());
             //imgLogo.setImageResource(idRes);
             headerView.setBackground(getResources().getDrawable(idRes));
         }else{
-            //Create applogin with null username and null password
-            //@Fixme: applogin will be created on the very first activity when user login for first time, since I'm not loading anything on the DB side, it can be created programatically here
+            //@Fixme: What to do if current applogin is invalid... Create a default applogin not good
+            //Create default applogin with null username and null password
             AppLoggin appLoggin = new AppLoggin();
             appLoggin.setName("Android Studio");
             appLoggin.setEmail("example@android.com");
@@ -989,7 +999,7 @@ public class  MainActivity extends AppCompatActivity {
             headerView.setBackground(getResources().getDrawable(data.getExtras().getInt("selectedImgResourceID"),null));
             ContentValues values = new ContentValues();
             values.put(ID_COLUMN,accountsDB.getMaxItemIdInTable(APPLOGGIN_TABLE));
-            values.put("PictureID",data.getExtras().getInt("selectedImgID"));
+            values.put(PICTUREID_COLUMN,data.getExtras().getInt("selectedImgID"));
             accountsDB.updateTable(APPLOGGIN_TABLE,values);
         }else if(requestCode == throwSelectNavDrawerBckGrndActReqCode && resultCode == Activity.RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from SelectNavDrawerBckGrnd received by MainAcitvity.");
@@ -1234,6 +1244,22 @@ public class  MainActivity extends AppCompatActivity {
 
     public static String getIsFavoriteColumn() {
         return IS_FAVORITE_COLUMN;
+    }
+
+    public static String getDateCreatedColumn() {
+        return DATE_CREATED_COLUMN;
+    }
+
+    public static String getValueColumn() {
+        return VALUE_COLUMN;
+    }
+
+    public static String getMessageColumn() {
+        return MESSAGE_COLUMN;
+    }
+
+    public static String getPictureidColumn() {
+        return PICTUREID_COLUMN;
     }
 
     public static int getCurrentTabID(){
@@ -1899,7 +1925,7 @@ public class  MainActivity extends AppCompatActivity {
                         //Check the input field is not empty
                         if(!userText.trim().equals("")){
                             ContentValues values = new ContentValues();
-                            values.put(ID_COLUMN,accountsDB.getMaxItemIdInTable(MainActivity.getApplogginTable()));
+                            values.put(ID_COLUMN,currentAppLoggin.get_id());
                             values.put(columnToBeUpdated[0],userText);
                             if(accountsDB.updateTable(APPLOGGIN_TABLE,values)){
                                 tvUserText.setText(input.getText());

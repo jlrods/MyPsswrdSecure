@@ -11,6 +11,8 @@ import java.util.Calendar;
 
 import javax.crypto.spec.IvParameterSpec;
 
+import io.github.jlrods.mypsswrdsecure.login.LoginActivity;
+
 //Class to manage all DB interaction
 public class AccountsDB extends SQLiteOpenHelper {
     private static final char apostropheChar = '\'';
@@ -25,7 +27,7 @@ public class AccountsDB extends SQLiteOpenHelper {
     public AccountsDB(Context context){
         super(context, "Accounts Database",null, 1);
         this.context = context;
-        this.cryptographer = MainActivity.getCryptographer();
+        this.cryptographer = LoginActivity.getCryptographer();
     }//End of default constructor
 
 
@@ -592,9 +594,11 @@ public class AccountsDB extends SQLiteOpenHelper {
             Log.d("addIcon","Icon to be added in the addItem method in AccountsDB class.");
         }else if(item instanceof AppLoggin){
             table = MainActivity.getApplogginTable();
+            fields.put(MainActivity.getUserNameIdColumn(),((AppLoggin)item).getUserName().get_id());
+            fields.put(MainActivity.getPsswrdIdColumn(),((AppLoggin)item).getPsswrd().get_id());
             fields.put(MainActivity.getNameColumn(),((AppLoggin)item).getName());
-            fields.put("Message",((AppLoggin)item).getMessage());
-            fields.put("PictureID",((AppLoggin)item).getPicture().get_id());
+            fields.put(MainActivity.getMessageColumn(),((AppLoggin)item).getMessage());
+            fields.put(MainActivity.getPictureidColumn(),((AppLoggin)item).getPicture().get_id());
             Log.d("addAppLoggin","AppLoggin to be added in the addItem method in AccountsDB class.");
         }else if(item instanceof Account){
             table = MainActivity.getAccountsTable();
@@ -716,8 +720,26 @@ public class AccountsDB extends SQLiteOpenHelper {
     public Cursor getAppLoginCursor(int _id){
         Log.d("getAppLogin","Enter the getCategoryByID method in the AccountsDB class.");
         Cursor cursor = this.runQuery("SELECT * FROM "+MainActivity.getApplogginTable()+" WHERE "+MainActivity.getIdColumn()+" = "+ _id);
+        if(cursor != null && cursor.getCount()>0){
+            cursor.moveToFirst();
+        }
         return cursor;
     }//End of getUserNameByID method
+
+    public Cursor getAppLoginCursorUserAndPsswrdData(int _id){
+        Log.d("getAppLogin","Enter the getCategoryByID method in the AccountsDB class.");
+        Cursor cursor = this.runQuery(
+                "SELECT APPLOGGIN.*, Psswrd.Value as PsswrdValue, Psswrd.initVector as PsswrdIV\n" +
+                        "FROM APPLOGGIN INNER JOIN PSSWRD\n" +
+                        "ON APPLOGGIN.PsswrdID = Psswrd._id\n" +
+                        "WHERE  APPLOGGIN.UserNameID = "+ _id);
+        return cursor;
+    }
+
+    public Cursor getAllAppLoginCursor(){
+        Cursor loginList = this.runQuery("SELECT * FROM "+MainActivity.getApplogginTable());
+        return loginList;
+    }
 
     //Method to get a specific Category, by passing in its DB _id as an argument
     public Category getCategoryByID(int _id){
