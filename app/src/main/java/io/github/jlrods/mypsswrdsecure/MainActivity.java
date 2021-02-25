@@ -360,14 +360,6 @@ public class  MainActivity extends AppCompatActivity {
             this.currentTab = this.appState.getInt(2);
             this.showAllAccounts =  this.accountsDB.toBoolean(this.appState.getInt(3));
             this.isFavoriteFilter = this.accountsDB.toBoolean(this.appState.getInt(4));
-//            if(this.currentCategory.get_id() < 0){
-//                //Check
-//                if(this.showAllAccounts){
-//                    this.currentCategory = this.categoryList.get(0);
-//                }else if(this.isFavoriteFilter){
-//                    this.currentCategory = this.categoryList.get(1);
-//                }
-//            }
             this.isSearchFilter = this.accountsDB.toBoolean(this.appState.getInt(5));
             this.isSearchUserNameFilter = this.accountsDB.toBoolean(this.appState.getInt(6));
             this.isSearchPsswrdFilter = this.accountsDB.toBoolean(this.appState.getInt(7));

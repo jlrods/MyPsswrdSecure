@@ -68,7 +68,6 @@ public class LoginActivity extends AppCompatActivity {
         final EditText etPasswordConfirm = findViewById(R.id.etPasswordConfirm);
         final EditText etUserName = findViewById(R.id.etUserName);
         final EditText etUserMessage = findViewById(R.id.etUserMessage);
-        final TextView tvSignUpSingIn = findViewById(R.id.tvSignUpSignIn);
 
         loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
             @Override
@@ -153,17 +152,8 @@ public class LoginActivity extends AppCompatActivity {
             etUserName.setVisibility(View.GONE);
             etUserMessage.setVisibility(View.GONE);
             btnLoginButton.setText(R.string.action_sign_in);
-            tvSignUpSingIn.setVisibility(View.INVISIBLE);
-            tvSignUpSingIn.setText(R.string.signUp);
-            tvSignUpSingIn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //toggleSignInSignUp();
-                }
-            });
         }else{
             displaySignUp = true;
-            tvSignUpSingIn.setVisibility(View.INVISIBLE);
         }
 
         btnLoginButton.setOnClickListener(new View.OnClickListener() {
@@ -302,31 +292,6 @@ public class LoginActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
     }
 
-    //Method to toggle between SingIn and SignUp screens
-    private void toggleSignInSignUp(){
-        Log.d("toggleSignInSignUp","Enter toggleSignInSignUp method in LoginActivity class.");
-        EditText etPasswordConfirm = findViewById(R.id.etPasswordConfirm);
-        EditText etUserName = findViewById(R.id.etUserName);
-        EditText etUserMessage = findViewById(R.id.etUserMessage);
-        Button btnLoginButton = findViewById(R.id.btnLogin);
-        TextView tvSignUpSignIn = findViewById(R.id.tvSignUpSignIn);
-        if(displaySignUp){
-            displaySignUp = false;
-            etPasswordConfirm.setVisibility(View.INVISIBLE);
-            etUserName.setVisibility(View.INVISIBLE);
-            etUserMessage.setVisibility(View.INVISIBLE);
-            btnLoginButton.setText(R.string.action_sign_in);
-            tvSignUpSignIn.setText(R.string.signUp);
-        }else{
-            displaySignUp = true;
-            etPasswordConfirm.setVisibility(View.VISIBLE);
-            etUserName.setVisibility(View.VISIBLE);
-            etUserMessage.setVisibility(View.VISIBLE);
-            btnLoginButton.setText(R.string.action_sign_up);
-            tvSignUpSignIn.setText(R.string.signIn);
-        }
-        Log.d("toggleSignInSignUp","Exit toggleSignInSignUp method in LoginActivity class.");
-    }//End of toggleSignInSignUp method
 
     //Getter and Setter methods
 
@@ -435,6 +400,4 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(i);
         Log.d("ThrowMain","Exit throwMainActivity method in the LoginActivity class.");
     }//End of throwAddTaskActivity
-
-
 }//End of LoginActivity
