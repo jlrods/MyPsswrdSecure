@@ -10,21 +10,22 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.biometric.BiometricManager;
+import androidx.biometric.BiometricPrompt;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-
+import java.util.concurrent.Executor;
 import javax.crypto.spec.IvParameterSpec;
-
 import io.github.jlrods.mypsswrdsecure.AccountsDB;
 import io.github.jlrods.mypsswrdsecure.AppLoggin;
 import io.github.jlrods.mypsswrdsecure.Cryptographer;
@@ -33,12 +34,18 @@ import io.github.jlrods.mypsswrdsecure.R;
 import io.github.jlrods.mypsswrdsecure.MainActivity;
 import io.github.jlrods.mypsswrdsecure.UserName;
 
+import static androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG;
+import static androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL;
+
 public class LoginActivity extends AppCompatActivity {
 
     private LoginViewModel loginViewModel;
     private static Cryptographer cryptographer;
     private static AccountsDB accountsDB;
     private static boolean displaySignUp;
+    private Executor executor;
+    private BiometricPrompt biometricPrompt;
+    private BiometricPrompt.PromptInfo promptInfo;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.d("Ent_onCreateLogin","Enter onCreate method in LoginActivity class.");
@@ -61,7 +68,7 @@ public class LoginActivity extends AppCompatActivity {
         final EditText etPasswordConfirm = findViewById(R.id.etPasswordConfirm);
         final EditText etUserName = findViewById(R.id.etUserName);
         final EditText etUserMessage = findViewById(R.id.etUserMessage);
-        final TextView tvSignUp = findViewById(R.id.tvSignUp);
+        final TextView tvSignUpSingIn = findViewById(R.id.tvSignUpSignIn);
 
         loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
             @Override
@@ -122,13 +129,42 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    loginViewModel.login(etUsernameId.getText().toString(),
-                            etPassword.getText().toString());
-                }
+//                if (actionId == EditorInfo.IME_ACTION_DONE) {
+//                    loginViewModel.login(etUsernameId.getText().toString(),
+//                            etPassword.getText().toString());
+//                }
                 return false;
             }
         });
+
+        //My stuff from here
+        //Create crypto object to handle encryption and decryption
+        cryptographer = new Cryptographer();
+        //Dummy encryption to get IV created
+        byte[] testEncrypted = cryptographer.encryptText("DummyEncryption");
+        String test2 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
+        //Create a new object to manage all DB interaction
+        accountsDB = new AccountsDB(this);
+
+        //Check if there's an account already registered in the DB. If there's at least one, show username and password fields only
+        final Cursor appLoginList = accountsDB.getAllAppLoginCursor();
+        if(appLoginList.moveToNext()){
+            etPasswordConfirm.setVisibility(View.GONE);
+            etUserName.setVisibility(View.GONE);
+            etUserMessage.setVisibility(View.GONE);
+            btnLoginButton.setText(R.string.action_sign_in);
+            tvSignUpSingIn.setVisibility(View.INVISIBLE);
+            tvSignUpSingIn.setText(R.string.signUp);
+            tvSignUpSingIn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //toggleSignInSignUp();
+                }
+            });
+        }else{
+            displaySignUp = true;
+            tvSignUpSingIn.setVisibility(View.INVISIBLE);
+        }
 
         btnLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -154,7 +190,7 @@ public class LoginActivity extends AppCompatActivity {
                             if(!inputUserNameCursor.moveToFirst()){
 
                                 //Add user name to UserName table
-                                newUserName = new UserName(cryptographer.encryptText(etUserName.getText().toString()),cryptographer.getIv().getIV());
+                                newUserName = new UserName(cryptographer.encryptText(etUsernameId.getText().toString()),cryptographer.getIv().getIV());
                                 newUserName.set_id(accountsDB.addItem(newUserName));
                                 //Check password doesn't exist in DB, otherwise keep PsswrdID
                                 inputPsswrdCursor = accountsDB.getPsswrdByName(etPassword.getText().toString());
@@ -207,7 +243,6 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     }//End of if statement to check the user name isn't empty and password field is valid
 
-                    //loginSuccess = accountsDB.addItem(appLogin???)
                 }else{
                     //In case of an already signed up account registered on the DB
                     //First check the username typed in by user actually  exists in DB, otherwise show proper error message
@@ -227,19 +262,14 @@ public class LoginActivity extends AppCompatActivity {
                                 errorMessageText ="Sorry, the user name and password combination is invalid.Try again...";
                             }//End of if statement that checks password passed in matches applogin password
                         }//End of if statement that checks the user name passed in matches applogin user name
-
-                    }
+                    }else{
+                        errorMessageText ="Sorry, the user name and password combination is invalid.Try again...";
+                    }//End of if statement that checks user name exists in DB
 
                 }//End of if else statement that checks it's first time login
 
                 if(loginSuccess){
-                    //@Fixme if successful loggin, the APPLOGGIN id should be passed in to MainActivity
-                    //Create new intent to launch MainActivity
-                    Intent i= new Intent(LoginActivity.this, MainActivity.class);
-                    //Put appLogin
-                    i.putExtra("appLoginID",appLoggin.get_id());
-                    //Start the MainActivity class
-                    startActivity(i);
+                    throwMainActivity(appLoggin.get_id());
                 }else{
                     //If user name not even present in the username table, throw an error message
                     MainActivity.displayToast(v.getContext(),errorMessageText,Toast.LENGTH_LONG, Gravity.CENTER);
@@ -247,43 +277,11 @@ public class LoginActivity extends AppCompatActivity {
                 //loadingProgressBar.setVisibility(View.VISIBLE);
                 //loginViewModel.login(etUsernameId.getText().toString(),
                  //       etPassword.getText().toString());
-            }
-        });
+            }//End of onClick method
+        });//End of setOnClickListener method for the signUp-signIn button
 
-        //My stuff from here
-        //Create crypto object to handle encryption and decryption
-        cryptographer = new Cryptographer();
-        //Dummy encryption to get IV created
-        byte[] testEncrypted = cryptographer.encryptText("DummyEncryption");
-        String test2 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
-        //Create a new object to manage all DB interaction
-        accountsDB = new AccountsDB(this);
-
-        //Check if there's an account already registered in the DB. If there's at least one, show username and password fields only
-        Cursor appLoginList = accountsDB.getAllAppLoginCursor();
-        if(appLoginList.moveToNext()){
-            displaySignUp = false;
-            tvSignUp.setVisibility(View.VISIBLE);
-            tvSignUp.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    etPasswordConfirm.setVisibility(View.VISIBLE);
-                    etUserName.setVisibility(View.VISIBLE);
-                    etUserMessage.setVisibility(View.VISIBLE);
-                }
-            });
-            //Make the extra fields gone from UI
-            etPasswordConfirm.setVisibility(View.GONE);
-            etUserName.setVisibility(View.GONE);
-            etUserMessage.setVisibility(View.GONE);
-            btnLoginButton.setText(R.string.action_sign_in);
-        }else{
-            displaySignUp = true;
-            tvSignUp.setVisibility(View.INVISIBLE);
-            //Otherwise, show rest of fields for full sign up
-            //Check all fields are valid
-            //Enable sign up button when values are entered
-            //
+        if(!displaySignUp){
+            this.biometricAuthentication(accountsDB.getAppLoginCursor(accountsDB.getMaxItemIdInTable(MainActivity.getApplogginTable())).getInt(0));
         }
 
 
@@ -304,6 +302,32 @@ public class LoginActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
     }
 
+    //Method to toggle between SingIn and SignUp screens
+    private void toggleSignInSignUp(){
+        Log.d("toggleSignInSignUp","Enter toggleSignInSignUp method in LoginActivity class.");
+        EditText etPasswordConfirm = findViewById(R.id.etPasswordConfirm);
+        EditText etUserName = findViewById(R.id.etUserName);
+        EditText etUserMessage = findViewById(R.id.etUserMessage);
+        Button btnLoginButton = findViewById(R.id.btnLogin);
+        TextView tvSignUpSignIn = findViewById(R.id.tvSignUpSignIn);
+        if(displaySignUp){
+            displaySignUp = false;
+            etPasswordConfirm.setVisibility(View.INVISIBLE);
+            etUserName.setVisibility(View.INVISIBLE);
+            etUserMessage.setVisibility(View.INVISIBLE);
+            btnLoginButton.setText(R.string.action_sign_in);
+            tvSignUpSignIn.setText(R.string.signUp);
+        }else{
+            displaySignUp = true;
+            etPasswordConfirm.setVisibility(View.VISIBLE);
+            etUserName.setVisibility(View.VISIBLE);
+            etUserMessage.setVisibility(View.VISIBLE);
+            btnLoginButton.setText(R.string.action_sign_up);
+            tvSignUpSignIn.setText(R.string.signIn);
+        }
+        Log.d("toggleSignInSignUp","Exit toggleSignInSignUp method in LoginActivity class.");
+    }//End of toggleSignInSignUp method
+
     //Getter and Setter methods
 
     public static Cryptographer getCryptographer() {
@@ -313,4 +337,104 @@ public class LoginActivity extends AppCompatActivity {
     public static AccountsDB getAccountsDB() {
         return accountsDB;
     }
+
+    //Method to handle biometric authentication
+    private void biometricAuthentication(final int appLoginID){
+        Log.d("biometricAuthentication","Enter biometricAuthentication method in the LoginActivity class.");
+        boolean canAuthenticate = false;
+        BiometricManager biometricManager = BiometricManager.from(this);
+        switch (biometricManager.canAuthenticate(BIOMETRIC_STRONG)) {
+            case BiometricManager.BIOMETRIC_SUCCESS:
+                Log.d("MY_APP_TAG", "App can authenticate using biometrics.");
+                canAuthenticate = true;
+                break;
+            case BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE:
+                Log.e("MY_APP_TAG", "No biometric features available on this device.");
+                break;
+            case BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE:
+                Log.e("MY_APP_TAG", "Biometric features are currently unavailable.");
+                break;
+            case BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED:
+                // Prompts the user to create credentials that your app accepts.
+//                final Intent enrollIntent = new Intent(Settings.ACTION_BIOMETRIC_ENROLL);
+//                enrollIntent.putExtra(Settings.EXTRA_BIOMETRIC_AUTHENTICATORS_ALLOWED,
+//                        BIOMETRIC_STRONG | DEVICE_CREDENTIAL);
+//                startActivityForResult(enrollIntent, REQUEST_CODE);
+                break;
+        }
+        //@TODO: Use user preferences to activate or deactivate this option
+        if(canAuthenticate){
+            executor = ContextCompat.getMainExecutor(this);
+            biometricPrompt = new BiometricPrompt(LoginActivity.this,
+                    executor, new BiometricPrompt.AuthenticationCallback() {
+                @Override
+                public void onAuthenticationError(int errorCode,
+                                                  @NonNull CharSequence errString) {
+                    super.onAuthenticationError(errorCode, errString);
+                    Toast.makeText(getApplicationContext(),
+                            getString(R.string.authenErr) + errString, Toast.LENGTH_SHORT)
+                            .show();
+                }
+
+                @Override
+                public void onAuthenticationSucceeded(
+                        @NonNull BiometricPrompt.AuthenticationResult result) {
+                    super.onAuthenticationSucceeded(result);
+                    Toast.makeText(getApplicationContext(),
+                            getString(R.string.authenSuccessful), Toast.LENGTH_SHORT).show();
+                    //Call throw MainActivity method
+                    throwMainActivity(appLoginID);
+                }
+
+                @Override
+                public void onAuthenticationFailed() {
+                    super.onAuthenticationFailed();
+                    Toast.makeText(getApplicationContext(), getString(R.string.authenFailed),
+                            Toast.LENGTH_SHORT)
+                            .show();
+                }
+            });
+
+            promptInfo = new BiometricPrompt.PromptInfo.Builder()
+                    .setTitle(getString(R.string.biometLoginTitle))
+                    .setSubtitle(getString(R.string.biometLoginSubTitle))
+                    .setNegativeButtonText(getString(R.string.biometLoginCancelMssg))
+                    .setAllowedAuthenticators(BIOMETRIC_STRONG)
+                    .build();
+            //Prompt fingerprint authentication straight away.
+            biometricPrompt.authenticate(promptInfo);
+        }
+        Log.d("biometricAuthentication","Exit biometricAuthentication method in the LoginActivity class.");
+    }//End of biometricAuthentication method
+
+    @Override
+    //User on resume method to call biometric authentication method again
+    public void onResume(){
+        super.onResume();
+        Log.d("onResume","Enter onResume method in the LoginActivity class.");
+        //Clear previous entered data
+        EditText etUsernameId = findViewById(R.id.etUsernameId);
+        EditText etPassword = findViewById(R.id.etPassword);
+        etUsernameId.setText("");
+        etPassword.setText("");
+        //Call method to check for biometric authentication
+        if(!displaySignUp){
+            this.biometricAuthentication(accountsDB.getAppLoginCursor(accountsDB.getMaxItemIdInTable(MainActivity.getApplogginTable())).getInt(0));
+        }
+        Log.d("onResume","Enter onResume method in the LoginActivity class.");
+    }//End of onResume method
+
+    //Method to throw new MainActivit ymethod
+    private void throwMainActivity(int appLoginId){
+        Log.d("ThrowMain","Enter throwMainActivity method in the LoginActivity class.");
+        //Create new intent to launch MainActivity
+        Intent i= new Intent(LoginActivity.this, MainActivity.class);
+        //Put appLogin
+        i.putExtra("appLoginID",appLoginId);
+        //Start the MainActivity class
+        startActivity(i);
+        Log.d("ThrowMain","Exit throwMainActivity method in the LoginActivity class.");
+    }//End of throwAddTaskActivity
+
+
 }//End of LoginActivity

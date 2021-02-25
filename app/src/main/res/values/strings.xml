@@ -301,6 +301,13 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="signUp"><a href="">Sign Up?</a></string>
+    <string name="signIn"><a href="">Sign In?</a></string>
+    <string name="authenErr">Authentication error: </string>
+    <string name="authenSuccessful">Authentication succeeded!</string>
+    <string name="authenFailed">Authentication failed</string>
+    <string name="biometLoginTitle">Biometric login for my MyPsswrdSecure</string>
+    <string name="biometLoginSubTitle">Log in using your biometric credential</string>
+    <string name="biometLoginCancelMssg">Use account password</string>
 
 
 </resources>

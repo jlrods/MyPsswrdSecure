@@ -1,12 +1,8 @@
 package io.github.jlrods.mypsswrdsecure;
-
+import android.content.Intent;
 import android.database.Cursor;
 import android.util.Log;
-
-import java.util.ArrayList;
-
 import io.github.jlrods.mypsswrdsecure.login.LoginActivity;
-
 public class AppLoggin extends Loggin {
 
     //Attribute expansion definition
@@ -107,5 +103,5 @@ public class AppLoggin extends Loggin {
         }
         Log.d("Ext_ExtractLoggin", "Exit extractLoggin method in the AppLoggin  class.");
         return appLoggin;
-    }
-}// End of AppUser
+    }//End of extractAppLoggin method
+}// End of AppLogin
