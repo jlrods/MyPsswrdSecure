@@ -258,6 +258,16 @@
     <string name="changeLangDescription">Cambie el idioma de la app</string>
     <string name="dateFormatSelection">Formato de fecha</string>
     <string name="dateFormatDescription">Seleccione el formato de fecha para su app</string>
+    <string name="security">Seguridad</string>
+    <string name="enableBiometrics">Activar acceso con scanner biométrico</string>
+    <string name="disableBiometrics">Desactivar acceso con scanner biométrico</string>
+    <string name="enableAutoLogOutTimeOut">Activar desloguéo automático por tiempo</string>
+    <string name="disableAutoLogOutTimeOut">Desctivar desloguéo automático por tiempo</string>
+    <string name="logOutTimeOutTitle">Desloguéo por tiempo</string>
+    <string name="changeLogoutTimeOut">Cambiar tiempo de desloguéo</string>
+    <string name="oneMinute">1 minute</string>
+    <string name="threeMinutes">3 minutes</string>
+    <string name="fiveMinutes">5 minutes</string>
 
     <!--    Select background Activity-->
     <string name="selectBckgrd">Selección de fondo</string>

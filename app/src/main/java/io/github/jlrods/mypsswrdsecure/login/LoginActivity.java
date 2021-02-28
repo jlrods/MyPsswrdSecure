@@ -1,9 +1,13 @@
 package io.github.jlrods.mypsswrdsecure.login;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -35,7 +39,6 @@ import io.github.jlrods.mypsswrdsecure.MainActivity;
 import io.github.jlrods.mypsswrdsecure.UserName;
 
 import static androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG;
-import static androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -46,6 +49,8 @@ public class LoginActivity extends AppCompatActivity {
     private Executor executor;
     private BiometricPrompt biometricPrompt;
     private BiometricPrompt.PromptInfo promptInfo;
+    private long BIOMETRIC_DELAY_TIME = 1500;
+    private long COUNT_DOWN_INTERVAL = 250;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.d("Ent_onCreateLogin","Enter onCreate method in LoginActivity class.");
@@ -271,12 +276,11 @@ public class LoginActivity extends AppCompatActivity {
         });//End of setOnClickListener method for the signUp-signIn button
 
         if(!displaySignUp){
-            this.biometricAuthentication(accountsDB.getAppLoginCursor(accountsDB.getMaxItemIdInTable(MainActivity.getApplogginTable())).getInt(0));
-        }
-
-
-
-
+            //Call method to display biometric authentication dialog if setting is active
+            if(getIsBioLoginActive(this)){
+                this.callBiometricAuthentication();
+            }
+        }//End of if statement to check sigup display isn't in use
         Log.d("Ext_onCreateLogin","Exit onCreate method in LoginActivity class.");
     }//End of onCreate method
 
@@ -382,9 +386,9 @@ public class LoginActivity extends AppCompatActivity {
         EditText etPassword = findViewById(R.id.etPassword);
         etUsernameId.setText("");
         etPassword.setText("");
-        //Call method to check for biometric authentication
-        if(!displaySignUp){
-            this.biometricAuthentication(accountsDB.getAppLoginCursor(accountsDB.getMaxItemIdInTable(MainActivity.getApplogginTable())).getInt(0));
+        //Call method to display biometric authentication dialog if setting is active
+        if(getIsBioLoginActive(this)){
+            this.callBiometricAuthentication();
         }
         Log.d("onResume","Enter onResume method in the LoginActivity class.");
     }//End of onResume method
@@ -400,4 +404,30 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(i);
         Log.d("ThrowMain","Exit throwMainActivity method in the LoginActivity class.");
     }//End of throwAddTaskActivity
+
+    private void callBiometricAuthentication(){
+        Log.d("callBiometAuthenT","Enter callBiometricAuthentication method in the LoginActivity class.");
+        CountDownTimer biometricDelay = new CountDownTimer(BIOMETRIC_DELAY_TIME, COUNT_DOWN_INTERVAL) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                Log.d("onTick","Log remainder time in  callBiometricAuthentication method in the LoginActivity class.");
+            }
+
+            @Override
+            public void onFinish() {
+                Log.d("onFinish","Log onFinish method call as delay time in callBiometricAuthentication method in the LoginActivity class has finished.");
+                biometricAuthentication(accountsDB.getAppLoginCursor(accountsDB.getMaxItemIdInTable(MainActivity.getApplogginTable())).getInt(0));
+            }
+        };
+        biometricDelay.start();
+        Log.d("callBiometAuthenT","Exit callBiometricAuthentication method in the LoginActivity class.");
+    }//End of callBiometricAuthentication method
+
+    public static boolean getIsBioLoginActive(Context context) {
+        Log.d("getIsBioLoginActive", "Enter getIsBioLoginActive method in MainActivity class.");
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean isBioLoginActive = pref.getBoolean("isBiometricLoginActive", true);
+        Log.d("getIsBioLoginActive", "Exit getIsBioLoginActive method in MainActivity class.");
+        return isBioLoginActive;
+    }//End of setAppTheme method
 }//End of LoginActivity

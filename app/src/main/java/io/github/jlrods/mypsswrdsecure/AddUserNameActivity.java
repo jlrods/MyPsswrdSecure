@@ -47,6 +47,8 @@ public class AddUserNameActivity extends AddItemActivity{
                     this.userName = new UserName(userNameValueEncrypted,this.cryptographer.getIv().getIV());
                     //Call DB method to insert  the user name object into the DB
                     userNameID = this.accountsDB.addItem(this.userName);
+                    //Put remainder time for logout so MainActivity can continue the count down
+                    intent.putExtra("timeOutRemainder",this.logOutTimer.getLogOutTimeRemainder());
                     if(userNameID > 0 ){
                         //Update the userName object ID and prepare data to exit activity
                         this.userName.set_id(userNameID);

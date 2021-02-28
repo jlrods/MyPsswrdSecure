@@ -26,7 +26,7 @@ public class EditAccountActivity extends DisplayAccountActivity {
         super.onCreate(savedInstanceState);
         Log.d("OnCreateEditAcc","Enter onCreate method in the EditAccountActivity abstract class.");
         //Extract extra data from owner Activity
-        this.extras = getIntent().getExtras();
+        //this.extras = getIntent().getExtras();
         //Set activity title
         getSupportActionBar().setTitle(R.string.editAccTitle);
         //Extract account details by passing in the _id attribute stored in the extras

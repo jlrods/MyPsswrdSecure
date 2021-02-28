@@ -263,6 +263,16 @@
     <string name="changeLangDescription">Change the app language</string>
     <string name="dateFormatSelection">Date format to be displayed</string>
     <string name="dateFormatDescription">Select the date format for your app.</string>
+    <string name="security">Security</string>
+    <string name="enableBiometrics">Enable login via fingerprint scanner</string>
+    <string name="disableBiometrics">Disable login via fingerprint scanner</string>
+    <string name="enableAutoLogOutTimeOut">Enable automatic logout timeout</string>
+    <string name="disableAutoLogOutTimeOut">Disable automatic logout timeout</string>
+    <string name="logOutTimeOutTitle">Logout timeout</string>
+    <string name="changeLogoutTimeOut">Change logout time</string>
+    <string name="oneMinute">1 minute</string>
+    <string name="threeMinutes">3 minutes</string>
+    <string name="fiveMinutes">5 minutes</string>
 
     <!--    Select background Activity-->
     <string name="selectBckgrd">Select background</string>
@@ -308,6 +318,7 @@
     <string name="biometLoginTitle">Biometric login for my MyPsswrdSecure</string>
     <string name="biometLoginSubTitle">Log in using your biometric credential</string>
     <string name="biometLoginCancelMssg">Use account password</string>
+
 
 
 </resources>

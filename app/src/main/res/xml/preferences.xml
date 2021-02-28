@@ -29,4 +29,24 @@
             android:entryValues="@array/languagesValues"
             android:defaultValue="0"/>
     </PreferenceCategory>
+    <PreferenceCategory
+        android:key="security"
+        android:title="@string/security">
+        <SwitchPreference
+            android:key="isBiometricLoginActive"
+            android:title="@string/enableBiometrics"
+            android:defaultValue="true" />
+        <SwitchPreference
+            android:key="isAutoLogOutActive"
+            android:title="@string/enableAutoLogOutTimeOut"
+            android:defaultValue="false" />
+        <ListPreference
+            android:key="logOutTime"
+            android:title="@string/logOutTimeOutTitle"
+            android:summary="@string/changeLogoutTimeOut"
+            android:entries="@array/logOutTime"
+            android:entryValues="@array/logOutTimeValues"
+            android:defaultValue="1"/>
+
+    </PreferenceCategory>
 </PreferenceScreen>

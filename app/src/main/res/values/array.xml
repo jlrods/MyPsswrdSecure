@@ -56,4 +56,15 @@
         <item>1</item>
     </string-array>
 
+    <string-array name="logOutTime">
+        <item>@string/oneMinute</item>
+        <item>@string/threeMinutes</item>
+        <item>@string/fiveMinutes</item>
+    </string-array>
+    <string-array name="logOutTimeValues">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
 </resources>

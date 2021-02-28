@@ -12,6 +12,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -113,9 +114,9 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
 
     Icon logo = null;
     int selectedPosition = -1;
-
-
-
+    logOutTimer logOutTimer;
+    long logOutTime;
+    long logOutTimeRemainder;
 
 
     //Method definition
@@ -124,6 +125,14 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("OnCreateDispAcc","Enter onCreate method in the DisplayAccountActivity abstract class.");
+        this.extras = getIntent().getExtras();
+        if(MainActivity.isIsLogOutActive()){
+            logOutTime = this.extras.getLong("timeOutRemainder");
+            logOutTimer = new logOutTimer(logOutTime, 250,this);
+            logOutTimer.start();
+        }
+
+
         //Get default current app theme from preferences
         int appThemeSelected = MainActivity.setAppTheme(this);
         //Set the theme by passing theme id number coming from preferences
@@ -1453,4 +1462,5 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         Log.d("isAddIconRequired", "Exit isAddIconRequired method in DisplayAccountActivity abstract class.");
         return logoID;
     }//End of isAddIconRequired
+
 }//End of AddAccountActivity

@@ -40,6 +40,9 @@ public abstract class AddItemActivity extends AppCompatActivity {
     protected Cryptographer cryptographer = MainActivity.getCryptographer();
     //Floating action button to delete existing item
     protected FloatingActionButton fabDelete = null;
+    protected logOutTimer logOutTimer;
+    protected long logOutTime;
+    Bundle extras;
 
     //Method definition
     //Other methods
@@ -53,6 +56,12 @@ public abstract class AddItemActivity extends AppCompatActivity {
         setTheme(appThemeSelected);
         //Set language as per preferences
         MainActivity.setAppLanguage(this);
+        this.extras = getIntent().getExtras();
+        if(MainActivity.isIsLogOutActive()){
+            logOutTime = this.extras.getLong("timeOutRemainder");
+            logOutTimer = new logOutTimer(logOutTime, 250,this);
+            logOutTimer.start();
+        }
         //Set layout for this activity
         setContentView(R.layout.activity_add_item);
         this.accountsDB = HomeFragment.getAccountsDB();

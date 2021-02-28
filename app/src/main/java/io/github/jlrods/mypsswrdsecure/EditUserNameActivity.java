@@ -18,14 +18,14 @@ import javax.crypto.spec.IvParameterSpec;
 
 public class EditUserNameActivity extends AddUserNameActivity {
     //Attribute definition
-    private Bundle extras;
+    //private Bundle extras;
     private boolean toBeDeleted = false;
     //Method definition
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("OnCreateEditUser","Enter onCreate method in the EditUserNameActivity class.");
-        this.extras = getIntent().getExtras();
+
         //Set activity title
         getSupportActionBar().setTitle(R.string.editUserTitle);
         //Extract user name by passing in the _id attribute stored in the extras

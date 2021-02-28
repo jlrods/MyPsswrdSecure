@@ -30,7 +30,6 @@ public class AboutActivity extends AppCompatActivity {
         tvAuthorWebsite.setMovementMethod(LinkMovementMethod.getInstance());
         TextView tvAuthorWebsiteDownloads = findViewById(R.id.tvAuthorWebsiteDownloads);
         tvAuthorWebsiteDownloads.setMovementMethod(LinkMovementMethod.getInstance());
-
         Log.d("OnCreate", "Exit onCreate method in the AboutActivity abstract class.");
     }//End of onCreate method
 }//End of AboutActivity class
