@@ -17,37 +17,19 @@ import androidx.fragment.app.Fragment;
 public class PreferencesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //Get default current property from preferences
-        //SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(this);
-        //String preferedThemeID = pref.getString("appTheme","0");
-        /*int themeId;
-        if(preferedThemeID.equals("1")){
-            themeId = R.style.AppTheme1;
-        }else if(preferedThemeID.equals("2")){
-            themeId = R.style.AppTheme2;
-        }else{
-            themeId = R.style.AppTheme;
-        }
-        setTheme(themeId);*/
-        //setTheme(R.style.AppThemeHulk);
+        //Call method to setup current app theme
         setTheme( MainActivity.setAppTheme(this));
         //Set language as per preferences
         MainActivity.setAppLanguage(this);
         //Call super method
         super.onCreate(savedInstanceState);
         //set fragment for preferences
-
-
-
+        
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(android.R.id.content, new PreferencesFragment())
                 .commit();
 
-
-        /*getFragmentManager().beginTransaction()
-                .replace(android.R.id.content, new PreferencesFragment())
-                .commit();*/
     }// End of constructor method
 
     @Override
@@ -71,10 +53,9 @@ public class PreferencesActivity extends AppCompatActivity {
                 //Call method to throw LoginActivity and clear activity stack.
                 Log.d("onOptionsItemSelected","Logout option selected on onOptionsItemSelected method in PreferencesActivity class.");
                 MainActivity.logout(this);
-        }
+        }//End of switch statement
         Log.d("onOptionsItemSelected","Exit successfully onOptionsItemSelected method in PreferencesActivity class.");
         finish();
         return result;
-    }
-
+    }//End of  onOptionsItemSelected method
 }//End of PreferencesActivity class
