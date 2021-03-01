@@ -190,6 +190,10 @@ public class EditQuestionActivity extends AddQuestionActivity {
                 Log.d("onOptionsItemSelected","Cancel option selected on onOptionsItemSelected method in EditQuestionActivity class.");
                 finish();
                 break;
+            case R.id.action_logout:
+                //Call method to throw LoginActivity and clear activity stack.
+                Log.d("onOptionsItemSelected","Logout option selected on onOptionsItemSelected method in EditQuestionActivity class.");
+                MainActivity.logout(this);
         }//End of switch statement
         return result;
     }//End of onOptionsItemSelected method

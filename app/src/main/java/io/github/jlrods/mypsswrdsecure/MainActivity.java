@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
     //Login - Logout variables
     private Bundle extras;
     private AppLoggin currentAppLoggin;
-    private logOutTimer logoutTimer;
+    private LogOutTimer logoutTimer;
     private long logOutTime;
     private static boolean isLogOutActive;
     private long logOutTimeRemainder;
@@ -479,7 +479,7 @@ public class MainActivity extends AppCompatActivity {
             //Get logOutTime form preferences
             this.logOutTime = getLogOutTime(this);
             //Create new logout time object to manage remainder time and actions to be done on timeout
-            this.logoutTimer = new logOutTimer(logOutTime,250,this);
+            this.logoutTimer = new LogOutTimer(logOutTime,250,this);
             //Start timer
             this.logoutTimer.start();
         }//End of if statement to check logout is active
@@ -1129,7 +1129,7 @@ public class MainActivity extends AppCompatActivity {
         }else{
             if(isLogOutActive){
                 logOutTimeRemainder = data.getExtras().getLong("timeOutRemainder");
-                logoutTimer = new logOutTimer(logOutTimeRemainder,250,this);
+                logoutTimer = new LogOutTimer(logOutTimeRemainder,250,this);
                 logoutTimer.start();
             }
             if (categoryMenuUpdate) {
@@ -2636,6 +2636,14 @@ public class MainActivity extends AppCompatActivity {
         Log.d("getIsLogOut", "Exit getIsLogOut method in MainActivity class.");
         return isLogOut;
     }//End of setAppTheme method
+
+    public static void logout(Context context){
+        Log.d("logout", "Enter logout method in MainActivity class called by: "+ context.toString());
+        Intent i = new Intent((Activity)context, LoginActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        ((Activity)context).startActivity(i);
+        Log.d("logout", "Exit logout method in MainActivity class called by: "+ context.toString());
+    }//End of logout method
 
 
 

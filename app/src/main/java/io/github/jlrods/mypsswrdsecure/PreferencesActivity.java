@@ -1,6 +1,10 @@
 package io.github.jlrods.mypsswrdsecure;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -46,5 +50,31 @@ public class PreferencesActivity extends AppCompatActivity {
                 .commit();*/
     }// End of constructor method
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_menu_save_cancel, menu);
+        menu.getItem(0).setVisible(false);
+        menu.getItem(1).setVisible(false);
+        return true;
+    }// Find fe OnCreateOptionsMenu
+
+    //Method to check the menu item selected and execute the corresponding actions
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d("onOptionsItemSelected","Enter onOptionsItemSelected method in PreferencesActivity  class.");
+        //Boolean to return method result
+        boolean result = false;
+        Intent intent = new Intent();
+        //Check the id of item selected in menu
+        switch (item.getItemId()) {
+            case R.id.action_logout:
+                //Call method to throw LoginActivity and clear activity stack.
+                Log.d("onOptionsItemSelected","Logout option selected on onOptionsItemSelected method in PreferencesActivity class.");
+                MainActivity.logout(this);
+        }
+        Log.d("onOptionsItemSelected","Exit successfully onOptionsItemSelected method in PreferencesActivity class.");
+        finish();
+        return result;
+    }
 
 }//End of PreferencesActivity class

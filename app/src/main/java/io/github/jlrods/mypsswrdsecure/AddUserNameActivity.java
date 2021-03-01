@@ -72,6 +72,10 @@ public class AddUserNameActivity extends AddItemActivity{
                 Log.d("onOptionsItemSelected","Cancel option selected on onOptionsItemSelected method in AddUserNameActivity class.");
                 finish();
                 break;
+            case R.id.action_logout:
+                //Call method to throw LoginActivity and clear activity stack.
+                Log.d("onOptionsItemSelected","Logout option selected on onOptionsItemSelected method in AddUserNameActivity class.");
+                MainActivity.logout(this);
         }//End of switch statement to check the menu option selected
         Log.d("onOptionsItemSelected","Exit onOptionsItemSelected method in AddUserNameActivity class.");
         return result;

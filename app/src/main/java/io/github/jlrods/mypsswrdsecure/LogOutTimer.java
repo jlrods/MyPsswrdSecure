@@ -13,7 +13,7 @@ import androidx.appcompat.app.AlertDialog;
 
 import io.github.jlrods.mypsswrdsecure.login.LoginActivity;
 
-public class logOutTimer extends CountDownTimer {
+public class LogOutTimer extends CountDownTimer {
     long logOutTimeRemainder;
     private Context context;
     /**
@@ -23,7 +23,7 @@ public class logOutTimer extends CountDownTimer {
      * @param countDownInterval The interval along the way to receive
      *                          {@link #onTick(long)} callbacks.
      */
-    public logOutTimer(long logOutTime, long countDownInterval,Context context) {
+    public LogOutTimer(long logOutTime, long countDownInterval, Context context) {
         super(logOutTime, countDownInterval);
         this.context = context;
     }
@@ -58,9 +58,10 @@ public class logOutTimer extends CountDownTimer {
         }).setNegativeButton("LogOut",new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Intent i = new Intent((Activity)context, LoginActivity.class);
-                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                ((Activity)context).startActivity(i);
+                MainActivity.logout(context);
+//                Intent i = new Intent((Activity)context, LoginActivity.class);
+//                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                ((Activity)context).startActivity(i);
                 //((Activity) context).setResult(MainActivity.getRESULT_TIMEOUT());
                 //((Activity) context).finish();
             }

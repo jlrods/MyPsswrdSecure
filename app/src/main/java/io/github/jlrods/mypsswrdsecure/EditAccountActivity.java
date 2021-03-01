@@ -248,8 +248,11 @@ public class EditAccountActivity extends DisplayAccountActivity {
                 setResult(RESULT_CANCELED, intent);
                 //Go back to previous activity
                 finish();
-
                 break;
+            case R.id.action_logout:
+                //Call method to throw LoginActivity and clear activity stack.
+                Log.d("onOptionsItemSelected","Logout option selected on onOptionsItemSelected method in EditAccountActivity class.");
+                MainActivity.logout(this);
         }//End of switch statement
         Log.d("onOptionsItemSelected","Exit successfully onOptionsItemSelected method in EditAccountActivity class.");
         return result;

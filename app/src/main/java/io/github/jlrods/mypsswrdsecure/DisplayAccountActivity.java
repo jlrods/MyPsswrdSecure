@@ -12,7 +12,6 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -33,7 +32,6 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
 
@@ -114,7 +112,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
 
     Icon logo = null;
     int selectedPosition = -1;
-    logOutTimer logOutTimer;
+    LogOutTimer logOutTimer;
     long logOutTime;
     long logOutTimeRemainder;
 
@@ -128,7 +126,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         this.extras = getIntent().getExtras();
         if(MainActivity.isIsLogOutActive()){
             logOutTime = this.extras.getLong("timeOutRemainder");
-            logOutTimer = new logOutTimer(logOutTime, 250,this);
+            logOutTimer = new LogOutTimer(logOutTime, 250,this);
             logOutTimer.start();
         }
 

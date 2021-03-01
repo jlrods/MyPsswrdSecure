@@ -84,7 +84,7 @@ public class SelectNavDrawerBckGrnd extends AppCompatActivity {
     //Method to check the menu item selected and execute the corresponding actions
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Log.d("onOptionsItemSelected","Enter onOptionsItemSelected method in SelectLogoActivity class.");
+        Log.d("onOptionsItemSelected","Enter onOptionsItemSelected method in SelectNavDrawerBckGrnd class.");
         //Boolean to return method result
         boolean result = false;
         Intent intent = new Intent();
@@ -96,16 +96,21 @@ public class SelectNavDrawerBckGrnd extends AppCompatActivity {
                     intent.putExtra("selectedImgResourceID",this.selectedIcon.getResourceID());
                     setResult(RESULT_OK, intent);
                 }//End of if statement to check the selected icon isn't null
-                Log.d("onOptionsItemSelected","Save option selected on onOptionsItemSelected method in SelectLogoActivity class.");
+                Log.d("onOptionsItemSelected","Save option selected on onOptionsItemSelected method in SelectNavDrawerBckGrnd class.");
                 break;
             case R.id.select_logo_cancel:
                 //Set activity result as cancelled so DisplayAccActivity can decide what to do if this is the case
                 setResult(RESULT_CANCELED, intent);
-                Log.d("onOptionsItemSelected","Cancel option selected on onOptionsItemSelected method in SelectLogoActivity class.");
+                Log.d("onOptionsItemSelected","Cancel option selected on onOptionsItemSelected method in SelectNavDrawerBckGrnd class.");
                 break;
+            case R.id.action_logout:
+                //Call method to throw LoginActivity and clear activity stack.
+                Log.d("onOptionsItemSelected","Logout option selected on onOptionsItemSelected method in SelectNavDrawerBckGrnd class.");
+                MainActivity.logout(this);
         }//End of switch statement
-        Log.d("onOptionsItemSelected","Exit successfully onOptionsItemSelected method in SelectLogoActivity class.");
+        Log.d("onOptionsItemSelected","Exit successfully onOptionsItemSelected method in SelectNavDrawerBckGrnd class.");
         finish();
         return result;
     }//End of onOptionsItem selected method
+
 }//End of SelectNavDrawerBckGrd class

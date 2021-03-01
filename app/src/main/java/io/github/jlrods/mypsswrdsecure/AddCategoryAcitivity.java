@@ -116,6 +116,10 @@ public class AddCategoryAcitivity extends AddItemActivity{
                 Log.d("onOptionsItemSelected","Cancel option selected on onOptionsItemSelected method in AddCategoryActivity class.");
                 finish();
                 break;
+            case R.id.action_logout:
+                //Call method to throw LoginActivity and clear activity stack.
+                Log.d("onOptionsItemSelected","Logout option selected on onOptionsItemSelected method in AddCategoryActivity class.");
+                MainActivity.logout(this);
         }//End of switch statement
         Log.d("onOptionsItemSelected","Exit successfully onOptionsItemSelected method in AddCategoryActivity class.");
         return result;
