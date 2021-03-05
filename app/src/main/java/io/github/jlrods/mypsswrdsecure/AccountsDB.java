@@ -39,48 +39,48 @@ public class AccountsDB extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE ANSWER (_id INTEGER PRIMARY KEY AUTOINCREMENT,Value BLOB, initVector BLOB);");
 
         //Include test data for Answers
-        byte[] answer1 = cryptographer.encryptText("Sasha");
-        ContentValues answerValues1 = new ContentValues();
+//        byte[] answer1 = cryptographer.encryptText("Sasha");
+//        ContentValues answerValues1 = new ContentValues();
         //values.put("_id",null);
-        answerValues1.put("Value",answer1);
-        answerValues1.put("initVector",cryptographer.getIv().getIV());
-        int answerID1 = (int) db.insert("ANSWER",null,answerValues1);
+//        answerValues1.put("Value",answer1);
+//        answerValues1.put("initVector",cryptographer.getIv().getIV());
+//        int answerID1 = (int) db.insert("ANSWER",null,answerValues1);
 
         //db.execSQL("INSERT INTO ANSWER VALUES(null,'Sasha');");
 
-        byte[] answer2 = cryptographer.encryptText("Machito88");
-        ContentValues answerValues2 = new ContentValues();
-        //values.put("_id",null);
-        answerValues2.put("Value",answer2);
-        answerValues2.put("initVector",cryptographer.getIv().getIV());
-        int answerID2 = (int) db.insert("ANSWER",null,answerValues2);
-        //db.execSQL("INSERT INTO ANSWER VALUES(null,'Machito88');");
-
-        byte[] answer3 = cryptographer.encryptText("Mamama");
-        ContentValues answerValues3 = new ContentValues();
-        //values.put("_id",null);
-        answerValues3.put("Value",answer3);
-        answerValues3.put("initVector",cryptographer.getIv().getIV());
-        int answerID3 = (int) db.insert("ANSWER",null,answerValues3);
-
-        //db.execSQL("INSERT INTO ANSWER VALUES(null,'Mamama');");
-
-        byte[] answer4 = cryptographer.encryptText("Caracas");
-        ContentValues answerValues4 = new ContentValues();
-        //values.put("_id",null);
-        answerValues4.put("Value",answer4);
-        answerValues4.put("initVector",cryptographer.getIv().getIV());
-        int answerID4 = (int) db.insert("ANSWER",null,answerValues4);
-        //db.execSQL("INSERT INTO ANSWER VALUES(null,'Caracas');");
+//        byte[] answer2 = cryptographer.encryptText("Machito88");
+//        ContentValues answerValues2 = new ContentValues();
+//        //values.put("_id",null);
+//        answerValues2.put("Value",answer2);
+//        answerValues2.put("initVector",cryptographer.getIv().getIV());
+//        int answerID2 = (int) db.insert("ANSWER",null,answerValues2);
+//        //db.execSQL("INSERT INTO ANSWER VALUES(null,'Machito88');");
+//
+//        byte[] answer3 = cryptographer.encryptText("Mamama");
+//        ContentValues answerValues3 = new ContentValues();
+//        //values.put("_id",null);
+//        answerValues3.put("Value",answer3);
+//        answerValues3.put("initVector",cryptographer.getIv().getIV());
+//        int answerID3 = (int) db.insert("ANSWER",null,answerValues3);
+//
+//        //db.execSQL("INSERT INTO ANSWER VALUES(null,'Mamama');");
+//
+//        byte[] answer4 = cryptographer.encryptText("Caracas");
+//        ContentValues answerValues4 = new ContentValues();
+//        //values.put("_id",null);
+//        answerValues4.put("Value",answer4);
+//        answerValues4.put("initVector",cryptographer.getIv().getIV());
+//        int answerID4 = (int) db.insert("ANSWER",null,answerValues4);
+//        //db.execSQL("INSERT INTO ANSWER VALUES(null,'Caracas');");
 
         //Create table to store security questions (linked to Answer ID as Foreign key)"
         db.execSQL("CREATE TABLE QUESTION (_id INTEGER PRIMARY KEY AUTOINCREMENT,Value TEXT,\n" +
                 "AnswerID INTEGER, FOREIGN KEY (AnswerID) REFERENCES ANSWER(_id));");
         //Insert pre-defined suggested security questions in the DB. No answer associated to question yet.
-        db.execSQL("INSERT INTO QUESTION VALUES(null,'whatsTheNameOfYourFirstPet',1);");
-        db.execSQL("INSERT INTO QUESTION VALUES(null,'whatWasTheModelOfYourFirstCar',2);");
-        db.execSQL("INSERT INTO QUESTION VALUES(null,'whatsYourGrannysName',3);");
-        db.execSQL("INSERT INTO QUESTION VALUES(null,'whereDidYouGetMarried',4);");
+        db.execSQL("INSERT INTO QUESTION VALUES(null,'whatsTheNameOfYourFirstPet',null);");
+        db.execSQL("INSERT INTO QUESTION VALUES(null,'whatWasTheModelOfYourFirstCar',null);");
+        db.execSQL("INSERT INTO QUESTION VALUES(null,'whatsYourGrannysName',null);");
+        db.execSQL("INSERT INTO QUESTION VALUES(null,'whereDidYouGetMarried',null);");
         db.execSQL("INSERT INTO QUESTION VALUES(null,'whatsYourMothersMaidenName',null);");
         db.execSQL("INSERT INTO QUESTION VALUES(null,'whatsTheNameOfTheTownWhereYouWereBorn',null);");
         db.execSQL("INSERT INTO QUESTION VALUES(null,'whichPhoneNumberDoYouRememberMostFromChildhood',null);");
@@ -120,10 +120,8 @@ public class AccountsDB extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE ICON (_id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT,Location TEXT, isSelected INTEGER);");
 
         //Create table to store MyPsswrdSecure App Logging data
-        db.execSQL("CREATE TABLE APPLOGGIN (_id INTEGER PRIMARY KEY AUTOINCREMENT,UserNameID TEXT, \n" +
-                "PsswrdID TEXT,Name TEXT,Email TEXT,Message TEXT, PictureID INT,\n" +
-                "FOREIGN KEY (UserNameID) REFERENCES USERNAME(_id),\n" +
-                "FOREIGN KEY (PsswrdID) REFERENCES PSSWRD(_id),\n" +
+        db.execSQL("CREATE TABLE APPLOGGIN (_id INTEGER PRIMARY KEY AUTOINCREMENT,UserNameID BLOB,UserNameIV BLOB, \n" +
+                "PsswrdID BLOB,PsswrdIV BLOB,Name TEXT,Message TEXT, PictureID INT,\n" +
                 "FOREIGN KEY (PictureID) REFERENCES ICON(_id));");
 
         //Create table to store the different categories an account can be associated to
@@ -246,99 +244,99 @@ public class AccountsDB extends SQLiteOpenHelper {
 
         //Test and sample data
         //Question Lists
-        db.execSQL("INSERT INTO QUESTIONLIST VALUES(null,1,2,3);");
-        db.execSQL("INSERT INTO QUESTIONLIST VALUES(null,4,null,null);");
-        db.execSQL("INSERT INTO QUESTIONLIST VALUES(null,2,3,4);");
+//        db.execSQL("INSERT INTO QUESTIONLIST VALUES(null,1,2,3);");
+//        db.execSQL("INSERT INTO QUESTIONLIST VALUES(null,4,null,null);");
+//        db.execSQL("INSERT INTO QUESTIONLIST VALUES(null,2,3,4);");
 
         //Question assignment
-        db.execSQL("INSERT INTO QUESTIONASSIGNMENT VALUES(null,1,1);");
-        db.execSQL("INSERT INTO QUESTIONASSIGNMENT VALUES(null,1,2);");
-        db.execSQL("INSERT INTO QUESTIONASSIGNMENT VALUES(null,1,3);");
-        db.execSQL("INSERT INTO QUESTIONASSIGNMENT VALUES(null,2,4);");
-        db.execSQL("INSERT INTO QUESTIONASSIGNMENT VALUES(null,3,2);");
-        db.execSQL("INSERT INTO QUESTIONASSIGNMENT VALUES(null,3,3);");
-        db.execSQL("INSERT INTO QUESTIONASSIGNMENT VALUES(null,3,4);");
+//        db.execSQL("INSERT INTO QUESTIONASSIGNMENT VALUES(null,1,1);");
+//        db.execSQL("INSERT INTO QUESTIONASSIGNMENT VALUES(null,1,2);");
+//        db.execSQL("INSERT INTO QUESTIONASSIGNMENT VALUES(null,1,3);");
+//        db.execSQL("INSERT INTO QUESTIONASSIGNMENT VALUES(null,2,4);");
+//        db.execSQL("INSERT INTO QUESTIONASSIGNMENT VALUES(null,3,2);");
+//        db.execSQL("INSERT INTO QUESTIONASSIGNMENT VALUES(null,3,3);");
+//        db.execSQL("INSERT INTO QUESTIONASSIGNMENT VALUES(null,3,4);");
 
         //Include test data for User names
-        byte[] user1 = cryptographer.encryptText("jlrods");
-        ContentValues values1 = new ContentValues();
-        values1.put("Value",user1);
-        values1.put("DateCreated", Calendar.getInstance().getTimeInMillis());
-        values1.put("initVector",cryptographer.getIv().getIV());
-        int userID1 = (int) db.insert("USERNAME",null,values1);
-
-        byte[] user2 = cryptographer.encryptText("jlrods@gmail.com");
-        ContentValues values2 = new ContentValues();
-        //values.put("_id",null);
-        values2.put("Value",user2);
-        values2.put("DateCreated", Calendar.getInstance().getTimeInMillis());
-        values2.put("initVector",cryptographer.getIv().getIV());
-        int userID2 = (int) db.insert("USERNAME",null,values2);
-        //String user2 = cryptographer.encryptText("jlrods@gmail.com").toString();
-        //db.execSQL("INSERT INTO USERNAME (Value, DateCreated) VALUES('"+user2+"',1588267878640);");
-        byte[] user3 = cryptographer.encryptText("j_rodriguez");
-        ContentValues values3 = new ContentValues();
-        //values.put("_id",null);
-        values3.put("Value",user3);
-        values3.put("DateCreated", Calendar.getInstance().getTimeInMillis());
-        values3.put("initVector",cryptographer.getIv().getIV());
-        int userID3 = (int) db.insert("USERNAME",null,values3);
-        //String user3 = cryptographer.encryptText("j_rodriguez").toString();
-        //db.execSQL("INSERT INTO USERNAME (Value, DateCreated) VALUES('"+user3+"',1588367878641);");
-        byte[]  user4 = cryptographer.encryptText("j_rodriguez@modularauto.ie");
-        ContentValues values4 = new ContentValues();
-        //values.put("_id",null);
-        values4.put("Value",user4);
-        values4.put("DateCreated", Calendar.getInstance().getTimeInMillis());
-        values4.put("initVector",cryptographer.getIv().getIV());
-        int userID4 = (int) db.insert("USERNAME",null,values4);
-        //String user4 = cryptographer.encryptText("j_rodriguez@modularauto.ie").toString();
-        //db.execSQL("INSERT INTO USERNAME (Value, DateCreated) VALUES('"+user4+"',1588467878642);");
-
-        ////Include test data for passwords
-        byte[] psswrd1 = cryptographer.encryptText("Machito88");
-        ContentValues values11 = new ContentValues();
-        //values.put("_id",null);
-        values11.put("Value",psswrd1);
-        values11.put("DateCreated", Calendar.getInstance().getTimeInMillis());
-        values11.put("initVector",cryptographer.getIv().getIV());
-        int psswrdID1 = (int) db.insert("PSSWRD",null,values11);
-        //String psswrd1 = cryptographer.encryptText("Machito88").toString();
-        //db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('"+psswrd1+"',1588167878639);");
-        byte[] psswrd2 = cryptographer.encryptText("JoseLeonardo");
-        ContentValues values12 = new ContentValues();
-        //values.put("_id",null);
-        values12.put("Value",psswrd2);
-        values12.put("DateCreated", Calendar.getInstance().getTimeInMillis());
-        values12.put("initVector",cryptographer.getIv().getIV());
-        int psswrdID2 = (int) db.insert("PSSWRD",null,values12);
-        //String psswrd2 = cryptographer.encryptText("JoseLeonardo").toString();
-        //db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('"+psswrd2+"',1588267878640);");
-        byte[]  psswrd3 = cryptographer.encryptText("Paracotos12!");
-        ContentValues values13 = new ContentValues();
-        //values.put("_id",null);
-        values13.put("Value",psswrd3);
-        values13.put("DateCreated", Calendar.getInstance().getTimeInMillis());
-        values13.put("initVector",cryptographer.getIv().getIV());
-        int psswrdID3 = (int) db.insert("PSSWRD",null,values13);
-        //String psswrd3 = cryptographer.encryptText("Paracotos12!").toString();
-        //db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('"+psswrd3+"',1588367878641);");
-        byte[] psswrd4 = cryptographer.encryptText("Roraima2020!");
-        ContentValues values14 = new ContentValues();
-        //values.put("_id",null);
-        values14.put("Value",psswrd4);
-        values14.put("DateCreated", Calendar.getInstance().getTimeInMillis());
-        values14.put("initVector",cryptographer.getIv().getIV());
-        int psswrdID4 = (int) db.insert("PSSWRD",null,values14);
-        //String psswrd4 = cryptographer.encryptText("Roraima2020!").toString();
-        //db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('"+psswrd4+"',1588467878642);");
-        byte[] psswrd5 = cryptographer.encryptText("M;Mach;to88!");
-        ContentValues values15 = new ContentValues();
-        //values.put("_id",null);
-        values15.put("Value",psswrd5);
-        values15.put("DateCreated", Calendar.getInstance().getTimeInMillis());
-        values15.put("initVector",cryptographer.getIv().getIV());
-        int psswrdID5 = (int) db.insert("PSSWRD",null,values15);
+//        byte[] user1 = cryptographer.encryptText("jlrods");
+//        ContentValues values1 = new ContentValues();
+//        values1.put("Value",user1);
+//        values1.put("DateCreated", Calendar.getInstance().getTimeInMillis());
+//        values1.put("initVector",cryptographer.getIv().getIV());
+//        int userID1 = (int) db.insert("USERNAME",null,values1);
+//
+//        byte[] user2 = cryptographer.encryptText("jlrods@gmail.com");
+//        ContentValues values2 = new ContentValues();
+//        //values.put("_id",null);
+//        values2.put("Value",user2);
+//        values2.put("DateCreated", Calendar.getInstance().getTimeInMillis());
+//        values2.put("initVector",cryptographer.getIv().getIV());
+//        int userID2 = (int) db.insert("USERNAME",null,values2);
+//        //String user2 = cryptographer.encryptText("jlrods@gmail.com").toString();
+//        //db.execSQL("INSERT INTO USERNAME (Value, DateCreated) VALUES('"+user2+"',1588267878640);");
+//        byte[] user3 = cryptographer.encryptText("j_rodriguez");
+//        ContentValues values3 = new ContentValues();
+//        //values.put("_id",null);
+//        values3.put("Value",user3);
+//        values3.put("DateCreated", Calendar.getInstance().getTimeInMillis());
+//        values3.put("initVector",cryptographer.getIv().getIV());
+//        int userID3 = (int) db.insert("USERNAME",null,values3);
+//        //String user3 = cryptographer.encryptText("j_rodriguez").toString();
+//        //db.execSQL("INSERT INTO USERNAME (Value, DateCreated) VALUES('"+user3+"',1588367878641);");
+//        byte[]  user4 = cryptographer.encryptText("j_rodriguez@modularauto.ie");
+//        ContentValues values4 = new ContentValues();
+//        //values.put("_id",null);
+//        values4.put("Value",user4);
+//        values4.put("DateCreated", Calendar.getInstance().getTimeInMillis());
+//        values4.put("initVector",cryptographer.getIv().getIV());
+//        int userID4 = (int) db.insert("USERNAME",null,values4);
+//        //String user4 = cryptographer.encryptText("j_rodriguez@modularauto.ie").toString();
+//        //db.execSQL("INSERT INTO USERNAME (Value, DateCreated) VALUES('"+user4+"',1588467878642);");
+//
+//        ////Include test data for passwords
+//        byte[] psswrd1 = cryptographer.encryptText("Machito88");
+//        ContentValues values11 = new ContentValues();
+//        //values.put("_id",null);
+//        values11.put("Value",psswrd1);
+//        values11.put("DateCreated", Calendar.getInstance().getTimeInMillis());
+//        values11.put("initVector",cryptographer.getIv().getIV());
+//        int psswrdID1 = (int) db.insert("PSSWRD",null,values11);
+//        //String psswrd1 = cryptographer.encryptText("Machito88").toString();
+//        //db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('"+psswrd1+"',1588167878639);");
+//        byte[] psswrd2 = cryptographer.encryptText("JoseLeonardo");
+//        ContentValues values12 = new ContentValues();
+//        //values.put("_id",null);
+//        values12.put("Value",psswrd2);
+//        values12.put("DateCreated", Calendar.getInstance().getTimeInMillis());
+//        values12.put("initVector",cryptographer.getIv().getIV());
+//        int psswrdID2 = (int) db.insert("PSSWRD",null,values12);
+//        //String psswrd2 = cryptographer.encryptText("JoseLeonardo").toString();
+//        //db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('"+psswrd2+"',1588267878640);");
+//        byte[]  psswrd3 = cryptographer.encryptText("Paracotos12!");
+//        ContentValues values13 = new ContentValues();
+//        //values.put("_id",null);
+//        values13.put("Value",psswrd3);
+//        values13.put("DateCreated", Calendar.getInstance().getTimeInMillis());
+//        values13.put("initVector",cryptographer.getIv().getIV());
+//        int psswrdID3 = (int) db.insert("PSSWRD",null,values13);
+//        //String psswrd3 = cryptographer.encryptText("Paracotos12!").toString();
+//        //db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('"+psswrd3+"',1588367878641);");
+//        byte[] psswrd4 = cryptographer.encryptText("Roraima2020!");
+//        ContentValues values14 = new ContentValues();
+//        //values.put("_id",null);
+//        values14.put("Value",psswrd4);
+//        values14.put("DateCreated", Calendar.getInstance().getTimeInMillis());
+//        values14.put("initVector",cryptographer.getIv().getIV());
+//        int psswrdID4 = (int) db.insert("PSSWRD",null,values14);
+//        //String psswrd4 = cryptographer.encryptText("Roraima2020!").toString();
+//        //db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('"+psswrd4+"',1588467878642);");
+//        byte[] psswrd5 = cryptographer.encryptText("M;Mach;to88!");
+//        ContentValues values15 = new ContentValues();
+//        //values.put("_id",null);
+//        values15.put("Value",psswrd5);
+//        values15.put("DateCreated", Calendar.getInstance().getTimeInMillis());
+//        values15.put("initVector",cryptographer.getIv().getIV());
+//        int psswrdID5 = (int) db.insert("PSSWRD",null,values15);
 //        String psswrd5 = cryptographer.encryptText("M;Mach;to88!").toString();
 //        db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('"+psswrd5+"',1588167878639);");
 
@@ -367,15 +365,13 @@ public class AccountsDB extends SQLiteOpenHelper {
 
 
         //Accounts
-        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'Modular',4,4,4,1,-1,0,1588567878642,0);");
-        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'Google',4,2,3,null,18,0,1588867878642,0);");
-        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'TMS',4,4,2,2,-1,0,1588767878642,0);");
-        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'Facebook',1,2,1,null,14,0,1588967878642,0);");
-        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'Instagram',1,2,5,null,20,0,1588867878642,0);");
-        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'AA',11,2,5,null,1,0,1588967878642,0);");
-        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'Integro',4,4,3,3,-1,0,1588667878642,0);");
-
-
+//        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'Modular',4,4,4,1,-1,0,1588567878642,0);");
+//        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'Google',4,2,3,null,18,0,1588867878642,0);");
+//        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'TMS',4,4,2,2,-1,0,1588767878642,0);");
+//        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'Facebook',1,2,1,null,14,0,1588967878642,0);");
+//        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'Instagram',1,2,5,null,20,0,1588867878642,0);");
+//        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'AA',11,2,5,null,1,0,1588967878642,0);");
+//        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'Integro',4,4,3,3,-1,0,1588667878642,0);");
 
         Log.d("Ext_DBOncreate","Exit onCreate method in AccountsDB class.");
     }//End of onCreate method
@@ -594,8 +590,10 @@ public class AccountsDB extends SQLiteOpenHelper {
             Log.d("addIcon","Icon to be added in the addItem method in AccountsDB class.");
         }else if(item instanceof AppLoggin){
             table = MainActivity.getApplogginTable();
-            fields.put(MainActivity.getUserNameIdColumn(),((AppLoggin)item).getUserName().get_id());
-            fields.put(MainActivity.getPsswrdIdColumn(),((AppLoggin)item).getPsswrd().get_id());
+            fields.put(MainActivity.getUserNameIdColumn(),cryptographer.encryptText(String.valueOf(((AppLoggin)item).getUserName().get_id())));
+            fields.put(MainActivity.getUserNameIvColumn(),cryptographer.getIv().getIV());
+            fields.put(MainActivity.getPsswrdIdColumn(),cryptographer.encryptText(String.valueOf(((AppLoggin)item).getPsswrd().get_id())));
+            fields.put(MainActivity.getPsswrdIvColumn(),cryptographer.getIv().getIV());
             fields.put(MainActivity.getNameColumn(),((AppLoggin)item).getName());
             fields.put(MainActivity.getMessageColumn(),((AppLoggin)item).getMessage());
             fields.put(MainActivity.getPictureidColumn(),((AppLoggin)item).getPicture().get_id());

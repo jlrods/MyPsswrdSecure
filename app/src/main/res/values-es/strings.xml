@@ -64,8 +64,9 @@
     <string name="account_removeQuestion">Remover</string>
     <string name="question_spinner_answer">Resp:</string>
     <string name="account_quest_avilab_spinner_prompt">Añada una pregunta a su lista...</string>
-    <string name="account_quest_list_spinner_prompt">No hay preguntas en sy lista aún...</string>
+    <string name="account_quest_list_spinner_prompt">No hay preguntas...</string>
     <string name="account_quest_list_spinner_prompt1">Lista de preguntas tiene </string>
+    <string name="account_quest_avilab_noAnswers">No hay respuestas...</string>
     <string name="account_quest_list_spinner_prompt2"> pregunta...</string>
     <string name="account_quest_list_spinner_prompt3"> preguntas...</string>
 
@@ -307,7 +308,9 @@
     <string name="biometLoginTitle">Validación biométrica para MyPsswrdSecure</string>
     <string name="biometLoginSubTitle">Logueé usando sus credenciales biométricas</string>
     <string name="biometLoginCancelMssg">Usar usuario y clave</string>
-
+    <string name="psswrdsDontMatchError">Lo siento, la contraseña y su confirmación no coinciden, intente de nuevo...</string>
+    <string name="moreThanOneLoginError">Lo siento, hay más de una cuenta registrada en la app. Por favor, desinstalle y vuelva a instalar.</string>
+    <string name="wrongCredentialsError">Lo siento, la combinación de usuario y contraseña es inválida, intent de nuevo...</string>
 
 
 </resources>

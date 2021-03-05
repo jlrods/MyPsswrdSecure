@@ -157,6 +157,7 @@ public class LoginActivity extends AppCompatActivity {
             etUserName.setVisibility(View.GONE);
             etUserMessage.setVisibility(View.GONE);
             btnLoginButton.setText(R.string.action_sign_in);
+            displaySignUp = false;
         }else{
             displaySignUp = true;
         }
@@ -166,101 +167,180 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //Define boolean flag to determine login success or failure
                 boolean loginSuccess = false;
-                AppLoggin appLoggin = new AppLoggin();;
+                AppLoggin appLoggin = new AppLoggin();
+                //Error flag
+                boolean loginError = false;
+                //Login Error message
                 String errorMessageText = "";
+
                 //Check if an applogin is already recorded on the DB
                 if(displaySignUp){
-                    Cursor inputUserNameCursor;
-                    UserName newUserName;
-                    Cursor inputPsswrdCursor;
-                    Psswrd newPsswrd;
-                    AppLoggin newAppLoggin = new AppLoggin();
-                    //MainActivity.displayToast(v.getContext(),"This is weird, should exist a user at least!",Toast.LENGTH_LONG, Gravity.CENTER);
-                    //If no data registered on DB or Signup request sent by user, Check the usernameID field if valid,
+                    //Declare variables to be used during the SignUp-SignIn process
+
+                    //Cursor and AppLoging objects used to retrieve and store the app login
+                    //AppLoggin newAppLoggin = new AppLoggin();
+
+                    //If no applogin data registered on DB, check the usernameID field if valid,
                     //Check the password isn't empty and the passwordConfirm field matches the password field
                     if(loginViewModel.isUserNameValid(etUsernameId.getText().toString()) && loginViewModel.isPasswordValid(etPassword.getText().toString())){
                         if(etPassword.getText().toString().equals(etPasswordConfirm.getText().toString())){
+                            //UserName object used to retrieve user name data corresponding  ot the user input
+                            UserName newUserName;
+                            //Cursor and Psswrd object used to retrieve and store password data corresponding to the user input
+                            Psswrd newPsswrd;
+                            //Add user name to UserName table
+                            newUserName = new UserName(cryptographer.encryptText(etUsernameId.getText().toString()),cryptographer.getIv().getIV());
+                            //Update user name id by inputting result coming from DB insertion
+                            newUserName.set_id(accountsDB.addItem(newUserName));
+                            newPsswrd = new Psswrd(cryptographer.encryptText(etPassword.getText().toString()),cryptographer.getIv().getIV());
+                            //Update password id by inputting result coming from DB insertion
+                            newPsswrd.set_id(accountsDB.addItem(newPsswrd));
+
+                            //Add appLogin record to APPLOGGIN table
+                            appLoggin = new AppLoggin(-1,etUserName.getText().toString(),newUserName,newPsswrd,etUserMessage.getText().toString(),accountsDB.getIconByID(62));
+                            //Update appLogin id by inputting result coming from DB insertion
+                            appLoggin.set_id(accountsDB.addItem(appLoggin));
+                            if(appLoggin.get_id() != -1){
+                                loginSuccess = true;
+                            }
+
                             //First check the username typed in by user  does not exist in DB, otherwise show proper error message
-                            inputUserNameCursor = accountsDB.getUserNameByName(etUsernameId.getText().toString());
-                            if(!inputUserNameCursor.moveToFirst()){
+//                            inputUserNameCursor = accountsDB.getUserNameByName(etUsernameId.getText().toString());
+//                            if(!inputUserNameCursor.moveToFirst()){
 
-                                //Add user name to UserName table
-                                newUserName = new UserName(cryptographer.encryptText(etUsernameId.getText().toString()),cryptographer.getIv().getIV());
-                                newUserName.set_id(accountsDB.addItem(newUserName));
-                                //Check password doesn't exist in DB, otherwise keep PsswrdID
-                                inputPsswrdCursor = accountsDB.getPsswrdByName(etPassword.getText().toString());
-                                if(!inputPsswrdCursor.moveToFirst()){
-                                    newPsswrd = new Psswrd(cryptographer.encryptText(etPassword.getText().toString()),cryptographer.getIv().getIV());
-                                    newPsswrd.set_id(accountsDB.addItem(newPsswrd));
-                                }else{
-                                    newPsswrd = Psswrd.extractPsswrd(inputPsswrdCursor);
-                                }
+//                                //Add user name to UserName table
+//                                newUserName = new UserName(cryptographer.encryptText(etUsernameId.getText().toString()),cryptographer.getIv().getIV());
+//                                newUserName.set_id(accountsDB.addItem(newUserName));
+//                                //Check password doesn't exist in DB, otherwise keep PsswrdID
+//                                inputPsswrdCursor = accountsDB.getPsswrdByName(etPassword.getText().toString());
+//                                if(!inputPsswrdCursor.moveToFirst()){
+//                                    newPsswrd = new Psswrd(cryptographer.encryptText(etPassword.getText().toString()),cryptographer.getIv().getIV());
+//                                    newPsswrd.set_id(accountsDB.addItem(newPsswrd));
+//                                }else{
+//                                    newPsswrd = Psswrd.extractPsswrd(inputPsswrdCursor);
+//                                }
+//
+//                                //Add appLogin record to APPLOGGIN table
+//                                newAppLoggin = new AppLoggin(-1,etUserName.getText().toString(),newUserName,newPsswrd,etUserMessage.getText().toString(),accountsDB.getIconByID(62));
+////                                newAppLoggin = new AppLoggin(-1,etUserName.getText().toString(),newUserName,newPsswrd,etUsernameId.getText().toString(),etUserMessage.getText().toString(),accountsDB.getIconByID(62));
+//                                newAppLoggin.set_id(accountsDB.addItem(newAppLoggin));
+//                                appLoggin = newAppLoggin;
 
-                                //Add appLogin record to APPLOGGIN table
-                                newAppLoggin = new AppLoggin(-1,etUserName.getText().toString(),newUserName,newPsswrd,etUsernameId.getText().toString(),etUserMessage.getText().toString(),accountsDB.getIconByID(62));
-                                newAppLoggin.set_id(accountsDB.addItem(newAppLoggin));
-                                appLoggin = newAppLoggin;
-
-                            }else{
+//                            }else{
                                 //The user name exists in DB, check is not being used as appLogin user name
                                 //Extract user name object
-                                newUserName = UserName.extractUserName(inputUserNameCursor);
+//                                newUserName = UserName.extractUserName(inputUserNameCursor);
                                 //Query the DB to get the APPLOGGIN record with the userName id found for the user name typed in
-                                Cursor appLoginCursor = accountsDB.getAppLoginCursorUserAndPsswrdData(newUserName.get_id());
-                                //Check cursor returned Empty, which means the user name typed in isn't used as appLogin user
-                                if(!appLoginCursor.moveToFirst()){
-                                    //Check password doesn't exist in DB, otherwise keep PsswrdID
-                                    inputPsswrdCursor = accountsDB.getPsswrdByName(etPassword.getText().toString());
-                                    if(!inputPsswrdCursor.moveToFirst()){
-                                        newPsswrd = new Psswrd(cryptographer.encryptText(etPassword.getText().toString()),cryptographer.getIv().getIV());
-                                        newPsswrd.set_id(accountsDB.addItem(newPsswrd));
-                                    }else{
-                                        newPsswrd = Psswrd.extractPsswrd(inputPsswrdCursor);
-                                    }
+                                //Cursor appLoginCursor = accountsDB.getAppLoginCursorUserAndPsswrdData(newUserName.get_id());
 
-                                    //Add appLogin record to APPLOGGIN table
-                                    newAppLoggin = new AppLoggin(-1,etUserName.getText().toString(),newUserName,newPsswrd,etUsernameId.getText().toString(),etUserMessage.getText().toString(),accountsDB.getIconByID(62));
-                                    newAppLoggin.set_id(accountsDB.addItem(newAppLoggin));
-                                    appLoggin = newAppLoggin;
 
-                                }else{
-                                    //Display error, The user name typed in is already in use
-                                    errorMessageText = "Sorry, the user name typed in is alredy in use. Try again...";
-                                }
-                            }
+                                //Get all records in AppLoggin table
+//                                Cursor appLoginCursor = accountsDB.getAllAppLoginCursor();
+//                                //Check the cursor to make sure only one user is present
+//                                if(appLoginCursor != null){
+//                                    if(!appLoginCursor.moveToFirst()){
+//                                        //Check password doesn't exist in DB, otherwise keep PsswrdID
+//                                        inputPsswrdCursor = accountsDB.getPsswrdByName(etPassword.getText().toString());
+//                                        if(!inputPsswrdCursor.moveToFirst()){
+//                                            newPsswrd = new Psswrd(cryptographer.encryptText(etPassword.getText().toString()),cryptographer.getIv().getIV());
+//                                            newPsswrd.set_id(accountsDB.addItem(newPsswrd));
+//                                        }else{
+//                                            newPsswrd = Psswrd.extractPsswrd(inputPsswrdCursor);
+//                                        }
+//                                        //Add appLogin record to APPLOGGIN table
+//                                        newAppLoggin = new AppLoggin(-1,etUserName.getText().toString(),newUserName,newPsswrd,etUserMessage.getText().toString(),accountsDB.getIconByID(62));
+////                                    newAppLoggin = new AppLoggin(-1,etUserName.getText().toString(),newUserName,newPsswrd,etUsernameId.getText().toString(),etUserMessage.getText().toString(),accountsDB.getIconByID(62));
+//                                        newAppLoggin.set_id(accountsDB.addItem(newAppLoggin));
+//                                        appLoggin = newAppLoggin;
+//                                    }else{
+//                                        //Handle error
+//                                    }
+//                                }
+
+//                                //Check cursor returned Empty, which means the user name typed in isn't used as appLogin user
+//                                if(!appLoginCursor.moveToFirst()){
+//                                    //Check password doesn't exist in DB, otherwise keep PsswrdID
+//                                    inputPsswrdCursor = accountsDB.getPsswrdByName(etPassword.getText().toString());
+//                                    if(!inputPsswrdCursor.moveToFirst()){
+//                                        newPsswrd = new Psswrd(cryptographer.encryptText(etPassword.getText().toString()),cryptographer.getIv().getIV());
+//                                        newPsswrd.set_id(accountsDB.addItem(newPsswrd));
+//                                    }else{
+//                                        newPsswrd = Psswrd.extractPsswrd(inputPsswrdCursor);
+//                                    }
+//
+//                                    //Add appLogin record to APPLOGGIN table
+//                                    newAppLoggin = new AppLoggin(-1,etUserName.getText().toString(),newUserName,newPsswrd,etUserMessage.getText().toString(),accountsDB.getIconByID(62));
+////                                    newAppLoggin = new AppLoggin(-1,etUserName.getText().toString(),newUserName,newPsswrd,etUsernameId.getText().toString(),etUserMessage.getText().toString(),accountsDB.getIconByID(62));
+//                                    newAppLoggin.set_id(accountsDB.addItem(newAppLoggin));
+//                                    appLoggin = newAppLoggin;
+//
+//                                }else{
+//                                    //Display error, The user name typed in is already in use
+//                                    errorMessageText = "Sorry, the user name typed in is alredy in use. Try again...";
+//                                }
+//                            }
                         }else{
                             //Display error, the password doesn't match the confirmation
-                            errorMessageText = "Sorry, the password and it's confirmation do not match. Try again...";
-
+                            loginError = true;
+                            errorMessageText = getString(R.string.psswrdsDontMatchError);
                         }//End of if else statement to check password and confirmation match
-                        if(newAppLoggin.get_id() != -1){
-                            loginSuccess = true;
-                        }
                     }//End of if statement to check the user name isn't empty and password field is valid
-
                 }else{
                     //In case of an already signed up account registered on the DB
                     //First check the username typed in by user actually  exists in DB, otherwise show proper error message
-                    Cursor inputUserNameCursor = accountsDB.getUserNameByName(etUsernameId.getText().toString());
+                    Cursor inputUserNameCursor = accountsDB.getUserNameByName(etUsernameId.getText().toString().trim());
                     if(inputUserNameCursor.moveToFirst()){
                         //Extract user name object
                         UserName inputUserName = UserName.extractUserName(inputUserNameCursor);
                         //Query the DB to get the APPLOGGIN record with the userName id found for the user name typed in
-                        Cursor appLoginCursor = accountsDB.getAppLoginCursorUserAndPsswrdData(inputUserName.get_id());
-                        //If APPLOGGIN record with same user name is found on the DB, check the password
-                        if(appLoginCursor.moveToNext()){
-                            //Only then check for password validity
-                            if(cryptographer.decryptText(appLoginCursor.getBlob(7),new IvParameterSpec(appLoginCursor.getBlob(8))).equals(etPassword.getText().toString().trim()) ){
-                                loginSuccess = true;
-                                appLoggin = AppLoggin.extractAppLoggin(appLoginCursor);
-                            }else{
-                                errorMessageText ="Sorry, the user name and password combination is invalid.Try again...";
-                            }//End of if statement that checks password passed in matches applogin password
-                        }//End of if statement that checks the user name passed in matches applogin user name
-                    }else{
-                        errorMessageText ="Sorry, the user name and password combination is invalid.Try again...";
-                    }//End of if statement that checks user name exists in DB
+//                        Cursor appLoginCursor = accountsDB.getAppLoginCursorUserAndPsswrdData(inputUserName.get_id());
+                        //@Fixme: Inclusion of new logic accounting for changes on AppLoggin table
+                        Cursor appLoginCursor = accountsDB.getAllAppLoginCursor();
 
+                        if(appLoginCursor.getCount() == 1 && appLoginCursor.moveToFirst()){
+                            //Extract appLoggin object to conduct credential verification
+                            appLoggin = AppLoggin.extractAppLoggin(appLoginCursor);
+                            //Check for user name validity
+                            if(appLoggin.getUserName().get_id() == inputUserName.get_id()){
+                                //Then check for password validity
+                                Cursor inputPsswrdCursor = accountsDB.getPsswrdByName(etPassword.getText().toString().trim());
+                                if(inputPsswrdCursor.moveToFirst()){
+                                    Psswrd inputPsswrd = Psswrd.extractPsswrd(inputPsswrdCursor);
+                                    if(appLoggin.getPsswrd().get_id() == inputPsswrd.get_id()){
+                                        loginSuccess = true;
+                                    }else{
+                                        loginError = true;
+                                    }
+                                }else{
+                                    loginError = true;
+                                }
+                            }else{
+                                loginError = true;
+                            }
+                        }else{
+                            //Handle error, no more than one applogin should be recorded on the DB
+                            loginError = true;
+                            errorMessageText =getString(R.string.moreThanOneLoginError);
+                        }//End of if statement that checks the user name passed in matches applogin user name
+
+                        //If APPLOGGIN record with same user name is found on the DB, check the password
+//                        if(appLoginCursor.moveToNext()){
+//                            //Only then check for password validity
+//                            //@Fixme: If DB doesn't offer a query to return same structure, but including new fields for envrypted UN and Psswrd in the AppLogin, this will need fixing
+//                            if(cryptographer.decryptText(appLoginCursor.getBlob(7),new IvParameterSpec(appLoginCursor.getBlob(8))).equals(etPassword.getText().toString().trim()) ){
+//                                loginSuccess = true;
+//                                appLoggin = AppLoggin.extractAppLoggin(appLoginCursor);
+//                            }else{
+//                                errorMessageText ="Sorry, the user name and password combination is invalid.Try again...";
+//                            }//End of if statement that checks password passed in matches applogin password
+//                        }//End of if statement that checks the user name passed in matches applogin user name
+                    }else{
+                        loginError = true;
+                    }//End of if statement that checks user name exists in DB
+                //Check if any error occured and assign correct error text to be displayed
+                    if(loginError && errorMessageText.equals("")){
+                        errorMessageText =getString(R.string.wrongCredentialsError);
+                    }
                 }//End of if else statement that checks it's first time login
 
                 if(loginSuccess){
@@ -269,20 +349,21 @@ public class LoginActivity extends AppCompatActivity {
                     //If user name not even present in the username table, throw an error message
                     MainActivity.displayToast(v.getContext(),errorMessageText,Toast.LENGTH_LONG, Gravity.CENTER);
                 }
-                //loadingProgressBar.setVisibility(View.VISIBLE);
-                //loginViewModel.login(etUsernameId.getText().toString(),
-                 //       etPassword.getText().toString());
             }//End of onClick method
         });//End of setOnClickListener method for the signUp-signIn button
 
         if(!displaySignUp){
             //Call method to display biometric authentication dialog if setting is active
-            if(getIsBioLoginActive(this)){
+            if(getIsBioLoginActive(this) && !displaySignUp){
                 this.callBiometricAuthentication();
             }
         }//End of if statement to check sigup display isn't in use
         Log.d("Ext_onCreateLogin","Exit onCreate method in LoginActivity class.");
     }//End of onCreate method
+
+    private boolean encryptedCredentialValidation(byte[] encryptedCredential, byte[] credentialIV ,TextView tvCredential){
+        return cryptographer.decryptText(encryptedCredential,new IvParameterSpec(credentialIV)).equals(tvCredential.getText().toString().trim());
+    }
 
     private void updateUiWithUser(LoggedInUserView model) {
         String welcome = getString(R.string.welcome) + model.getDisplayName();
@@ -387,7 +468,7 @@ public class LoginActivity extends AppCompatActivity {
         etUsernameId.setText("");
         etPassword.setText("");
         //Call method to display biometric authentication dialog if setting is active
-        if(getIsBioLoginActive(this)){
+        if(getIsBioLoginActive(this) && !displaySignUp){
             this.callBiometricAuthentication();
         }
         Log.d("onResume","Enter onResume method in the LoginActivity class.");

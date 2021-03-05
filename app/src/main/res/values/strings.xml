@@ -64,7 +64,8 @@
     <string name="account_removeQuestion">Delete</string>
     <string name="question_spinner_answer">Answ:</string>
     <string name="account_quest_avilab_spinner_prompt">Add a question to your list...</string>
-    <string name="account_quest_list_spinner_prompt">No questions in your list...</string>
+    <string name="account_quest_avilab_noAnswers">No Answers available</string>
+    <string name="account_quest_list_spinner_prompt">No questions...</string>
     <string name="account_quest_list_spinner_prompt1">Security list has </string>
     <string name="account_quest_list_spinner_prompt2"> question...</string>
     <string name="account_quest_list_spinner_prompt3"> questions...</string>
@@ -318,7 +319,9 @@
     <string name="biometLoginTitle">Biometric login for my MyPsswrdSecure</string>
     <string name="biometLoginSubTitle">Log in using your biometric credential</string>
     <string name="biometLoginCancelMssg">Use account password</string>
-
+    <string name="psswrdsDontMatchError">Sorry, the password and it\'s confirmation do not match. Try again...</string>
+    <string name="moreThanOneLoginError">Sorry, There\'s more than one account registered to this app. Please, uninstall and reinstall the app.</string>
+    <string name="wrongCredentialsError">Sorry, the user name and password combination is invalid.Try again...</string>
 
 
 </resources>

@@ -134,7 +134,9 @@ public class MainActivity extends AppCompatActivity {
     //CONSTANTS: DB Column names
     private static final String CATEGORY_ID_COLUMN = "CategoryID";
     private static final String USER_NAME_ID_COLUMN = "UserNameID";
+    private static final String USER_NAME_IV_COLUMN = "UserNameIV";
     private static final String PSSWRD_ID_COLUMN = "PsswrdID";
+    private static final String PSSWRD_IV_COLUMN = "PsswrdIV";
     private static final String QUESTION_LIST_ID_COLUMN = "QuestionListID";
     private static final String QUESTION_ID_1_COLUMN = "QuestionID1";
     private static final String QUESTION_ID_2_COLUMN = "QuestionID2";
@@ -444,7 +446,6 @@ public class MainActivity extends AppCompatActivity {
         tvUserName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //setUserProfileName();
                 setUserProfileText(1, (TextView) v);
             }
         });
@@ -452,7 +453,6 @@ public class MainActivity extends AppCompatActivity {
         tvUserMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //setUserProfileMessage();
                 setUserProfileText(2, (TextView) v);
             }
         });
@@ -467,13 +467,16 @@ public class MainActivity extends AppCompatActivity {
             headerView.setBackground(getResources().getDrawable(idRes));
         } else {
             //@Fixme: What to do if current applogin is invalid... Create a default applogin not good
+            //Call logout method and display error message???
+            displayToast(((Activity)this).getParent(),"Log in error, the app loggin supplied doesn't match the one in the app records!",Toast.LENGTH_LONG,Gravity.CENTER);
+            logout();
             //Create default applogin with null username and null password
-            AppLoggin appLoggin = new AppLoggin();
-            appLoggin.setName("Android Studio");
-            appLoggin.setEmail("example@android.com");
-            appLoggin.setMessage("Test message!");
-            appLoggin.setPicture(accountsDB.getIconByID(62));
-            accountsDB.addItem(appLoggin);
+//            AppLoggin appLoggin = new AppLoggin();
+//            appLoggin.setName("Android Studio");
+//            appLoggin.setEmail("example@android.com");
+//            appLoggin.setMessage("Test message!");
+//            appLoggin.setPicture(accountsDB.getIconByID(62));
+//            accountsDB.addItem(appLoggin);
         }//End of if statement to check user cursor is not empty
         if(isLogOutActive){
             //Get logOutTime form preferences
@@ -1115,7 +1118,9 @@ public class MainActivity extends AppCompatActivity {
             View headerView = navigationView.getHeaderView(0);
             headerView.setBackground(getResources().getDrawable(data.getExtras().getInt("selectedImgResourceID"), null));
             ContentValues values = new ContentValues();
-            values.put(ID_COLUMN, accountsDB.getMaxItemIdInTable(APPLOGGIN_TABLE));
+            //@Fixme: Change to get AppLogin ID passed in from LoginActivity and not the max number in the table
+            //@Fixme: This might not be impacted by new AppLoggin table definition with encrypted user and psswrd IDs
+            values.put(ID_COLUMN, currentAppLoggin.get_id());
             values.put(PICTUREID_COLUMN, data.getExtras().getInt("selectedImgID"));
             accountsDB.updateTable(APPLOGGIN_TABLE, values);
         } else if (requestCode == throwSelectNavDrawerBckGrndActReqCode && resultCode == Activity.RESULT_CANCELED) {
@@ -1297,6 +1302,14 @@ public class MainActivity extends AppCompatActivity {
 
     public static String getPsswrdIdColumn() {
         return PSSWRD_ID_COLUMN;
+    }
+
+    public static String getUserNameIvColumn() {
+        return USER_NAME_IV_COLUMN;
+    }
+
+    public static String getPsswrdIvColumn() {
+        return PSSWRD_IV_COLUMN;
     }
 
     public static String getQuestionListIdColumn() {

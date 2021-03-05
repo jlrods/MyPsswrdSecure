@@ -24,7 +24,7 @@ public class PreferencesActivity extends AppCompatActivity {
         //Call super method
         super.onCreate(savedInstanceState);
         //set fragment for preferences
-        
+
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(android.R.id.content, new PreferencesFragment())
