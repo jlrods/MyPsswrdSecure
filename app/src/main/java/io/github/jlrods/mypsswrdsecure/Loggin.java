@@ -48,28 +48,28 @@ abstract class Loggin {
         return _id;
     }
 
-    protected void set_id(int _id) {
+    public void set_id(int _id) {
         this._id = _id;
     }
 
-    protected UserName getUserName(){
+    public UserName getUserName(){
         return this.userName;
     }
 
-    protected void setUserName(UserName userName){
+    public void setUserName(UserName userName){
         this.userName = userName;
     }
 
-    protected Psswrd getPsswrd(){
+    public Psswrd getPsswrd(){
         return this.psswrd;
     }
 
-    protected void setPsswrd(Psswrd psswrd){
+    public void setPsswrd(Psswrd psswrd){
         this.psswrd = psswrd;
     }
 
     //Other methods
-    protected static ArrayList<Object> extractLoggin(Cursor c){
+    public static ArrayList<Object> extractLoggin(Cursor c){
         Log.d("Ent_ExtractLoggin","Enter extractLoggin method in the Loggin abstract class.");
         //Initialize local variables
         ArrayList<Object> attributes = new ArrayList<>();

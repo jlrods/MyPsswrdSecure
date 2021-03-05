@@ -1,5 +1,6 @@
 package io.github.jlrods.mypsswrdsecure;
 
+import android.app.Activity;
 import android.content.Intent;
 //import android.os.Bundle;
 //import android.preference.Preference;
@@ -11,6 +12,9 @@ import android.util.Log;
 
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
+import androidx.preference.SwitchPreference;
+
+import io.github.jlrods.mypsswrdsecure.login.LoginActivity;
 
 /**
  * Created by rodjose1 on 18/07/2018.
@@ -67,7 +71,7 @@ public class PreferencesFragment extends androidx.preference.PreferenceFragmentC
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
 
-                //Call the super method
+        //Call the super method
         //super.onCreate(savedInstanceState);
         //Set the layout
         setPreferencesFromResource(R.xml.preferences, rootKey);
@@ -79,15 +83,43 @@ public class PreferencesFragment extends androidx.preference.PreferenceFragmentC
         //dateFormatPreference.setOnPreferenceChangeListener(this);
         ListPreference language = (ListPreference) findPreference("languages");
         language.setOnPreferenceChangeListener(this);
-    }
 
+        SwitchPreference isLogOutActive = (SwitchPreference) findPreference("isAutoLogOutActive");
+        ListPreference timeOutTime = (ListPreference) findPreference("logOutTime");
+        timeOutTime.setEnabled(isLogOutActive.isChecked());
+        isLogOutActive.setOnPreferenceChangeListener(this);
+//        isLogOutActive.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+//            @Override
+//            public boolean onPreferenceChange(Preference preference, Object newValue) {
+//                if ((boolean) newValue) {
+//                    timeOutTime.setEnabled(true);
+//                } else {
+//                    timeOutTime.setEnabled(false);
+//                }
+//                return (boolean) newValue;
+//            }
+//
+//        });
+//        isLogOutActive.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+//            @Override
+//            public boolean onPreferenceClick(Preference preference) {
+//                (SwitchPreference) preference
+//                return false;
+//            }
+//    });
+    }
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
-                Log.e("preference", "Pending Preference value is: " + newValue);
+        Log.d("preference", "Pending Preference value is: " + newValue);
         if(preference.equals(findPreference("appTheme")) || preference.equals(findPreference("languages")) ){
-            Intent intent = new Intent(this.getContext(),MainActivity.class);
+            Intent intent = new Intent(this.getContext(), LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
-        }
+        }else if(((SwitchPreference)preference).equals(findPreference("isAutoLogOutActive"))){
+            ListPreference timeOutTime = (ListPreference) findPreference("logOutTime");
+            //Set new state of switch as thenew time out time preference visibility
+            timeOutTime.setEnabled((boolean) newValue);
+        }// End of if else statements to check what preference changed
         return true;
-    }
+    }//End of onPreferenceChange method
 }// End of PreferencesFragment class

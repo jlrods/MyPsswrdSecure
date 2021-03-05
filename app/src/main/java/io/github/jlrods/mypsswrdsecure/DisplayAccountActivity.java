@@ -32,7 +32,6 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
 
@@ -113,9 +112,9 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
 
     Icon logo = null;
     int selectedPosition = -1;
-
-
-
+    LogOutTimer logOutTimer;
+    long logOutTime;
+    long logOutTimeRemainder;
 
 
     //Method definition
@@ -124,6 +123,13 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("OnCreateDispAcc","Enter onCreate method in the DisplayAccountActivity abstract class.");
+        this.extras = getIntent().getExtras();
+        if(MainActivity.isIsLogOutActive()){
+            logOutTime = this.extras.getLong("timeOutRemainder");
+            logOutTimer = new LogOutTimer(logOutTime, 250,this);
+            logOutTimer.start();
+        }
+
         //Get default current app theme from preferences
         int appThemeSelected = MainActivity.setAppTheme(this);
         //Set the theme by passing theme id number coming from preferences
@@ -508,18 +514,32 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
 
     //Method to setup dummy cursor for security question spinner when initializing it
     protected void initSecQuestionListSpinner(){
+        Log.d("initSQListSpinner","Enter initSecQuestionListSpinner method in the DisplayAccountActivity abstract class.");
         this.cursorQuestionList = accountsDB.getQuestionCursorByID(1);
-        this.spAccSecQuestionList.setPrompt(getBaseContext().getResources().getString(R.string.account_quest_list_spinner_prompt));
+        this.spAccSecQuestionList.setPrompt(getString(R.string.account_quest_list_spinner_prompt));
         this.setUpQuestionListSpinnerData(cursorQuestionList,spAccSecQuestionList);
         //Disable the Security question spinner so user wont be able to see dummy item in spinner
         this.spAccSecQuestionList.setEnabled(false);
-    }
+        Log.d("initSQListSpinner","Enter initSecQuestionListSpinner method in the DisplayAccountActivity abstract class.");
+    }//End of initSecQuestionListSpinner method
+
 
     protected void initQuesitonAvailableListSpinner(){
+        Log.d("initQAListSpinner","Enter initQuesitonAvailableListSpinner method in the DisplayAccountActivity abstract class.");
         this.cursorListOfQuestionsAvailable = accountsDB.getListQuestionsAvailable();
-        this.spQuestionsAvailable.setPrompt(getBaseContext().getResources().getString(R.string.account_quest_avilab_spinner_prompt));
-        this.setUpQuestionListSpinnerData(cursorListOfQuestionsAvailable,spQuestionsAvailable);
-    }
+        if(cursorListOfQuestionsAvailable.moveToFirst()){
+            this.spQuestionsAvailable.setPrompt(getString(R.string.account_quest_avilab_spinner_prompt));
+            this.setUpQuestionListSpinnerData(cursorListOfQuestionsAvailable,spQuestionsAvailable);
+        }else{
+            //Workaround to display prompt when no answers are available
+            this.cursorListOfQuestionsAvailable = accountsDB.getQuestionCursorByID(1);
+            this.spQuestionsAvailable.setPrompt(getString(R.string.account_quest_avilab_noAnswers));
+            this.setUpQuestionListSpinnerData(cursorListOfQuestionsAvailable,spQuestionsAvailable);
+            //Disable the Security question spinner so user wont be able to see dummy item in spinner
+            this.spQuestionsAvailable.setEnabled(false);
+        }//End of if else statement that checks the cursor isn't empty or null
+        Log.d("initQAListSpinner","Exit initQuesitonAvailableListSpinner method in the DisplayAccountActivity abstract class.");
+    }//End of initQuesitonAvailableListSpinner method
 
 
     @Override
@@ -1453,4 +1473,5 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         Log.d("isAddIconRequired", "Exit isAddIconRequired method in DisplayAccountActivity abstract class.");
         return logoID;
     }//End of isAddIconRequired
+
 }//End of AddAccountActivity

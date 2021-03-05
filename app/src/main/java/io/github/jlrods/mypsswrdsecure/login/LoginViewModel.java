@@ -46,13 +46,17 @@ public class LoginViewModel extends ViewModel {
             loginFormState.setValue(new LoginFormState(R.string.invalid_username, null));
         } else if (!isPasswordValid(password)) {
             loginFormState.setValue(new LoginFormState(null, R.string.invalid_password));
-        } else {
+        }
+//        else if(!isPasswordValid(passwordConfirm)){
+//            loginFormState.setValue(new LoginFormState(null, R.string.invalid_password));
+//        }
+        else {
             loginFormState.setValue(new LoginFormState(true));
         }
     }
 
     // A placeholder username validation check
-    private boolean isUserNameValid(String username) {
+    public boolean isUserNameValid(String username) {
         if (username == null) {
             return false;
         }
@@ -64,7 +68,7 @@ public class LoginViewModel extends ViewModel {
     }
 
     // A placeholder password validation check
-    private boolean isPasswordValid(String password) {
+    public boolean isPasswordValid(String password) {
         return password != null && password.trim().length() > 5;
     }
 }

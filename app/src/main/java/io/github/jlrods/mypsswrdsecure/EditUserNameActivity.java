@@ -18,14 +18,14 @@ import javax.crypto.spec.IvParameterSpec;
 
 public class EditUserNameActivity extends AddUserNameActivity {
     //Attribute definition
-    private Bundle extras;
+    //private Bundle extras;
     private boolean toBeDeleted = false;
     //Method definition
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("OnCreateEditUser","Enter onCreate method in the EditUserNameActivity class.");
-        this.extras = getIntent().getExtras();
+
         //Set activity title
         getSupportActionBar().setTitle(R.string.editUserTitle);
         //Extract user name by passing in the _id attribute stored in the extras
@@ -89,6 +89,10 @@ public class EditUserNameActivity extends AddUserNameActivity {
                 Log.d("onOptionsItemSelected","Cancel option selected on onOptionsItemSelected method in EditUserNameActivity class.");
                 finish();
                 break;
+            case R.id.action_logout:
+                //Call method to throw LoginActivity and clear activity stack.
+                Log.d("onOptionsItemSelected","Logout option selected on onOptionsItemSelected method in EditUserNameActivity class.");
+                MainActivity.logout(this);
         }//End of switch statement
         return result;
     }//End of onOptionsItemSelected method

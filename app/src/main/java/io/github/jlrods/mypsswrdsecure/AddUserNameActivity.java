@@ -47,6 +47,11 @@ public class AddUserNameActivity extends AddItemActivity{
                     this.userName = new UserName(userNameValueEncrypted,this.cryptographer.getIv().getIV());
                     //Call DB method to insert  the user name object into the DB
                     userNameID = this.accountsDB.addItem(this.userName);
+                    //Put remainder time for logout so MainActivity can continue the count down
+                    if(MainActivity.isIsLogOutActive()){
+                        intent.putExtra("timeOutRemainder",this.logOutTimer.getLogOutTimeRemainder());
+                    }
+
                     if(userNameID > 0 ){
                         //Update the userName object ID and prepare data to exit activity
                         this.userName.set_id(userNameID);
@@ -70,6 +75,10 @@ public class AddUserNameActivity extends AddItemActivity{
                 Log.d("onOptionsItemSelected","Cancel option selected on onOptionsItemSelected method in AddUserNameActivity class.");
                 finish();
                 break;
+            case R.id.action_logout:
+                //Call method to throw LoginActivity and clear activity stack.
+                Log.d("onOptionsItemSelected","Logout option selected on onOptionsItemSelected method in AddUserNameActivity class.");
+                MainActivity.logout(this);
         }//End of switch statement to check the menu option selected
         Log.d("onOptionsItemSelected","Exit onOptionsItemSelected method in AddUserNameActivity class.");
         return result;

@@ -86,6 +86,10 @@ public class EditPsswrdActivity extends AddPsswrdActivity {
                 Log.d("onOptionsItemSelected","Cancel option selected on onOptionsItemSelected method in EditPsswrdActivity class.");
                 finish();
                 break;
+            case R.id.action_logout:
+                //Call method to throw LoginActivity and clear activity stack.
+                Log.d("onOptionsItemSelected","Logout option selected on onOptionsItemSelected method in EditPsswrdActivity class.");
+                MainActivity.logout(this);
         }//End of switch statement
         return result;
     }//End of onOptionsItemSelected method

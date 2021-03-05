@@ -10,14 +10,6 @@
     <string name="menu_home">Home</string>
     <string name="menu_favorites">Favoritos</string>
     <string name="home_second">Casa</string>
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Clave</string>
-    <string name="action_sign_in">Iniciar sesion or registrarse</string>
-    <string name="action_sign_in_short">Iniciar sesión</string>
-    <string name="welcome">"Bievenido !"</string>
-    <string name="invalid_username">Nombre de usuarion inválido</string>
-    <string name="invalid_password">Clave de seguridad debe ser >5 caracteres</string>
-    <string name="login_failed">Inicio de sesión fallido</string>
     <string name="whatsTheNameOfYourFirstPet">Cuál es el nombre de tu mascota favorita?</string>
     <string name="whatWasTheModelOfYourFirstCar">Cuál fue el modelo de tu primer carro?</string>
     <string name="whatsYourGrannysName">Cuál es el nombre de tu abuela?</string>
@@ -72,8 +64,9 @@
     <string name="account_removeQuestion">Remover</string>
     <string name="question_spinner_answer">Resp:</string>
     <string name="account_quest_avilab_spinner_prompt">Añada una pregunta a su lista...</string>
-    <string name="account_quest_list_spinner_prompt">No hay preguntas en sy lista aún...</string>
+    <string name="account_quest_list_spinner_prompt">No hay preguntas...</string>
     <string name="account_quest_list_spinner_prompt1">Lista de preguntas tiene </string>
+    <string name="account_quest_avilab_noAnswers">No hay respuestas...</string>
     <string name="account_quest_list_spinner_prompt2"> pregunta...</string>
     <string name="account_quest_list_spinner_prompt3"> preguntas...</string>
 
@@ -266,6 +259,16 @@
     <string name="changeLangDescription">Cambie el idioma de la app</string>
     <string name="dateFormatSelection">Formato de fecha</string>
     <string name="dateFormatDescription">Seleccione el formato de fecha para su app</string>
+    <string name="security">Seguridad</string>
+    <string name="enableBiometrics">Activar acceso con scanner biométrico</string>
+    <string name="disableBiometrics">Desactivar acceso con scanner biométrico</string>
+    <string name="enableAutoLogOutTimeOut">Activar desloguéo automático por tiempo</string>
+    <string name="disableAutoLogOutTimeOut">Desctivar desloguéo automático por tiempo</string>
+    <string name="logOutTimeOutTitle">Desloguéo por tiempo</string>
+    <string name="changeLogoutTimeOut">Cambiar tiempo de desloguéo</string>
+    <string name="oneMinute">1 minute</string>
+    <string name="threeMinutes">3 minutes</string>
+    <string name="fiveMinutes">5 minutes</string>
 
     <!--    Select background Activity-->
     <string name="selectBckgrd">Selección de fondo</string>
@@ -282,6 +285,32 @@
     <string name="moreAppsTag">Para más apps:</string>
     <string name="softwareInfoTitle">Información sobre el software</string>
 
+
+    <!--    Login Activity-->
+    <string name="prompt_password">Clave</string>
+    <string name="action_sign_in">Iniciar sesión</string>
+    <string name="action_sign_in_short">Iniciar sesión</string>
+    <string name="welcome">"Bievenido !"</string>
+    <string name="invalid_username">Nombre de usuarion inválido</string>
+    <string name="invalid_password">Clave de seguridad debe ser >5 caracteres</string>
+    <string name="login_failed">Inicio de sesión fallido</string>
+    <string name="prompt_enterUserID">Introduzca su nombre de usuario</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_passwordConfirm">Confirme su clave</string>
+    <string name="prompt_enterUserName">Introduzca su nombre</string>
+    <string name="prompt_userMssg">Introduzca su mensaje personalizado</string>
+    <string name="action_sign_up">Registrarse</string>
+    <string name="signUp"><a href="">Sign Up?</a></string>
+    <string name="signIn"><a href="">Sign In?</a></string>
+    <string name="authenErr">Error de autenticación: </string>
+    <string name="authenSuccessful">Authentication succeeded!</string>
+    <string name="authenFailed">Autenticacón fallida</string>
+    <string name="biometLoginTitle">Validación biométrica para MyPsswrdSecure</string>
+    <string name="biometLoginSubTitle">Logueé usando sus credenciales biométricas</string>
+    <string name="biometLoginCancelMssg">Usar usuario y clave</string>
+    <string name="psswrdsDontMatchError">Lo siento, la contraseña y su confirmación no coinciden, intente de nuevo...</string>
+    <string name="moreThanOneLoginError">Lo siento, hay más de una cuenta registrada en la app. Por favor, desinstalle y vuelva a instalar.</string>
+    <string name="wrongCredentialsError">Lo siento, la combinación de usuario y contraseña es inválida, intent de nuevo...</string>
 
 
 </resources>

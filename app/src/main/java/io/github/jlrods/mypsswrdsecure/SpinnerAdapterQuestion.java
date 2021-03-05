@@ -33,7 +33,11 @@ class SpinnerAdapterQuestion extends SpinnerAdapter {
         //Declare and instantiate a String to hold the name by extracting data from cursor (Column 1 will hold the name attribute)
         //String itemText = cursor.getString(1);
         String questionText = cursor.getString(1);
-        String answerText = cryptographer.decryptText(cursor.getBlob(3),new IvParameterSpec(cursor.getBlob(4))) ;
+        //As brand new app has no answers for preloaded questions... Check the answer field isn't null, otherwise skip populating the answer value
+        String answerText = "";
+        if(cursor.getBlob(3) != null && cursor.getBlob(4) != null){
+            answerText = cryptographer.decryptText(cursor.getBlob(3),new IvParameterSpec(cursor.getBlob(4))) ;
+        }
         //Declare and instantiate an int to hold the string id from resources
         int questionID = context.getResources().getIdentifier(questionText,"string",context.getPackageName());
         //If textID is 0, means it's not stored in the app resources
