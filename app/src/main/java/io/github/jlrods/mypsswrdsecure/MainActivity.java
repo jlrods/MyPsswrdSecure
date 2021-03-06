@@ -27,12 +27,10 @@ import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
-
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
@@ -49,7 +47,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Locale;
-
 import io.github.jlrods.mypsswrdsecure.login.LoginActivity;
 import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
 
@@ -86,32 +83,29 @@ public class MainActivity extends AppCompatActivity {
     private static ArrayList<QuestionList> listOfQuestionLists = null;
 
     private static String dateFormat;
-
-
     private static Cryptographer cryptographer;
 
     //CONSTANT VALUES
-    private final static int INDEX_TO_GET_LAST_TASK_LIST_ITEM = 2;
+    private static final int INDEX_TO_GET_LAST_TASK_LIST_ITEM = 2;
 
     //Throw intent codes
-    private final static int THROW_IMAGE_GALLERY_REQ_CODE = 1642;
-    private final static int THROW_IMAGE_CAMERA_REQ_CODE = 2641;
+    private static final int THROW_IMAGE_GALLERY_REQ_CODE = 1642;
+    private static final  int THROW_IMAGE_CAMERA_REQ_CODE = 2641;
     private static final int GALLERY_ACCESS_REQUEST = 5196;
     private static final int CAMERA_ACCESS_REQUEST = 3171;
 
     ///Throw activity request codes
-    //@Fixme: Rename variable to all cap case
-    private int throwAddAccountActReqCode = 5566;
-    private static int throwAddQuestionActReqCode = 9876;
-    private static int throwAddUserNameActReqCode = 5744;
-    private static int throwAddPsswrdActReqCode = 9732;
-    private int throwAddCategoryReqCode = 5673;
-    private int throwEditUserNameActReqCode = 4475;
-    private int throwEditPsswrdActReqCode = 6542;
-    private int throwEditQuestionActReqCode = 2456;
-    private static int throwEditCategoryActReqCode = 2002;
-    private static int throwEditAccountActReqCode = 1199;
-    private static int throwSelectNavDrawerBckGrndActReqCode = 4473;
+    private final int THROW_ADD_ACCOUNT_ACT_REQCODE = 5566;
+    private static final int THROW_ADD_QUESTION_ACT_REQCODE = 9876;
+    private static final int THROW_ADD_USERNAME_ACT_REQCODE = 5744;
+    private static final int THROW_ADD_PSSWRD_ACT_REWCODE = 9732;
+    private final int TRHOW_ADD_CATEGORY_REQCODE = 5673;
+    private final int THROW_EDIT_USERNAME_ACT_REQCODE = 4475;
+    private final int THROW_EDIT_PSSWRD_ACT_REQCODE = 6542;
+    private final int THROW_EDIT_QUESTIONS_ACT_REQCODE = 2456;
+    private static final int THROW_EDIT_CATEGORY_ACT_REQCODE = 2002;
+    private static final int THROW_EDIT_ACCOUNT_ACT_REQCODE = 1199;
+    private static final int THROW_SELECT_NAVDRAWERBCKGRND_ACT_REQCODE = 4473;
 
     private static final String ACCOUNTS_LOGOS = "logo_";
     private static final String NAV_DRAWER_BCKGRNDS = "nav_menu_header_bg";
@@ -350,26 +344,21 @@ public class MainActivity extends AppCompatActivity {
 
         //Create and set default logo for accounts
         myPsswrdSecureLogo = new Icon(R.mipmap.ic_my_psswrd_secure, "MyPsswrdSecureIcon", String.valueOf(R.mipmap.ic_my_psswrd_secure), false);
-        //@Fixme: Gett cryptog and accountsDB from LoginActivity
         cryptographer = LoginActivity.getCryptographer();
-        //Dummy encryption to get IV created
-        //byte[] testEncrypted = cryptographer.encryptText("DummyEncryption");
-        //String test2 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
         //Create a new object to manage all DB interaction
         accountsDB = LoginActivity.getAccountsDB();
         //Get the category list from DB
         this.homeCategory = new Category("Home", new Icon("Home", MainActivity.getRESOURCES(), R.drawable.home));
         this.favCategory = new Category(-2, "Favorites", new Icon("Favorites", MainActivity.getRESOURCES(), android.R.drawable.star_big_on));
         this.categoryList = accountsDB.getCategoryList();
-        //Set the Home category as the default one
-        //this.currentCategory = categoryList.get(0);
-        //@Fixme:Retrieve App state from DB and update app variable appropriately
+
+        //Retrieve App state from DB and update app variable appropriately
         this.appState = accountsDB.getAppState();
         if (this.appState != null && this.appState.getCount() > 0) {
-            //@Fixme: Since current cat is being stored in DB, even Home and Fav, which are not defined in the Category table, must ensure the proper CatID is being stored
+            //Get the current category and tab stored from app state
             this.currentCategory = this.getCategoryByID(this.appState.getInt(1));
-            //@Fixme: Update the nav drawer to display appropriate item in the menu
             this.currentTab = this.appState.getInt(2);
+            //Update the nav drawer to display appropriate item in the menu
             this.showAllAccounts = this.accountsDB.toBoolean(this.appState.getInt(3));
             this.isFavoriteFilter = this.accountsDB.toBoolean(this.appState.getInt(4));
             this.isSearchFilter = this.accountsDB.toBoolean(this.appState.getInt(5));
@@ -466,17 +455,9 @@ public class MainActivity extends AppCompatActivity {
             //imgLogo.setImageResource(idRes);
             headerView.setBackground(getResources().getDrawable(idRes));
         } else {
-            //@Fixme: What to do if current applogin is invalid... Create a default applogin not good
             //Call logout method and display error message???
             displayToast(((Activity)this).getParent(),"Log in error, the app loggin supplied doesn't match the one in the app records!",Toast.LENGTH_LONG,Gravity.CENTER);
             logout();
-            //Create default applogin with null username and null password
-//            AppLoggin appLoggin = new AppLoggin();
-//            appLoggin.setName("Android Studio");
-//            appLoggin.setEmail("example@android.com");
-//            appLoggin.setMessage("Test message!");
-//            appLoggin.setPicture(accountsDB.getIconByID(62));
-//            accountsDB.addItem(appLoggin);
         }//End of if statement to check user cursor is not empty
         if(isLogOutActive){
             //Get logOutTime form preferences
@@ -578,11 +559,9 @@ public class MainActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         if (this.isSearchFilter) {
-            //@Fixme: Check what is best: setTint or setColourFilter
-            menu.getItem(0).getIcon().setTint(getColor(R.color.colorAccent));
+            menu.getItem(0).getIcon().setTintList(ColorStateList.valueOf(themeUpdater.fetchThemeColor("colorAccent")));
         } else if (this.isSortFilter) {
-            //@Fixme: Check what is best: setTint or setColourFilter
-            menu.getItem(1).getIcon().setTint(getColor(R.color.colorAccent));
+            menu.getItem(1).getIcon().setTintList(ColorStateList.valueOf(themeUpdater.fetchThemeColor("colorAccent")));
         }
         return true;
     }
@@ -799,7 +778,7 @@ public class MainActivity extends AppCompatActivity {
             i.putExtra("timeOutRemainder",(long)this.logoutTimer.getLogOutTimeRemainder());
         }
         //Start the addTaskActivity class
-        startActivityForResult(i, throwAddAccountActReqCode);
+        startActivityForResult(i, THROW_ADD_ACCOUNT_ACT_REQCODE);
         Log.d("ThrowAddAcc", "Exit throwAddAccountActivity method in the MainActivity class.");
     }//End of throwAddAccountActivity
 
@@ -812,7 +791,7 @@ public class MainActivity extends AppCompatActivity {
             i.putExtra("timeOutRemainder",(long)this.logoutTimer.getLogOutTimeRemainder());
         }
         //Start the AddItemActivity class
-        startActivityForResult(i, throwAddUserNameActReqCode);
+        startActivityForResult(i, THROW_ADD_USERNAME_ACT_REQCODE);
         Log.d("ThrowAddUser", "Exit throwAddUserNameActivity method in the MainActivity class.");
     }//End of throwAddTaskActivity
 
@@ -821,7 +800,7 @@ public class MainActivity extends AppCompatActivity {
         //Declare and instantiate a new intent object
         Intent i = new Intent(MainActivity.this, AddPsswrdActivity.class);
         //Start the AddItemActivity class
-        startActivityForResult(i, throwAddPsswrdActReqCode);
+        startActivityForResult(i, THROW_ADD_PSSWRD_ACT_REWCODE);
         Log.d("ThrowAddPsswrd", "Exit throwAddPsswrdActivity method in the MainActivity class.");
     }//End of throwAddTaskActivity
 
@@ -830,7 +809,7 @@ public class MainActivity extends AppCompatActivity {
         //Declare and instantiate a new intent object
         Intent i = new Intent(MainActivity.this, AddQuestionActivity.class);
         //Start the addTaskActivity class
-        startActivityForResult(i, throwAddQuestionActReqCode);
+        startActivityForResult(i, THROW_ADD_QUESTION_ACT_REQCODE);
         Log.d("ThrowAddQuest", "Exit throwAddQuestionActivity method in the MainActivity class.");
     }//End of throwAddTaskActivity
 
@@ -839,7 +818,7 @@ public class MainActivity extends AppCompatActivity {
         //Declare and instantiate a new intent object
         Intent i = new Intent(MainActivity.this, AddCategoryAcitivity.class);
         //Start the addTaskActivity class
-        startActivityForResult(i, throwAddCategoryReqCode);
+        startActivityForResult(i, TRHOW_ADD_CATEGORY_REQCODE);
         Log.d("ThrowAddCatt", "Exit throwAddCategoryActivity method in the MainActivity class.");
     }//End of throwAddTaskActivity
 
@@ -865,7 +844,7 @@ public class MainActivity extends AppCompatActivity {
             i.putExtra("timeOutRemainder",(long)this.logoutTimer.getLogOutTimeRemainder());
         }
         //Start the AddItemActivity class
-        startActivityForResult(i, throwEditAccountActReqCode);
+        startActivityForResult(i, THROW_EDIT_ACCOUNT_ACT_REQCODE);
         Log.d("ThrowEditAcc", "Exit throwEditAccountActivity method in the MainActivity class.");
     }//End of throwAddTaskActivity
 
@@ -890,7 +869,7 @@ public class MainActivity extends AppCompatActivity {
             i.putExtra("timeOutRemainder",(long)this.logoutTimer.getLogOutTimeRemainder());
         }
         //Start the AddItemActivity class
-        startActivityForResult(i, this.throwEditUserNameActReqCode);
+        startActivityForResult(i, this.THROW_EDIT_USERNAME_ACT_REQCODE);
         Log.d("ThrowEditUser", "Exit throwEditUserNameActivity method in the MainActivity class.");
     }//End of throwAddTaskActivity
 
@@ -912,7 +891,7 @@ public class MainActivity extends AppCompatActivity {
         //i.putExtra("category",this.currentCategory.toString());
         i.putExtra(ID_COLUMN, psswrd.get_id());
         //Start the AddItemActivity class
-        startActivityForResult(i, this.throwEditPsswrdActReqCode);
+        startActivityForResult(i, this.THROW_EDIT_PSSWRD_ACT_REQCODE);
         Log.d("ThrowAddUser", "Exit throwEditPsswrdActivity method in the MainActivity class.");
     }//End of throwAddTaskActivity
 
@@ -934,7 +913,7 @@ public class MainActivity extends AppCompatActivity {
         //i.putExtra("category",this.currentCategory.toString());
         i.putExtra(ID_COLUMN, question.get_id());
         //Start the AddItemActivity class
-        startActivityForResult(i, this.throwEditQuestionActReqCode);
+        startActivityForResult(i, this.THROW_EDIT_QUESTIONS_ACT_REQCODE);
         Log.d("ThrowAddUser", "Exit throwEditQuestionActivity method in the MainActivity class.");
     }//End of throwAddTaskActivity
 
@@ -945,7 +924,7 @@ public class MainActivity extends AppCompatActivity {
         i.putExtra(ID_COLUMN, _id);
         i.putExtra("positionInCatList", listPosition);
         //Start the addTaskActivity class
-        startActivityForResult(i, throwEditCategoryActReqCode);
+        startActivityForResult(i, THROW_EDIT_CATEGORY_ACT_REQCODE);
         Log.d("ThrowEditCat", "Exit throwEditCategoryActivity method in the MainActivity class.");
     }//End of throwAddTaskActivity
 
@@ -959,7 +938,7 @@ public class MainActivity extends AppCompatActivity {
         i.putExtra("selectedImgPosition", -1);
         i.putExtra("selectedImgLocation", RESOURCES);
         //Start the addTaskActivity and wait for result
-        startActivityForResult(i, this.throwSelectNavDrawerBckGrndActReqCode);
+        startActivityForResult(i, this.THROW_SELECT_NAVDRAWERBCKGRND_ACT_REQCODE);
         Log.d("throwSelectBckActivity", "Exit the throwSelectNavDrawerBackgroundActivity method in the DisplayAccountActivity class.");
     }//End of throwSelectLogoActivity method
 
@@ -998,7 +977,7 @@ public class MainActivity extends AppCompatActivity {
         boolean categoryMenuUpdate = false;
         RecyclerView recyclerView = HomeFragment.getRv();
         RecyclerView.Adapter adapter = null;
-        if (requestCode == this.throwAddAccountActReqCode && resultCode == RESULT_OK) {
+        if (requestCode == this.THROW_ADD_ACCOUNT_ACT_REQCODE && resultCode == RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from AddAccountActivity (received by MainActivity).");
             //Update RV data set
             //Consider the category selected on drawer menu to run correct sql query
@@ -1012,47 +991,47 @@ public class MainActivity extends AppCompatActivity {
             goodResultDelivered = true;
 
             toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountAdded);
-        } else if (requestCode == this.throwAddAccountActReqCode && resultCode == RESULT_CANCELED) {
+        } else if (requestCode == this.THROW_ADD_ACCOUNT_ACT_REQCODE && resultCode == RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from AddAccountActivity (received by MainActivity).");
             //Check if result comes from AddAccountActivity
-        } else if(requestCode == this.throwAddAccountActReqCode && resultCode == RESULT_TIMEOUT){
+        } else if(requestCode == this.THROW_ADD_ACCOUNT_ACT_REQCODE && resultCode == RESULT_TIMEOUT){
             Log.d("onActivityResult", "Received TIMEOUT result from AddAccountActivity (received by MainActivity).");
 
-        }else if (requestCode == throwAddUserNameActReqCode && resultCode == RESULT_OK) {
+        }else if (requestCode == THROW_ADD_USERNAME_ACT_REQCODE && resultCode == RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from AddUserNameActivity (received by MainActivity).");
             //Set variable to display Toast
             goodResultDelivered = true;
             //Define text to display Toast to confirm the account has been added
             toastText = getResources().getString(R.string.userNameAdded);
-        } else if (requestCode == throwAddUserNameActReqCode && resultCode == RESULT_CANCELED) {
+        } else if (requestCode == THROW_ADD_USERNAME_ACT_REQCODE && resultCode == RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from AddUserNameActivity (received by MainActivity).");
-        } else if (requestCode == throwAddUserNameActReqCode && resultCode == RESULT_TIMEOUT) {
+        } else if (requestCode == THROW_ADD_USERNAME_ACT_REQCODE && resultCode == RESULT_TIMEOUT) {
             Log.d("onActivityResult", "Received TIMEOUT result from AddUserNameActivity (received by MainActivity).");
             isLogOutTimedOut = true;
-        }else if (requestCode == throwAddPsswrdActReqCode && resultCode == RESULT_OK) {
+        }else if (requestCode == THROW_ADD_PSSWRD_ACT_REWCODE && resultCode == RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from AddPsswrdActivity (received by MainActivity).");
             //Set variable to display Toast
             goodResultDelivered = true;
             //Define text to display Toast to confirm the account has been added
             toastText = getResources().getString(R.string.psswrdAdded);
-        } else if (requestCode == throwAddPsswrdActReqCode && resultCode == RESULT_CANCELED) {
+        } else if (requestCode == THROW_ADD_PSSWRD_ACT_REWCODE && resultCode == RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from AddPsswrdActivity (received by MainActivity).");
-        } else if (requestCode == throwAddQuestionActReqCode && resultCode == RESULT_OK) {
+        } else if (requestCode == THROW_ADD_QUESTION_ACT_REQCODE && resultCode == RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from AddAccountActivity (received by MainActivity).");
             //Set variable to display Toast
             goodResultDelivered = true;
             //Define text to display Toast to confirm the account has been added
             toastText = getResources().getString(R.string.questionAdded);
-        } else if (requestCode == throwAddQuestionActReqCode && resultCode == RESULT_CANCELED) {
+        } else if (requestCode == THROW_ADD_QUESTION_ACT_REQCODE && resultCode == RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from AddQuestionActivity (received by MainActivity).");
-        } else if (requestCode == throwAddCategoryReqCode && resultCode == Activity.RESULT_OK) {
+        } else if (requestCode == TRHOW_ADD_CATEGORY_REQCODE && resultCode == Activity.RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from AddCategoryActivity (received by HomeFragment).");
             goodResultDelivered = true;
             categoryMenuUpdate = true;
             toastText = data.getExtras().getString("categoryName") + " " + getResources().getString(R.string.catAdded);
-        } else if (requestCode == throwAddCategoryReqCode && resultCode == Activity.RESULT_CANCELED) {
+        } else if (requestCode == TRHOW_ADD_CATEGORY_REQCODE && resultCode == Activity.RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from AddCategoryActivity received by MainAcitvity.");
-        } else if (requestCode == throwEditUserNameActReqCode && resultCode == RESULT_OK) {
+        } else if (requestCode == THROW_EDIT_USERNAME_ACT_REQCODE && resultCode == RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from EditUserNameActivity (received by MainActivity).");
             //Define text to display Toast to confirm the account has been added
             if (data.getExtras().getBoolean("itemDeleted")) {
@@ -1062,9 +1041,9 @@ public class MainActivity extends AppCompatActivity {
             }//End of if else statement to check the boolean value retrieved from extra data
             //Set variable to display Toast
             goodResultDelivered = true;
-        } else if (requestCode == throwEditUserNameActReqCode && resultCode == RESULT_CANCELED) {
+        } else if (requestCode == THROW_EDIT_USERNAME_ACT_REQCODE && resultCode == RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from EditUserNameActivity (received by MainActivity).");
-        } else if (requestCode == throwEditPsswrdActReqCode && resultCode == RESULT_OK) {
+        } else if (requestCode == THROW_EDIT_PSSWRD_ACT_REQCODE && resultCode == RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from EditUserNameActivity (received by MainActivity).");
             //Define text to display Toast to confirm the account has been added
             if (data.getExtras().getBoolean("itemDeleted")) {
@@ -1074,9 +1053,9 @@ public class MainActivity extends AppCompatActivity {
             }
             //Set variable to display Toast
             goodResultDelivered = true;
-        } else if (requestCode == throwEditPsswrdActReqCode && resultCode == RESULT_CANCELED) {
+        } else if (requestCode == THROW_EDIT_PSSWRD_ACT_REQCODE && resultCode == RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from EditUserNameActivity (received by MainActivity).");
-        } else if (requestCode == throwEditQuestionActReqCode && resultCode == RESULT_OK) {
+        } else if (requestCode == THROW_EDIT_QUESTIONS_ACT_REQCODE && resultCode == RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from EditQuestionActivity (received by MainActivity).");
             //Define text to display Toast to confirm the account has been added
             if (data.getExtras().getBoolean("itemDeleted")) {
@@ -1086,9 +1065,9 @@ public class MainActivity extends AppCompatActivity {
             }
             //Set variable to display Toast
             goodResultDelivered = true;
-        } else if (requestCode == throwEditQuestionActReqCode && resultCode == RESULT_CANCELED) {
+        } else if (requestCode == THROW_EDIT_QUESTIONS_ACT_REQCODE && resultCode == RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from EditQuestionActivity (received by MainActivity).");
-        } else if (requestCode == throwEditAccountActReqCode && resultCode == Activity.RESULT_OK) {
+        } else if (requestCode == THROW_EDIT_ACCOUNT_ACT_REQCODE && resultCode == Activity.RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from EditAccountActivity (received by HomeFragment).");
             //Define text to display Toast to confirm the account has been added
             //Set variable to display Toast
@@ -1099,20 +1078,20 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountUpdated);
             }
-        } else if (requestCode == throwEditAccountActReqCode && resultCode == Activity.RESULT_CANCELED) {
+        } else if (requestCode == THROW_EDIT_ACCOUNT_ACT_REQCODE && resultCode == Activity.RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from EditAccountActivity (received by HomeFragment).");
-        } else if(requestCode == this.throwEditAccountActReqCode && resultCode == RESULT_TIMEOUT){
+        } else if(requestCode == this.THROW_EDIT_ACCOUNT_ACT_REQCODE && resultCode == RESULT_TIMEOUT){
             Log.d("onActivityResult", "Received TIMEOUT result from EditAccountActivity (received by MainActivity).");
             this.logoutTimer.cancel();
             this.finish();
-        } else if (requestCode == throwEditCategoryActReqCode && resultCode == Activity.RESULT_OK) {
+        } else if (requestCode == THROW_EDIT_CATEGORY_ACT_REQCODE && resultCode == Activity.RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from EditCategoryActivity received by MainAcitvity.");
             goodResultDelivered = true;
             categoryMenuUpdate = true;
             toastText = data.getExtras().getString("categoryName") + " " + getResources().getString(R.string.catUpdated);
-        } else if (requestCode == throwEditCategoryActReqCode && resultCode == Activity.RESULT_CANCELED) {
+        } else if (requestCode == THROW_EDIT_CATEGORY_ACT_REQCODE && resultCode == Activity.RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from EditCategoryActivity received by MainAcitvity.");
-        } else if (requestCode == throwSelectNavDrawerBckGrndActReqCode && resultCode == Activity.RESULT_OK) {
+        } else if (requestCode == THROW_SELECT_NAVDRAWERBCKGRND_ACT_REQCODE && resultCode == Activity.RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from SelectNavDrawerBckGrnd received by MainAcitvity.");
             NavigationView navigationView = findViewById(R.id.nav_view);
             View headerView = navigationView.getHeaderView(0);
@@ -1123,7 +1102,7 @@ public class MainActivity extends AppCompatActivity {
             values.put(ID_COLUMN, currentAppLoggin.get_id());
             values.put(PICTUREID_COLUMN, data.getExtras().getInt("selectedImgID"));
             accountsDB.updateTable(APPLOGGIN_TABLE, values);
-        } else if (requestCode == throwSelectNavDrawerBckGrndActReqCode && resultCode == Activity.RESULT_CANCELED) {
+        } else if (requestCode == THROW_SELECT_NAVDRAWERBCKGRND_ACT_REQCODE && resultCode == Activity.RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from SelectNavDrawerBckGrnd received by MainAcitvity.");
         }//End of if else statement chain to check activity results
 
@@ -1148,10 +1127,10 @@ public class MainActivity extends AppCompatActivity {
                     //for the AlartDialog numbering issue
                     int positionInCatList = -1;
                     MenuItem menuItem = null;
-                    if (requestCode == throwAddCategoryReqCode) {
+                    if (requestCode == TRHOW_ADD_CATEGORY_REQCODE) {
                         positionInCatList = navigationView.getMenu().size() - 1;
                         this.updateNavMenu(navigationView.getMenu(), positionInCatList);
-                    } else if (requestCode == throwEditCategoryActReqCode) {
+                    } else if (requestCode == THROW_EDIT_CATEGORY_ACT_REQCODE) {
                         positionInCatList = data.getExtras().getInt("positionInCatList");
                         //Get the menu item in the same position as the one in the categor list
                         menuItem = navigationView.getMenu().getItem(positionInCatList);
@@ -1232,24 +1211,24 @@ public class MainActivity extends AppCompatActivity {
         return listOfQuestionLists;
     }
 
-    public static int getThrowAddQuestionActReqCode() {
-        return throwAddQuestionActReqCode;
+    public static int getThrowAddQuestionActReqcode() {
+        return THROW_ADD_QUESTION_ACT_REQCODE;
     }
 
-    public static int getThrowEditAccountActReqCode() {
-        return throwEditAccountActReqCode;
+    public static int getThrowEditAccountActReqcode() {
+        return THROW_EDIT_ACCOUNT_ACT_REQCODE;
     }
 
-    public int getThrowEditUserNameActReqCode() {
-        return throwEditUserNameActReqCode;
+    public int getTHROW_EDIT_USERNAME_ACT_REQCODE() {
+        return THROW_EDIT_USERNAME_ACT_REQCODE;
     }
 
-    public static int getThrowAddUserNameActReqCode() {
-        return throwAddUserNameActReqCode;
+    public static int getThrowAddUsernameActReqcode() {
+        return THROW_ADD_USERNAME_ACT_REQCODE;
     }
 
-    public static int getThrowAddPsswrdActReqCode() {
-        return throwAddPsswrdActReqCode;
+    public static int getThrowAddPsswrdActRewcode() {
+        return THROW_ADD_PSSWRD_ACT_REWCODE;
     }
 
     public static String getUsernameTable() {
@@ -2209,7 +2188,6 @@ public class MainActivity extends AppCompatActivity {
                         //Call method to update RV data
                         //Call method to update the adapter and the recyclerView
                         updateRecyclerViewData(HomeFragment.getRv().getAdapter());
-                        //@Fixme: Check what is best: setTint or setColourFilter
                         item.getIcon().setTintList(ColorStateList.valueOf(themeUpdater.fetchThemeColor("colorAccent")));
                         //Update App State
                         updateSortFilterInAppState();
@@ -2398,7 +2376,6 @@ public class MainActivity extends AppCompatActivity {
                                 //Call method to update the adapter and the recyclerView
                                 updateRecyclerViewData(HomeFragment.getRv().getAdapter());
                             }//End of if else statement to check the children count in the linear layout, this defines what tab is being used
-                            //@Fixme: Check what is best: setTint or setColourFilter
                             item.getIcon().setTintList(ColorStateList.valueOf(themeUpdater.fetchThemeColor("colorAccent")));
                             //Update app state in DB
                             ContentValues values = new ContentValues();
@@ -2475,8 +2452,6 @@ public class MainActivity extends AppCompatActivity {
         this.lastSearchText = "";
         Toolbar toolbar = findViewById(R.id.toolbar);
         if (toolbar.getMenu().size() > 0) {
-            //@Fixme: use different method that setTintList?
-//            toolbar.getMenu().getItem(0).getIcon().setColorFilter(null);//.setColorFilter(null);
             toolbar.getMenu().getItem(0).getIcon().setTintList(null);
         }
         //Update app state to remove all search related fields
@@ -2500,8 +2475,7 @@ public class MainActivity extends AppCompatActivity {
         this.currentSortFilter = null;
         Toolbar toolbar = findViewById(R.id.toolbar);
         if (toolbar.getMenu().size() > 0) {
-            //@Fixme: use different method that setTintList?=
-            toolbar.getMenu().getItem(1).getIcon().setTintList(null);//.setColorFilter(null);
+            toolbar.getMenu().getItem(1).getIcon().setTintList(null);
         }
         //Update sort filter in app state
         this.updateSortFilterInAppState();

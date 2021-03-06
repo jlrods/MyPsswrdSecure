@@ -623,7 +623,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         Log.d("addNewQuestion","Enter the addNewQuestion method in the DisplayAccountActivity class.");
         //Declare and instantiate a new intent object
         Intent i= new Intent(this, AddUserNameActivity.class);
-        startActivityForResult(i,MainActivity.getThrowAddUserNameActReqCode());
+        startActivityForResult(i,MainActivity.getThrowAddUsernameActReqcode());
         Log.d("addNewPsswrd","Exit the addNewQuestion method in the DisplayAccountActivity class.");
     }
 
@@ -632,7 +632,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         Log.d("addNewQuestion","Enter the addNewQuestion method in the DisplayAccountActivity class.");
         //Declare and instantiate a new intent object
         Intent i= new Intent(this, AddPsswrdActivity.class);
-        startActivityForResult(i,MainActivity.getThrowAddPsswrdActReqCode());
+        startActivityForResult(i,MainActivity.getThrowAddPsswrdActRewcode());
         Log.d("addNewPsswrd","Exit the addNewQuestion method in the DisplayAccountActivity class.");
     }
 
@@ -642,7 +642,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         Log.d("addNewQuestion","Enter the addNewQuestion method in the DisplayAccountActivity class.");
         //Declare and instantiate a new intent object
         Intent i= new Intent(this, AddQuestionActivity.class);
-        startActivityForResult(i,MainActivity.getThrowAddQuestionActReqCode());
+        startActivityForResult(i,MainActivity.getThrowAddQuestionActReqcode());
         Log.d("addNewPsswrd","Exit the addNewQuestion method in the DisplayAccountActivity class.");
     }//End of addNewQuestion method
 
@@ -885,7 +885,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         }else if(requestCode==this.throwSelectLogoActReqCode && resultCode==RESULT_CANCELED){
             //In the event of receiving a cancel result, no change to be done on the current account, no logo change to be applied
             Log.d("onActivityResult","Received CANCEL result from SelectLogoActivity received by the DisplayAccountActivity class.");
-        }else if(requestCode== MainActivity.getThrowAddUserNameActReqCode() && resultCode==RESULT_OK){
+        }else if(requestCode== MainActivity.getThrowAddUsernameActReqcode() && resultCode==RESULT_OK){
             Log.d("onActivityResult","Received GOOD result from AddUserNameActivity received by the DisplayAccountActivity class.");
             int userNameID = data.getExtras().getInt("userNameID");
             //Update the userName object ID
@@ -900,9 +900,9 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             Snackbar snackbar = Snackbar.make(coordinatorLayoutAccAct, R.string.snackBarUserAdded, Snackbar.LENGTH_LONG);
             snackbar.setAction(R.string.snackBarUndo,new SnackBarClickHandler(this.userName,this.cursorUserName,spAccUserName));
             snackbar.show();
-        }else if(requestCode== MainActivity.getThrowAddUserNameActReqCode() && resultCode==RESULT_CANCELED){
+        }else if(requestCode== MainActivity.getThrowAddUsernameActReqcode() && resultCode==RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from AddUserNameActivity received by the DisplayAccountActivity class.");
-        }else if(requestCode== MainActivity.getThrowAddPsswrdActReqCode() && resultCode==RESULT_OK){
+        }else if(requestCode== MainActivity.getThrowAddPsswrdActRewcode() && resultCode==RESULT_OK){
             Log.d("onActivityResult","Received GOOD result from AddPsswrdActivity received by the DisplayAccountActivity class.");
             int psswrdID = data.getExtras().getInt("psswrdID");
             //Update the password object
@@ -916,9 +916,9 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             Snackbar snackbar = Snackbar.make(coordinatorLayoutAccAct, R.string.snackBarPsswrdAdded, Snackbar.LENGTH_LONG);
             snackbar.setAction(R.string.snackBarUndo,new SnackBarClickHandler(this.psswrd,this.cursorPsswrd,spAccPsswrd));
             snackbar.show();
-        }else if(requestCode== MainActivity.getThrowAddPsswrdActReqCode() && resultCode==RESULT_CANCELED){
+        }else if(requestCode== MainActivity.getThrowAddPsswrdActRewcode() && resultCode==RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from AddPsswrdActivity received by the DisplayAccountActivity class.");
-        }else if(requestCode== MainActivity.getThrowAddQuestionActReqCode() && resultCode==RESULT_OK){
+        }else if(requestCode== MainActivity.getThrowAddQuestionActReqcode() && resultCode==RESULT_OK){
             Log.d("onActivityResult","Received GOOD result from AddQuestionActivity received by the DisplayAccountActivity class.");
             //Setup the Questions Available spinner and populate with data
             this.cursorListOfQuestionsAvailable = accountsDB.getListQuestionsAvailable();
@@ -930,7 +930,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             Snackbar snackbar = Snackbar.make(coordinatorLayoutAccAct, R.string.snackBarQuestionAdded, Snackbar.LENGTH_LONG);
             snackbar.setAction(R.string.snackBarUndo,new SnackBarClickHandler(this.extractQuestionsFromSpinner(this.spAccSecQuestionList).getQuestions().get(newQuestionPosition),this.cursorQuestionList,this.spAccSecQuestionList));
             snackbar.show();
-        }else if(requestCode== MainActivity.getThrowAddQuestionActReqCode() && resultCode==RESULT_CANCELED){
+        }else if(requestCode== MainActivity.getThrowAddQuestionActReqcode() && resultCode==RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from AddQuestionActivity received by the DisplayAccountActivity class.");
         }else if(requestCode == MainActivity.getThrowImageGalleryReqCode() && resultCode == Activity.RESULT_OK){
             Log.d("onActivityResult","Received GOOD result from Gallery intent received by the DisplayAccountActivity class.");

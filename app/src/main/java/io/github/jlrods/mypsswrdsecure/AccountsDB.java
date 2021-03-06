@@ -135,7 +135,7 @@ public class AccountsDB extends SQLiteOpenHelper {
                 "isSearchUserInAccountsFilter INTEGER, isSearchPsswrdInAccountsFilter INTEGER,\n"+
                 "lastSearch TEXT,isSortFilter INTEGER,currentSortFilter INTEGER, FOREIGN KEY (currentCategoryID) REFERENCES CATEGORY(_id));");
         //Populate default state of app
-        db.execSQL("INSERT INTO APPSTATE VALUES(null,1,1,1,0,0,0,0,'',0,-1);");
+        db.execSQL("INSERT INTO APPSTATE VALUES(null,-1,1,1,0,0,0,0,'',0,-1);");
 
         //Create a table to store the accounts items
         // Leave empty as user has to create their accounts.
@@ -724,15 +724,15 @@ public class AccountsDB extends SQLiteOpenHelper {
         return cursor;
     }//End of getUserNameByID method
 
-    public Cursor getAppLoginCursorUserAndPsswrdData(int _id){
-        Log.d("getAppLogin","Enter the getCategoryByID method in the AccountsDB class.");
-        Cursor cursor = this.runQuery(
-                "SELECT APPLOGGIN.*, Psswrd.Value as PsswrdValue, Psswrd.initVector as PsswrdIV\n" +
-                        "FROM APPLOGGIN INNER JOIN PSSWRD\n" +
-                        "ON APPLOGGIN.PsswrdID = Psswrd._id\n" +
-                        "WHERE  APPLOGGIN.UserNameID = "+ _id);
-        return cursor;
-    }
+//    public Cursor getAppLoginCursorUserAndPsswrdData(int _id){
+//        Log.d("getAppLogin","Enter the getCategoryByID method in the AccountsDB class.");
+//        Cursor cursor = this.runQuery(
+//                "SELECT APPLOGGIN.*, Psswrd.Value as PsswrdValue, Psswrd.initVector as PsswrdIV\n" +
+//                        "FROM APPLOGGIN INNER JOIN PSSWRD\n" +
+//                        "ON APPLOGGIN.PsswrdID = Psswrd._id\n" +
+//                        "WHERE  APPLOGGIN.UserNameID = "+ _id);
+//        return cursor;
+//    }
 
     public Cursor getAllAppLoginCursor(){
         Cursor loginList = this.runQuery("SELECT * FROM "+MainActivity.getApplogginTable());

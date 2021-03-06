@@ -3,8 +3,6 @@ package io.github.jlrods.mypsswrdsecure.ui.home;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -12,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,8 +17,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.google.android.material.tabs.TabLayout;
 
 import io.github.jlrods.mypsswrdsecure.Account;
 import io.github.jlrods.mypsswrdsecure.AccountAdapter;
@@ -89,7 +84,7 @@ public class HomeFragment extends Fragment {
                 //i.putExtra("category",this.currentCategory.toString());
                 i.putExtra("_id",account.get_id());
                 //Start the AddItemActivity class
-                startActivityForResult(i,MainActivity.getThrowEditAccountActReqCode());
+                startActivityForResult(i,MainActivity.getThrowEditAccountActReqcode());
                 Log.d("ThrowEditAcc","Exit throwEditAccountActivity method in the MainActivity class.");
             }//End of onClick method
         });//End of setOnClickListener
@@ -190,14 +185,14 @@ public class HomeFragment extends Fragment {
         String toastText = "";
         //Flag to display Toast and update RV
         boolean goodResultDelivered = false;
-        if (requestCode == MainActivity.getThrowEditAccountActReqCode() && resultCode == Activity.RESULT_OK) {
+        if (requestCode == MainActivity.getThrowEditAccountActReqcode() && resultCode == Activity.RESULT_OK) {
             Log.d("onActivityResult","Received GOOD result from EditAccountActivity (received by HomeFragment).");
             //((AccountAdapter) this.rv.getAdapter()).setCursor(accountsDB.getAccountsList());
             //Define text to display Toast to confirm the account has been added
             //Set variable to display Toast
             goodResultDelivered = true;
             toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountUpdated);
-        }else if(requestCode == MainActivity.getThrowEditAccountActReqCode() && resultCode == Activity.RESULT_CANCELED){
+        }else if(requestCode == MainActivity.getThrowEditAccountActReqcode() && resultCode == Activity.RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from EditAccountActivity (received by HomeFragment).");
         }
         //Check if toast would be displayed
