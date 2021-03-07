@@ -1100,8 +1100,6 @@ public class MainActivity extends AppCompatActivity {
             View headerView = navigationView.getHeaderView(0);
             headerView.setBackground(getResources().getDrawable(data.getExtras().getInt("selectedImgResourceID"), null));
             ContentValues values = new ContentValues();
-            //@Fixme: Change to get AppLogin ID passed in from LoginActivity and not the max number in the table
-            //@Fixme: This might not be impacted by new AppLoggin table definition with encrypted user and psswrd IDs
             values.put(ID_COLUMN, currentAppLoggin.get_id());
             values.put(PICTUREID_COLUMN, data.getExtras().getInt("selectedImgID"));
             accountsDB.updateTable(APPLOGGIN_TABLE, values);
@@ -1518,9 +1516,8 @@ public class MainActivity extends AppCompatActivity {
             recyclerView.scrollToPosition(adapterPosition);
             update = true;
         } else {
-            //@Fixme: Is the prompt to be displayed?
             //Prompt the user about DB problem
-            //MainActivity.displayToast(this.getBaseContext(),"DB Error",Toast.LENGTH_SHORT,Gravity.CENTER);
+            MainActivity.displayToast(v.getContext(),"DB Error",Toast.LENGTH_SHORT,Gravity.CENTER);
         }//End of if else statement to check the item was updated
         Log.d("toggleIsFavorite", "Exit toggleIsFavorite method in the MainActivity class.");
         return update;
@@ -1798,7 +1795,6 @@ public class MainActivity extends AppCompatActivity {
                 //another one to hold the isChecked attribute
                 final boolean[] deletableCategories = new boolean[categoryList.size() - INDEX_TO_GET_LAST_TASK_LIST_ITEM];
                 //For loop to populate the char-sequence array with the category names coming from category list
-                //Fixme: error out of index due the index to get last taks list item
                 for (int i = INDEX_TO_GET_LAST_TASK_LIST_ITEM; i < categoryList.size(); i++) {
                     //For each item in the list, extract name and save it in the string array
 //                    int textID = getResources().getIdentifier(categoryList.get(i).getName(),"string",getPackageName());
@@ -2203,7 +2199,6 @@ public class MainActivity extends AppCompatActivity {
                         //Call clear search filter method
                         //clearSortFilter();
                         //Update the RV list
-//                                //@Fixme: There's an issue here. Test to remember
 //                                if(isSearchFilter){
 //                                    updateRecyclerViewData(HomeFragment.getRv().getAdapter());
 //                                }
@@ -2398,10 +2393,7 @@ public class MainActivity extends AppCompatActivity {
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //Call clear search filter method
-                        //clearSearchFilter();
                         //Update the RV list
-                        //@Fixme: There's an issue here. Test to remember
                         if (isSearchFilter) {
                             updateRecyclerViewData(HomeFragment.getRv().getAdapter());
                         }
@@ -2611,8 +2603,7 @@ public class MainActivity extends AppCompatActivity {
                 logOutTime= 1;
                 break;
         }
-        //@Fixme: Include 60 seconds per minute in the calculation below instead of 10 secs per min
-        logOutTime = logOutTime*10*1000;
+        logOutTime = logOutTime*60*1000;
         Log.d("getLogOutTime", "Exit getLogOutTime method in MainActivity class.");
         return logOutTime;
     }//End of setAppTheme method
