@@ -2,6 +2,7 @@ package io.github.jlrods.mypsswrdsecure;
 
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
@@ -44,8 +45,9 @@ public class AddCategoryAcitivity extends AddItemActivity{
         ScrollView catIconList = findViewById(R.id.categoryIconScrallView);
         this.categoryIconTable = findViewById(R.id.categoryIconTable);
         this.imgSelectedIcon = findViewById(R.id.format_list_bulleted);
-        this.imgSelectedIcon.setColorFilter(this.themeUpdater.fetchThemeColor("colorAccent"), android.graphics.PorterDuff.Mode.SRC_IN);
+        //this.imgSelectedIcon.setColorFilter(this.themeUpdater.fetchThemeColor("colorAccent"), android.graphics.PorterDuff.Mode.SRC_IN);
         //this.imgSelectedIcon.setColorFilter(ContextCompat.getColor(this, R.color.colorPrimaryDark), android.graphics.PorterDuff.Mode.SRC_IN);
+        this.imgSelectedIcon.setImageTintList(ColorStateList.valueOf(this.themeUpdater.fetchThemeColor("colorAccent")));
         for(int i=0;i< categoryIconTable.getChildCount();i++){
             TableRow row = (TableRow) categoryIconTable.getChildAt(i);
             for(int j=0;j< row.getChildCount();j++){
@@ -136,8 +138,8 @@ public class AddCategoryAcitivity extends AddItemActivity{
             ((ImageView) v).setImageTintList(ColorStateList.valueOf(themeUpdater.fetchThemeColor("colorAccent")));
             //((ImageView) v).setColorFilter(this.themeUpdater.fetchThemeColor("colorAccent"), android.graphics.PorterDuff.Mode.SRC_IN);
             //((ImageView) v).setColorFilter(ContextCompat.getColor(this, R.color.colorPrimaryDark), android.graphics.PorterDuff.Mode.SRC_IN);
-            imgSelectedIcon.setColorFilter(ContextCompat.getColor(this, R.color.colorBlack), android.graphics.PorterDuff.Mode.SRC_IN);
-            //imgSelectedIcon.setImageTintList(ColorStateList.valueOf(themeUpdater.fetchThemeColor("colorAccent")));
+            //imgSelectedIcon.setColorFilter(ContextCompat.getColor(this, R.color.colorBlack), android.graphics.PorterDuff.Mode.SRC_IN);
+            imgSelectedIcon.setImageTintList(ColorStateList.valueOf(Color.BLACK));
             imgSelectedIcon = (ImageView) v;
         }//End of if statement to check the selected image isn't the same
         Log.d("toggleCatIconSelection","Exit toggleCatIconSelection method in AddCategoryActivity class.");
