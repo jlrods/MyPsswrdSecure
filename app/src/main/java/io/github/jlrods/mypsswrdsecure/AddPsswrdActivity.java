@@ -52,6 +52,7 @@ public class AddPsswrdActivity extends AddItemActivity {
                         //Update the Psswrd object ID and prepare data to exit the activity
                         this.psswrd.set_id(psswrdID);
                         intent.putExtra("psswrdID",this.psswrd.get_id());
+                        intent.putExtra("psswrdValue",psswrdValue);
                         setResult(RESULT_OK, intent);
                         finish();
                         Log.d("onOptionsItemSelected","The password "+ psswrdValue +" has been added into the DB through onOptionsItemSelected method in the AddPsswrdActivity class.");

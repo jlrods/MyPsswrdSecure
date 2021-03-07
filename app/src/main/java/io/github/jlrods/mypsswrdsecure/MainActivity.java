@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
     private final int THROW_ADD_ACCOUNT_ACT_REQCODE = 5566;
     private static final int THROW_ADD_QUESTION_ACT_REQCODE = 9876;
     private static final int THROW_ADD_USERNAME_ACT_REQCODE = 5744;
-    private static final int THROW_ADD_PSSWRD_ACT_REWCODE = 9732;
+    private static final int THROW_ADD_PSSWRD_ACT_REQCODE = 9732;
     private final int TRHOW_ADD_CATEGORY_REQCODE = 5673;
     private final int THROW_EDIT_USERNAME_ACT_REQCODE = 4475;
     private final int THROW_EDIT_PSSWRD_ACT_REQCODE = 6542;
@@ -205,7 +205,6 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         final FloatingActionButton fab = findViewById(R.id.fab);
         //Change fab + icon color based on app theme
-        //@Fixme: Fix setTintList issue here
         fab.setImageTintList(ColorStateList.valueOf(themeUpdater.fetchThemeColor("colorPrimary")));
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -319,14 +318,14 @@ public class MainActivity extends AppCompatActivity {
                 boolean appStateUpdated = accountsDB.updateTable(APPSTATE_TABLE, appStateValues);
                 //If update goes well, get values from DB???
                 if (appStateUpdated) {
-                    //@FIXME: Define method in AccountsDB
-                    Cursor c = accountsDB.runQuery("SELECT * FROM " + APPSTATE_TABLE);
+                    Cursor c = accountsDB.getAppState();
                     c.moveToFirst();
                     String search = c.getString(6);
                     Snackbar snackbar = Snackbar.make(coordinatorLayout, search, Snackbar.LENGTH_LONG);
                     snackbar.setAction("Action", null).show();
                 } else {
-                    //@FIXME: Define action in case the app fail to update state
+                    //Display error message
+                    displayAlertDialogNoInput(getBaseContext(),getString(R.string.appStateError),getString(R.string.appStateErrorMssg));
                 }//End of if else statement
             }//End of onTabSelected
 
@@ -355,36 +354,41 @@ public class MainActivity extends AppCompatActivity {
         //Retrieve App state from DB and update app variable appropriately
         this.appState = accountsDB.getAppState();
         if (this.appState != null && this.appState.getCount() > 0) {
-            //Get the current category and tab stored from app state
-            this.currentCategory = this.getCategoryByID(this.appState.getInt(1));
-            this.currentTab = this.appState.getInt(2);
-            //Update the nav drawer to display appropriate item in the menu
-            this.showAllAccounts = this.accountsDB.toBoolean(this.appState.getInt(3));
-            this.isFavoriteFilter = this.accountsDB.toBoolean(this.appState.getInt(4));
-            this.isSearchFilter = this.accountsDB.toBoolean(this.appState.getInt(5));
-            this.isSearchUserNameFilter = this.accountsDB.toBoolean(this.appState.getInt(6));
-            this.isSearchPsswrdFilter = this.accountsDB.toBoolean(this.appState.getInt(7));
-            this.lastSearchText = this.appState.getString(8);
-            this.isSortFilter = this.accountsDB.toBoolean(this.appState.getInt(9));
-            this.currentSortFilter = SortFilter.getSortFilterByOrdinal(this.appState.getInt(10));
-            //Set boolean flag to identify first run of the onCreate method
-            //This flag is a work around to avoid clearSearch filter when calling onTabSelected method when
-            //Changing tab during first run of program
             if (currentTab != 0) {
                 isFirstRun = true;
             }
         } else {
+            accountsDB.getWritableDatabase().execSQL("INSERT INTO APPSTATE VALUES(null,-1,1,1,0,0,0,0,'',0,-1);");
+            this.appState = accountsDB.getAppState();
             //Set default app state values
-            this.currentCategory = this.getCategoryByID(0);
-            this.showAllAccounts = true;
-            this.isFavoriteFilter = false;
-            this.isSearchFilter = false;
-            this.isSearchUserNameFilter = false;
-            this.isSearchPsswrdFilter = false;
-            this.lastSearchText = "";
-            this.isSortFilter = false;
-            this.currentSortFilter = null;
+//            this.currentCategory = this.getCategoryByID(0);
+//            this.showAllAccounts = true;
+//            this.isFavoriteFilter = false;
+//            this.isSearchFilter = false;
+//            this.isSearchUserNameFilter = false;
+//            this.isSearchPsswrdFilter = false;
+//            this.lastSearchText = "";
+//            this.isSortFilter = false;
+//            this.currentSortFilter = null;
+            //Insert default app state to be loaded
+            //Populate default state of app
+
         }//End of if statement to check and extract the app state from dB
+        //Get the current category and tab stored from app state
+        this.currentCategory = this.getCategoryByID(this.appState.getInt(1));
+        this.currentTab = this.appState.getInt(2);
+        //Update the nav drawer to display appropriate item in the menu
+        this.showAllAccounts = this.accountsDB.toBoolean(this.appState.getInt(3));
+        this.isFavoriteFilter = this.accountsDB.toBoolean(this.appState.getInt(4));
+        this.isSearchFilter = this.accountsDB.toBoolean(this.appState.getInt(5));
+        this.isSearchUserNameFilter = this.accountsDB.toBoolean(this.appState.getInt(6));
+        this.isSearchPsswrdFilter = this.accountsDB.toBoolean(this.appState.getInt(7));
+        this.lastSearchText = this.appState.getString(8);
+        this.isSortFilter = this.accountsDB.toBoolean(this.appState.getInt(9));
+        this.currentSortFilter = SortFilter.getSortFilterByOrdinal(this.appState.getInt(10));
+        //Set boolean flag to identify first run of the onCreate method
+        //This flag is a work around to avoid clearSearch filter when calling onTabSelected method when
+        //Changing tab during first run of program
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -800,7 +804,7 @@ public class MainActivity extends AppCompatActivity {
         //Declare and instantiate a new intent object
         Intent i = new Intent(MainActivity.this, AddPsswrdActivity.class);
         //Start the AddItemActivity class
-        startActivityForResult(i, THROW_ADD_PSSWRD_ACT_REWCODE);
+        startActivityForResult(i, THROW_ADD_PSSWRD_ACT_REQCODE);
         Log.d("ThrowAddPsswrd", "Exit throwAddPsswrdActivity method in the MainActivity class.");
     }//End of throwAddTaskActivity
 
@@ -1002,26 +1006,26 @@ public class MainActivity extends AppCompatActivity {
             //Set variable to display Toast
             goodResultDelivered = true;
             //Define text to display Toast to confirm the account has been added
-            toastText = getResources().getString(R.string.userNameAdded);
+            toastText = data.getExtras().getString("userNameValue") + " " + getResources().getString(R.string.userNameAdded);
         } else if (requestCode == THROW_ADD_USERNAME_ACT_REQCODE && resultCode == RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from AddUserNameActivity (received by MainActivity).");
         } else if (requestCode == THROW_ADD_USERNAME_ACT_REQCODE && resultCode == RESULT_TIMEOUT) {
             Log.d("onActivityResult", "Received TIMEOUT result from AddUserNameActivity (received by MainActivity).");
             isLogOutTimedOut = true;
-        }else if (requestCode == THROW_ADD_PSSWRD_ACT_REWCODE && resultCode == RESULT_OK) {
+        }else if (requestCode == THROW_ADD_PSSWRD_ACT_REQCODE && resultCode == RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from AddPsswrdActivity (received by MainActivity).");
             //Set variable to display Toast
             goodResultDelivered = true;
             //Define text to display Toast to confirm the account has been added
-            toastText = getResources().getString(R.string.psswrdAdded);
-        } else if (requestCode == THROW_ADD_PSSWRD_ACT_REWCODE && resultCode == RESULT_CANCELED) {
+            toastText = data.getExtras().getString("psswrdValue") + " " + getResources().getString(R.string.psswrdAdded);
+        } else if (requestCode == THROW_ADD_PSSWRD_ACT_REQCODE && resultCode == RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from AddPsswrdActivity (received by MainActivity).");
         } else if (requestCode == THROW_ADD_QUESTION_ACT_REQCODE && resultCode == RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from AddAccountActivity (received by MainActivity).");
             //Set variable to display Toast
             goodResultDelivered = true;
             //Define text to display Toast to confirm the account has been added
-            toastText = getResources().getString(R.string.questionAdded);
+            toastText = data.getExtras().getString("questionValue") + " " +  getResources().getString(R.string.questionAdded);
         } else if (requestCode == THROW_ADD_QUESTION_ACT_REQCODE && resultCode == RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from AddQuestionActivity (received by MainActivity).");
         } else if (requestCode == TRHOW_ADD_CATEGORY_REQCODE && resultCode == Activity.RESULT_OK) {
@@ -1037,7 +1041,7 @@ public class MainActivity extends AppCompatActivity {
             if (data.getExtras().getBoolean("itemDeleted")) {
                 toastText = data.getExtras().getString("itemDeletedName") + " " + getResources().getString(R.string.userNameDeleted);
             } else {
-                toastText = getResources().getString(R.string.userNameUpdated);
+                toastText = data.getExtras().getString("userNameValue") + " " + getResources().getString(R.string.userNameUpdated);
             }//End of if else statement to check the boolean value retrieved from extra data
             //Set variable to display Toast
             goodResultDelivered = true;
@@ -1049,7 +1053,7 @@ public class MainActivity extends AppCompatActivity {
             if (data.getExtras().getBoolean("itemDeleted")) {
                 toastText = data.getExtras().getString("itemDeletedName") + " " + getResources().getString(R.string.psswrdDeleted);
             } else {
-                toastText = getResources().getString(R.string.psswrdUpdated);
+                toastText = data.getExtras().getString("psswrdValue") + " " + getResources().getString(R.string.psswrdUpdated);
             }
             //Set variable to display Toast
             goodResultDelivered = true;
@@ -1061,7 +1065,7 @@ public class MainActivity extends AppCompatActivity {
             if (data.getExtras().getBoolean("itemDeleted")) {
                 toastText = data.getExtras().getString("itemDeletedName") + " " + getResources().getString(R.string.questionDeleted);
             } else {
-                toastText = getResources().getString(R.string.questionUpdated);
+                toastText = data.getExtras().getString("questionValue") + " " +  getResources().getString(R.string.questionUpdated);
             }
             //Set variable to display Toast
             goodResultDelivered = true;
@@ -1072,7 +1076,6 @@ public class MainActivity extends AppCompatActivity {
             //Define text to display Toast to confirm the account has been added
             //Set variable to display Toast
             goodResultDelivered = true;
-            //@Fixme: Check EditAccountActivity, even for deleted accounts returns text account has been updated
             if (data.getExtras().getInt("accountID") == -1) {
                 toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountDeleted);
             } else {
@@ -1227,8 +1230,8 @@ public class MainActivity extends AppCompatActivity {
         return THROW_ADD_USERNAME_ACT_REQCODE;
     }
 
-    public static int getThrowAddPsswrdActRewcode() {
-        return THROW_ADD_PSSWRD_ACT_REWCODE;
+    public static int getThrowAddPsswrdActReqcode() {
+        return THROW_ADD_PSSWRD_ACT_REQCODE;
     }
 
     public static String getUsernameTable() {

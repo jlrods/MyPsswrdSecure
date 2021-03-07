@@ -1,6 +1,7 @@
 package io.github.jlrods.mypsswrdsecure;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
@@ -126,14 +127,17 @@ public class AddCategoryAcitivity extends AddItemActivity{
     }//End of onOptionsItemSelected
 
     private void toggleCatIconSelection(View v){
+
+        //@Fixme: Icon selection not working ok, when selecting different icons randomly. Already selected icons do not get colour again
         Log.d("toggleCatIconSelection","Enter toggleCatIconSelection method in AddCategoryActivity class.");
         if(imgSelectedIcon.getId() != v.getId()){
             this.categoryIcon.setName(getResources().getResourceEntryName(v.getId()));
             this.categoryIcon.setResourceID(v.getId());
-            //@Fixme: setColorFilter method does not required min API21, this might fix the setTintFilter issue in other activities
-            ((ImageView) v).setColorFilter(this.themeUpdater.fetchThemeColor("colorAccent"), android.graphics.PorterDuff.Mode.SRC_IN);
+            ((ImageView) v).setImageTintList(ColorStateList.valueOf(themeUpdater.fetchThemeColor("colorAccent")));
+            //((ImageView) v).setColorFilter(this.themeUpdater.fetchThemeColor("colorAccent"), android.graphics.PorterDuff.Mode.SRC_IN);
             //((ImageView) v).setColorFilter(ContextCompat.getColor(this, R.color.colorPrimaryDark), android.graphics.PorterDuff.Mode.SRC_IN);
             imgSelectedIcon.setColorFilter(ContextCompat.getColor(this, R.color.colorBlack), android.graphics.PorterDuff.Mode.SRC_IN);
+            //imgSelectedIcon.setImageTintList(ColorStateList.valueOf(themeUpdater.fetchThemeColor("colorAccent")));
             imgSelectedIcon = (ImageView) v;
         }//End of if statement to check the selected image isn't the same
         Log.d("toggleCatIconSelection","Exit toggleCatIconSelection method in AddCategoryActivity class.");

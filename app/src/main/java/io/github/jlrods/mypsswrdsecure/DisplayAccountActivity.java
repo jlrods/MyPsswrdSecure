@@ -632,7 +632,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         Log.d("addNewQuestion","Enter the addNewQuestion method in the DisplayAccountActivity class.");
         //Declare and instantiate a new intent object
         Intent i= new Intent(this, AddPsswrdActivity.class);
-        startActivityForResult(i,MainActivity.getThrowAddPsswrdActRewcode());
+        startActivityForResult(i,MainActivity.getThrowAddPsswrdActReqcode());
         Log.d("addNewPsswrd","Exit the addNewQuestion method in the DisplayAccountActivity class.");
     }
 
@@ -902,7 +902,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             snackbar.show();
         }else if(requestCode== MainActivity.getThrowAddUsernameActReqcode() && resultCode==RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from AddUserNameActivity received by the DisplayAccountActivity class.");
-        }else if(requestCode== MainActivity.getThrowAddPsswrdActRewcode() && resultCode==RESULT_OK){
+        }else if(requestCode== MainActivity.getThrowAddPsswrdActReqcode() && resultCode==RESULT_OK){
             Log.d("onActivityResult","Received GOOD result from AddPsswrdActivity received by the DisplayAccountActivity class.");
             int psswrdID = data.getExtras().getInt("psswrdID");
             //Update the password object
@@ -916,7 +916,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             Snackbar snackbar = Snackbar.make(coordinatorLayoutAccAct, R.string.snackBarPsswrdAdded, Snackbar.LENGTH_LONG);
             snackbar.setAction(R.string.snackBarUndo,new SnackBarClickHandler(this.psswrd,this.cursorPsswrd,spAccPsswrd));
             snackbar.show();
-        }else if(requestCode== MainActivity.getThrowAddPsswrdActRewcode() && resultCode==RESULT_CANCELED){
+        }else if(requestCode== MainActivity.getThrowAddPsswrdActReqcode() && resultCode==RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from AddPsswrdActivity received by the DisplayAccountActivity class.");
         }else if(requestCode== MainActivity.getThrowAddQuestionActReqcode() && resultCode==RESULT_OK){
             Log.d("onActivityResult","Received GOOD result from AddQuestionActivity received by the DisplayAccountActivity class.");

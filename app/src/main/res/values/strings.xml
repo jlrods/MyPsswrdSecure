@@ -115,13 +115,13 @@
 
     <!--    AddUserName Activity-->
     <string name="addUserTitle">Add User Name</string>
-    <string name="userNameAdded">New user name added successfully!</string>
+    <string name="userNameAdded">user name added successfully!</string>
     <string name="userNameNotEntered">Sorry, no user name entered in the input field</string>
 
     <!--    EditUserName Activity   -->
     <string name="editUserTitle">Edit User name</string>
     <string name="userNameNotChanged">Sorry, the user name value has not been changed</string>
-    <string name="userNameUpdated">The user name has been updated</string>
+    <string name="userNameUpdated">user name has been updated</string>
     <string name="userNameDeleted"> user name has been deleted</string>
     <string name="userNameDeleteTitle">Delete user name</string>
     <string name="userNameDeleteMssg">Are you sure you want to delete this user name?</string>
@@ -129,13 +129,13 @@
 
     <!--    AddPsswrd Activity-->
     <string name="addPsswrdTitle">Add Password</string>
-    <string name="psswrdAdded">New password added successfully!</string>
+    <string name="psswrdAdded">password added successfully!</string>
     <string name="psswrdNotEntered">Sorry, no password entered in the input field</string>
 
     <!--    EditPsswrd Activity   -->
     <string name="editPsswrdTitle">Edit Password</string>
     <string name="psswrdNotChanged">Sorry, the password value has not been changed</string>
-    <string name="psswrdUpdated">The password has been updated</string>
+    <string name="psswrdUpdated">password has been updated</string>
     <string name="psswrdDeleted">password has been deleted</string>
     <string name="psswrdDeleteTitle">Delete password</string>
     <string name="psswrdDeleteMssg">Are you sure you want to delete this password?</string>
@@ -146,7 +146,7 @@
     <string name="addQuestQuestionTag">Security question</string>
     <string name="addQuestQuestionHint">Type the new question here...</string>
     <string name="addQuestAnswerHint">Type the new answer here...</string>
-    <string name="questionAdded">New question added successfully!</string>
+    <string name="questionAdded">question added successfully!</string>
     <string name="questionNotEntered">Sorry, no question entered in the input field</string>
     <string name="answerNotEntered">Sorry, no answer entered in the input field</string>
 
@@ -154,7 +154,7 @@
     <string name="editQuestTitle">Edit Question</string>
     <string name="answerNoTChanged">Sorry, the answer value has not been changed</string>
     <string name="questionAnswerNoTChanged">Sorry, at least one value must be changed (question or answer)</string>
-    <string name="questionUpdated">The question has been updated</string>
+    <string name="questionUpdated">question has been updated</string>
     <string name="questionDeleted">question has been deleted</string>
     <string name="questionDeleteTitle">Delete security question</string>
     <string name="questionDeleteMssg">Are you sure you want to delete this question?</string>
@@ -322,6 +322,10 @@
     <string name="psswrdsDontMatchError">Sorry, the password and it\'s confirmation do not match. Try again...</string>
     <string name="moreThanOneLoginError">Sorry, There\'s more than one account registered to this app. Please, uninstall and reinstall the app.</string>
     <string name="wrongCredentialsError">Sorry, the user name and password combination is invalid.Try again...</string>
+
+
+    <string name="appStateError">App state error</string>
+    <string name="appStateErrorMssg">App failed to update state.</string>
 
 
 </resources>

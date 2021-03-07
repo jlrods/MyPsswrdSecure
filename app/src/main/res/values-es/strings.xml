@@ -313,4 +313,8 @@
     <string name="wrongCredentialsError">Lo siento, la combinación de usuario y contraseña es inválida, intent de nuevo...</string>
 
 
+    <string name="appStateError">Error de estado de la app</string>
+    <string name="appStateErrorMssg">La app falló en actualizar su estado</string>
+
+
 </resources>

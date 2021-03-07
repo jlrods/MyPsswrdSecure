@@ -170,7 +170,8 @@ public class EditQuestionActivity extends AddQuestionActivity {
                     //Update the new question in the DB
                     if(questionDbTransCompleted && answerDbTransCompleted){
                         //Go back to previous activity
-                        intent.putExtra("userNameID",this.question.get_id());
+                        intent.putExtra("questionID",this.question.get_id());
+                        intent.putExtra("questionValue",this.question.getValue());
                         intent.putExtra("itemDeleted",false);
                         result = true;
                         setResult(RESULT_OK, intent);

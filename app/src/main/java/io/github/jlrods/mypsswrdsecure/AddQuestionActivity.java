@@ -82,6 +82,7 @@ public class AddQuestionActivity extends AddItemActivity {
                             Log.d("onOptionsItemSelected","Save option selected on onOptionsItemSelected method in AddQuestionActivity class.");
                             intent.putExtra("answerID",this.answer.get_id());
                             intent.putExtra("questionID",this.question.get_id());
+                            intent.putExtra("questionValue",this.question.getValue());
                             setResult(RESULT_OK, intent);
                             finish();
                         }else{

@@ -71,6 +71,7 @@ public class EditUserNameActivity extends AddUserNameActivity {
                     if(this.accountsDB.updateTable(MainActivity.getUsernameTable(),values)){
                         //Go back to previous activity
                         intent.putExtra("userNameID",this.userName.get_id());
+                        intent.putExtra("userNameValue",userNameValue);
                         intent.putExtra("itemDeleted",false);
                         result = true;
                         setResult(RESULT_OK, intent);
@@ -97,5 +98,4 @@ public class EditUserNameActivity extends AddUserNameActivity {
         return result;
     }//End of onOptionsItemSelected method
 
-    private void test(){}
 }//End of class EditUserNameActivity

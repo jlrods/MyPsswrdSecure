@@ -68,6 +68,7 @@ public class EditPsswrdActivity extends AddPsswrdActivity {
                     if(this.accountsDB.updateTable(MainActivity.getPsswrdTable(),values)){
                         //Go back to previous activity
                         intent.putExtra("psswrdID",this.psswrd.get_id());
+                        intent.putExtra("psswrdValue",psswrdValue);
                         intent.putExtra("itemDeleted",false);
                         result = true;
                         setResult(RESULT_OK, intent);
