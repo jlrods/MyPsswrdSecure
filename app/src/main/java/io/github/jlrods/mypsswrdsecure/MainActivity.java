@@ -60,8 +60,8 @@ public class MainActivity extends AppCompatActivity {
     private static Cursor appState = null;
     private static Category currentCategory = null;
     private static int currentTab = 0;
-    private boolean showAllAccounts = true;
-    private boolean isFavoriteFilter = false;
+//    private boolean showAllAccounts = true;
+//    private boolean isFavoriteFilter = false;
     private static boolean isSearchFilter = false;
     private static boolean isSearchUserNameFilter = false;
     private static boolean isSearchPsswrdFilter = false;
@@ -141,8 +141,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String NAME_COLUMN = "Name";
     private static final String CURRENT_CATEGORY_ID_COLUMN = "currentCategoryID";
     private static final String CURRENT_TAB_COLUMN = "currentTab";
-    private static final String SHOW_ALL_ACCOUNTS_COLUMN = "showAllAccounts";
-    private static final String IS_FAVORITE_FILTER_COLUMN = "isFavoriteFilter";
+//    private static final String SHOW_ALL_ACCOUNTS_COLUMN = "showAllAccounts";
+//    private static final String IS_FAVORITE_FILTER_COLUMN = "isFavoriteFilter";
     private static final String IS_SEARCH_FILTER_COLUMN = "isSearchFilter";
     private static final String IS_SEARCH_USER_FILTER_COLUMN = "isSearchUserInAccountsFilter";
     private static final String IS_SEARCH_PSSWRD_FILTER_COLUMN = "isSearchPsswrdInAccountsFilter";
@@ -320,9 +320,9 @@ public class MainActivity extends AppCompatActivity {
                 if (appStateUpdated) {
                     Cursor c = accountsDB.getAppState();
                     c.moveToFirst();
-                    String search = c.getString(6);
-                    Snackbar snackbar = Snackbar.make(coordinatorLayout, search, Snackbar.LENGTH_LONG);
-                    snackbar.setAction("Action", null).show();
+//                    String search = c.getString(6);
+//                    Snackbar snackbar = Snackbar.make(coordinatorLayout, search, Snackbar.LENGTH_LONG);
+//                    snackbar.setAction("Action", null).show();
                 } else {
                     //Display error message
                     displayAlertDialogNoInput(getBaseContext(),getString(R.string.appStateError),getString(R.string.appStateErrorMssg));
@@ -358,7 +358,7 @@ public class MainActivity extends AppCompatActivity {
                 isFirstRun = true;
             }
         } else {
-            accountsDB.getWritableDatabase().execSQL("INSERT INTO APPSTATE VALUES(null,-1,1,1,0,0,0,0,'',0,-1);");
+            accountsDB.getWritableDatabase().execSQL("INSERT INTO APPSTATE VALUES(null,-1,1,0,0,0,'',0,-1);");
             this.appState = accountsDB.getAppState();
             //Set default app state values
 //            this.currentCategory = this.getCategoryByID(0);
@@ -378,14 +378,14 @@ public class MainActivity extends AppCompatActivity {
         this.currentCategory = this.getCategoryByID(this.appState.getInt(1));
         this.currentTab = this.appState.getInt(2);
         //Update the nav drawer to display appropriate item in the menu
-        this.showAllAccounts = this.accountsDB.toBoolean(this.appState.getInt(3));
-        this.isFavoriteFilter = this.accountsDB.toBoolean(this.appState.getInt(4));
-        this.isSearchFilter = this.accountsDB.toBoolean(this.appState.getInt(5));
-        this.isSearchUserNameFilter = this.accountsDB.toBoolean(this.appState.getInt(6));
-        this.isSearchPsswrdFilter = this.accountsDB.toBoolean(this.appState.getInt(7));
-        this.lastSearchText = this.appState.getString(8);
-        this.isSortFilter = this.accountsDB.toBoolean(this.appState.getInt(9));
-        this.currentSortFilter = SortFilter.getSortFilterByOrdinal(this.appState.getInt(10));
+//        this.showAllAccounts = this.accountsDB.toBoolean(this.appState.getInt(3));
+//        this.isFavoriteFilter = this.accountsDB.toBoolean(this.appState.getInt(4));
+        this.isSearchFilter = this.accountsDB.toBoolean(this.appState.getInt(3));
+        this.isSearchUserNameFilter = this.accountsDB.toBoolean(this.appState.getInt(4));
+        this.isSearchPsswrdFilter = this.accountsDB.toBoolean(this.appState.getInt(5));
+        this.lastSearchText = this.appState.getString(6);
+        this.isSortFilter = this.accountsDB.toBoolean(this.appState.getInt(7));
+        this.currentSortFilter = SortFilter.getSortFilterByOrdinal(this.appState.getInt(8));
         //Set boolean flag to identify first run of the onCreate method
         //This flag is a work around to avoid clearSearch filter when calling onTabSelected method when
         //Changing tab during first run of program
@@ -675,9 +675,9 @@ public class MainActivity extends AppCompatActivity {
                 }
             } else {
                 //Check current category variable to call method that retrieves proper account list
-                if (MainActivity.getCurrentCategory().get_id() == -1) {
+                if (MainActivity.getCurrentCategory().get_id() == homeCategory.get_id()) {
                     cursor = accountsDB.getAccountsList();
-                } else if (MainActivity.getCurrentCategory().get_id() == -2) {
+                } else if (MainActivity.getCurrentCategory().get_id() == favCategory.get_id()) {
                     cursor = accountsDB.getAccountsWithSpecifcValue(MainActivity.getIsFavoriteColumn(), 1);
                 } else {
                     cursor = accountsDB.getAccountsWithSpecifcValue(MainActivity.getCategoryIdColumn(), MainActivity.getCurrentCategory().get_id());

@@ -129,8 +129,6 @@ public class AddCategoryAcitivity extends AddItemActivity{
     }//End of onOptionsItemSelected
 
     private void toggleCatIconSelection(View v){
-
-        //@Fixme: Icon selection not working ok, when selecting different icons randomly. Already selected icons do not get colour again
         Log.d("toggleCatIconSelection","Enter toggleCatIconSelection method in AddCategoryActivity class.");
         if(imgSelectedIcon.getId() != v.getId()){
             this.categoryIcon.setName(getResources().getResourceEntryName(v.getId()));

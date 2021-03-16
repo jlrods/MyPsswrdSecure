@@ -131,11 +131,11 @@ public class AccountsDB extends SQLiteOpenHelper {
 
         //Create table to store app state
         db.execSQL("CREATE TABLE APPSTATE(_id INTEGER PRIMARY KEY AUTOINCREMENT,currentCategoryID INTEGER,\n" +
-                "currentTab INTEGER,showAllAccounts INTEGER,isFavoriteFilter INTEGER,isSearchFilter INTEGER,\n" +
+                "currentTab INTEGER,isSearchFilter INTEGER,\n" +
                 "isSearchUserInAccountsFilter INTEGER, isSearchPsswrdInAccountsFilter INTEGER,\n"+
                 "lastSearch TEXT,isSortFilter INTEGER,currentSortFilter INTEGER, FOREIGN KEY (currentCategoryID) REFERENCES CATEGORY(_id));");
         //Populate default state of app
-        db.execSQL("INSERT INTO APPSTATE VALUES(null,-1,1,1,0,0,0,0,'',0,-1);");
+        db.execSQL("INSERT INTO APPSTATE VALUES(null,-1,1,0,0,0,'',0,-1);");
 
         //Create a table to store the accounts items
         // Leave empty as user has to create their accounts.
@@ -405,81 +405,81 @@ public class AccountsDB extends SQLiteOpenHelper {
 
     //Methods to update the DB
     //Method to update AppState in DB
-    public boolean updateAppStateOld(int currentCategory, int currentTab, int showAllAccounts, int isFavoriteFilter, int isSearchFilter, String lastSearchText){
-        Log.d("UpdateState","Enter the updateAppState method in the AccountsDB class.");
-        boolean success = false;
-        Cursor appState;
-        //Declare and instantiate a new database object to handle the database operations
-        SQLiteDatabase db = getWritableDatabase();
-        appState = this.runQuery("SELECT * FROM APPSTATE");
-        //Declare string for the fist part of sql query
-        String updateState ="UPDATE APPSTATE SET ";
-        //Prepare lastSearchTask and lastSearchGrocery text before sql is run --> include escape character for apostrophe
-        if(lastSearchText.contains(apostrophe)){
-            lastSearchText = this.includeApostropheEscapeChar(lastSearchText);
-        }//End of if statement
-        //Form all the query fields section
-        String fields = " currentCategoryID = " + currentCategory + ","+
-                " currentTab = " + currentTab+ ","+
-                " showAllAccounts = "+ showAllAccounts + ","+
-                " isFavoriteFilter = "+ isFavoriteFilter + ","+
-                " isSearchFilter = " + isSearchFilter + ","+
-                " lastSearch = '" + lastSearchText+ "'";
-        //String to hold the where part of the query
-        String whereId = " WHERE _id = ";
-        String whereClause = "_id = ";
-        //String to hold the complete sql query
-        String sql = "";
-        //get next app state (only one should be saved)
-        if(appState.moveToNext()){
-            sql = updateState+fields+ whereId+appState.getInt(0);
-        }
-        //Try Catch block to execute the sql command to update corresponding table
-        try{
-            //Run the query and change success to true if no issues
-            db.execSQL(sql);
-            success = true;
-            Log.d("UpdateState","Exit successfully the updateAppState method in the Accounts class.");
-        }catch (Exception e) {
-            //Log the exception message
-            Log.d("UpdateState","Exit the updateAppState method in the Accounts class with exception: "+e.getMessage());
-        }
-        finally{
-            db.close();
-            return success;
-        }//End of try and catch block
-    }//End of updateAppState
+//    public boolean updateAppStateOld(int currentCategory, int currentTab, int showAllAccounts, int isFavoriteFilter, int isSearchFilter, String lastSearchText){
+//        Log.d("UpdateState","Enter the updateAppState method in the AccountsDB class.");
+//        boolean success = false;
+//        Cursor appState;
+//        //Declare and instantiate a new database object to handle the database operations
+//        SQLiteDatabase db = getWritableDatabase();
+//        appState = this.runQuery("SELECT * FROM APPSTATE");
+//        //Declare string for the fist part of sql query
+//        String updateState ="UPDATE APPSTATE SET ";
+//        //Prepare lastSearchTask and lastSearchGrocery text before sql is run --> include escape character for apostrophe
+//        if(lastSearchText.contains(apostrophe)){
+//            lastSearchText = this.includeApostropheEscapeChar(lastSearchText);
+//        }//End of if statement
+//        //Form all the query fields section
+//        String fields = " currentCategoryID = " + currentCategory + ","+
+//                " currentTab = " + currentTab+ ","+
+//                " showAllAccounts = "+ showAllAccounts + ","+
+//                " isFavoriteFilter = "+ isFavoriteFilter + ","+
+//                " isSearchFilter = " + isSearchFilter + ","+
+//                " lastSearch = '" + lastSearchText+ "'";
+//        //String to hold the where part of the query
+//        String whereId = " WHERE _id = ";
+//        String whereClause = "_id = ";
+//        //String to hold the complete sql query
+//        String sql = "";
+//        //get next app state (only one should be saved)
+//        if(appState.moveToNext()){
+//            sql = updateState+fields+ whereId+appState.getInt(0);
+//        }
+//        //Try Catch block to execute the sql command to update corresponding table
+//        try{
+//            //Run the query and change success to true if no issues
+//            db.execSQL(sql);
+//            success = true;
+//            Log.d("UpdateState","Exit successfully the updateAppState method in the Accounts class.");
+//        }catch (Exception e) {
+//            //Log the exception message
+//            Log.d("UpdateState","Exit the updateAppState method in the Accounts class with exception: "+e.getMessage());
+//        }
+//        finally{
+//            db.close();
+//            return success;
+//        }//End of try and catch block
+//    }//End of updateAppState
 
     //Method to update AppState in DB
-    public boolean updateAppState(int currentCategory, int currentTab, int showAllAccounts, int isFavoriteFilter, int isSearchFilter, String lastSearchText){
-        Log.d("UpdateState","Enter the updateAppState method in the AccountsDB class.");
-        boolean updated = false;
-        int _id = -1;
-        String whereClause = "_id = ";
-        boolean success = false;
-        //Declare and instantiate a new database object to handle the database operations
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("currentCategoryID",currentCategory);
-        values.put("currentTab",currentTab);
-        values.put("showAllAccounts",showAllAccounts);
-        values.put("isFavoriteFilter",isFavoriteFilter);
-        values.put("isSearchFilter",isSearchFilter);
-        values.put("lastSearch",lastSearchText);
-        try{
-            _id = this.getMaxItemIdInTable(MainActivity.getAppstateTable());
-            whereClause += _id;
-            if(db.update(MainActivity.getAppstateTable(),values,whereClause,null) > 0){
-                updated = true;
-            }
-            Log.d("updateTable","Exit successfully the updateTable  method in the Accounts class.");
-        }catch (Exception e){
-            Log.d("updateTable","Exit the updateTable  method in the Accounts class with exception "+e.getMessage());
-        }finally{
-            db.close();
-            return updated;
-        }//End of try catch block
-    }//End of updateAppState
+//    public boolean updateAppState(int currentCategory, int currentTab, int showAllAccounts, int isFavoriteFilter, int isSearchFilter, String lastSearchText){
+//        Log.d("UpdateState","Enter the updateAppState method in the AccountsDB class.");
+//        boolean updated = false;
+//        int _id = -1;
+//        String whereClause = "_id = ";
+//        boolean success = false;
+//        //Declare and instantiate a new database object to handle the database operations
+//        SQLiteDatabase db = getWritableDatabase();
+//        ContentValues values = new ContentValues();
+//        values.put("currentCategoryID",currentCategory);
+//        values.put("currentTab",currentTab);
+//        values.put("showAllAccounts",showAllAccounts);
+//        values.put("isFavoriteFilter",isFavoriteFilter);
+//        values.put("isSearchFilter",isSearchFilter);
+//        values.put("lastSearch",lastSearchText);
+//        try{
+//            _id = this.getMaxItemIdInTable(MainActivity.getAppstateTable());
+//            whereClause += _id;
+//            if(db.update(MainActivity.getAppstateTable(),values,whereClause,null) > 0){
+//                updated = true;
+//            }
+//            Log.d("updateTable","Exit successfully the updateTable  method in the Accounts class.");
+//        }catch (Exception e){
+//            Log.d("updateTable","Exit the updateTable  method in the Accounts class with exception "+e.getMessage());
+//        }finally{
+//            db.close();
+//            return updated;
+//        }//End of try catch block
+//    }//End of updateAppState
 
     public boolean updateTable(String table, ContentValues values){
         Log.d("updateTable","Enter the updateTable method in the AccountsDB class.");
