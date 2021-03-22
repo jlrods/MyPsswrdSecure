@@ -168,10 +168,10 @@ public class EditAccountActivity extends DisplayAccountActivity {
                                                     }//End of if statement to check the question list are the same
                                                     //Call method to add icon into DB if required
                                                     this.isAddIconRequired(newAccount);
-                                                    values.put("IconID",newAccount.getIcon().get_id());
-                                                    values.put("IsFavorite",newAccount.isFavorite());
+                                                    values.put(MainActivity.getIconIdColumn(),newAccount.getIcon().get_id());
+                                                    values.put(MainActivity.getIsFavoriteColumn(),newAccount.isFavorite());
                                                     //values.put("DateCreated",this.account.getDateCreated());
-                                                    values.put("DateChange",newAccount.getDateChange());
+                                                    values.put(MainActivity.getDateChangeColumn(),newAccount.getDateChange());
                                                     if(result = this.accountsDB.updateTable(MainActivity.getAccountsTable(),values)){
                                                         //Call method to update data set displayed on the recycler view and display proper message after adding the grocery to the DB
                                                         //Put extra info to transfer to the Main activity

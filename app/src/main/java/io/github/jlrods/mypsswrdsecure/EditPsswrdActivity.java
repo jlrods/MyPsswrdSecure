@@ -61,9 +61,9 @@ public class EditPsswrdActivity extends AddPsswrdActivity {
                     this.psswrd.setIv(this.cryptographer.getIv().getIV());
                     //Store data to be updated on the DB
                     ContentValues values = new ContentValues();
-                    values.put("_id",this.psswrd.get_id());
-                    values.put("Value",this.psswrd.getValue());
-                    values.put("initVector",this.psswrd.getIv());
+                    values.put(MainActivity.getIdColumn(),this.psswrd.get_id());
+                    values.put(MainActivity.getValueColumn(),this.psswrd.getValue());
+                    values.put(MainActivity.getInitVectorColumn(),this.psswrd.getIv());
                     //Update the table
                     if(this.accountsDB.updateTable(MainActivity.getPsswrdTable(),values)){
                         //Go back to previous activity

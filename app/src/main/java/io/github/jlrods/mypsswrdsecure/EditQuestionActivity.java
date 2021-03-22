@@ -139,9 +139,9 @@ public class EditQuestionActivity extends AddQuestionActivity {
                         //Update the new answer in the DB
                         ContentValues values = new ContentValues();
                         if(this.answer.get_id() > 0){
-                            values.put("_id",this.answer.get_id());
-                            values.put("Value",this.answer.getValue());
-                            values.put("initVector",this.answer.getIv());
+                            values.put(MainActivity.getIdColumn(),this.answer.get_id());
+                            values.put(MainActivity.getValueColumn(),this.answer.getValue());
+                            values.put(MainActivity.getInitVectorColumn(),this.answer.getIv());
                             answerDbTransCompleted = this.accountsDB.updateTable(MainActivity.getAnswerTable(),values);
                         }else{
                             newAnswerID = this.accountsDB.addItem(this.answer);
@@ -160,11 +160,11 @@ public class EditQuestionActivity extends AddQuestionActivity {
                         this.question.setValue(this.etNewItemField.getText().toString());
                         //Store the values to be updated in the DB
                         values.put(MainActivity.getIdColumn(),this.question.get_id());
-                        values.put("Value",this.question.getValue());
+                        values.put(MainActivity.getValueColumn(),this.question.getValue());
                     }else{
                         //In case the preloaded questions, if new answer was added, update the question record in the DB
                         values.put(MainActivity.getIdColumn(),this.question.get_id());
-                        values.put("AnswerID",this.answer.get_id());
+                        values.put(MainActivity.getAnswerIdColumn(),this.answer.get_id());
                     }//End of if statement to check for preloaded questions
                     questionDbTransCompleted = this.accountsDB.updateTable(MainActivity.getQuestionTable(),values);
                     //Update the new question in the DB

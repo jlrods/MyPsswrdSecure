@@ -445,7 +445,7 @@ public abstract class AddItemActivity extends AppCompatActivity {
                                         //And update the new QuesitonListID in each account
                                         while(listOfAccountsUsingTheQuestionList.moveToNext()){
                                             values = new ContentValues();
-                                            values.put("_id",listOfAccountsUsingTheQuestionList.getInt(0));
+                                            values.put(MainActivity.getIdColumn(),listOfAccountsUsingTheQuestionList.getInt(0));
                                             values.put(MainActivity.getQuestionListIdColumn(),re_structuredQuestionListID);
                                             accountsDB.updateTable(MainActivity.getAccountsTable(),values);
                                         }//End of while loop to update accounts holding current question list
@@ -461,7 +461,7 @@ public abstract class AddItemActivity extends AppCompatActivity {
                                     //Iterate through the list of accounts
                                     while(listOfAccountsUsingTheQuestionList.moveToNext()){
                                         values = new ContentValues();
-                                        values.put("_id",listOfAccountsUsingTheQuestionList.getInt(0));
+                                        values.put(MainActivity.getIdColumn(),listOfAccountsUsingTheQuestionList.getInt(0));
                                         values.put(MainActivity.getQuestionListIdColumn(),"(null)");
                                         accountsDB.updateTable(MainActivity.getAccountsTable(),values);
                                     }//End of while loop that iterates through list of Accounts holding the questionList therefore the question to be deleted
@@ -473,7 +473,7 @@ public abstract class AddItemActivity extends AppCompatActivity {
                                     //Path 1.2.-
                                     //Remove the QUESTIONASSIGMENT row that links the questionListID and the _id of the question to be deleted
                                     table = MainActivity.getQuestionassignmentTable();
-                                    column = "_id";
+                                    column = MainActivity.getIdColumn();
                                     accountsDB.deleteRowFromTable(table,column,questionAssignmentID);
                                 }else{
                                     //Path 1.1.- and Path 2.- merge here and follow same steps.
@@ -495,14 +495,14 @@ public abstract class AddItemActivity extends AppCompatActivity {
                                 //Rest the values object every time a new iteration begins
                                 values = new ContentValues();
                                 //Assign the _id column to the current account id value
-                                values.put("_id",(int)listOfAccountsUsingTheItemArray[0].get(i));
+                                values.put(MainActivity.getIdColumn(),(int)listOfAccountsUsingTheItemArray[0].get(i));
                                 //Check if item is an instance of question class so the answer can be deleted first
                                 if(item instanceof Psswrd){
                                     //Set password column to null
-                                    values.put("PsswrdID","NULL");
+                                    values.put(MainActivity.getPsswrdIdColumn(),"NULL");
                                 }else if(item instanceof UserName){
                                     //Set user name column to
-                                    values.put("UserNameID","NULL");
+                                    values.put(MainActivity.getUserNameIdColumn(),"NULL");
                                 }//End of if else statement to check what type of object the item is
                                 //Update the current account and set item column to nll
                                 accountsDB.updateTable(MainActivity.getAccountsTable(),values);

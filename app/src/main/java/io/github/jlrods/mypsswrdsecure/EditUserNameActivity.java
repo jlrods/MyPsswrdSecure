@@ -64,9 +64,9 @@ public class EditUserNameActivity extends AddUserNameActivity {
                     this.userName.setIv(this.cryptographer.getIv().getIV());
                     //Store the values to be updated in the DB
                     ContentValues values = new ContentValues();
-                    values.put("_id",this.userName.get_id());
-                    values.put("Value",this.userName.getValue());
-                    values.put("initVector",this.userName.getIv());
+                    values.put(MainActivity.getIdColumn(),this.userName.get_id());
+                    values.put(MainActivity.getValueColumn(),this.userName.getValue());
+                    values.put(MainActivity.getInitVectorColumn(),this.userName.getIv());
                     //Update the user name in the DB
                     if(this.accountsDB.updateTable(MainActivity.getUsernameTable(),values)){
                         //Go back to previous activity

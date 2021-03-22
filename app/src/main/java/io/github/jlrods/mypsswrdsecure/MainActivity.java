@@ -131,15 +131,19 @@ public class MainActivity extends AppCompatActivity {
     private static final String PSSWRD_ID_COLUMN = "PsswrdID";
     private static final String PSSWRD_IV_COLUMN = "PsswrdIV";
     private static final String QUESTION_LIST_ID_COLUMN = "QuestionListID";
+    private static final String QUESTION_ID_COLUMN = "QuestionID";
     private static final String QUESTION_ID_1_COLUMN = "QuestionID1";
     private static final String QUESTION_ID_2_COLUMN = "QuestionID2";
     private static final String QUESTION_ID_3_COLUMN = "QuestionID3";
     private static final String ICON_ID_COLUMN = "IconID";
+    private static final String ICON_LOCATION_COLUMN="Location";
+    private static final String ICON_IS_SELECTED_COLUMN="isSelected";
     private static final String ID_COLUMN = "_id";
     private static final String IS_FAVORITE_COLUMN = "IsFavorite";
     private static final String NAME_COLUMN = "Name";
     private static final String CURRENT_CATEGORY_ID_COLUMN = "currentCategoryID";
     private static final String CURRENT_TAB_COLUMN = "currentTab";
+    private static final String ANSWER_ID_COLUMN ="AnswerID";
 //    private static final String SHOW_ALL_ACCOUNTS_COLUMN = "showAllAccounts";
 //    private static final String IS_FAVORITE_FILTER_COLUMN = "isFavoriteFilter";
     private static final String IS_SEARCH_FILTER_COLUMN = "isSearchFilter";
@@ -151,9 +155,11 @@ public class MainActivity extends AppCompatActivity {
     private static final String ASC = "ASC";
     private static final String DESC = "DESC";
     private static final String DATE_CREATED_COLUMN = "DateCreated";
+    private static final String DATE_CHANGE_COLUMN = "DateChange";
     private static final String VALUE_COLUMN = "Value";
     private static final String MESSAGE_COLUMN = "Message";
     private static final String PICTUREID_COLUMN = "PictureID";
+    private static final String INIT_VECTOR_COLUMN="initVector";
 
 
     private static Uri uriCameraImage = null;
@@ -677,9 +683,9 @@ public class MainActivity extends AppCompatActivity {
                 if (MainActivity.getCurrentCategory().get_id() == homeCategory.get_id()) {
                     cursor = accountsDB.getAccountsList();
                 } else if (MainActivity.getCurrentCategory().get_id() == favCategory.get_id()) {
-                    cursor = accountsDB.getAccountsWithSpecifcValue(MainActivity.getIsFavoriteColumn(), 1);
+                    cursor = accountsDB.getAccountsWithSpecifcValue(IS_FAVORITE_COLUMN, 1);
                 } else {
-                    cursor = accountsDB.getAccountsWithSpecifcValue(MainActivity.getCategoryIdColumn(), MainActivity.getCurrentCategory().get_id());
+                    cursor = accountsDB.getAccountsWithSpecifcValue(CATEGORY_ID_COLUMN,currentCategory.get_id());
                 }//End of if else statements to check current category
             }//End of if else statement to check if the search filter is active
             //Check the isSearch filter flag to define the correct cursor to retrieve from the DB
@@ -708,9 +714,9 @@ public class MainActivity extends AppCompatActivity {
                 cursor = accountsDB.getQuestionsWithThisTextInValue(lastSearchText);
             } else if (isSortFilter) {
                 if (currentSortFilter == SortFilter.ALPHA_ASC) {
-                    cursor = accountsDB.getQuestionsSortedColumnUpDown(VALUE_COLUMN, ASC);
+                    cursor = accountsDB.getQuestionsSortedColumnUpDown(ASC);
                 } else if (currentSortFilter == SortFilter.ALPHA_DES) {
-                    cursor = accountsDB.getQuestionsSortedColumnUpDown(VALUE_COLUMN, DESC);
+                    cursor = accountsDB.getQuestionsSortedColumnUpDown(DESC);
                 } else if (currentSortFilter == SortFilter.TIMES_USED) {
                     cursor = accountsDB.getQuestionsSortedByTimesUsed();
                 }
@@ -1299,6 +1305,10 @@ public class MainActivity extends AppCompatActivity {
         return CATEGORY_ID_COLUMN;
     }
 
+    public static String getQuestionIdColumn() {
+        return QUESTION_ID_COLUMN;
+    }
+
     public static String getQuestionId1Column() {
         return QUESTION_ID_1_COLUMN;
     }
@@ -1309,6 +1319,34 @@ public class MainActivity extends AppCompatActivity {
 
     public static String getQuestionId3Column() {
         return QUESTION_ID_3_COLUMN;
+    }
+
+    public static String getAnswerIdColumn() {
+        return ANSWER_ID_COLUMN;
+    }
+
+    public static String getIsSearchFilterColumn() {
+        return IS_SEARCH_FILTER_COLUMN;
+    }
+
+    public static String getIsSearchUserFilterColumn() {
+        return IS_SEARCH_USER_FILTER_COLUMN;
+    }
+
+    public static String getIsSearchPsswrdFilterColumn() {
+        return IS_SEARCH_PSSWRD_FILTER_COLUMN;
+    }
+
+    public static String getLastSearchTextColumn() {
+        return LAST_SEARCH_TEXT_COLUMN;
+    }
+
+    public static String getIsSortFilterColumn() {
+        return IS_SORT_FILTER_COLUMN;
+    }
+
+    public static String getCurrentSortFilterColumn() {
+        return CURRENT_SORT_FILTER_COLUMN;
     }
 
     public static int getThrowImageGalleryReqCode() {
@@ -1363,12 +1401,24 @@ public class MainActivity extends AppCompatActivity {
         return NAME_COLUMN;
     }
 
+    public static String getIconLocationColumn() {
+        return ICON_LOCATION_COLUMN;
+    }
+
+    public static String getIconIsSelectedColumn() {
+        return ICON_IS_SELECTED_COLUMN;
+    }
+
     public static String getIsFavoriteColumn() {
         return IS_FAVORITE_COLUMN;
     }
 
     public static String getDateCreatedColumn() {
         return DATE_CREATED_COLUMN;
+    }
+
+    public static String getDateChangeColumn() {
+        return DATE_CHANGE_COLUMN;
     }
 
     public static String getValueColumn() {
@@ -1383,6 +1433,10 @@ public class MainActivity extends AppCompatActivity {
         return PICTUREID_COLUMN;
     }
 
+    public static String getInitVectorColumn() {
+        return INIT_VECTOR_COLUMN;
+    }
+
     public static int getCurrentTabID() {
         return currentTab;
     }
@@ -1390,6 +1444,15 @@ public class MainActivity extends AppCompatActivity {
     public static Category getCurrentCategory() {
         return currentCategory;
     }
+
+    public static String getCurrentCategoryIdColumn() {
+        return CURRENT_CATEGORY_ID_COLUMN;
+    }
+
+    public static String getCurrentTabColumn() {
+        return CURRENT_TAB_COLUMN;
+    }
+
 
     public static Category getHomeCategory() {
         return homeCategory;
@@ -1496,8 +1559,8 @@ public class MainActivity extends AppCompatActivity {
         }//End of if else statement that checks the isFavorite attribute state
         //Call DB method to update the account item in the Accounts table
         ContentValues values = new ContentValues();
-        values.put("_id", account.get_id());
-        values.put("isFavorite", account.isFavorite());
+        values.put(ID_COLUMN, account.get_id());
+        values.put(IS_FAVORITE_COLUMN, account.isFavorite());
         if (accountsDB.updateTable(ACCOUNTS_TABLE, values)) {
             //If DB update was successful, call method to update the recyclerview
             if (isSearchFilter) {
