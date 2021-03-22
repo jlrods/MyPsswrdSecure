@@ -653,7 +653,7 @@ public class AccountsDB extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         //Declare and initialize a query string
         String deleteFrom = "DELETE FROM ";
-        String whereID =" WHERE "+MainActivity.getIconIdColumn()+" = ";
+        String whereID =" WHERE "+MainActivity.getIdColumn()+" = ";
         String table="";
         if(item instanceof Category){
             table = MainActivity.getCategoryTable();

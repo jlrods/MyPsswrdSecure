@@ -513,13 +513,18 @@ public abstract class AddItemActivity extends AppCompatActivity {
                     }//End of if else statement to check if item is a Question or any type of object
 
                     //All different paths merge here, final deletion of the item and preparation of result transfer to caller method
-                    accountsDB.deleteItem(item);
-                    //MainActivity.displayToast(getBaseContext(),itemDeletedToastText,Toast.LENGTH_LONG,Gravity.CENTER);
-                    Intent intent = new Intent();
-                    intent.putExtra("itemDeletedName",itemDeletedName);
-                    intent.putExtra(itemDeletedNameForIntent,true);
-                    setResult(RESULT_OK,intent);
-                    finish();
+                    //Request delete item on DB and handle bad result
+                    if(accountsDB.deleteItem(item)){
+                        //MainActivity.displayToast(getBaseContext(),itemDeletedToastText,Toast.LENGTH_LONG,Gravity.CENTER);
+                        Intent intent = new Intent();
+                        intent.putExtra("itemDeletedName",itemDeletedName);
+                        intent.putExtra(itemDeletedNameForIntent,true);
+                        setResult(RESULT_OK,intent);
+                        finish();
+                    }else{
+                        MainActivity.displayToast(getBaseContext(),getString(R.string.itemNotDeletedMssg),Toast.LENGTH_SHORT,Gravity.CENTER);
+                    }
+
                 }//End of onClick method
             });//End of
             dialog.show();

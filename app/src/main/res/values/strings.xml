@@ -326,6 +326,7 @@
 
     <string name="appStateError">App state error</string>
     <string name="appStateErrorMssg">App failed to update state.</string>
+    <string name="itemNotDeletedMssg">Sorry, item could not be deleted from the database</string>
 
 
 </resources>

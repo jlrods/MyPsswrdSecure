@@ -315,6 +315,7 @@
 
     <string name="appStateError">Error de estado de la app</string>
     <string name="appStateErrorMssg">La app falló en actualizar su estado</string>
+    <string name="itemNotDeletedMssg">Lo siento, el ítem no fue eliminado de la base de datos</string>
 
 
 </resources>
