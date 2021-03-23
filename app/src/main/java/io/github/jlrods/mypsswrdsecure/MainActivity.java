@@ -381,6 +381,16 @@ public class MainActivity extends AppCompatActivity {
         }//End of if statement to check and extract the app state from dB
         //Get the current category and tab stored from app state
         this.currentCategory = this.getCategoryByID(this.appState.getInt(1));
+        //Counter measure to avoid NullException when current category recorded on app state was deleted, but never updated to
+        // new current category
+        if(this.currentCategory == null){
+            //Set home as default
+            this.currentCategory = this.categoryList.get(0);
+            //update app state
+            ContentValues values = new ContentValues();
+            values.put(CURRENT_CATEGORY_ID_COLUMN,-1);
+            accountsDB.updateTable(APPSTATE_TABLE,values);
+        }
         this.currentTab = this.appState.getInt(2);
         //Update the nav drawer to display appropriate item in the menu
 //        this.showAllAccounts = this.accountsDB.toBoolean(this.appState.getInt(3));
@@ -1147,7 +1157,12 @@ public class MainActivity extends AppCompatActivity {
                         //Set up the proper icon for each category (icon data comes from DB), as this might be updated from previous activity
                         idRes = this.getResources().getIdentifier(categoryList.get(positionInCatList).getIcon().getName(), "drawable", this.getPackageName());
                         menuItem.setIcon(idRes);
-                    }
+                        //Check if  category updated is the one alrady selected, so RV heading is updated with correct name
+                        if(navigationView.getMenu().getItem(positionInCatList ).isChecked()){
+                            Toolbar toolbar = findViewById(R.id.toolbar);
+                            toolbar.setTitle(updatedCategory.getName());
+                        }
+                    }//End of if else statement to check Category activity thrown
                     //Display Toast to confirm the account has been added
                     displayToast(this, toastText, Toast.LENGTH_LONG, Gravity.CENTER);
                 }//End of if statement to check good result was delivered
@@ -1162,7 +1177,7 @@ public class MainActivity extends AppCompatActivity {
                     displayToast(this, toastText, Toast.LENGTH_LONG, Gravity.CENTER);
                 }//End of if statement to check good result was delivered
             }//End of if else statement that checks if nav drawer menu has to be updated
-        }
+        }//End of if else for timeout logout
 
         //End of if else statement to check the data comes from one of the thrown activities
         Log.d("onActivityResult", "Exit the onActivityResult method in the DisplayAccountActivity class.");
@@ -1980,12 +1995,16 @@ public class MainActivity extends AppCompatActivity {
                                                         if (isCurrentCategoryInListToBeDeleted(currentCategory.get_id(), categoriesToBeDeleted)) {
                                                             //If that the case, move current category to Home
                                                             currentCategory = categoryList.get(0);
+                                                            //@Fixme: Update APPState with correct current category
+                                                            ContentValues values =  new ContentValues();
+                                                            updateCategoryInAppState();
                                                             //Then move Nav drawer menu item to Home
                                                             navMenu.getItem(0).setCheckable(true);
                                                             navMenu.getItem(0).setChecked(true);
                                                             NavController navController = Navigation.findNavController(MainActivity.this, R.id.nav_host_fragment);
                                                             //Ask nav controller to load the HomeFragment class
                                                             navController.navigate(R.id.nav_home);
+
                                                         }//End of if statement that checks if current category has been deleted
                                                         //Finally, display toast to confirm category was deleted
                                                         //Check the number of categories that were deleted
@@ -2547,6 +2566,7 @@ public class MainActivity extends AppCompatActivity {
         ContentValues values = new ContentValues();
         values.put(ID_COLUMN, accountsDB.getMaxItemIdInTable(APPSTATE_TABLE));
         values.put(CURRENT_CATEGORY_ID_COLUMN, currentCategory.get_id());
+        this.appState = accountsDB.getAppState();
         Log.d("updateCatInAppState", "Exit updateCategoryInAppState method in the MainActivity class.");
         return accountsDB.updateTable(APPSTATE_TABLE, values);
     }//End of updateCategoryInAppState method

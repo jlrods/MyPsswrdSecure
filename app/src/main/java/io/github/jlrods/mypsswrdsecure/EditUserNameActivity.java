@@ -19,7 +19,7 @@ import javax.crypto.spec.IvParameterSpec;
 public class EditUserNameActivity extends AddUserNameActivity {
     //Attribute definition
     //private Bundle extras;
-    private boolean toBeDeleted = false;
+    //private boolean toBeDeleted = false;
     //Method definition
     @Override
     public void onCreate(Bundle savedInstanceState) {
