@@ -83,6 +83,7 @@ public class HomeFragment extends Fragment {
                 //Add extras to the intent object, specifically the current category where the add button was pressed from
                 //i.putExtra("category",this.currentCategory.toString());
                 i.putExtra("_id",account.get_id());
+                i.putExtra("position",itemPosition);
                 //Start the AddItemActivity class
                 startActivityForResult(i,MainActivity.getThrowEditAccountActReqcode());
                 Log.d("ThrowEditAcc","Exit throwEditAccountActivity method in the MainActivity class.");
@@ -190,7 +191,15 @@ public class HomeFragment extends Fragment {
             //((AccountAdapter) this.rv.getAdapter()).setCursor(accountsDB.getAccountsList());
             //Define text to display Toast to confirm the account has been added
             //Set variable to display Toast
-            goodResultDelivered = true;
+            //goodResultDelivered = true;
+
+            AccountAdapter adapter = (AccountAdapter) rv.getAdapter();
+            //recyclerView.getAdapter().notifyDataSetChanged();
+            //updateRecyclerViewData(adapter);
+            MainActivity.updateItemInRecyclerView(adapter,data.getExtras().getInt("position"));
+            //Move to new account position
+            //Display Toast to confirm the account has been added
+            MainActivity.displayToast(getContext(), toastText, Toast.LENGTH_LONG, Gravity.CENTER);
             toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountUpdated);
         }else if(requestCode == MainActivity.getThrowEditAccountActReqcode() && resultCode == Activity.RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from EditAccountActivity (received by HomeFragment).");

@@ -177,6 +177,7 @@ public class EditAccountActivity extends DisplayAccountActivity {
                                                         //Put extra info to transfer to the Main activity
                                                         intent.putExtra("accountID",newAccount.get_id());
                                                         intent.putExtra("accountName",newAccount.getName());
+                                                        intent.putExtra("position",extras.getInt("position"));
                                                         setResult(RESULT_OK, intent);
                                                         Log.d("onOptionsItemSelected","Set activity result to OK  on onOptionsItemSelected method in EditAccountActivity class.");
                                                         finish();
