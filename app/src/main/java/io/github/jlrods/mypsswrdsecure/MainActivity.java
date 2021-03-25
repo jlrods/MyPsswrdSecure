@@ -46,6 +46,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Locale;
+
+import javax.crypto.spec.IvParameterSpec;
+
 import io.github.jlrods.mypsswrdsecure.login.LoginActivity;
 import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
 
@@ -765,7 +768,7 @@ public class MainActivity extends AppCompatActivity {
         updateRecyclerViewData(adapter, SearchType.ACCOUNTS);
     }
 
-    public static void updateItemInRecyclerView(RecyclerView.Adapter adapter, int position){
+    public static void updateRecyclerViewData(RecyclerView.Adapter adapter, int position, NotifyChangeType changeType){
         AccountsDB accountsDB = HomeFragment.getAccountsDB();
         Cursor cursor = null;
         //Check current category variable to call method that retrieves proper account list
@@ -825,11 +828,27 @@ public class MainActivity extends AppCompatActivity {
         //Set new data set (cursor) to the accounts adapter
         ((AccountAdapter) adapter).setCursor(cursor);
         //Check if current category is favorite category
-        if(MainActivity.getCurrentCategory().get_id() == favCategory.get_id()){
-            adapter.notifyItemRemoved(position);
-        }else{
-            adapter.notifyItemChanged(position);
-        }//End of if else statement to call proper notify change method for RV update based on the is favorite category
+//        if(MainActivity.getCurrentCategory().get_id() == favCategory.get_id()){
+//            adapter.notifyItemRemoved(position);
+//        }else{
+//            adapter.notifyItemChanged(position);
+//        }//End of if else statement to call proper notify change method for RV update based on the is favorite category
+
+        switch (changeType.ordinal()){
+            case 0:
+                adapter.notifyItemChanged(position);
+                break;
+            case 1:
+                adapter.notifyItemRemoved(position);
+                break;
+            case 2:
+                adapter.notifyItemInserted(position);
+                break;
+            default:
+                adapter.notifyDataSetChanged();
+                break;
+        }
+        isFirstRun = false;
     }//End of updateItemInRecyclerView method
 
     //@Fixme: try to compress all the throw activity methods into one generic method
@@ -1160,15 +1179,23 @@ public class MainActivity extends AppCompatActivity {
             //Define text to display Toast to confirm the account has been added
             //Set variable to display Toast
             //goodResultDelivered = true;
+            NotifyChangeType changeType = null;
             if (data.getExtras().getInt("accountID") == -1) {
+                changeType = MainActivity.NotifyChangeType.ITEM_REMOVED;
                 toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountDeleted);
             } else {
+                Account editedAccount = accountsDB.getAccountByID(data.getExtras().getInt("accountID"));
+                if(editedAccount != null){
+                    changeType = getNotifyChangeType(editedAccount);
+                }else{
+                    changeType = MainActivity.NotifyChangeType.DATA_SET_CHANGED;
+                }
                 toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountUpdated);
             }
             adapter = recyclerView.getAdapter();
             //recyclerView.getAdapter().notifyDataSetChanged();
             //updateRecyclerViewData(adapter);
-            updateItemInRecyclerView(adapter,data.getExtras().getInt("position"));
+            updateRecyclerViewData(adapter,data.getExtras().getInt("position"),changeType);
             //Move to new account position
             //Display Toast to confirm the account has been added
             displayToast(this, toastText, Toast.LENGTH_LONG, Gravity.CENTER);
@@ -1258,6 +1285,53 @@ public class MainActivity extends AppCompatActivity {
         //End of if else statement to check the data comes from one of the thrown activities
         Log.d("onActivityResult", "Exit the onActivityResult method in the DisplayAccountActivity class.");
     }//End of onActivityResult method
+
+    public static NotifyChangeType getNotifyChangeType(Account editedAccount){
+        NotifyChangeType changeType = null;
+        if(currentCategory== favCategory){
+            if(!editedAccount.isFavorite()){
+                changeType = MainActivity.NotifyChangeType.ITEM_REMOVED;
+            }else{
+                if(isSearchFilter){
+                    if(isSearchUserNameFilter && !cryptographer.decryptText(editedAccount.getUserName().getValue(),new IvParameterSpec(editedAccount.getUserName().getIv())).equals(lastSearchText)){
+                        changeType = MainActivity.NotifyChangeType.ITEM_REMOVED;
+                    }else if(isSearchPsswrdFilter && !cryptographer.decryptText(editedAccount.getPsswrd().getValue(),new IvParameterSpec(editedAccount.getPsswrd().getIv())).equals(lastSearchText)){
+                        changeType = MainActivity.NotifyChangeType.ITEM_REMOVED;
+                    }else if (!isSearchUserNameFilter && !isSearchPsswrdFilter && !editedAccount.getName().toLowerCase().contains(lastSearchText.toLowerCase())){
+                        changeType = MainActivity.NotifyChangeType.ITEM_REMOVED;
+                    }else {
+                        changeType = MainActivity.NotifyChangeType.ITEM_CHANGED;
+                    }
+                }else{
+                    changeType = MainActivity.NotifyChangeType.ITEM_CHANGED;
+                }
+            }
+        }else{
+            if(isSearchFilter){
+                if(isSearchUserNameFilter && !cryptographer.decryptText(editedAccount.getUserName().getValue(),new IvParameterSpec(editedAccount.getUserName().getIv())).equals(lastSearchText)){
+                    changeType = MainActivity.NotifyChangeType.ITEM_REMOVED;
+                }else if(isSearchPsswrdFilter && !cryptographer.decryptText(editedAccount.getPsswrd().getValue(),new IvParameterSpec(editedAccount.getPsswrd().getIv())).equals(lastSearchText)){
+                    changeType = MainActivity.NotifyChangeType.ITEM_REMOVED;
+                }else if (!isSearchUserNameFilter && !isSearchPsswrdFilter && !editedAccount.getName().toLowerCase().contains(lastSearchText.toLowerCase())){
+                    changeType = MainActivity.NotifyChangeType.ITEM_REMOVED;
+                }else {
+                    changeType = MainActivity.NotifyChangeType.ITEM_CHANGED;
+                }
+            }else{
+                changeType = MainActivity.NotifyChangeType.ITEM_CHANGED;
+            }
+//            if(isSearchUserNameFilter && !cryptographer.decryptText(editedAccount.getUserName().getValue(),new IvParameterSpec(editedAccount.getUserName().getIv())).equals(lastSearchText)){
+//                changeType = MainActivity.NotifyChangeType.ITEM_REMOVED;
+//            }else if(isSearchPsswrdFilter && !cryptographer.decryptText(editedAccount.getPsswrd().getValue(),new IvParameterSpec(editedAccount.getPsswrd().getIv())).equals(lastSearchText)){
+//                changeType = MainActivity.NotifyChangeType.ITEM_REMOVED;
+//            }else if(isSearchFilter && !editedAccount.getName().toLowerCase().contains(lastSearchText.toLowerCase())){
+//                changeType = MainActivity.NotifyChangeType.ITEM_REMOVED;
+//            }else {
+//                changeType = MainActivity.NotifyChangeType.ITEM_CHANGED;
+//            }
+        }
+        return changeType;
+    }
 
     //Method to display a generic new Dialog Alert view from any activity.
     public static AlertDialog.Builder displayAlertDialogWithInput(Context context, EditText inputField, String title, String message, String hint) {
@@ -1674,7 +1748,12 @@ public class MainActivity extends AppCompatActivity {
 
             //recyclerView.scrollToPosition(adapterPosition);
             //accountAdapter.notifyItemChanged(adapterPosition);
-            updateItemInRecyclerView(accountAdapter,adapterPosition);
+            if(currentCategory.equals(favCategory)){
+                updateRecyclerViewData(accountAdapter,adapterPosition,NotifyChangeType.ITEM_REMOVED);
+            }else{
+                updateRecyclerViewData(accountAdapter,adapterPosition,NotifyChangeType.ITEM_CHANGED);
+            }
+
             update = true;
         } else {
             //Prompt the user about DB problem
@@ -2394,6 +2473,23 @@ public class MainActivity extends AppCompatActivity {
             Log.d("ExtFullCategory", "Exit full constructor in the Category class.");
         }//End of Full Category constructor
     }//End of SearchType enum
+
+    //Inner Enum to define the possible searches available for the search filter
+    public enum NotifyChangeType {
+        //Define the possible priorities in this app
+        ITEM_CHANGED("Item changed"),
+        ITEM_REMOVED("Item removed"),
+        ITEM_INSERTED("Item inserted"),
+        DATA_SET_CHANGED("Data set changed");
+        String name;
+
+        //Full constructor
+        NotifyChangeType(String name) {
+            Log.d("NotifyChangeType", "Enter full constructor in the NotifyChangeType enum MainActivity class.");
+            this.name = name;
+            Log.d("NotifyChangeType", "Exit full constructor in the NotifyChangeType enum in MainActivity class.");
+        }//End of Full Category constructor
+    }//End of NotifyChangeType enum
 
 
     //Method to filter task or groceries by description content

@@ -196,11 +196,37 @@ public class HomeFragment extends Fragment {
             AccountAdapter adapter = (AccountAdapter) rv.getAdapter();
             //recyclerView.getAdapter().notifyDataSetChanged();
             //updateRecyclerViewData(adapter);
-            MainActivity.updateItemInRecyclerView(adapter,data.getExtras().getInt("position"));
+
+            MainActivity.NotifyChangeType changeType = null;
+            if (data.getExtras().getInt("accountID") == -1) {
+                changeType = MainActivity.NotifyChangeType.ITEM_REMOVED;
+                toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountDeleted);
+            }else{
+                Account editedAccount = accountsDB.getAccountByID(data.getExtras().getInt("accountID"));
+                if(editedAccount != null){
+                    changeType = MainActivity.getNotifyChangeType(editedAccount);
+                }else{
+                    changeType = MainActivity.NotifyChangeType.DATA_SET_CHANGED;
+                }
+
+            }
+            MainActivity.updateRecyclerViewData(adapter,data.getExtras().getInt("position"),changeType);
             //Move to new account position
             //Display Toast to confirm the account has been added
+            toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountUpdated)+"in Home fragment";
             MainActivity.displayToast(getContext(), toastText, Toast.LENGTH_LONG, Gravity.CENTER);
-            toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountUpdated);
+//            if(editedAccount != null){
+//                if(editedAccount.isFavorite()){
+//                    changeType = MainActivity.NotifyChangeType.ITEM_CHANGED;
+//                    //MainActivity.updateItemInRecyclerView(adapter,data.getExtras().getInt("position"),0);
+//                }else{
+//                    changeType = MainActivity.NotifyChangeType.ITEM_REMOVED;
+//                    //MainActivity.updateItemInRecyclerView(adapter,data.getExtras().getInt("position"),1);
+//                }
+//            }else{
+//                changeType = MainActivity.NotifyChangeType.DATA_SET_CHANGED;
+//            }
+
         }else if(requestCode == MainActivity.getThrowEditAccountActReqcode() && resultCode == Activity.RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from EditAccountActivity (received by HomeFragment).");
         }
