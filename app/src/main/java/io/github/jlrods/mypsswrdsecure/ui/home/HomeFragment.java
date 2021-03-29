@@ -99,13 +99,17 @@ public class HomeFragment extends Fragment {
         if(MainActivity.getCurrentTabID() != 0){
             MainActivity.getTabLayout().selectTab(MainActivity.getTabLayout().getTabAt(MainActivity.getCurrentTabID()));
         }else {
-            if(MainActivity.isSearchUserNameFilter()){
-                MainActivity.updateRecyclerViewData(accountAdapter,MainActivity.SearchType.ACCOUNT_WITH_USERNAME);
-            }else if(MainActivity.isSearchPsswrdFilter()){
-                MainActivity.updateRecyclerViewData(accountAdapter,MainActivity.SearchType.ACCOUNT_WITH_PSSWRD);
-            }else{
-                MainActivity.updateRecyclerViewData(accountAdapter);
-            }
+            MainActivity.updateRecyclerViewData(accountAdapter,-1, MainActivity.NotifyChangeType.DATA_SET_CHANGED);
+//            if(MainActivity.isSearchUserNameFilter()){
+//                //MainActivity.updateRecyclerViewData(accountAdapter,MainActivity.SearchType.ACCOUNT_WITH_USERNAME);
+//                MainActivity.updateRecyclerViewData(accountAdapter,-1, MainActivity.NotifyChangeType.DATA_SET_CHANGED);
+//            }else if(MainActivity.isSearchPsswrdFilter()){
+//                //MainActivity.updateRecyclerViewData(accountAdapter,MainActivity.SearchType.ACCOUNT_WITH_PSSWRD);
+//                MainActivity.updateRecyclerViewData(accountAdapter,-1, MainActivity.NotifyChangeType.DATA_SET_CHANGED);
+//            }else{
+//               // MainActivity.updateRecyclerViewData(accountAdapter);
+//                MainActivity.updateRecyclerViewData(accountAdapter,-1, MainActivity.NotifyChangeType.DATA_SET_CHANGED);
+//            }
         }//End of if else statement that checks the tab to be displayed
     }//End of onActivityCreated method
 
@@ -185,7 +189,7 @@ public class HomeFragment extends Fragment {
         //Check if result comes from AddAccountActivity
         String toastText = "";
         //Flag to display Toast and update RV
-        boolean goodResultDelivered = false;
+//        boolean goodResultDelivered = false;
         if (requestCode == MainActivity.getThrowEditAccountActReqcode() && resultCode == Activity.RESULT_OK) {
             Log.d("onActivityResult","Received GOOD result from EditAccountActivity (received by HomeFragment).");
             //((AccountAdapter) this.rv.getAdapter()).setCursor(accountsDB.getAccountsList());
@@ -255,12 +259,12 @@ public class HomeFragment extends Fragment {
             Log.d("onActivityResult","Received BAD result from EditAccountActivity (received by HomeFragment).");
         }
         //Check if toast would be displayed
-        if(goodResultDelivered){
-            MainActivity.updateRecyclerViewData(this.rv.getAdapter());
-            //Move to new account position
-            //Display Toast to confirm the account has been added
-            MainActivity.displayToast(getContext(),toastText, Toast.LENGTH_LONG, Gravity.CENTER);
-        }//End of if statement to check good result was delivered
+//        if(goodResultDelivered){
+//            //MainActivity.updateRecyclerViewData(this.rv.getAdapter());
+//            //Move to new account position
+//            //Display Toast to confirm the account has been added
+//            //MainActivity.displayToast(getContext(),toastText, Toast.LENGTH_LONG, Gravity.CENTER);
+//        }//End of if statement to check good result was delivered
         //End of if else statement to check the data comes from one of the thrown activities
         Log.d("onActivityResult","Exit the onActivityResult method in the DisplayAccountActivity class.");
     }//End of onActivityResult method
