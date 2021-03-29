@@ -22,6 +22,7 @@ public class EditPsswrdActivity extends AddPsswrdActivity {
         this.extras = getIntent().getExtras();
         //Set activity title
         getSupportActionBar().setTitle(R.string.editPsswrdTitle);
+        int position = this.extras.getInt("position");
         //Extract password by passing in the _id attribute stored in the extras
         Cursor cursorPsswrd = this.accountsDB.getPsswrdCursorByID(this.extras.getInt("_id"));
         if(cursorPsswrd != null && cursorPsswrd.getCount() > 0){
@@ -36,7 +37,7 @@ public class EditPsswrdActivity extends AddPsswrdActivity {
                 new FabOnClickEventHandler(psswrd,getResources().getString(R.string.psswrdDeleteTitle),
                         getResources().getString(R.string.psswrdDeleteMssg),
                         cryptographer.decryptText(psswrd.getValue(),new IvParameterSpec(psswrd.getIv())),
-                        "itemDeleted")
+                        "itemDeleted",position)
         );
         Log.d("OnCreateEditPsswrd","Exit onCreate method in the EditPsswrdActivity class.");
     }//End of onCreate method
@@ -70,6 +71,7 @@ public class EditPsswrdActivity extends AddPsswrdActivity {
                         intent.putExtra("psswrdID",this.psswrd.get_id());
                         intent.putExtra("psswrdValue",psswrdValue);
                         intent.putExtra("itemDeleted",false);
+                        intent.putExtra("position",extras.getInt("position"));
                         result = true;
                         setResult(RESULT_OK, intent);
                         finish();

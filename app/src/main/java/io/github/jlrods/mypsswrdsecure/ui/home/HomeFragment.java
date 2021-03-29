@@ -193,28 +193,52 @@ public class HomeFragment extends Fragment {
             //Set variable to display Toast
             //goodResultDelivered = true;
 
-            AccountAdapter adapter = (AccountAdapter) rv.getAdapter();
+
             //recyclerView.getAdapter().notifyDataSetChanged();
             //updateRecyclerViewData(adapter);
 
+//            MainActivity.NotifyChangeType changeType = null;
+//            if (data.getExtras().getInt("accountID") == -1) {
+//                changeType = MainActivity.NotifyChangeType.ITEM_REMOVED;
+//                toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountDeleted);
+//            }else{
+//                Account editedAccount = accountsDB.getAccountByID(data.getExtras().getInt("accountID"));
+//                if(editedAccount != null){
+//                    changeType = MainActivity.getNotifyChangeType(editedAccount);
+//                }else{
+//                    changeType = MainActivity.NotifyChangeType.DATA_SET_CHANGED;
+//                }
+//
+//            }
             MainActivity.NotifyChangeType changeType = null;
             if (data.getExtras().getInt("accountID") == -1) {
+                //If no actual account id is returned, means the account was deleted
+                //Set the NotifyChangeType variable to Item removed
                 changeType = MainActivity.NotifyChangeType.ITEM_REMOVED;
+                //Set text to display Toast to confirm the account has been DELETED
                 toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountDeleted);
-            }else{
+            } else {
+                //In case actual account id is returned, get the account from DB
                 Account editedAccount = accountsDB.getAccountByID(data.getExtras().getInt("accountID"));
+                //Check if account not null,set up the NotifyChangeType variable
                 if(editedAccount != null){
+                    //To define what type of notify change, call method that will determine it
                     changeType = MainActivity.getNotifyChangeType(editedAccount);
                 }else{
+                    //Set default notify change type to Data set change
                     changeType = MainActivity.NotifyChangeType.DATA_SET_CHANGED;
                 }
+                //Set text to display Toast to confirm the account has been UPDATED
+                toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountUpdated);
+            }//End of if else statement to check account id
 
-            }
+            AccountAdapter adapter = (AccountAdapter) rv.getAdapter();
             MainActivity.updateRecyclerViewData(adapter,data.getExtras().getInt("position"),changeType);
+            MainActivity.displayToast(getContext(), toastText, Toast.LENGTH_LONG, Gravity.CENTER);
             //Move to new account position
             //Display Toast to confirm the account has been added
-            toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountUpdated)+"in Home fragment";
-            MainActivity.displayToast(getContext(), toastText, Toast.LENGTH_LONG, Gravity.CENTER);
+            //toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountUpdated)+"in Home fragment";
+
 //            if(editedAccount != null){
 //                if(editedAccount.isFavorite()){
 //                    changeType = MainActivity.NotifyChangeType.ITEM_CHANGED;

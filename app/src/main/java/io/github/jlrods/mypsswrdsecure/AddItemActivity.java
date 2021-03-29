@@ -331,20 +331,22 @@ public abstract class AddItemActivity extends AppCompatActivity {
     protected class FabOnClickEventHandler implements View.OnClickListener{
         //Attributes
         Object item;
-        Cursor cursor;
+        //Cursor cursor;
         String alertDiaglogTitle ="";
         String alertDialogMessage ="";
         String itemDeletedName ="";
         String itemDeletedNameForIntent ="";
+        int itemPosition= -1;
 
         FabOnClickEventHandler(Object item, String alertDiaglogTitle, String alertDialogMessage,
-                               String itemDeletedName, String itemDeletedNameForIntent){
+                               String itemDeletedName, String itemDeletedNameForIntent,int itemPosition){
             Log.d("FabOnClickEventHandler","Enter the FabOnClickEventHandler constructor method in FabOnClickEventHandler inner class of the AddQuestionActivity abstract class.");
             this.item = item;
             this.alertDiaglogTitle = alertDiaglogTitle;
             this.alertDialogMessage = alertDialogMessage;
             this.itemDeletedName = itemDeletedName;
             this.itemDeletedNameForIntent = itemDeletedNameForIntent;
+            this.itemPosition = itemPosition;
             Log.d("FabOnClickEventHandler","Exit the FabOnClickEventHandler constructor method in FabOnClickEventHandler inner class of the AddQuestionActivity abstract class.");
         }//End of constructor method
 
@@ -519,6 +521,7 @@ public abstract class AddItemActivity extends AppCompatActivity {
                         Intent intent = new Intent();
                         intent.putExtra("itemDeletedName",itemDeletedName);
                         intent.putExtra(itemDeletedNameForIntent,true);
+                        intent.putExtra("position",itemPosition);
                         setResult(RESULT_OK,intent);
                         finish();
                     }else{

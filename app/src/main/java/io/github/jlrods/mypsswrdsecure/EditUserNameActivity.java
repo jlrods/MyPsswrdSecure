@@ -30,6 +30,7 @@ public class EditUserNameActivity extends AddUserNameActivity {
         getSupportActionBar().setTitle(R.string.editUserTitle);
         //Extract user name by passing in the _id attribute stored in the extras
         this.userName = UserName.extractUserName(this.accountsDB.getUserNameCursorByID(this.extras.getInt("_id")));
+        int position = this.extras.getInt("position");
         //Set the edit text field with the user name value after decryption
         this.etNewItemField.setText(this.cryptographer.decryptText(userName.getValue(),new IvParameterSpec(userName.getIv())));
         this.fabDelete.setVisibility(View.VISIBLE);
@@ -39,7 +40,7 @@ public class EditUserNameActivity extends AddUserNameActivity {
                 new FabOnClickEventHandler(userName,getResources().getString(R.string.userNameDeleteTitle),
                         getResources().getString(R.string.userNameDeleteMssg),
                         cryptographer.decryptText(userName.getValue(),new IvParameterSpec(userName.getIv())),
-                        "itemDeleted")
+                        "itemDeleted",position)
         );
         Log.d("OnCreateEditUser","Exit onCreate method in the EditUserNameActivity class.");
     }//End of onCreate method
@@ -73,6 +74,7 @@ public class EditUserNameActivity extends AddUserNameActivity {
                         intent.putExtra("userNameID",this.userName.get_id());
                         intent.putExtra("userNameValue",userNameValue);
                         intent.putExtra("itemDeleted",false);
+                        intent.putExtra("position",extras.getInt("position"));
                         result = true;
                         setResult(RESULT_OK, intent);
                         finish();

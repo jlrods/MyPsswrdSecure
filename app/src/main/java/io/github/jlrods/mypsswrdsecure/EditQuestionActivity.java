@@ -50,7 +50,7 @@ public class EditQuestionActivity extends AddQuestionActivity {
                     new FabOnClickEventHandler(question,getResources().getString(R.string.questionDeleteTitle),
                             getResources().getString(R.string.questionDeleteMssg),
                             question.getValue(),
-                            "itemDeleted")
+                            "itemDeleted",-1)
             );
         }
 
