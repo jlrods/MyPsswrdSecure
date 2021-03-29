@@ -1091,6 +1091,7 @@ public class MainActivity extends AppCompatActivity {
         //Add extras to the intent object, specifically the current category where the add button was pressed from
         //i.putExtra("category",this.currentCategory.toString());
         i.putExtra(ID_COLUMN, question.get_id());
+        i.putExtra("position",itemPosition);
         //Start the AddItemActivity class
         startActivityForResult(i, this.THROW_EDIT_QUESTIONS_ACT_REQCODE);
         Log.d("ThrowAddUser", "Exit throwEditQuestionActivity method in the MainActivity class.");
@@ -1220,9 +1221,17 @@ public class MainActivity extends AppCompatActivity {
         } else if (requestCode == THROW_ADD_QUESTION_ACT_REQCODE && resultCode == RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from AddAccountActivity (received by MainActivity).");
             //Set variable to display Toast
-            goodResultDelivered = true;
+            //goodResultDelivered = true;
+            adapter = recyclerView.getAdapter();
+            //Get current item position in the updated cursor. Use getCursorToUpdateRV with the most up to date data set
+            int itemPosition = accountsDB.findItemPositionInCursor(getCursorToUpdateRV((SecurityQuestionAdapter)adapter),accountsDB.getMaxItemIdInTable(QUESTION_TABLE));
+            //Call method to update RV, pass in the item position and set the notify change method to inset a new item in the position passed in
+            updateRecyclerViewData(adapter,itemPosition,NotifyChangeType.ITEM_INSERTED);
+            //As RV to scroll up to the item position in case isn't on display
+            recyclerView.scrollToPosition(itemPosition);
             //Define text to display Toast to confirm the account has been added
             toastText = data.getExtras().getString("questionValue") + " " +  getResources().getString(R.string.questionAdded);
+            displayToast(this, toastText, Toast.LENGTH_LONG, Gravity.CENTER);
         } else if (requestCode == THROW_ADD_QUESTION_ACT_REQCODE && resultCode == RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from AddQuestionActivity (received by MainActivity).");
         } else if (requestCode == TRHOW_ADD_CATEGORY_REQCODE && resultCode == Activity.RESULT_OK) {
@@ -1299,14 +1308,33 @@ public class MainActivity extends AppCompatActivity {
             Log.d("onActivityResult", "Received BAD result from EditUserNameActivity (received by MainActivity).");
         } else if (requestCode == THROW_EDIT_QUESTIONS_ACT_REQCODE && resultCode == RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from EditQuestionActivity (received by MainActivity).");
+            //Declare and initialize a NotifyChangeType variable to be passed into method that updated RV data
+            NotifyChangeType changeType = null;
             //Define text to display Toast to confirm the account has been added
             if (data.getExtras().getBoolean("itemDeleted")) {
+                //If no item deleted boolean flag id is returned, means the password was deleted
+                //Set the NotifyChangeType variable to Item removed
+                changeType = NotifyChangeType.ITEM_REMOVED;
                 toastText = data.getExtras().getString("itemDeletedName") + " " + getResources().getString(R.string.questionDeleted);
             } else {
+                //In case actual account id is returned, get the account from DB
+                Question editedQuestion = accountsDB.getQuestionByID(data.getExtras().getInt("questionID"));
+                //Check if account not null,set up the NotifyChangeType variable
+                if(editedQuestion != null){
+                    //To define what type of notify change, call method that will determine it
+                    changeType = getNotifyChangeType(editedQuestion);
+                }else{
+                    //Set default notify change type to Data set change
+                    changeType = NotifyChangeType.DATA_SET_CHANGED;
+                }
                 toastText = data.getExtras().getString("questionValue") + " " +  getResources().getString(R.string.questionUpdated);
             }
             //Set variable to display Toast
-            goodResultDelivered = true;
+            //goodResultDelivered = true;
+            adapter = recyclerView.getAdapter();
+            updateRecyclerViewData(adapter,data.getExtras().getInt("position"),changeType);
+            //Display Toast to confirm the account has been added
+            displayToast(this, toastText, Toast.LENGTH_LONG, Gravity.CENTER);
         } else if (requestCode == THROW_EDIT_QUESTIONS_ACT_REQCODE && resultCode == RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from EditQuestionActivity (received by MainActivity).");
         } else if (requestCode == THROW_EDIT_ACCOUNT_ACT_REQCODE && resultCode == Activity.RESULT_OK) {
@@ -1535,6 +1563,22 @@ public class MainActivity extends AppCompatActivity {
             //Any other edition, the account item must be notified as changed
             changeType = MainActivity.NotifyChangeType.ITEM_CHANGED;
             Log.d("getNotifyChangeType", "ITEM_CHANGED selected in getNotifyChangeType method for Psswrd class in the MainActivity class for user name with id: "+ editedPsswrd.get_id());
+        }
+        Log.d("getNotifyChangeType", "Exit getNotifyChangeType method for Psswrd class in the MainActivity class.");
+        return changeType;
+    }//End of getNotifyChangeType method for UserName class
+
+    public static NotifyChangeType getNotifyChangeType(Question editedQuestion) {
+        Log.d("getNotifyChangeType", "Enter getNotifyChangeType method for Psswrd class in the MainActivity class.");
+        //Declare and initialize the chaneType variable to be returned by method
+        NotifyChangeType changeType = null;
+        if (isSearchFilter && !editedQuestion.getValue().toLowerCase().contains(lastSearchText.toLowerCase())) {
+            changeType = NotifyChangeType.ITEM_REMOVED;
+            Log.d("getNotifyChangeType", "ITEM_REMOVED selected in getNotifyChangeType method for Psswrd class in the MainActivity class for user name with id:  " + editedQuestion.get_id());
+        }else{
+            //Any other edition, the account item must be notified as changed
+            changeType = MainActivity.NotifyChangeType.ITEM_CHANGED;
+            Log.d("getNotifyChangeType", "ITEM_CHANGED selected in getNotifyChangeType method for Psswrd class in the MainActivity class for user name with id: "+ editedQuestion.get_id());
         }
         Log.d("getNotifyChangeType", "Exit getNotifyChangeType method for Psswrd class in the MainActivity class.");
         return changeType;

@@ -27,6 +27,7 @@ public class EditQuestionActivity extends AddQuestionActivity {
         getSupportActionBar().setTitle(R.string.editQuestTitle);
         //Extract user name by passing in the _id attribute stored in the extras
         this.question = Question.extractQuestion(this.accountsDB.getQuestionCursorByID(this.extras.getInt("_id")));
+        int position = this.extras.getInt("position");
         this.answer = question.getAnswer();
         //Set the edit text field with the user name value after decryption
         if(isQuestionPreLoaded(this.question,true)){
@@ -50,7 +51,7 @@ public class EditQuestionActivity extends AddQuestionActivity {
                     new FabOnClickEventHandler(question,getResources().getString(R.string.questionDeleteTitle),
                             getResources().getString(R.string.questionDeleteMssg),
                             question.getValue(),
-                            "itemDeleted",-1)
+                            "itemDeleted",position)
             );
         }
 
@@ -110,7 +111,7 @@ public class EditQuestionActivity extends AddQuestionActivity {
                         //Throw user notification toast
                         //Prompt the user the question or answer value have not changed
                         MainActivity.displayToast(this, getResources().getString(R.string.questionAnswerNoTChanged), Toast.LENGTH_SHORT, Gravity.CENTER);
-                    }//End of if else that checks the question or answer value changed//End of if statement to check the answer chated
+                    }//End of if else that checks the question or answer value changed//End of if statement to check the answer changed
                 }else{
                     //If question is preloaded check only the answer changed
                     if(answerChanged){
@@ -173,6 +174,7 @@ public class EditQuestionActivity extends AddQuestionActivity {
                         intent.putExtra("questionID",this.question.get_id());
                         intent.putExtra("questionValue",this.question.getValue());
                         intent.putExtra("itemDeleted",false);
+                        intent.putExtra("position",extras.getInt("position"));
                         result = true;
                         setResult(RESULT_OK, intent);
                         finish();
