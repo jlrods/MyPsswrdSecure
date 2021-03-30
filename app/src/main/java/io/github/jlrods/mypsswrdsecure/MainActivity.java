@@ -21,7 +21,6 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
-import android.widget.Adapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -367,12 +366,14 @@ public class MainActivity extends AppCompatActivity {
         //Retrieve App state from DB and update app variable appropriately
         this.appState = accountsDB.getAppState();
         if (this.appState != null && this.appState.getCount() > 0) {
+            this.currentTab = this.appState.getInt(2);
             if (currentTab != 0) {
                 isFirstRun = true;
             }
         } else {
             accountsDB.getWritableDatabase().execSQL("INSERT INTO APPSTATE VALUES(null,-1,1,0,0,0,'',0,-1);");
             this.appState = accountsDB.getAppState();
+            this.currentTab = this.appState.getInt(2);
             //Set default app state values
 //            this.currentCategory = this.getCategoryByID(0);
 //            this.showAllAccounts = true;
@@ -399,7 +400,7 @@ public class MainActivity extends AppCompatActivity {
             values.put(CURRENT_CATEGORY_ID_COLUMN,-1);
             accountsDB.updateTable(APPSTATE_TABLE,values);
         }
-        this.currentTab = this.appState.getInt(2);
+
         //Update the nav drawer to display appropriate item in the menu
 //        this.showAllAccounts = this.accountsDB.toBoolean(this.appState.getInt(3));
 //        this.isFavoriteFilter = this.accountsDB.toBoolean(this.appState.getInt(4));
@@ -925,7 +926,6 @@ public class MainActivity extends AppCompatActivity {
                 cursor = accountsDB.getUserNameList();
             }
         }//End of if else statement that checks the instance of the adapter
-
         Log.d("getCursorToUpdateRV", "Enter the getCursorToUpdateRV method in the MainActivity class.");
         return cursor;
     }//End of getCursorToUpdateRV method
