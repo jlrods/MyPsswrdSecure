@@ -35,7 +35,7 @@ public class AddAccountActivity extends DisplayAccountActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         Log.d("onCreateOptionsMenu","Enter onCreateOptionsMenu method in the DisplayAccountActivity abstract class.");
-        menu.getItem(0).setVisible(false);
+        menu.getItem(2).setVisible(false);
         Log.d("onCreateOptionsMenu","Enter onCreateOptionsMenu method in the DisplayAccountActivity abstract class.");
         return true;
     }//End of onCreateOptionsMenu method

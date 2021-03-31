@@ -331,20 +331,22 @@ public abstract class AddItemActivity extends AppCompatActivity {
     protected class FabOnClickEventHandler implements View.OnClickListener{
         //Attributes
         Object item;
-        Cursor cursor;
+        //Cursor cursor;
         String alertDiaglogTitle ="";
         String alertDialogMessage ="";
         String itemDeletedName ="";
         String itemDeletedNameForIntent ="";
+        int itemPosition= -1;
 
         FabOnClickEventHandler(Object item, String alertDiaglogTitle, String alertDialogMessage,
-                               String itemDeletedName, String itemDeletedNameForIntent){
+                               String itemDeletedName, String itemDeletedNameForIntent,int itemPosition){
             Log.d("FabOnClickEventHandler","Enter the FabOnClickEventHandler constructor method in FabOnClickEventHandler inner class of the AddQuestionActivity abstract class.");
             this.item = item;
             this.alertDiaglogTitle = alertDiaglogTitle;
             this.alertDialogMessage = alertDialogMessage;
             this.itemDeletedName = itemDeletedName;
             this.itemDeletedNameForIntent = itemDeletedNameForIntent;
+            this.itemPosition = itemPosition;
             Log.d("FabOnClickEventHandler","Exit the FabOnClickEventHandler constructor method in FabOnClickEventHandler inner class of the AddQuestionActivity abstract class.");
         }//End of constructor method
 
@@ -445,7 +447,7 @@ public abstract class AddItemActivity extends AppCompatActivity {
                                         //And update the new QuesitonListID in each account
                                         while(listOfAccountsUsingTheQuestionList.moveToNext()){
                                             values = new ContentValues();
-                                            values.put("_id",listOfAccountsUsingTheQuestionList.getInt(0));
+                                            values.put(MainActivity.getIdColumn(),listOfAccountsUsingTheQuestionList.getInt(0));
                                             values.put(MainActivity.getQuestionListIdColumn(),re_structuredQuestionListID);
                                             accountsDB.updateTable(MainActivity.getAccountsTable(),values);
                                         }//End of while loop to update accounts holding current question list
@@ -461,7 +463,7 @@ public abstract class AddItemActivity extends AppCompatActivity {
                                     //Iterate through the list of accounts
                                     while(listOfAccountsUsingTheQuestionList.moveToNext()){
                                         values = new ContentValues();
-                                        values.put("_id",listOfAccountsUsingTheQuestionList.getInt(0));
+                                        values.put(MainActivity.getIdColumn(),listOfAccountsUsingTheQuestionList.getInt(0));
                                         values.put(MainActivity.getQuestionListIdColumn(),"(null)");
                                         accountsDB.updateTable(MainActivity.getAccountsTable(),values);
                                     }//End of while loop that iterates through list of Accounts holding the questionList therefore the question to be deleted
@@ -473,7 +475,7 @@ public abstract class AddItemActivity extends AppCompatActivity {
                                     //Path 1.2.-
                                     //Remove the QUESTIONASSIGMENT row that links the questionListID and the _id of the question to be deleted
                                     table = MainActivity.getQuestionassignmentTable();
-                                    column = "_id";
+                                    column = MainActivity.getIdColumn();
                                     accountsDB.deleteRowFromTable(table,column,questionAssignmentID);
                                 }else{
                                     //Path 1.1.- and Path 2.- merge here and follow same steps.
@@ -495,14 +497,14 @@ public abstract class AddItemActivity extends AppCompatActivity {
                                 //Rest the values object every time a new iteration begins
                                 values = new ContentValues();
                                 //Assign the _id column to the current account id value
-                                values.put("_id",(int)listOfAccountsUsingTheItemArray[0].get(i));
+                                values.put(MainActivity.getIdColumn(),(int)listOfAccountsUsingTheItemArray[0].get(i));
                                 //Check if item is an instance of question class so the answer can be deleted first
                                 if(item instanceof Psswrd){
                                     //Set password column to null
-                                    values.put("PsswrdID","NULL");
+                                    values.put(MainActivity.getPsswrdIdColumn(),"NULL");
                                 }else if(item instanceof UserName){
                                     //Set user name column to
-                                    values.put("UserNameID","NULL");
+                                    values.put(MainActivity.getUserNameIdColumn(),"NULL");
                                 }//End of if else statement to check what type of object the item is
                                 //Update the current account and set item column to nll
                                 accountsDB.updateTable(MainActivity.getAccountsTable(),values);
@@ -513,13 +515,19 @@ public abstract class AddItemActivity extends AppCompatActivity {
                     }//End of if else statement to check if item is a Question or any type of object
 
                     //All different paths merge here, final deletion of the item and preparation of result transfer to caller method
-                    accountsDB.deleteItem(item);
-                    //MainActivity.displayToast(getBaseContext(),itemDeletedToastText,Toast.LENGTH_LONG,Gravity.CENTER);
-                    Intent intent = new Intent();
-                    intent.putExtra("itemDeletedName",itemDeletedName);
-                    intent.putExtra(itemDeletedNameForIntent,true);
-                    setResult(RESULT_OK,intent);
-                    finish();
+                    //Request delete item on DB and handle bad result
+                    if(accountsDB.deleteItem(item)){
+                        //MainActivity.displayToast(getBaseContext(),itemDeletedToastText,Toast.LENGTH_LONG,Gravity.CENTER);
+                        Intent intent = new Intent();
+                        intent.putExtra("itemDeletedName",itemDeletedName);
+                        intent.putExtra(itemDeletedNameForIntent,true);
+                        intent.putExtra("position",itemPosition);
+                        setResult(RESULT_OK,intent);
+                        finish();
+                    }else{
+                        MainActivity.displayToast(getBaseContext(),getString(R.string.itemNotDeletedMssg),Toast.LENGTH_SHORT,Gravity.CENTER);
+                    }
+
                 }//End of onClick method
             });//End of
             dialog.show();

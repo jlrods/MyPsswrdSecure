@@ -118,37 +118,42 @@
                                 <TableRow
                                     android:id="@+id/catIconsrow1"
                                     android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
+                                    android:layout_height="wrap_content"
                                     android:layout_gravity="center"
                                     android:gravity="center">
-
                                     <ImageView
                                         android:id="@+id/account"
                                         android:tag="account"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/account" />
+                                        android:src="@drawable/account"
+                                        android:layout_weight="1"/>
 
                                     <ImageView
                                         android:id="@+id/account_details"
                                         android:tag="account_details"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/account_details" />
+                                        android:src="@drawable/account_details"
+                                        android:layout_weight="1"/>
 
                                     <ImageView
                                         android:id="@+id/account_group"
                                         android:tag="account_group"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/account_group" />
+                                        android:src="@drawable/account_group"
+                                        android:layout_weight="1"/>
 
                                     <ImageView
                                         android:id="@+id/airplane_takeoff"
                                         android:tag="airplane_takeoff"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/airplane_takeoff" />
+                                        android:src="@drawable/airplane_takeoff"
+                                        android:layout_weight="1"/>
+
+
                                 </TableRow>
 
                                 <TableRow
@@ -161,30 +166,34 @@
                                         <ImageView
                                             android:id="@+id/android_studio"
                                             android:tag="android_studio"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="match_parent"
-                                            android:src="@drawable/android_studio" />
+                                            android:layout_width="match_parent"
+                                            android:layout_height="84dp"
+                                            android:src="@drawable/android_studio"
+                                            android:layout_weight="1"/>
 
                                         <ImageView
                                             android:id="@+id/baseball_bat"
                                             android:tag="baseball_bat"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="match_parent"
-                                            android:src="@drawable/baseball_bat" />
+                                            android:layout_width="match_parent"
+                                            android:layout_height="84dp"
+                                            android:src="@drawable/baseball_bat"
+                                            android:layout_weight="1"/>
 
                                         <ImageView
                                             android:id="@+id/battery_charging"
                                             android:tag="battery_charging"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="match_parent"
-                                            android:src="@drawable/battery_charging" />
+                                            android:layout_width="match_parent"
+                                            android:layout_height="84dp"
+                                            android:src="@drawable/battery_charging"
+                                            android:layout_weight="1"/>
 
                                         <ImageView
                                             android:id="@+id/beaker"
                                             android:tag="beaker"
-                                            android:layout_width="84dp"
+                                            android:layout_width="match_parent"
                                             android:layout_height="84dp"
-                                            android:src="@drawable/beaker" />
+                                            android:src="@drawable/beaker"
+                                            android:layout_weight="1"/>
                                 </TableRow>
 
                                 <TableRow
@@ -197,30 +206,34 @@
                                     <ImageView
                                         android:id="@+id/briefcase_clock"
                                         android:tag="briefcase_clock"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/briefcase_clock" />
+                                        android:src="@drawable/briefcase_clock"
+                                        android:layout_weight="1"/>
 
                                     <ImageView
                                         android:id="@+id/briefcase_search"
                                         android:tag="briefcase_search"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/briefcase_search" />
+                                        android:src="@drawable/briefcase_search"
+                                        android:layout_weight="1"/>
 
                                     <ImageView
                                         android:id="@+id/calendar"
                                         android:tag="calendar"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/calendar" />
+                                        android:src="@drawable/calendar"
+                                        android:layout_weight="1"/>
 
                                     <ImageView
                                         android:id="@+id/car_lifted_pickup"
                                         android:tag="car_lifted_pickup"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/car_lifted_pickup" />
+                                        android:src="@drawable/car_lifted_pickup"
+                                        android:layout_weight="1"/>
 
                                 </TableRow>
 
@@ -234,30 +247,34 @@
                                     <ImageView
                                         android:id="@+id/controller_classic"
                                         android:tag="controller_classic"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/controller_classic" />
+                                        android:src="@drawable/controller_classic"
+                                        android:layout_weight="1"/>
 
                                     <ImageView
                                         android:id="@+id/credit_card_check"
                                         android:tag="credit_card_check"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/credit_card_check" />
+                                        android:src="@drawable/credit_card_check"
+                                        android:layout_weight="1"/>
 
                                     <ImageView
                                         android:id="@+id/dog_side"
                                         android:tag="dog_side"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/dog_side" />
+                                        android:src="@drawable/dog_side"
+                                        android:layout_weight="1"/>
 
                                     <ImageView
                                         android:id="@+id/engine"
                                         android:tag="engine"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/engine" />
+                                        android:src="@drawable/engine"
+                                        android:layout_weight="1"/>
 
                                 </TableRow>
 
@@ -271,30 +288,34 @@
                                     <ImageView
                                         android:id="@+id/currency_eur"
                                         android:tag="currency_eur"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/currency_eur" />
+                                        android:src="@drawable/currency_eur"
+                                        android:layout_weight="1"/>
 
                                     <ImageView
                                         android:id="@+id/facebook"
                                         android:tag="facebook"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/facebook" />
+                                        android:src="@drawable/facebook"
+                                        android:layout_weight="1"/>
 
                                     <ImageView
                                         android:id="@+id/food"
                                         android:tag="food"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/food" />
+                                        android:src="@drawable/food"
+                                        android:layout_weight="1"/>
 
                                     <ImageView
                                         android:id="@+id/food_apple"
                                         android:tag="food_apple"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/food_apple" />
+                                        android:src="@drawable/food_apple"
+                                        android:layout_weight="1"/>
 
                                 </TableRow>
 
@@ -308,27 +329,31 @@
                                     <ImageView
                                         android:id="@+id/format_list_bulleted"
                                         android:tag="format_list_bulleted"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/format_list_bulleted" />
+                                        android:src="@drawable/format_list_bulleted"
+                                        android:layout_weight="1"/>
                                     <ImageView
                                         android:id="@+id/glass_mug_variant"
                                         android:tag="glass_mug_variant"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/glass_mug_variant" />
+                                        android:src="@drawable/glass_mug_variant"
+                                        android:layout_weight="1"/>
                                     <ImageView
                                         android:id="@+id/needle"
                                         android:tag="needle"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/needle" />
+                                        android:src="@drawable/needle"
+                                        android:layout_weight="1"/>
                                     <ImageView
                                         android:id="@+id/netflix"
                                         android:tag="netflix"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/netflix" />
+                                        android:src="@drawable/netflix"
+                                        android:layout_weight="1"/>
 
                                 </TableRow>
 
@@ -342,30 +367,34 @@
                                     <ImageView
                                         android:id="@+id/home"
                                         android:tag="home"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/home" />
+                                        android:src="@drawable/home"
+                                        android:layout_weight="1"/>
 
                                     <ImageView
                                         android:id="@+id/ic_cat_cellphone_wireless"
                                         android:tag="ic_cat_cellphone_wireless"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/ic_cat_cellphone_wireless" />
+                                        android:src="@drawable/ic_cat_cellphone_wireless"
+                                        android:layout_weight="1"/>
 
                                     <ImageView
                                         android:id="@+id/hospital_box"
                                         android:tag="hospital_box"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/hospital_box" />
+                                        android:src="@drawable/hospital_box"
+                                        android:layout_weight="1"/>
 
                                     <ImageView
                                         android:id="@+id/ic_menu_camera"
                                         android:tag="ic_menu_camera"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/ic_menu_camera" />
+                                        android:src="@drawable/ic_menu_camera"
+                                        android:layout_weight="1"/>
                                 </TableRow>
 
                                 <TableRow
@@ -378,30 +407,34 @@
                                     <ImageView
                                         android:id="@+id/ic_menu_gallery"
                                         android:tag="ic_menu_gallery"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/ic_menu_gallery" />
+                                        android:src="@drawable/ic_menu_gallery"
+                                        android:layout_weight="1"/>
 
                                     <ImageView
                                         android:id="@+id/ic_menu_slideshow"
                                         android:tag="ic_menu_slideshow"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/ic_menu_slideshow" />
+                                        android:src="@drawable/ic_menu_slideshow"
+                                        android:layout_weight="1"/>
 
                                     <ImageView
                                         android:id="@+id/pencil_lock"
                                         android:tag="pencil_lock"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/pencil_lock" />
+                                        android:src="@drawable/pencil_lock"
+                                        android:layout_weight="1"/>
 
                                     <ImageView
                                         android:id="@+id/popcorn"
                                         android:tag="popcorn"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/popcorn" />
+                                        android:src="@drawable/popcorn"
+                                        android:layout_weight="1"/>
                                 </TableRow>
 
                                 <TableRow
@@ -414,30 +447,34 @@
                                     <ImageView
                                         android:id="@+id/shield_check"
                                         android:tag="shield_check"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/shield_check" />
+                                        android:src="@drawable/shield_check"
+                                        android:layout_weight="1"/>
 
                                     <ImageView
                                         android:id="@+id/shield_lock"
                                         android:tag="shield_lock"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/shield_lock" />
+                                        android:src="@drawable/shield_lock"
+                                        android:layout_weight="1"/>
 
                                     <ImageView
                                         android:id="@+id/shopping"
                                         android:tag="shopping"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/shopping" />
+                                        android:src="@drawable/shopping"
+                                        android:layout_weight="1"/>
 
                                     <ImageView
                                         android:id="@+id/tools"
                                         android:tag="tools"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/tools" />
+                                        android:src="@drawable/tools"
+                                        android:layout_weight="1"/>
                                 </TableRow>
 
                                 <TableRow
@@ -450,30 +487,34 @@
                                     <ImageView
                                         android:id="@+id/music_note"
                                         android:tag="music_note"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/music_note" />
+                                        android:src="@drawable/music_note"
+                                        android:layout_weight="1"/>
 
                                     <ImageView
                                         android:id="@+id/shoe_cleat"
                                         android:tag="shoe_cleat"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/shoe_cleat" />
+                                        android:src="@drawable/shoe_cleat"
+                                        android:layout_weight="1"/>
 
                                     <ImageView
                                         android:id="@+id/signal_variant"
                                         android:tag="signal_variant"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/signal_variant" />
+                                        android:src="@drawable/signal_variant"
+                                        android:layout_weight="1"/>
 
                                     <ImageView
                                         android:id="@+id/silverware"
                                         android:tag="silverware"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/silverware" />
+                                        android:src="@drawable/silverware"
+                                        android:layout_weight="1"/>
                                 </TableRow>
 
                                 <TableRow
@@ -486,30 +527,34 @@
                                     <ImageView
                                         android:id="@+id/sim_outline"
                                         android:tag="sim_outline"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/sim_outline" />
+                                        android:src="@drawable/sim_outline"
+                                        android:layout_weight="1"/>
 
                                     <ImageView
                                         android:id="@+id/sitemap"
                                         android:tag="sitemap"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/sitemap" />
+                                        android:src="@drawable/sitemap"
+                                        android:layout_weight="1"/>
 
                                     <ImageView
                                         android:id="@+id/skull_outline"
                                         android:tag="skull_outline"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/skull_outline" />
+                                        android:src="@drawable/skull_outline"
+                                        android:layout_weight="1"/>
 
                                     <ImageView
                                         android:id="@+id/sofa_single"
                                         android:tag="sofa_single"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/sofa_single" />
+                                        android:src="@drawable/sofa_single"
+                                        android:layout_weight="1"/>
                                 </TableRow>
 
                                 <TableRow
@@ -522,30 +567,34 @@
                                     <ImageView
                                         android:id="@+id/sony_playstation"
                                         android:tag="sony_playstation"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/sony_playstation" />
+                                        android:src="@drawable/sony_playstation"
+                                        android:layout_weight="1"/>
 
                                     <ImageView
                                         android:id="@+id/sort_ascending"
                                         android:tag="sort_ascending"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/sort_ascending" />
+                                        android:src="@drawable/sort_ascending"
+                                        android:layout_weight="1"/>
 
                                     <ImageView
                                         android:id="@+id/sort_descending"
                                         android:tag="sort_descending"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/sort_descending" />
+                                        android:src="@drawable/sort_descending"
+                                        android:layout_weight="1"/>
 
                                     <ImageView
                                         android:id="@+id/sort_reverse_variant"
                                         android:tag="sort_reverse_variant"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/sort_reverse_variant" />
+                                        android:src="@drawable/sort_reverse_variant"
+                                        android:layout_weight="1"/>
                                 </TableRow>
 
                                 <TableRow
@@ -558,30 +607,34 @@
                                     <ImageView
                                         android:id="@+id/spotify"
                                         android:tag="spotify"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/spotify" />
+                                        android:src="@drawable/spotify"
+                                        android:layout_weight="1"/>
 
                                     <ImageView
                                         android:id="@+id/stethoscope"
                                         android:tag="stethoscope"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/stethoscope" />
+                                        android:src="@drawable/stethoscope"
+                                        android:layout_weight="1"/>
 
                                     <ImageView
                                         android:id="@+id/television"
                                         android:tag="television"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/television" />
+                                        android:src="@drawable/television"
+                                        android:layout_weight="1"/>
 
                                     <ImageView
                                         android:id="@+id/thermometer_lines"
                                         android:tag="thermometer_lines"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/thermometer_lines" />
+                                        android:src="@drawable/thermometer_lines"
+                                        android:layout_weight="1"/>
                                 </TableRow>
 
                                 <TableRow
@@ -594,30 +647,34 @@
                                     <ImageView
                                         android:id="@+id/twitter"
                                         android:tag="twitter"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/twitter" />
+                                        android:src="@drawable/twitter"
+                                        android:layout_weight="1"/>
 
                                     <ImageView
                                         android:id="@+id/watch"
                                         android:tag="watch"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/watch" />
+                                        android:src="@drawable/watch"
+                                        android:layout_weight="1"/>
 
                                     <ImageView
                                         android:id="@+id/whatsapp"
                                         android:tag="whatsapp"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/whatsapp" />
+                                        android:src="@drawable/whatsapp"
+                                        android:layout_weight="1"/>
 
                                     <ImageView
                                         android:id="@+id/youtube_subscription"
                                         android:tag="youtube_subscription"
-                                        android:layout_width="84dp"
+                                        android:layout_width="match_parent"
                                         android:layout_height="84dp"
-                                        android:src="@drawable/youtube_subscription" />
+                                        android:src="@drawable/youtube_subscription"
+                                        android:layout_weight="1"/>
                                 </TableRow>
 
 

@@ -36,7 +36,7 @@ public class AccountsDB extends SQLiteOpenHelper {
         Log.d("Ent_DBOncreate","Enter onCreate method in AccountsDB class.");
 
         //Create table to store security answers. Leave empty as user has to create their own answers
-        db.execSQL("CREATE TABLE ANSWER (_id INTEGER PRIMARY KEY AUTOINCREMENT,Value BLOB, initVector BLOB);");
+        db.execSQL("CREATE TABLE "+MainActivity.getAnswerTable()+" (_id INTEGER PRIMARY KEY AUTOINCREMENT,"+MainActivity.getValueColumn()+" BLOB, "+MainActivity.getInitVectorColumn()+" BLOB);");
 
         //Include test data for Answers
 //        byte[] answer1 = cryptographer.encryptText("Sasha");
@@ -74,172 +74,172 @@ public class AccountsDB extends SQLiteOpenHelper {
 //        //db.execSQL("INSERT INTO ANSWER VALUES(null,'Caracas');");
 
         //Create table to store security questions (linked to Answer ID as Foreign key)"
-        db.execSQL("CREATE TABLE QUESTION (_id INTEGER PRIMARY KEY AUTOINCREMENT,Value TEXT,\n" +
-                "AnswerID INTEGER, FOREIGN KEY (AnswerID) REFERENCES ANSWER(_id));");
+        db.execSQL("CREATE TABLE "+MainActivity.getQuestionTable() +" (_id INTEGER PRIMARY KEY AUTOINCREMENT,"+MainActivity.getValueColumn()+" TEXT,\n" +
+                MainActivity.getAnswerIdColumn()+" INTEGER, FOREIGN KEY ("+MainActivity.getAnswerIdColumn()+") REFERENCES ANSWER(_id));");
         //Insert pre-defined suggested security questions in the DB. No answer associated to question yet.
-        db.execSQL("INSERT INTO QUESTION VALUES(null,'whatsTheNameOfYourFirstPet',null);");
-        db.execSQL("INSERT INTO QUESTION VALUES(null,'whatWasTheModelOfYourFirstCar',null);");
-        db.execSQL("INSERT INTO QUESTION VALUES(null,'whatsYourGrannysName',null);");
-        db.execSQL("INSERT INTO QUESTION VALUES(null,'whereDidYouGetMarried',null);");
-        db.execSQL("INSERT INTO QUESTION VALUES(null,'whatsYourMothersMaidenName',null);");
-        db.execSQL("INSERT INTO QUESTION VALUES(null,'whatsTheNameOfTheTownWhereYouWereBorn',null);");
-        db.execSQL("INSERT INTO QUESTION VALUES(null,'whichPhoneNumberDoYouRememberMostFromChildhood',null);");
-        db.execSQL("INSERT INTO QUESTION VALUES(null,'whatStreetDidYouGrowUpOn',null);");
-        db.execSQL("INSERT INTO QUESTION VALUES(null,'whatIsTheNameOfYourFirstSchool',null);");
-        db.execSQL("INSERT INTO QUESTION VALUES(null,'whatsYourFathersMiddleName',null);");
+        db.execSQL("INSERT INTO "+MainActivity.getQuestionTable() +" VALUES(null,'whatsTheNameOfYourFirstPet',null);");
+        db.execSQL("INSERT INTO "+MainActivity.getQuestionTable() +" VALUES(null,'whatWasTheModelOfYourFirstCar',null);");
+        db.execSQL("INSERT INTO "+MainActivity.getQuestionTable() +" VALUES(null,'whatsYourGrannysName',null);");
+        db.execSQL("INSERT INTO "+MainActivity.getQuestionTable() +" VALUES(null,'whereDidYouGetMarried',null);");
+        db.execSQL("INSERT INTO "+MainActivity.getQuestionTable() +" VALUES(null,'whatsYourMothersMaidenName',null);");
+        db.execSQL("INSERT INTO "+MainActivity.getQuestionTable() +" VALUES(null,'whatsTheNameOfTheTownWhereYouWereBorn',null);");
+        db.execSQL("INSERT INTO "+MainActivity.getQuestionTable() +" VALUES(null,'whichPhoneNumberDoYouRememberMostFromChildhood',null);");
+        db.execSQL("INSERT INTO "+MainActivity.getQuestionTable() +" VALUES(null,'whatStreetDidYouGrowUpOn',null);");
+        db.execSQL("INSERT INTO "+MainActivity.getQuestionTable() +" VALUES(null,'whatIsTheNameOfYourFirstSchool',null);");
+        db.execSQL("INSERT INTO "+MainActivity.getQuestionTable() +" VALUES(null,'whatsYourFathersMiddleName',null);");
 
 
         //Create intermediate table to associate several questions to one list of questions.
         // Leave empty as user has to group their own questions and assign them to an account.
-        db.execSQL("CREATE TABLE QUESTIONLIST (_id INTEGER PRIMARY KEY AUTOINCREMENT,QuestionID1 INTEGER,\n" +
-                "QuestionID2 INTEGER, QuestionID3 INTEGER,\n" +
-                "FOREIGN KEY (QuestionID1) REFERENCES QUESTION(_id),\n" +
-                "FOREIGN KEY (QuestionID2) REFERENCES QUESTION(_id),\n" +
-                "FOREIGN KEY (QuestionID3) REFERENCES QUESTION(_id));");
+        db.execSQL("CREATE TABLE "+MainActivity.getQuestionlistTable() +" (_id INTEGER PRIMARY KEY AUTOINCREMENT,"+MainActivity.getQuestionId1Column()+" INTEGER,\n" +
+                MainActivity.getQuestionId2Column()+" INTEGER, "+MainActivity.getQuestionId3Column()+" INTEGER,\n" +
+                "FOREIGN KEY ("+MainActivity.getQuestionId1Column()+") REFERENCES QUESTION(_id),\n" +
+                "FOREIGN KEY ("+MainActivity.getQuestionId2Column()+") REFERENCES QUESTION(_id),\n" +
+                "FOREIGN KEY ("+MainActivity.getQuestionId3Column()+") REFERENCES QUESTION(_id));");
 
         //Create intermediate table to link QuestionListID and QuestionID, this way all the questions in one list
         // can be populated in one table. This solves QuestionID ambiguity issue.
         // Leave empty as user has to group their own questions and link them to an account.
-        db.execSQL("CREATE TABLE QUESTIONASSIGNMENT (_id INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
-                "QuestionListID INTEGER, QuestionID INTEGER,\n" +
-                "FOREIGN KEY (QuestionListID) REFERENCES QUESTIONLIST(_id),\n" +
-                "FOREIGN KEY (QuestionID) REFERENCES QUESTION(_id));");
+        db.execSQL("CREATE TABLE  "+MainActivity.getQuestionassignmentTable()+" (_id INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
+                ""+MainActivity.getQuestionListIdColumn()+" INTEGER, "+MainActivity.getQuestionIdColumn()+" INTEGER,\n" +
+                "FOREIGN KEY ("+MainActivity.getQuestionListIdColumn()+") REFERENCES QUESTIONLIST(_id),\n" +
+                "FOREIGN KEY ("+MainActivity.getQuestionIdColumn()+") REFERENCES QUESTION(_id));");
 
         //Create table to store usernames for site loggins
         // Leave empty as user has to create their own user names.
-        db.execSQL("CREATE TABLE USERNAME (_id INTEGER PRIMARY KEY AUTOINCREMENT,Value BLOB, \n" +
-                "initVector BLOB, DateCreated BIGINT);");
+        db.execSQL("CREATE TABLE "+MainActivity.getUsernameTable()+" (_id INTEGER PRIMARY KEY AUTOINCREMENT,"+MainActivity.getValueColumn()+" BLOB, \n" +
+                MainActivity.getInitVectorColumn()+" BLOB, "+MainActivity.getDateCreatedColumn()+" BIGINT);");
 
         //Create table to store passwords for site loggins
         // Leave empty as user has to create their own passwords.
-        db.execSQL("CREATE TABLE PSSWRD (_id INTEGER PRIMARY KEY AUTOINCREMENT,Value BLOB,\n" +
-                "initVector BLOB, DateCreated BIGINT);");
+        db.execSQL("CREATE TABLE "+MainActivity.getPsswrdTable()+" (_id INTEGER PRIMARY KEY AUTOINCREMENT,"+MainActivity.getValueColumn()+" BLOB,\n" +
+                MainActivity.getInitVectorColumn()+" BLOB, "+MainActivity.getDateCreatedColumn()+" BIGINT);");
 
         //Create table to store new icon/image locations (selected by user)
         // Leave empty as pre populated icons
-        db.execSQL("CREATE TABLE ICON (_id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT,Location TEXT, isSelected INTEGER);");
+        db.execSQL("CREATE TABLE "+MainActivity.getIconTable()+" (_id INTEGER PRIMARY KEY AUTOINCREMENT, "+MainActivity.getNameColumn()+" TEXT,"+MainActivity.getIconLocationColumn()+" TEXT, "+MainActivity.getIconIsSelectedColumn()+" INTEGER);");
 
         //Create table to store MyPsswrdSecure App Logging data
-        db.execSQL("CREATE TABLE APPLOGGIN (_id INTEGER PRIMARY KEY AUTOINCREMENT,UserNameID BLOB,UserNameIV BLOB, \n" +
-                "PsswrdID BLOB,PsswrdIV BLOB,Name TEXT,Message TEXT, PictureID INT,\n" +
-                "FOREIGN KEY (PictureID) REFERENCES ICON(_id));");
+        db.execSQL("CREATE TABLE "+MainActivity.getApplogginTable()+" (_id INTEGER PRIMARY KEY AUTOINCREMENT,"+MainActivity.getUserNameIdColumn()+" BLOB,"+MainActivity.getUserNameIvColumn()+" BLOB, \n" +
+                MainActivity.getPsswrdIdColumn()+" BLOB,"+MainActivity.getPsswrdIvColumn()+" BLOB,"+MainActivity.getNameColumn()+" TEXT,"+MainActivity.getMessageColumn()+" TEXT, "+MainActivity.getPictureidColumn()+" INT,\n" +
+                "FOREIGN KEY ("+MainActivity.getPictureidColumn()+") REFERENCES ICON(_id));");
 
         //Create table to store the different categories an account can be associated to
-        db.execSQL("CREATE TABLE CATEGORY (_id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, \n" +
-                "IconID INT, FOREIGN KEY (IconID) REFERENCES ICON(_id));");
+        db.execSQL("CREATE TABLE "+MainActivity.getCategoryTable()+" (_id INTEGER PRIMARY KEY AUTOINCREMENT, "+MainActivity.getNameColumn()+" TEXT, \n" +
+                MainActivity.getIconIdColumn()+" INT, FOREIGN KEY ("+MainActivity.getIconIdColumn()+") REFERENCES ICON(_id));");
 
 
         //Create table to store app state
-        db.execSQL("CREATE TABLE APPSTATE(_id INTEGER PRIMARY KEY AUTOINCREMENT,currentCategoryID INTEGER,\n" +
-                "currentTab INTEGER,showAllAccounts INTEGER,isFavoriteFilter INTEGER,isSearchFilter INTEGER,\n" +
-                "isSearchUserInAccountsFilter INTEGER, isSearchPsswrdInAccountsFilter INTEGER,\n"+
-                "lastSearch TEXT,isSortFilter INTEGER,currentSortFilter INTEGER, FOREIGN KEY (currentCategoryID) REFERENCES CATEGORY(_id));");
+        db.execSQL("CREATE TABLE "+MainActivity.getAppstateTable()+"(_id INTEGER PRIMARY KEY AUTOINCREMENT, "+MainActivity.getCurrentCategoryIdColumn()+" INTEGER,\n" +
+                MainActivity.getCurrentTabColumn()+" INTEGER,"+MainActivity.getIsSearchFilterColumn()+" INTEGER,\n" +
+                MainActivity.getIsSearchUserFilterColumn()+" INTEGER, "+MainActivity.getIsSearchPsswrdFilterColumn()+" INTEGER,\n"+
+                MainActivity.getLastSearchTextColumn()+" TEXT,"+MainActivity.getIsSortFilterColumn()+" INTEGER,"+MainActivity.getCurrentSortFilterColumn()+" INTEGER, FOREIGN KEY ("+MainActivity.getCurrentCategoryIdColumn()+") REFERENCES CATEGORY(_id));");
         //Populate default state of app
-        db.execSQL("INSERT INTO APPSTATE VALUES(null,1,1,1,0,0,0,0,'',0,-1);");
+        db.execSQL("INSERT INTO "+MainActivity.getAppstateTable()+" VALUES(null,-1,1,0,0,0,'',0,-1);");
 
         //Create a table to store the accounts items
         // Leave empty as user has to create their accounts.
-        db.execSQL("CREATE TABLE ACCOUNTS(_id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, \n" +
-                "CategoryID INTEGER , UserNameID INTEGER, PsswrdID INTEGER, QuestionListID INTEGER,\n" +
-                "IconID INTEGER,  IsFavorite INTEGER, DateCreated BIGINT, DateChange BIGINT,\n" +
-                "FOREIGN KEY (CategoryID) REFERENCES CATEGORY(_id),\n" +
-                "FOREIGN KEY (UserNameID) REFERENCES USERNAME(_id),\n" +
-                "FOREIGN KEY (PsswrdID) REFERENCES PSSWRD(_id),\n" +
-                "FOREIGN KEY (QuestionListID) REFERENCES QUESTIONLIST(_id),\n" +
-                "FOREIGN KEY (IconID) REFERENCES ICON(_id));");
+        db.execSQL("CREATE TABLE "+MainActivity.getAccountsTable()+"(_id INTEGER PRIMARY KEY AUTOINCREMENT, "+MainActivity.getNameColumn()+" TEXT, \n" +
+                MainActivity.getCategoryIdColumn()+" INTEGER , "+MainActivity.getUserNameIdColumn()+" INTEGER, "+MainActivity.getPsswrdIdColumn()+" INTEGER, "+MainActivity.getQuestionIdColumn()+" INTEGER,\n" +
+                MainActivity.getIconIdColumn()+" INTEGER,  "+MainActivity.getIsFavoriteColumn()+" INTEGER, "+MainActivity.getDateCreatedColumn()+" BIGINT, "+MainActivity.getDateChangeColumn()+" BIGINT,\n" +
+                "FOREIGN KEY ("+MainActivity.getCategoryIdColumn()+") REFERENCES CATEGORY(_id),\n" +
+                "FOREIGN KEY ("+MainActivity.getUserNameIdColumn()+") REFERENCES USERNAME(_id),\n" +
+                "FOREIGN KEY ("+MainActivity.getPsswrdIdColumn()+") REFERENCES PSSWRD(_id),\n" +
+                "FOREIGN KEY ("+MainActivity.getQuestionIdColumn()+") REFERENCES QUESTIONLIST(_id),\n" +
+                "FOREIGN KEY ("+MainActivity.getIconIdColumn()+") REFERENCES ICON(_id));");
 
 
         //App resources
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_aa','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_aerlingus_green','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_aib','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_amazon','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_apple','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_apple_vintange','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_axa','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_booking','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_cpl','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_donedelal','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_dropbox','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_edx','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_eir','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_facebook','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_firefox','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_github','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_glassdoor_green','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_google','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_huawei','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_instagram','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_irish_life','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_irish_life_health','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_linkedin','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_marvin','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_microsoft','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_microsoft_dark','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_netflix','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_netflix_black','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_paypal','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_pinterest','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_ptsb','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_reddit','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_revenue','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_ryanair','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_ryanair_blue','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_samsung','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_small_world','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_sportify_black','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_sportify_fullblack','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_sse_airtricity','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_subway','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_teamviewer','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_three','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_twitter','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_vhi','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_virgin_media','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_vodafone','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('logo_vue','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_aa','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+")  VALUES('logo_aerlingus_green','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+")  VALUES('logo_aib','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+")  VALUES('logo_amazon','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+")  VALUES('logo_apple','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_apple_vintange','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_axa','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_booking','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_cpl','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_donedelal','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_dropbox','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_edx','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_eir','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_facebook','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_firefox','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_github','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_glassdoor_green','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_google','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_huawei','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_instagram','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_irish_life','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_irish_life_health','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_linkedin','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_marvin','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_microsoft','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_microsoft_dark','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_netflix','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_netflix_black','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_paypal','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_pinterest','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_ptsb','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_reddit','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_revenue','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_ryanair','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_ryanair_blue','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_samsung','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_small_world','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_sportify_black','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_sportify_fullblack','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_sse_airtricity','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_subway','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_teamviewer','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_three','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_twitter','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_vhi','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_virgin_media','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_vodafone','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_vue','Resources');");
         //Android resources
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('facebook','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('popcorn','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('ic_cat_cellphone_wireless','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('briefcase_clock','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('web','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('shopping','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('airplane_takeoff','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('android_studio','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('food','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('currency_eur','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('shield_check','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('briefcase_search','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('tools','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('facebook','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('popcorn','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('ic_cat_cellphone_wireless','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('briefcase_clock','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('web','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('shopping','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('airplane_takeoff','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('android_studio','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('food','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('currency_eur','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('shield_check','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('briefcase_search','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('tools','Resources');");
         //NavDrawer Resources
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('nav_menu_header_bg','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('nav_menu_header_bg1','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('nav_menu_header_bg2','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('nav_menu_header_bg3','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('nav_menu_header_bg4','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('nav_menu_header_bg5','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('nav_menu_header_bg6','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('nav_menu_header_bg7','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('nav_menu_header_bg8','Resources');");
-        db.execSQL("INSERT INTO ICON (Name, Location) VALUES('nav_menu_header_bg9','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg1','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg2','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg3','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg4','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg5','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg6','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg7','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg8','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg9','Resources');");
 
 
 
         //Populate the Category table with some default category items
-        db.execSQL("INSERT INTO CATEGORY (Name,IconID) VALUES('SocialMedia',49);");
-        db.execSQL("INSERT INTO CATEGORY (Name,IconID) VALUES('Entertainment',50);");
-        db.execSQL("INSERT INTO CATEGORY (Name,IconID) VALUES('Communication',51);");
-        db.execSQL("INSERT INTO CATEGORY (Name,IconID) VALUES('Work',52);");
-        db.execSQL("INSERT INTO CATEGORY (Name,IconID) VALUES('Internet',53);");
-        db.execSQL("INSERT INTO CATEGORY (Name,IconID) VALUES('Shopping',54);");
-        db.execSQL("INSERT INTO CATEGORY (Name,IconID) VALUES('Travel',55);");
-        db.execSQL("INSERT INTO CATEGORY (Name,IconID) VALUES('Learning',56);");
-        db.execSQL("INSERT INTO CATEGORY (Name,IconID) VALUES('Food',57);");
-        db.execSQL("INSERT INTO CATEGORY (Name,IconID) VALUES('Finance',58);");
-        db.execSQL("INSERT INTO CATEGORY (Name,IconID) VALUES('Insurance',59);");
-        db.execSQL("INSERT INTO CATEGORY (Name,IconID) VALUES('JobHunting',60);");
-        db.execSQL("INSERT INTO CATEGORY (Name,IconID) VALUES('Utilities',61);");
+        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('SocialMedia',49);");
+        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Entertainment',50);");
+        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Communication',51);");
+        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Work',52);");
+        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Internet',53);");
+        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Shopping',54);");
+        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Travel',55);");
+        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Learning',56);");
+        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Food',57);");
+        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Finance',58);");
+        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Insurance',59);");
+        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('JobHunting',60);");
+        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Utilities',61);");
 
 
         //Test and sample data
@@ -405,91 +405,91 @@ public class AccountsDB extends SQLiteOpenHelper {
 
     //Methods to update the DB
     //Method to update AppState in DB
-    public boolean updateAppStateOld(int currentCategory, int currentTab, int showAllAccounts, int isFavoriteFilter, int isSearchFilter, String lastSearchText){
-        Log.d("UpdateState","Enter the updateAppState method in the AccountsDB class.");
-        boolean success = false;
-        Cursor appState;
-        //Declare and instantiate a new database object to handle the database operations
-        SQLiteDatabase db = getWritableDatabase();
-        appState = this.runQuery("SELECT * FROM APPSTATE");
-        //Declare string for the fist part of sql query
-        String updateState ="UPDATE APPSTATE SET ";
-        //Prepare lastSearchTask and lastSearchGrocery text before sql is run --> include escape character for apostrophe
-        if(lastSearchText.contains(apostrophe)){
-            lastSearchText = this.includeApostropheEscapeChar(lastSearchText);
-        }//End of if statement
-        //Form all the query fields section
-        String fields = " currentCategoryID = " + currentCategory + ","+
-                " currentTab = " + currentTab+ ","+
-                " showAllAccounts = "+ showAllAccounts + ","+
-                " isFavoriteFilter = "+ isFavoriteFilter + ","+
-                " isSearchFilter = " + isSearchFilter + ","+
-                " lastSearch = '" + lastSearchText+ "'";
-        //String to hold the where part of the query
-        String whereId = " WHERE _id = ";
-        String whereClause = "_id = ";
-        //String to hold the complete sql query
-        String sql = "";
-        //get next app state (only one should be saved)
-        if(appState.moveToNext()){
-            sql = updateState+fields+ whereId+appState.getInt(0);
-        }
-        //Try Catch block to execute the sql command to update corresponding table
-        try{
-            //Run the query and change success to true if no issues
-            db.execSQL(sql);
-            success = true;
-            Log.d("UpdateState","Exit successfully the updateAppState method in the Accounts class.");
-        }catch (Exception e) {
-            //Log the exception message
-            Log.d("UpdateState","Exit the updateAppState method in the Accounts class with exception: "+e.getMessage());
-        }
-        finally{
-            db.close();
-            return success;
-        }//End of try and catch block
-    }//End of updateAppState
+//    public boolean updateAppStateOld(int currentCategory, int currentTab, int showAllAccounts, int isFavoriteFilter, int isSearchFilter, String lastSearchText){
+//        Log.d("UpdateState","Enter the updateAppState method in the AccountsDB class.");
+//        boolean success = false;
+//        Cursor appState;
+//        //Declare and instantiate a new database object to handle the database operations
+//        SQLiteDatabase db = getWritableDatabase();
+//        appState = this.runQuery("SELECT * FROM APPSTATE");
+//        //Declare string for the fist part of sql query
+//        String updateState ="UPDATE APPSTATE SET ";
+//        //Prepare lastSearchTask and lastSearchGrocery text before sql is run --> include escape character for apostrophe
+//        if(lastSearchText.contains(apostrophe)){
+//            lastSearchText = this.includeApostropheEscapeChar(lastSearchText);
+//        }//End of if statement
+//        //Form all the query fields section
+//        String fields = " currentCategoryID = " + currentCategory + ","+
+//                " currentTab = " + currentTab+ ","+
+//                " showAllAccounts = "+ showAllAccounts + ","+
+//                " isFavoriteFilter = "+ isFavoriteFilter + ","+
+//                " isSearchFilter = " + isSearchFilter + ","+
+//                " lastSearch = '" + lastSearchText+ "'";
+//        //String to hold the where part of the query
+//        String whereId = " WHERE _id = ";
+//        String whereClause = "_id = ";
+//        //String to hold the complete sql query
+//        String sql = "";
+//        //get next app state (only one should be saved)
+//        if(appState.moveToNext()){
+//            sql = updateState+fields+ whereId+appState.getInt(0);
+//        }
+//        //Try Catch block to execute the sql command to update corresponding table
+//        try{
+//            //Run the query and change success to true if no issues
+//            db.execSQL(sql);
+//            success = true;
+//            Log.d("UpdateState","Exit successfully the updateAppState method in the Accounts class.");
+//        }catch (Exception e) {
+//            //Log the exception message
+//            Log.d("UpdateState","Exit the updateAppState method in the Accounts class with exception: "+e.getMessage());
+//        }
+//        finally{
+//            db.close();
+//            return success;
+//        }//End of try and catch block
+//    }//End of updateAppState
 
     //Method to update AppState in DB
-    public boolean updateAppState(int currentCategory, int currentTab, int showAllAccounts, int isFavoriteFilter, int isSearchFilter, String lastSearchText){
-        Log.d("UpdateState","Enter the updateAppState method in the AccountsDB class.");
-        boolean updated = false;
-        int _id = -1;
-        String whereClause = "_id = ";
-        boolean success = false;
-        //Declare and instantiate a new database object to handle the database operations
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("currentCategoryID",currentCategory);
-        values.put("currentTab",currentTab);
-        values.put("showAllAccounts",showAllAccounts);
-        values.put("isFavoriteFilter",isFavoriteFilter);
-        values.put("isSearchFilter",isSearchFilter);
-        values.put("lastSearch",lastSearchText);
-        try{
-            _id = this.getMaxItemIdInTable(MainActivity.getAppstateTable());
-            whereClause += _id;
-            if(db.update(MainActivity.getAppstateTable(),values,whereClause,null) > 0){
-                updated = true;
-            }
-            Log.d("updateTable","Exit successfully the updateTable  method in the Accounts class.");
-        }catch (Exception e){
-            Log.d("updateTable","Exit the updateTable  method in the Accounts class with exception "+e.getMessage());
-        }finally{
-            db.close();
-            return updated;
-        }//End of try catch block
-    }//End of updateAppState
+//    public boolean updateAppState(int currentCategory, int currentTab, int showAllAccounts, int isFavoriteFilter, int isSearchFilter, String lastSearchText){
+//        Log.d("UpdateState","Enter the updateAppState method in the AccountsDB class.");
+//        boolean updated = false;
+//        int _id = -1;
+//        String whereClause = "_id = ";
+//        boolean success = false;
+//        //Declare and instantiate a new database object to handle the database operations
+//        SQLiteDatabase db = getWritableDatabase();
+//        ContentValues values = new ContentValues();
+//        values.put("currentCategoryID",currentCategory);
+//        values.put("currentTab",currentTab);
+//        values.put("showAllAccounts",showAllAccounts);
+//        values.put("isFavoriteFilter",isFavoriteFilter);
+//        values.put("isSearchFilter",isSearchFilter);
+//        values.put("lastSearch",lastSearchText);
+//        try{
+//            _id = this.getMaxItemIdInTable(MainActivity.getAppstateTable());
+//            whereClause += _id;
+//            if(db.update(MainActivity.getAppstateTable(),values,whereClause,null) > 0){
+//                updated = true;
+//            }
+//            Log.d("updateTable","Exit successfully the updateTable  method in the Accounts class.");
+//        }catch (Exception e){
+//            Log.d("updateTable","Exit the updateTable  method in the Accounts class with exception "+e.getMessage());
+//        }finally{
+//            db.close();
+//            return updated;
+//        }//End of try catch block
+//    }//End of updateAppState
 
     public boolean updateTable(String table, ContentValues values){
         Log.d("updateTable","Enter the updateTable method in the AccountsDB class.");
         boolean updated = false;
         int _id = -1;
-        String whereClause = "_id = ";
+        String whereClause = MainActivity.getIdColumn()+" = ";
         //Declare and instantiate a new database object to handle the database operations
         SQLiteDatabase db = getWritableDatabase();
         try{
-            _id = values.getAsInteger("_id");
+            _id = values.getAsInteger(MainActivity.getIdColumn());
             whereClause += _id;
             if(db.update(table,values,whereClause,null) > 0){
                 updated = true;
@@ -524,7 +524,7 @@ public class AccountsDB extends SQLiteOpenHelper {
 
     //Method to add a new item into the database
     public int addItem(Object item) {
-        Log.d("Ent_addItem","Enter addItem method in TasksDB class.");
+        Log.d("Ent_addItem","Enter addItem method in AccountsDB class.");
         //Declare and instantiate a new database object to handle the database operations
         SQLiteDatabase db = getWritableDatabase();
         //Declare and initialize a query string variables
@@ -552,41 +552,41 @@ public class AccountsDB extends SQLiteOpenHelper {
         }else if(item instanceof Psswrd){
             table = MainActivity.getPsswrdTable();
             itemNameEcrypted = ((Psswrd)item).getValue();
-            fields.put("Value",itemNameEcrypted);
-            fields.put("DateCreated",((Psswrd) item).getDateCreated());
-            fields.put("initVector",((Psswrd) item).getIv());
+            fields.put(MainActivity.getValueColumn(),itemNameEcrypted);
+            fields.put(MainActivity.getDateCreatedColumn(),((Psswrd) item).getDateCreated());
+            fields.put(MainActivity.getInitVectorColumn(),((Psswrd) item).getIv());
             Log.d("addPassword","Password to be added in the addItem method in AccountsDB class.");
         }else if(item instanceof UserName ) {
             itemNameEcrypted = ((UserName)item).getValue();
             table = MainActivity.getUsernameTable();
-            fields.put("Value",itemNameEcrypted);
-            fields.put("DateCreated",((UserName) item).getDateCreated());
-            fields.put("initVector",((UserName) item).getIv());
+            fields.put(MainActivity.getValueColumn(),itemNameEcrypted);
+            fields.put(MainActivity.getDateCreatedColumn(),((UserName) item).getDateCreated());
+            fields.put(MainActivity.getInitVectorColumn(),((UserName) item).getIv());
             Log.d("addUserName", "User name to be added in the addItem method in AccountsDB class.");
         }else if(item instanceof Answer){
             table = MainActivity.getAnswerTable();
-            fields.put("Value",((Answer) item).getValue());
-            fields.put("initVector",((Answer) item).getIv());
+            fields.put(MainActivity.getValueColumn(),((Answer) item).getValue());
+            fields.put(MainActivity.getInitVectorColumn(),((Answer) item).getIv());
             Log.d("addAnswer", "Answer to be added in the addItem method in AccountsDB class.");
         }else if(item instanceof Question){
             itemName = ((Question)item).getValue();
             table = MainActivity.getQuestionTable();
-            fields.put("Value",itemName);
-            fields.put("AnswerID",((Question) item).getAnswer().get_id());
+            fields.put(MainActivity.getValueColumn(),itemName);
+            fields.put(MainActivity.getAnswerIdColumn(),((Question) item).getAnswer().get_id());
             Log.d("addQuestion", "Question to be added in the addItem method in AccountsDB class.");
         }else if(item instanceof QuestionList){
             QuestionList questionList = (QuestionList) item;
             table = MainActivity.getQuestionlistTable();
             for(int i=0;i< questionList.getSize();i++){
-                fields.put("QuestionID"+(i+1),questionList.getQuestions().get(i).get_id());
+                fields.put(MainActivity.getQuestionIdColumn()+(i+1),questionList.getQuestions().get(i).get_id());
             }//End of for loop to add all question ids in the question list
             Log.d("addQuestionList","QuestionList to be added in the addItem method in AccountsDB class.");
         }else if(item instanceof Icon){
             table = MainActivity.getIconTable();
             fields.put(MainActivity.getNameColumn(),((Icon)item).getName());
-            fields.put("Location",((Icon)item).getLocation());
+            fields.put(MainActivity.getIconLocationColumn(),((Icon)item).getLocation());
             //fields.put("ResourceID",((Icon)item).getResourceID());
-            fields.put("isSelected",  toInt(((Icon)item).isSelected()));
+            fields.put(MainActivity.getIconIsSelectedColumn(),  toInt(((Icon)item).isSelected()));
             Log.d("addIcon","Icon to be added in the addItem method in AccountsDB class.");
         }else if(item instanceof AppLoggin){
             table = MainActivity.getApplogginTable();
@@ -611,31 +611,37 @@ public class AccountsDB extends SQLiteOpenHelper {
             }
             fields.put(MainActivity.getIconIdColumn(),account.getIcon().get_id());
             fields.put(MainActivity.getIsFavoriteColumn(),account.isFavorite());
-            fields.put("DateCreated",account.getDateCreated());
+            fields.put(MainActivity.getDateCreatedColumn(),account.getDateCreated());
             //A password renew date is always given,either an actual long number or 0 if not required
-            fields.put("DateChange",account.getDateChange());
+            fields.put(MainActivity.getDateChangeColumn(),account.getDateChange());
             Log.d("addAccount","Account to be added in the addItem method in AccountsDB class.");
         }//End of if else statements
-        id = (int) db.insert(table,null,fields);
-        //Final insertion for question assignment in case the item just inserted was QuestionList object
-        if(item instanceof QuestionList){
-            //Check the returned id is valid
-            if(id > 0){
-                QuestionList questionList = (QuestionList) item;
-                //Insert in the DB the question assignment items for the just added list
-                for(int i=0;i<questionList.getSize();i++){
-                    table = "QUESTIONASSIGNMENT";
-                    fields = new ContentValues();
-                    fields.put("QuestionListID",id);
-                    fields.put("QuestionID",(questionList.getQuestions().get(i).get_id()));
-                    db.insert(table,null,fields);
-                }//End of for loop
-            }//End of if statement to check the id is valid
-        }//End of if statement to check the item type
-        db.close();
-        Log.d("Ext_addItem","Exit addItem method in AccountsDB class.");
-        //Return id of item just added into database
-        return id;
+        try{
+            id = (int) db.insert(table,null,fields);
+            Log.d("addItem","Item added successfully in the addItem method in AccountsDB class.");
+            //Final insertion for question assignment in case the item just inserted was QuestionList object
+            if(item instanceof QuestionList){
+                //Check the returned id is valid
+                if(id > 0){
+                    QuestionList questionList = (QuestionList) item;
+                    //Insert in the DB the question assignment items for the just added list
+                    for(int i=0;i<questionList.getSize();i++){
+                        table = MainActivity.getQuestionassignmentTable();
+                        fields = new ContentValues();
+                        fields.put(MainActivity.getQuestionListIdColumn(),id);
+                        fields.put(MainActivity.getQuestionIdColumn(),(questionList.getQuestions().get(i).get_id()));
+                        db.insert(table,null,fields);
+                    }//End of for loop
+                }//End of if statement to check the id is valid
+            }//End of if statement to check the item type
+        }catch(Exception e){
+            Log.d("addItem","Item failed to be added into the DB in the addItem method in AccountsDB class due to error: "+e.getMessage());
+        }finally{
+            db.close();
+            Log.d("Ext_addItem","Exit addItem method in AccountsDB class.");
+            //Return id of item just added into database
+            return id;
+        }
     }//End of addTask method
 
     //Method to delete a task within the database
@@ -647,7 +653,7 @@ public class AccountsDB extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         //Declare and initialize a query string
         String deleteFrom = "DELETE FROM ";
-        String whereID =" WHERE _id = ";
+        String whereID =" WHERE "+MainActivity.getIdColumn()+" = ";
         String table="";
         if(item instanceof Category){
             table = MainActivity.getCategoryTable();
@@ -687,19 +693,24 @@ public class AccountsDB extends SQLiteOpenHelper {
             id = ((Account) item).get_id();
             Log.d("deleteAccount","ACCOUNT to be deleted.");
         }//End of if else statements
-        //Run SQL statement to delete the task with id x from the TASK table
-        db.execSQL(deleteFrom + table + whereID + id);
-        db.close();
-        result = true;
-        Log.d("Ext_deleteItem","Exit deleteItem method in AccountsDB class.");
-        return result;
+        try{
+            //Run SQL statement to delete the task with id x from the TASK table
+            db.execSQL(deleteFrom + table + whereID + id);
+            result = true;
+        }catch(Exception e){
+            Log.d("deleteItem","Item failed to be deleted from DB in the deleteItem method in AccountsDB class due to error: "+e.getMessage());
+        }finally{
+            db.close();
+            Log.d("Ext_deleteItem","Exit deleteItem method in AccountsDB class.");
+            return result;
+        }//End fo try catch finally block
     }//End of deleteTask method
 
     //Methods to query the DB
 
     //Method to get the list of user names from the DB
     public Cursor getIconList(){
-        return  this.runQuery("SELECT * FROM ICON");
+        return  this.runQuery("SELECT * FROM "+MainActivity.getIconTable());
     }
 
     //Method to get tha app state cursor
@@ -724,15 +735,15 @@ public class AccountsDB extends SQLiteOpenHelper {
         return cursor;
     }//End of getUserNameByID method
 
-    public Cursor getAppLoginCursorUserAndPsswrdData(int _id){
-        Log.d("getAppLogin","Enter the getCategoryByID method in the AccountsDB class.");
-        Cursor cursor = this.runQuery(
-                "SELECT APPLOGGIN.*, Psswrd.Value as PsswrdValue, Psswrd.initVector as PsswrdIV\n" +
-                        "FROM APPLOGGIN INNER JOIN PSSWRD\n" +
-                        "ON APPLOGGIN.PsswrdID = Psswrd._id\n" +
-                        "WHERE  APPLOGGIN.UserNameID = "+ _id);
-        return cursor;
-    }
+//    public Cursor getAppLoginCursorUserAndPsswrdData(int _id){
+//        Log.d("getAppLogin","Enter the getCategoryByID method in the AccountsDB class.");
+//        Cursor cursor = this.runQuery(
+//                "SELECT APPLOGGIN.*, Psswrd.Value as PsswrdValue, Psswrd.initVector as PsswrdIV\n" +
+//                        "FROM APPLOGGIN INNER JOIN PSSWRD\n" +
+//                        "ON APPLOGGIN.PsswrdID = Psswrd._id\n" +
+//                        "WHERE  APPLOGGIN.UserNameID = "+ _id);
+//        return cursor;
+//    }
 
     public Cursor getAllAppLoginCursor(){
         Cursor loginList = this.runQuery("SELECT * FROM "+MainActivity.getApplogginTable());
@@ -742,7 +753,7 @@ public class AccountsDB extends SQLiteOpenHelper {
     //Method to get a specific Category, by passing in its DB _id as an argument
     public Category getCategoryByID(int _id){
         Log.d("getCategoryByID","Enter the getCategoryByID method in the AccountsDB class.");
-        Cursor cursor = this.runQuery("SELECT * FROM CATEGORY WHERE _id = "+ _id);
+        Cursor cursor = this.runQuery("SELECT * FROM "+MainActivity.getCategoryTable()+" WHERE "+MainActivity.getIdColumn()+" = "+ _id);
         if(cursor.moveToFirst()){
             Log.d("getCategoryByID","Exit successfully (category with id " +_id+ " has been found) the getCategoryByID method in the AccountsDB class.");
             return Category.extractCategory(cursor);
@@ -754,7 +765,7 @@ public class AccountsDB extends SQLiteOpenHelper {
 
     //Method to get the list of categories names from the DB
     public Cursor getCategoryListCursor(){
-        return  this.runQuery("SELECT * FROM CATEGORY");
+        return  this.runQuery("SELECT * FROM "+MainActivity.getCategoryTable());
     }
 
     //Method to get a specific user name, by passing in its DB _id as an argument
@@ -763,7 +774,7 @@ public class AccountsDB extends SQLiteOpenHelper {
         if(category.contains(apostrophe)){
             category = includeApostropheEscapeChar(category);
         }
-        Cursor cursor = this.runQuery("SELECT * FROM "+ MainActivity.getCategoryTable()+" WHERE Name = "+ "'"+category+"'");
+        Cursor cursor = this.runQuery("SELECT * FROM "+ MainActivity.getCategoryTable()+" WHERE "+MainActivity.getNameColumn()+" = "+ "'"+category+"'");
         if(cursor.moveToFirst()){
             Log.d("getCategoryByName","Exit successfully (CATEGORY with value " +category+ " has been found) the getCategoryByName method in the AccountsDB class.");
         }else{
@@ -774,13 +785,13 @@ public class AccountsDB extends SQLiteOpenHelper {
 
     //Method to get the list of user names from the DB
     public Cursor getUserNameList(){
-        return  this.runQuery("SELECT * FROM USERNAME");
+        return  this.runQuery("SELECT * FROM "+MainActivity.getUsernameTable());
     }
 
     //Method to get a specific Category, by passing in its DB _id as an argument
     public Account getAccountByID(int _id){
         Log.d("getAccountByID","Enter the getAccountByID method in the AccountsDB class.");
-        Cursor cursor = this.runQuery("SELECT * FROM ACCOUNTS WHERE _id = "+ _id);
+        Cursor cursor = this.runQuery("SELECT * FROM "+MainActivity.getAccountsTable()+" WHERE "+MainActivity.getIdColumn()+" = "+ _id);
         Account account = null;
         if(cursor.moveToFirst()){
             account = Account.extractAccount(cursor);
@@ -794,7 +805,8 @@ public class AccountsDB extends SQLiteOpenHelper {
     //Method to get a specific Category, by passing in its DB _id as an argument
     public Cursor getAccountCursorByID(int _id){
         Log.d("getAccountByID","Enter the getAccountByID method in the AccountsDB class.");
-        Cursor cursor = this.runQuery("SELECT * FROM ACCOUNTS WHERE _id = "+ _id);
+        Cursor cursor = this.runQuery("SELECT * FROM "+MainActivity.getAccountsTable()+" WHERE "+MainActivity.getIdColumn()+" = "+ _id);
+        //Cursor cursor = this.runQuery("SELECT * FROM ACCOUNTS WHERE _id = "+ _id);
         if(cursor.moveToFirst()){
             Log.d("getAccountByID","Exit successfully (account with id " +_id+ " has been found) the getAccountByID method in the AccountsDB class.");
         }else{
@@ -806,7 +818,7 @@ public class AccountsDB extends SQLiteOpenHelper {
     //Method to get a specific Category, by passing in its DB _id as an argument
     public Cursor getAccountCursorByName(String accountName){
         Log.d("getAccountCursorByName","Enter the getAccountCursorByName method in the AccountsDB class.");
-        Cursor cursor = this.runQuery("SELECT * FROM ACCOUNTS WHERE lower(ACCOUNTS.Name) = '"
+        Cursor cursor = this.runQuery("SELECT * FROM "+MainActivity.getAccountsTable()+" WHERE lower(ACCOUNTS.Name) = '"
                 + accountName.toLowerCase() + "'");
         if(cursor.moveToFirst()){
             Log.d("getAccountCursorByName","Exit successfully (account with name " +accountName+ " has been found) the getAccountCursorByName method in the AccountsDB class.");
@@ -819,13 +831,13 @@ public class AccountsDB extends SQLiteOpenHelper {
     //Method to get the list of accounts from the DB
     public Cursor getAccountsList(){
         Log.d("getAccountsList","Enter/Exit the getAccountsList method in the AccountsDB class.");
-        return  this.runQuery("SELECT * FROM ACCOUNTS");
+        return  this.runQuery("SELECT * FROM "+MainActivity.getAccountsTable());
     }
 
     //Method to get the number of times a specific user name is being used in different accounts as per the DB
     public int getTimesUsedUserName(int userNameID){
         Log.d("getTimesUsedUserName","Enter/Exit the getTimesUsedUserName method in the AccountsDB class.");
-        return this.runQuery("SELECT * FROM ACCOUNTS WHERE UserNameID = "+userNameID).getCount();
+        return this.runQuery("SELECT * FROM "+MainActivity.getAccountsTable()+" WHERE "+MainActivity.getUserNameIdColumn()+" = "+userNameID).getCount();
     }
 
     //Method to return a cursor with all the UserNames items sorted by number of times used
@@ -841,7 +853,7 @@ public class AccountsDB extends SQLiteOpenHelper {
     //Method to get the number of times a specific password is being used in different accounts as per the DB
     public int getTimesUsedPsswrd(int psswrdID){
         Log.d("getTimesUsedPsswrd","Enter/Exit the getTimesUsedPsswrd method in the AccountsDB class.");
-        return this.runQuery("SELECT * FROM ACCOUNTS WHERE PsswrdID = "+psswrdID).getCount();
+        return this.runQuery("SELECT * FROM "+MainActivity.getAccountsTable()+" WHERE "+MainActivity.getPsswrdIdColumn()+" = "+psswrdID).getCount();
     }
 
     //Method to return a cursor with all the UserNames items sorted by number of times used
@@ -937,7 +949,7 @@ public class AccountsDB extends SQLiteOpenHelper {
     //Method to retrieve a specific Icon from DB by passing in it's ID
     public Icon getIconByID(int _id){
         Log.d("getIconByID","Enter the getIconByID method in the AccountsDB class.");
-        Cursor cursor = this.runQuery("SELECT * FROM ICON WHERE _id = "+ _id);
+        Cursor cursor = this.runQuery("SELECT * FROM "+MainActivity.getIconTable()+" WHERE "+MainActivity.getIdColumn()+" = "+ _id);
         if(cursor != null && cursor.getCount() >0){
             cursor.moveToFirst();
             Log.d("getIconByID","Exit successfully (icon with id " +_id+ " has been found) the getIconByID method in the AccountsDB class.");
@@ -951,7 +963,7 @@ public class AccountsDB extends SQLiteOpenHelper {
     //Method to retrieve a specific Icon from DB by passing in it's ID
     public Icon getIconByName(String name){
         Log.d("getIconByID","Enter the getIconByID method in the AccountsDB class.");
-        Cursor cursor = this.runQuery("SELECT * FROM ICON WHERE Name = '"+ name+"'");
+        Cursor cursor = this.runQuery("SELECT * FROM "+MainActivity.getIconTable()+" WHERE "+MainActivity.getNameColumn()+" = '"+ name+"'");
         if(cursor.moveToFirst()){
             //cursor.moveToFirst();
             Log.d("getIconByID","Exit successfully (icon with id " +name+ " has been found) the getIconByID method in the AccountsDB class.");
@@ -965,7 +977,7 @@ public class AccountsDB extends SQLiteOpenHelper {
     //Method to retrieve a specific Icon from DB by passing in it's ID
     public Icon getIconByUriLocation(String uri){
         Log.d("getIconByID","Enter the getIconByUriLocation method in the AccountsDB class.");
-        Cursor cursor = this.runQuery("SELECT * FROM "+ MainActivity.getIconTable() +"  WHERE Location = '"+ uri + "'");
+        Cursor cursor = this.runQuery("SELECT * FROM "+MainActivity.getIconTable()+"  WHERE "+MainActivity.getIconLocationColumn()+" = '"+ uri + "'");
         if(cursor.moveToFirst()){
             //cursor.moveToFirst();
             Log.d("getIconByID","Exit successfully (icon with location: " +uri+ " has been found) the getIconByUriLocation method in the AccountsDB class.");
@@ -980,7 +992,7 @@ public class AccountsDB extends SQLiteOpenHelper {
     //Method to get a specific user name, by passing in its DB _id as an argument
     public UserName getUserNameByID(int _id){
         Log.d("getUserNameByID","Enter the getUserNameByID method in the AccountsDB class.");
-        Cursor cursor = this.runQuery("SELECT * FROM USERNAME WHERE _id = "+ _id);
+        Cursor cursor = this.runQuery("SELECT * FROM "+MainActivity.getUsernameTable()+" WHERE "+MainActivity.getIdColumn()+" = "+ _id);
         if(cursor != null && cursor.getCount() >0){
             cursor.moveToFirst();
             Log.d("getUserNameByID","Exit successfully (user name with id " +_id+ " has been found) the getUserNameByID method in the AccountsDB class.");
@@ -994,7 +1006,7 @@ public class AccountsDB extends SQLiteOpenHelper {
     //Method to get a specific user name, by passing in its DB _id as an argument
     public Cursor getUserNameCursorByID(int _id){
         Log.d("getUserNameByID","Enter the getUserNameByID method in the AccountsDB class.");
-        Cursor cursor = this.runQuery("SELECT * FROM USERNAME WHERE _id = "+ _id);
+        Cursor cursor = this.runQuery("SELECT * FROM "+MainActivity.getUsernameTable()+" WHERE "+MainActivity.getIdColumn()+" = "+ _id);
         if(cursor != null && cursor.getCount() >0){
             cursor.moveToFirst();
             Log.d("getUserNameByID","Exit successfully (user name with id " +_id+ " has been found) the getUserNameByID method in the AccountsDB class.");
@@ -1011,7 +1023,7 @@ public class AccountsDB extends SQLiteOpenHelper {
         boolean found = false;
         String userNameDecrypted = "";
         //Get all data from USERNAME table
-        Cursor userNameCursor = this.runQuery("SELECT * FROM USERNAME");
+        Cursor userNameCursor = this.runQuery("SELECT * FROM "+MainActivity.getUsernameTable());
         //Iterate through it, decrypt user name values and compare against value passed in as parameter
         while(!found && userNameCursor.moveToNext()){
             //Decrypt the user name value coming form DB
@@ -1021,7 +1033,7 @@ public class AccountsDB extends SQLiteOpenHelper {
                 found = true;
             }//End of if statement to compare user names
         }//End of while loop to iterate through list of user names
-        //Make ajustments to return proper value based on the found boolean flag
+        //Make adjustments to return proper value based on the found boolean flag
         if(found){
             Log.d("getUserNameByName","Exit successfully (user name with value " +userName + " has been found) the getUserNameByID method in the AccountsDB class.");
             return this.getUserNameCursorByID(userNameCursor.getInt(0));
@@ -1037,7 +1049,7 @@ public class AccountsDB extends SQLiteOpenHelper {
     public Cursor getUserNamesSortedColumnUpDown(String column, String order){
         Log.d("getUserSorted","Enter the getUserNamesSortedColumnUpDown method in the AccountsDB class.");
         Cursor  listOfUserNamesSorted = null;
-        listOfUserNamesSorted = runQuery("SELECT * FROM "+ MainActivity.getUsernameTable()+ " ORDER BY " + column + " " +order);
+        listOfUserNamesSorted = runQuery("SELECT * FROM "+MainActivity.getUsernameTable()+ " ORDER BY " + column + " " +order);
         Log.d("getUserSorted","Exit the getUserNamesSortedColumnUpDown method in the AccountsDB class.");
         return listOfUserNamesSorted;
     }//End of getUserNameByID method
@@ -1045,7 +1057,7 @@ public class AccountsDB extends SQLiteOpenHelper {
     //Method to get a specific password, by passing in its DB _id as an argument
     public Psswrd getPsswrdByID(int _id){
         Log.d("getPsswrdByID","Enter the getPsswrdByID method in the AccountsDB class.");
-        Cursor cursor = this.runQuery("SELECT * FROM PSSWRD WHERE _id = "+ _id);
+        Cursor cursor = this.runQuery("SELECT * FROM "+MainActivity.getPsswrdTable()+" WHERE "+MainActivity.getIdColumn()+" = "+ _id);
         if(cursor != null && cursor.getCount() >0){
             cursor.moveToFirst();
             Log.d("getPsswrdByID","Exit successfully (password with id " +_id+ " has been found) the getPsswrdByID method in the AccountsDB class.");
@@ -1059,7 +1071,7 @@ public class AccountsDB extends SQLiteOpenHelper {
     //Method to get a specific user name, by passing in its DB _id as an argument
     public Cursor getPsswrdCursorByID(int _id){
         Log.d("getPsswrdCursorByID","Enter the getPsswrdCursorByID method in the AccountsDB class.");
-        Cursor cursor = this.runQuery("SELECT * FROM PSSWRD WHERE _id = "+ _id);
+        Cursor cursor = this.runQuery("SELECT * FROM "+MainActivity.getPsswrdTable()+" WHERE "+MainActivity.getIdColumn()+" = "+ _id);
         if(cursor != null && cursor.getCount() >0){
             cursor.moveToFirst();
             Log.d("getPsswrdCursorByID","Exit successfully (password with id " +_id+ " has been found) the getPsswrdCursorByID method in the AccountsDB class.");
@@ -1076,7 +1088,7 @@ public class AccountsDB extends SQLiteOpenHelper {
         boolean found = false;
         String psswrdDecrypted = "";
         //Get all data from PSSWRD table
-        Cursor psswrdCursor = this.runQuery("SELECT * FROM PSSWRD");
+        Cursor psswrdCursor = this.runQuery("SELECT * FROM "+MainActivity.getPsswrdTable());
         //Iterate through it, decrypt user name values and compare against value passed in as parameter
         while(!found && psswrdCursor.moveToNext()){
             //Decrypt the user name value coming form DB
@@ -1101,7 +1113,7 @@ public class AccountsDB extends SQLiteOpenHelper {
     public Cursor getPsswrdsSortedColumnUpDown(String column, String order){
         Log.d("getPsswrdsSorted","Enter the getPsswrdsSortedColumnUpDown method in the AccountsDB class.");
         Cursor  listOfAccountsSortedAlpha = null;
-        listOfAccountsSortedAlpha = runQuery("SELECT * FROM "+ MainActivity.getPsswrdTable()+ " ORDER BY " + column + " " +order);
+        listOfAccountsSortedAlpha = runQuery("SELECT * FROM "+MainActivity.getPsswrdTable()+ " ORDER BY " + column + " " +order);
         Log.d("getPsswrdsSorted","Exit the getPsswrdsSortedColumnUpDown method in the AccountsDB class.");
         return listOfAccountsSortedAlpha;
 //        Log.d("getPsswrdsSorted","Enter the getUserNameByName method in the AccountsDB class.");
@@ -1132,7 +1144,7 @@ public class AccountsDB extends SQLiteOpenHelper {
 
     //Method to get the list of passwords from the DB
     public Cursor getPsswrdList(){
-        return  this.runQuery("SELECT * FROM PSSWRD");
+        return  this.runQuery("SELECT * FROM "+MainActivity.getPsswrdTable());
     }
 
     //Method to retrieve the list of categories stored on the database
@@ -1141,7 +1153,7 @@ public class AccountsDB extends SQLiteOpenHelper {
         //Declare and instantiate Array list of Category objects
         ArrayList<Category> list = new ArrayList<Category>();
         //Define a string to hold the sql query
-        String query = "SELECT * FROM CATEGORY ";
+        String query = "SELECT * FROM "+MainActivity.getCategoryTable();
         //Declare a category object to hold temporarily the Category objects to be created
         Category item;
         //Declare and instantiate a cursor object to hold data retrieved from sql query
@@ -1166,7 +1178,7 @@ public class AccountsDB extends SQLiteOpenHelper {
     //Method to get a specific answer, by passing in its DB _id as an argument
     public Answer getAnswerByID(int _id){
         Log.d("getAnswerByID","Enter the getAnswerByID method in the AccountsDB class.");
-        Cursor cursor = this.runQuery("SELECT * FROM ANSWER WHERE _id = "+ _id);
+        Cursor cursor = this.runQuery("SELECT * FROM "+MainActivity.getAnswerTable()+" WHERE "+MainActivity.getIdColumn()+" = "+ _id);
         if(cursor != null && cursor.getCount() >0){
             cursor.moveToFirst();
             Log.d("getAnswerByID","Exit successfully (ANSWER with id " +_id+ " has been found) the getAnswerByID method in the AccountsDB class.");
@@ -1183,7 +1195,7 @@ public class AccountsDB extends SQLiteOpenHelper {
         //Declare and initialize a list to keep the QuestionList objects
         ArrayList<QuestionList> listOfQuestionLists = new ArrayList<QuestionList>();
         //Declare and initialize a cursor to hold data from DB
-        Cursor listOfQuestionsLists = this.runQuery("SELECT * FROM QUESTIONLIST");
+        Cursor listOfQuestionsLists = this.runQuery("SELECT * FROM "+MainActivity.getQuestionlistTable());
         //Check list of questions available isn't null or empty
         if(listOfQuestionsLists!= null && listOfQuestionsLists.getCount()>0){
             //Go through the list
@@ -1399,7 +1411,7 @@ public class AccountsDB extends SQLiteOpenHelper {
     }//End of getSecQuestionListID method
 
     //Method to get a specific user name, by passing in its DB _id as an argument
-    public Cursor getQuestionsSortedColumnUpDown(String column, String order){
+    public Cursor getQuestionsSortedColumnUpDown(String order){
         Log.d("getQuestSorted","Enter the getQuestionsSortedColumnUpDown method in the AccountsDB class.");
         Cursor  listOfAccountsSortedAlpha = null;
 
@@ -1441,7 +1453,7 @@ public class AccountsDB extends SQLiteOpenHelper {
             listOfAccountUsingTheItem = this.getRowsThatMeetMultipleValuesCriteria(MainActivity.getAccountsTable(),column, listOfQuestionListIDsUsingTheItem);
             // listOfAccountUsingTheItem = this.runQuery("SELECT * FROM ACCOUNTS WHERE "+ column + " = " + questionListsWithQuestionToBeDeleted.getInt(1));
         }else{
-            listOfAccountUsingTheItem = this.runQuery("SELECT * FROM ACCOUNTS WHERE "+ column + " = " + itemID);
+            listOfAccountUsingTheItem = this.runQuery("SELECT * FROM "+MainActivity.getAccountsTable()+" WHERE "+ column + " = " + itemID);
         }//End of if else statement to check if item type is question
 
         //Add the each account id to the list of accounts using the item
@@ -1574,7 +1586,7 @@ public class AccountsDB extends SQLiteOpenHelper {
     public String getQuestionListColumnNameThatHoldsQuestion(int questionListID,int questionID){
         Log.d("questListColumnName","Enter the getQuestionListColumnNameThatHoldsQuestion method in the AccountsDB class.");
         //Declare and initialize variables to be used and return by the method
-        String column = "QuestionID";
+        String column = MainActivity.getQuestionIdColumn();
         //Extract the full question list object from cursor by passing in questionListID
         QuestionList questionList = this.getQuestionListById(questionListID);
         //Iterate through the question list
@@ -1655,7 +1667,7 @@ public class AccountsDB extends SQLiteOpenHelper {
             //If the list id returns -1, means the resulting list doesn't exist in the DB, therefore updating the current list ID will do
             values = this.moveValuesBetweenColumns(initPosition,questionListUsingTheQuestionToBeDeleted);
             //Store the _id attribute of the question list to be updated
-            values.put("_id",questionListID);
+            values.put(MainActivity.getIdColumn(),questionListID);
             if(this.updateTable(MainActivity.getQuestionlistTable(),values)){
                 //If the question list updated is successful, the id to be returned by method should be the ID from question list holding the question
                 //to be deleted
@@ -1672,9 +1684,9 @@ public class AccountsDB extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         for(int i=initPosition;i < questionListUsingTheQuestionToBeDeleted.getSize();i++){
             if(i!=questionListUsingTheQuestionToBeDeleted.getSize()-1){
-                values.put("QuestionID"+(i+1),questionListUsingTheQuestionToBeDeleted.getQuestions().get(i+1).get_id());
+                values.put(MainActivity.getQuestionIdColumn()+(i+1),questionListUsingTheQuestionToBeDeleted.getQuestions().get(i+1).get_id());
             }else{
-                values.put("QuestionID"+(i+1),"(null)");
+                values.put(MainActivity.getQuestionIdColumn()+(i+1),"(null)");
             }//End of if else statement to check the question size after removing one item
         }//End of for loop to iterate through the question list
         Log.d("movValuesBetweenColumns","Exit the moveValuesBetweenColumns method in the AccountsDB class.");

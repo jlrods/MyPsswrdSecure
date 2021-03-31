@@ -56,6 +56,7 @@ public class AddUserNameActivity extends AddItemActivity{
                         //Update the userName object ID and prepare data to exit activity
                         this.userName.set_id(userNameID);
                         intent.putExtra("userNameID",this.userName.get_id());
+                        intent.putExtra("userNameValue",userNameValue);
                         setResult(RESULT_OK, intent);
                         finish();
                         Log.d("onOptionsItemSelected","The user name "+ userNameValue +" has been added into the DB through addNewUserName method in the AddUserNameActivity class.");

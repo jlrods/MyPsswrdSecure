@@ -151,32 +151,33 @@ public class EditAccountActivity extends DisplayAccountActivity {
                                                         //&& this.account.getDateCreated() == newAccount.getDateCreated()
                                                         && this.account.getDateChange() == newAccount.getDateChange())) {
                                                     ContentValues values = new ContentValues();
-                                                    values.put("_id",newAccount.get_id());
-                                                    values.put("Name",newAccount.getName());
-                                                    values.put("CategoryID",newAccount.getCategory().get_id());
-                                                    values.put("UserNameID",newAccount.getUserName().get_id());
-                                                    values.put("PsswrdID",newAccount.getPsswrd().get_id());
+                                                    values.put(MainActivity.getIdColumn(),newAccount.get_id());
+                                                    values.put(MainActivity.getNameColumn(),newAccount.getName());
+                                                    values.put(MainActivity.getCategoryIdColumn(),newAccount.getCategory().get_id());
+                                                    values.put(MainActivity.getUserNameIdColumn(),newAccount.getUserName().get_id());
+                                                    values.put(MainActivity.getPsswrdIdColumn(),newAccount.getPsswrd().get_id());
 
                                                     if(!this.isQuestionListTheSame(this.account.getQuestionList(),newAccount.getQuestionList())){
                                                         if(this.account.getQuestionList() == null && newAccount.getQuestionList() != null){
-                                                            values.put("QuestionListID",newAccount.getQuestionList().get_id());
+                                                            values.put(MainActivity.getQuestionListIdColumn(),newAccount.getQuestionList().get_id());
                                                         }else if(this.account.getQuestionList() != null && newAccount.getQuestionList() == null){
-                                                            values.put("QuestionListID","(null)");
+                                                            values.put(MainActivity.getQuestionListIdColumn(),"(null)");
                                                         }else if(this.account.getQuestionList().get_id() != newAccount.getQuestionList().get_id()){
-                                                            values.put("QuestionListID",newAccount.getQuestionList().get_id());
+                                                            values.put(MainActivity.getQuestionListIdColumn(),newAccount.getQuestionList().get_id());
                                                         }//End of if else statements to catch null lists
                                                     }//End of if statement to check the question list are the same
                                                     //Call method to add icon into DB if required
                                                     this.isAddIconRequired(newAccount);
-                                                    values.put("IconID",newAccount.getIcon().get_id());
-                                                    values.put("IsFavorite",newAccount.isFavorite());
+                                                    values.put(MainActivity.getIconIdColumn(),newAccount.getIcon().get_id());
+                                                    values.put(MainActivity.getIsFavoriteColumn(),newAccount.isFavorite());
                                                     //values.put("DateCreated",this.account.getDateCreated());
-                                                    values.put("DateChange",newAccount.getDateChange());
+                                                    values.put(MainActivity.getDateChangeColumn(),newAccount.getDateChange());
                                                     if(result = this.accountsDB.updateTable(MainActivity.getAccountsTable(),values)){
                                                         //Call method to update data set displayed on the recycler view and display proper message after adding the grocery to the DB
                                                         //Put extra info to transfer to the Main activity
                                                         intent.putExtra("accountID",newAccount.get_id());
                                                         intent.putExtra("accountName",newAccount.getName());
+                                                        intent.putExtra("position",extras.getInt("position"));
                                                         setResult(RESULT_OK, intent);
                                                         Log.d("onOptionsItemSelected","Set activity result to OK  on onOptionsItemSelected method in EditAccountActivity class.");
                                                         finish();
@@ -233,9 +234,12 @@ public class EditAccountActivity extends DisplayAccountActivity {
                                     //Put extra info to transfer to the Main activity
                                     intents[0].putExtra("accountID",-1);
                                     intents[0].putExtra("accountName",account.getName());
+                                    intents[0].putExtra("position",extras.getInt("position"));
                                     setResult(RESULT_OK, intents[0]);
                                     Log.d("onOptionsItemSelected","Set activity result to OK  on onOptionsItemSelected method in EditAccountActivity class.");
                                     finish();
+                                }else{
+                                    //Display error message
                                 }
                                 //Check the boolean flag that confirms the account was deleted so proper info is passed back to caller activity
                             }//End of onClick method

@@ -2,8 +2,10 @@ package io.github.jlrods.mypsswrdsecure;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -53,16 +55,17 @@ public class EditCategoryActivity extends AddCategoryAcitivity {
             }
         }//End of safe if statement to check the category retrieved is not null
         //Remove selection color from default image (formatted bullet list)
-        this.imgSelectedIcon.setColorFilter(ContextCompat.getColor(this, R.color.colorBlack), android.graphics.PorterDuff.Mode.SRC_IN);
-
+        //this.imgSelectedIcon.setColorFilter(ContextCompat.getColor(this, R.color.colorBlack), android.graphics.PorterDuff.Mode.SRC_IN);
+        this.imgSelectedIcon.setImageTintList(ColorStateList.valueOf(Color.BLACK));
         //int resID = getResources().getIdentifier(this.category.getIcon().getName(),"drawable",getPackageName());
 
         //Assign selection to category icon by passing in its ID, found via the resource name
         this.imgSelectedIcon = this.findIconImageByName(this.category.getIcon().getName());
         //Set up the selection color to the new selected icon
         if(this.imgSelectedIcon != null){
-            this.imgSelectedIcon.setColorFilter(this.themeUpdater.fetchThemeColor("colorAccent"), android.graphics.PorterDuff.Mode.SRC_IN);
+            //this.imgSelectedIcon.setColorFilter(this.themeUpdater.fetchThemeColor("colorAccent"), android.graphics.PorterDuff.Mode.SRC_IN);
             //this.imgSelectedIcon.setColorFilter(ContextCompat.getColor(this, R.color.colorPrimaryDark), android.graphics.PorterDuff.Mode.SRC_IN);
+            this.imgSelectedIcon.setImageTintList(ColorStateList.valueOf(this.themeUpdater.fetchThemeColor("colorAccent")));
             this.categoryIcon = new Icon(getResources().getResourceEntryName(this.imgSelectedIcon.getId()),MainActivity.getRESOURCES(),true, this.imgSelectedIcon.getId());
         }//End of if statement to check the image selected image view isn't null
         Log.d("OnCreateEditCat", "Enter onCreate method in the EditCategoryActivity class.");

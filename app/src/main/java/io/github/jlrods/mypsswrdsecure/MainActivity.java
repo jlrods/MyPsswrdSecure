@@ -27,12 +27,9 @@ import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
-
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
@@ -50,6 +47,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import javax.crypto.spec.IvParameterSpec;
+
 import io.github.jlrods.mypsswrdsecure.login.LoginActivity;
 import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
 
@@ -63,8 +62,8 @@ public class MainActivity extends AppCompatActivity {
     private static Cursor appState = null;
     private static Category currentCategory = null;
     private static int currentTab = 0;
-    private boolean showAllAccounts = true;
-    private boolean isFavoriteFilter = false;
+//    private boolean showAllAccounts = true;
+//    private boolean isFavoriteFilter = false;
     private static boolean isSearchFilter = false;
     private static boolean isSearchUserNameFilter = false;
     private static boolean isSearchPsswrdFilter = false;
@@ -86,32 +85,29 @@ public class MainActivity extends AppCompatActivity {
     private static ArrayList<QuestionList> listOfQuestionLists = null;
 
     private static String dateFormat;
-
-
     private static Cryptographer cryptographer;
 
     //CONSTANT VALUES
-    private final static int INDEX_TO_GET_LAST_TASK_LIST_ITEM = 2;
+    private static final int INDEX_TO_GET_LAST_TASK_LIST_ITEM = 2;
 
     //Throw intent codes
-    private final static int THROW_IMAGE_GALLERY_REQ_CODE = 1642;
-    private final static int THROW_IMAGE_CAMERA_REQ_CODE = 2641;
+    private static final int THROW_IMAGE_GALLERY_REQ_CODE = 1642;
+    private static final  int THROW_IMAGE_CAMERA_REQ_CODE = 2641;
     private static final int GALLERY_ACCESS_REQUEST = 5196;
     private static final int CAMERA_ACCESS_REQUEST = 3171;
 
     ///Throw activity request codes
-    //@Fixme: Rename variable to all cap case
-    private int throwAddAccountActReqCode = 5566;
-    private static int throwAddQuestionActReqCode = 9876;
-    private static int throwAddUserNameActReqCode = 5744;
-    private static int throwAddPsswrdActReqCode = 9732;
-    private int throwAddCategoryReqCode = 5673;
-    private int throwEditUserNameActReqCode = 4475;
-    private int throwEditPsswrdActReqCode = 6542;
-    private int throwEditQuestionActReqCode = 2456;
-    private static int throwEditCategoryActReqCode = 2002;
-    private static int throwEditAccountActReqCode = 1199;
-    private static int throwSelectNavDrawerBckGrndActReqCode = 4473;
+    private final int THROW_ADD_ACCOUNT_ACT_REQCODE = 5566;
+    private static final int THROW_ADD_QUESTION_ACT_REQCODE = 9876;
+    private static final int THROW_ADD_USERNAME_ACT_REQCODE = 5744;
+    private static final int THROW_ADD_PSSWRD_ACT_REQCODE = 9732;
+    private final int TRHOW_ADD_CATEGORY_REQCODE = 5673;
+    private final int THROW_EDIT_USERNAME_ACT_REQCODE = 4475;
+    private final int THROW_EDIT_PSSWRD_ACT_REQCODE = 6542;
+    private final int THROW_EDIT_QUESTIONS_ACT_REQCODE = 2456;
+    private static final int THROW_EDIT_CATEGORY_ACT_REQCODE = 2002;
+    private static final int THROW_EDIT_ACCOUNT_ACT_REQCODE = 1199;
+    private static final int THROW_SELECT_NAVDRAWERBCKGRND_ACT_REQCODE = 4473;
 
     private static final String ACCOUNTS_LOGOS = "logo_";
     private static final String NAV_DRAWER_BCKGRNDS = "nav_menu_header_bg";
@@ -138,17 +134,21 @@ public class MainActivity extends AppCompatActivity {
     private static final String PSSWRD_ID_COLUMN = "PsswrdID";
     private static final String PSSWRD_IV_COLUMN = "PsswrdIV";
     private static final String QUESTION_LIST_ID_COLUMN = "QuestionListID";
+    private static final String QUESTION_ID_COLUMN = "QuestionID";
     private static final String QUESTION_ID_1_COLUMN = "QuestionID1";
     private static final String QUESTION_ID_2_COLUMN = "QuestionID2";
     private static final String QUESTION_ID_3_COLUMN = "QuestionID3";
     private static final String ICON_ID_COLUMN = "IconID";
+    private static final String ICON_LOCATION_COLUMN="Location";
+    private static final String ICON_IS_SELECTED_COLUMN="isSelected";
     private static final String ID_COLUMN = "_id";
     private static final String IS_FAVORITE_COLUMN = "IsFavorite";
     private static final String NAME_COLUMN = "Name";
     private static final String CURRENT_CATEGORY_ID_COLUMN = "currentCategoryID";
     private static final String CURRENT_TAB_COLUMN = "currentTab";
-    private static final String SHOW_ALL_ACCOUNTS_COLUMN = "showAllAccounts";
-    private static final String IS_FAVORITE_FILTER_COLUMN = "isFavoriteFilter";
+    private static final String ANSWER_ID_COLUMN ="AnswerID";
+//    private static final String SHOW_ALL_ACCOUNTS_COLUMN = "showAllAccounts";
+//    private static final String IS_FAVORITE_FILTER_COLUMN = "isFavoriteFilter";
     private static final String IS_SEARCH_FILTER_COLUMN = "isSearchFilter";
     private static final String IS_SEARCH_USER_FILTER_COLUMN = "isSearchUserInAccountsFilter";
     private static final String IS_SEARCH_PSSWRD_FILTER_COLUMN = "isSearchPsswrdInAccountsFilter";
@@ -158,9 +158,11 @@ public class MainActivity extends AppCompatActivity {
     private static final String ASC = "ASC";
     private static final String DESC = "DESC";
     private static final String DATE_CREATED_COLUMN = "DateCreated";
+    private static final String DATE_CHANGE_COLUMN = "DateChange";
     private static final String VALUE_COLUMN = "Value";
     private static final String MESSAGE_COLUMN = "Message";
     private static final String PICTUREID_COLUMN = "PictureID";
+    private static final String INIT_VECTOR_COLUMN="initVector";
 
 
     private static Uri uriCameraImage = null;
@@ -211,7 +213,6 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         final FloatingActionButton fab = findViewById(R.id.fab);
         //Change fab + icon color based on app theme
-        //@Fixme: Fix setTintList issue here
         fab.setImageTintList(ColorStateList.valueOf(themeUpdater.fetchThemeColor("colorPrimary")));
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -268,7 +269,8 @@ public class MainActivity extends AppCompatActivity {
                             clearSearchFilter();
                             clearSortFilter();
                         }
-                        MainActivity.updateRecyclerViewData(accountAdapter);
+                        //MainActivity.updateRecyclerViewData(accountAdapter);
+                        updateRecyclerViewData(accountAdapter,-1, NotifyChangeType.DATA_SET_CHANGED);
                         break;
                     case 1:
                         //Create rv adapter for the user name tab
@@ -284,7 +286,8 @@ public class MainActivity extends AppCompatActivity {
                             clearSearchFilter();
                             clearSortFilter();
                         }
-                        MainActivity.updateRecyclerViewData(userNameAdapter);
+                        //MainActivity.updateRecyclerViewData(userNameAdapter);
+                        updateRecyclerViewData(userNameAdapter,-1,NotifyChangeType.DATA_SET_CHANGED);
                         break;
                     case 2:
                         PsswrdAdapter psswrdAdapter = new PsswrdAdapter(mainActivityContext, null);
@@ -299,7 +302,8 @@ public class MainActivity extends AppCompatActivity {
                             clearSearchFilter();
                             clearSortFilter();
                         }
-                        MainActivity.updateRecyclerViewData(psswrdAdapter);
+                        //MainActivity.updateRecyclerViewData(psswrdAdapter);
+                        updateRecyclerViewData(psswrdAdapter,-1,NotifyChangeType.DATA_SET_CHANGED);
                         break;
                     case 3:
                         SecurityQuestionAdapter secQuestionAdapter = new SecurityQuestionAdapter(getBaseContext(), null);
@@ -307,7 +311,8 @@ public class MainActivity extends AppCompatActivity {
                             clearSearchFilter();
                             clearSortFilter();
                         }
-                        MainActivity.updateRecyclerViewData(secQuestionAdapter);
+                        //MainActivity.updateRecyclerViewData(secQuestionAdapter);
+                        updateRecyclerViewData(secQuestionAdapter,-1,NotifyChangeType.DATA_SET_CHANGED);
                         secQuestionAdapter.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -325,14 +330,14 @@ public class MainActivity extends AppCompatActivity {
                 boolean appStateUpdated = accountsDB.updateTable(APPSTATE_TABLE, appStateValues);
                 //If update goes well, get values from DB???
                 if (appStateUpdated) {
-                    //@FIXME: Define method in AccountsDB
-                    Cursor c = accountsDB.runQuery("SELECT * FROM " + APPSTATE_TABLE);
+                    Cursor c = accountsDB.getAppState();
                     c.moveToFirst();
-                    String search = c.getString(6);
-                    Snackbar snackbar = Snackbar.make(coordinatorLayout, search, Snackbar.LENGTH_LONG);
-                    snackbar.setAction("Action", null).show();
+//                    String search = c.getString(6);
+//                    Snackbar snackbar = Snackbar.make(coordinatorLayout, search, Snackbar.LENGTH_LONG);
+//                    snackbar.setAction("Action", null).show();
                 } else {
-                    //@FIXME: Define action in case the app fail to update state
+                    //Display error message
+                    displayAlertDialogNoInput(getBaseContext(),getString(R.string.appStateError),getString(R.string.appStateErrorMssg));
                 }//End of if else statement
             }//End of onTabSelected
 
@@ -350,52 +355,64 @@ public class MainActivity extends AppCompatActivity {
 
         //Create and set default logo for accounts
         myPsswrdSecureLogo = new Icon(R.mipmap.ic_my_psswrd_secure, "MyPsswrdSecureIcon", String.valueOf(R.mipmap.ic_my_psswrd_secure), false);
-        //@Fixme: Gett cryptog and accountsDB from LoginActivity
         cryptographer = LoginActivity.getCryptographer();
-        //Dummy encryption to get IV created
-        //byte[] testEncrypted = cryptographer.encryptText("DummyEncryption");
-        //String test2 = cryptographer.decryptText(testEncrypted,cryptographer.getIv());
         //Create a new object to manage all DB interaction
         accountsDB = LoginActivity.getAccountsDB();
         //Get the category list from DB
         this.homeCategory = new Category("Home", new Icon("Home", MainActivity.getRESOURCES(), R.drawable.home));
         this.favCategory = new Category(-2, "Favorites", new Icon("Favorites", MainActivity.getRESOURCES(), android.R.drawable.star_big_on));
         this.categoryList = accountsDB.getCategoryList();
-        //Set the Home category as the default one
-        //this.currentCategory = categoryList.get(0);
-        //@Fixme:Retrieve App state from DB and update app variable appropriately
+
+        //Retrieve App state from DB and update app variable appropriately
         this.appState = accountsDB.getAppState();
         if (this.appState != null && this.appState.getCount() > 0) {
-            //@Fixme: Since current cat is being stored in DB, even Home and Fav, which are not defined in the Category table, must ensure the proper CatID is being stored
-            this.currentCategory = this.getCategoryByID(this.appState.getInt(1));
-            //@Fixme: Update the nav drawer to display appropriate item in the menu
             this.currentTab = this.appState.getInt(2);
-            this.showAllAccounts = this.accountsDB.toBoolean(this.appState.getInt(3));
-            this.isFavoriteFilter = this.accountsDB.toBoolean(this.appState.getInt(4));
-            this.isSearchFilter = this.accountsDB.toBoolean(this.appState.getInt(5));
-            this.isSearchUserNameFilter = this.accountsDB.toBoolean(this.appState.getInt(6));
-            this.isSearchPsswrdFilter = this.accountsDB.toBoolean(this.appState.getInt(7));
-            this.lastSearchText = this.appState.getString(8);
-            this.isSortFilter = this.accountsDB.toBoolean(this.appState.getInt(9));
-            this.currentSortFilter = SortFilter.getSortFilterByOrdinal(this.appState.getInt(10));
-            //Set boolean flag to identify first run of the onCreate method
-            //This flag is a work around to avoid clearSearch filter when calling onTabSelected method when
-            //Changing tab during first run of program
             if (currentTab != 0) {
                 isFirstRun = true;
             }
         } else {
+            accountsDB.getWritableDatabase().execSQL("INSERT INTO APPSTATE VALUES(null,-1,1,0,0,0,'',0,-1);");
+            this.appState = accountsDB.getAppState();
+            this.currentTab = this.appState.getInt(2);
             //Set default app state values
-            this.currentCategory = this.getCategoryByID(0);
-            this.showAllAccounts = true;
-            this.isFavoriteFilter = false;
-            this.isSearchFilter = false;
-            this.isSearchUserNameFilter = false;
-            this.isSearchPsswrdFilter = false;
-            this.lastSearchText = "";
-            this.isSortFilter = false;
-            this.currentSortFilter = null;
+//            this.currentCategory = this.getCategoryByID(0);
+//            this.showAllAccounts = true;
+//            this.isFavoriteFilter = false;
+//            this.isSearchFilter = false;
+//            this.isSearchUserNameFilter = false;
+//            this.isSearchPsswrdFilter = false;
+//            this.lastSearchText = "";
+//            this.isSortFilter = false;
+//            this.currentSortFilter = null;
+            //Insert default app state to be loaded
+            //Populate default state of app
+
         }//End of if statement to check and extract the app state from dB
+        //Get the current category and tab stored from app state
+        this.currentCategory = this.getCategoryByID(this.appState.getInt(1));
+        //Counter measure to avoid NullException when current category recorded on app state was deleted, but never updated to
+        // new current category
+        if(this.currentCategory == null){
+            //Set home as default
+            this.currentCategory = this.categoryList.get(0);
+            //update app state
+            ContentValues values = new ContentValues();
+            values.put(CURRENT_CATEGORY_ID_COLUMN,-1);
+            accountsDB.updateTable(APPSTATE_TABLE,values);
+        }
+
+        //Update the nav drawer to display appropriate item in the menu
+//        this.showAllAccounts = this.accountsDB.toBoolean(this.appState.getInt(3));
+//        this.isFavoriteFilter = this.accountsDB.toBoolean(this.appState.getInt(4));
+        this.isSearchFilter = this.accountsDB.toBoolean(this.appState.getInt(3));
+        this.isSearchUserNameFilter = this.accountsDB.toBoolean(this.appState.getInt(4));
+        this.isSearchPsswrdFilter = this.accountsDB.toBoolean(this.appState.getInt(5));
+        this.lastSearchText = this.appState.getString(6);
+        this.isSortFilter = this.accountsDB.toBoolean(this.appState.getInt(7));
+        this.currentSortFilter = SortFilter.getSortFilterByOrdinal(this.appState.getInt(8));
+        //Set boolean flag to identify first run of the onCreate method
+        //This flag is a work around to avoid clearSearch filter when calling onTabSelected method when
+        //Changing tab during first run of program
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -466,17 +483,9 @@ public class MainActivity extends AppCompatActivity {
             //imgLogo.setImageResource(idRes);
             headerView.setBackground(getResources().getDrawable(idRes));
         } else {
-            //@Fixme: What to do if current applogin is invalid... Create a default applogin not good
             //Call logout method and display error message???
             displayToast(((Activity)this).getParent(),"Log in error, the app loggin supplied doesn't match the one in the app records!",Toast.LENGTH_LONG,Gravity.CENTER);
             logout();
-            //Create default applogin with null username and null password
-//            AppLoggin appLoggin = new AppLoggin();
-//            appLoggin.setName("Android Studio");
-//            appLoggin.setEmail("example@android.com");
-//            appLoggin.setMessage("Test message!");
-//            appLoggin.setPicture(accountsDB.getIconByID(62));
-//            accountsDB.addItem(appLoggin);
         }//End of if statement to check user cursor is not empty
         if(isLogOutActive){
             //Get logOutTime form preferences
@@ -578,11 +587,9 @@ public class MainActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         if (this.isSearchFilter) {
-            //@Fixme: Check what is best: setTint or setColourFilter
-            menu.getItem(0).getIcon().setTint(getColor(R.color.colorAccent));
+            menu.getItem(0).getIcon().setTintList(ColorStateList.valueOf(themeUpdater.fetchThemeColor("colorAccent")));
         } else if (this.isSortFilter) {
-            //@Fixme: Check what is best: setTint or setColourFilter
-            menu.getItem(1).getIcon().setTint(getColor(R.color.colorAccent));
+            menu.getItem(1).getIcon().setTintList(ColorStateList.valueOf(themeUpdater.fetchThemeColor("colorAccent")));
         }
         return true;
     }
@@ -649,28 +656,193 @@ public class MainActivity extends AppCompatActivity {
         return category;
     }// End of getCategoryID method
 
-    public static void updateRecyclerViewData(RecyclerView.Adapter adapter, MainActivity.SearchType searchType) {
-        Log.d("Ent_updateRecViewData", "Enter the updateRecyclerViewData method in the MainActivity class.");
-        RecyclerView rv = HomeFragment.getRv();
-        AccountsDB accountsDB = HomeFragment.getAccountsDB();
-        Cursor cursor = null;
+//    public static void updateRecyclerViewData(RecyclerView.Adapter adapter, MainActivity.SearchType searchType) {
+//        Log.d("Ent_updateRecViewData", "Enter the updateRecyclerViewData method in the MainActivity class.");
+//        RecyclerView rv = HomeFragment.getRv();
+//        AccountsDB accountsDB = HomeFragment.getAccountsDB();
+//        Cursor cursor = null;
+//        //Check the class of the adapter passed in as argument#
+//        if (adapter instanceof AccountAdapter) {
+//            if (isSearchFilter) {
+//                if (searchType.equals(SearchType.ACCOUNT_WITH_USERNAME)) {
+//                    Cursor userName = accountsDB.getUserNameByName(lastSearchText);
+//                    if (userName != null && userName.getCount() > 0) {
+//                        cursor = accountsDB.getAccountsWithSpecifcValueAndCategory(USER_NAME_ID_COLUMN, userName.getInt(0), MainActivity.getCurrentCategory().get_id());
+//                    } else {
+//                        //Work around to get a Non null cursor with no data as null cursor crashes app when getCount method is called by RV
+//                        cursor = accountsDB.getAccountsWithSpecifcValue(USER_NAME_ID_COLUMN, -1);
+//                    }//En of if else statement to check the user name retrieved isn't null
+//                } else if (searchType.equals(SearchType.ACCOUNT_WITH_PSSWRD)) {
+//                    Cursor psswrd = accountsDB.getPsswrdByName(lastSearchText);
+//                    if (psswrd != null && psswrd.getCount() > 0) {
+//                        cursor = accountsDB.getAccountsWithSpecifcValueAndCategory(PSSWRD_ID_COLUMN, psswrd.getInt(0), MainActivity.getCurrentCategory().get_id());
+//                    } else {
+//                        //Work around to get a Non null cursor with no data as null cursor crashes app when getCount method is called by RV
+//                        cursor = accountsDB.getAccountsWithSpecifcValue(PSSWRD_ID_COLUMN, -1);
+//                    }//End of if else statement to check password retrieved isn't nulll
+//                } else {
+//                    //Since user name and password specific search is not category limited, if the search text is searched in the account name
+//                    //include the current category in the search criteria
+//                    cursor = accountsDB.getAccountsThatContainsThisTextInName(lastSearchText, currentCategory.get_id());
+//                }//End of if else statement to check if the Account special search feature is being used
+//            } else if (isSortFilter) {
+//                if (currentSortFilter == SortFilter.ALPHA_ASC) {
+//                    cursor = accountsDB.getAccountsSortedByColumnUpOrDown(NAME_COLUMN, ASC);
+//                } else if (currentSortFilter == SortFilter.ALPHA_DES) {
+//                    cursor = accountsDB.getAccountsSortedByColumnUpOrDown(NAME_COLUMN, DESC);
+//                } else if (currentSortFilter == SortFilter.DATE_ASC) {
+//                    cursor = accountsDB.getAccountsSortedByColumnUpOrDown(DATE_CREATED_COLUMN, ASC);
+//                } else if (currentSortFilter == SortFilter.DATE_DES) {
+//                    cursor = accountsDB.getAccountsSortedByColumnUpOrDown(DATE_CREATED_COLUMN, DESC);
+//                } else if (currentSortFilter == SortFilter.CATEGORY) {
+//                    cursor = accountsDB.getAccountsSortedByColumnUpOrDown(CATEGORY_ID_COLUMN, ASC);
+//                }
+//            } else {
+//                //Check current category variable to call method that retrieves proper account list
+//                if (MainActivity.getCurrentCategory().get_id() == homeCategory.get_id()) {
+//                    cursor = accountsDB.getAccountsList();
+//                } else if (MainActivity.getCurrentCategory().get_id() == favCategory.get_id()) {
+//                    cursor = accountsDB.getAccountsWithSpecifcValue(IS_FAVORITE_COLUMN, 1);
+//                } else {
+//                    cursor = accountsDB.getAccountsWithSpecifcValue(CATEGORY_ID_COLUMN,currentCategory.get_id());
+//                }//End of if else statements to check current category
+//            }//End of if else statement to check if the search filter is active
+//            //Check the isSearch filter flag to define the correct cursor to retrieve from the DB
+//
+//            ((AccountAdapter) adapter).setCursor(cursor);
+//        } else if (adapter instanceof PsswrdAdapter) {
+//            //Check the isSearch filter flag to define the correct cursor to retrieve from the DB
+//            if (isSearchFilter) {
+//                cursor = accountsDB.getPsswrdByName(lastSearchText);
+//            } else if (isSortFilter) {
+//                if (currentSortFilter == SortFilter.DATE_ASC) {
+//                    cursor = accountsDB.getPsswrdsSortedColumnUpDown(DATE_CREATED_COLUMN, ASC);
+//                } else if (currentSortFilter == SortFilter.DATE_DES) {
+//                    cursor = accountsDB.getPsswrdsSortedColumnUpDown(DATE_CREATED_COLUMN, DESC);
+//                } else if (currentSortFilter == SortFilter.TIMES_USED) {
+//                    cursor = accountsDB.getPsswrdsSortedByTimesUsed();
+//                }
+//            } else {
+//                cursor = accountsDB.getPsswrdList();
+//            }
+//            ((PsswrdAdapter) adapter).setCursor(cursor);
+//        } else if (adapter instanceof SecurityQuestionAdapter) {
+//            //Check the isSearch filter flag to define the correct cursor to retrieve from the DB
+//            if (isSearchFilter) {
+//                //Call DB method to retrieve the questions that holds specific value in the question text
+//                cursor = accountsDB.getQuestionsWithThisTextInValue(lastSearchText);
+//            } else if (isSortFilter) {
+//                if (currentSortFilter == SortFilter.ALPHA_ASC) {
+//                    cursor = accountsDB.getQuestionsSortedColumnUpDown(ASC);
+//                } else if (currentSortFilter == SortFilter.ALPHA_DES) {
+//                    cursor = accountsDB.getQuestionsSortedColumnUpDown(DESC);
+//                } else if (currentSortFilter == SortFilter.TIMES_USED) {
+//                    cursor = accountsDB.getQuestionsSortedByTimesUsed();
+//                }
+//            } else {
+//                cursor = accountsDB.getListQuestionsAvailableNoAnsw();
+//            }
+//            ((SecurityQuestionAdapter) adapter).setCursor(cursor);
+//        } else if (adapter instanceof UserNameAdapter) {
+//            //Check the isSearch filter flag to define the correct cursor to retrieve from the DB
+//            if (isSearchFilter) {
+//                cursor = accountsDB.getUserNameByName(lastSearchText);
+//            } else if (isSortFilter) {
+//                if (currentSortFilter == SortFilter.DATE_ASC) {
+//                    cursor = accountsDB.getUserNamesSortedColumnUpDown(DATE_CREATED_COLUMN, ASC);
+//                } else if (currentSortFilter == SortFilter.DATE_DES) {
+//                    cursor = accountsDB.getUserNamesSortedColumnUpDown(DATE_CREATED_COLUMN, DESC);
+//                } else if (currentSortFilter == SortFilter.TIMES_USED) {
+//                    cursor = accountsDB.getUserNameCursorSortedByTimesUsed();
+//                }
+//            } else {
+//                cursor = accountsDB.getUserNameList();
+//            }
+//            ((UserNameAdapter) adapter).setCursor(cursor);
+//        }//End of if else statement that checks the instance of the adapter
+//        //Move to first row of cursor if not empty
+//        if (cursor != null) {
+//            cursor.moveToFirst();
+//        }
+//        rv.setAdapter(adapter);
+//        adapter.notifyDataSetChanged();
+//        isFirstRun = false;
+//        Log.d("Ext_updateRecViewData", "Exit the updateRecyclerViewData method in the MainActivity class.");
+//    }//End of updateRecyclerViewData method
+
+
+//    public static void updateRecyclerViewData(RecyclerView.Adapter adapter) {
+//        updateRecyclerViewData(adapter, SearchType.ACCOUNTS);
+//    }
+
+    public static void updateRecyclerViewData(RecyclerView.Adapter adapter, int position, NotifyChangeType changeType){
+        Log.d("updateRecViewDataNew", "Enter new the updateRecyclerViewData method in the MainActivity class.");
+        //Call method to get updated cursor for current app state (current category, search and sort filter status).
+        Cursor cursor = getCursorToUpdateRV(adapter);
         //Check the class of the adapter passed in as argument#
         if (adapter instanceof AccountAdapter) {
+            //Set new data set (cursor) to the accounts adapter
+            ((AccountAdapter) adapter).setCursor(cursor);
+        }else if(adapter instanceof PsswrdAdapter){
+            ((PsswrdAdapter) adapter).setCursor(cursor);
+        }else if(adapter instanceof SecurityQuestionAdapter){
+            ((SecurityQuestionAdapter) adapter).setCursor(cursor);
+        }else if(adapter instanceof UserNameAdapter){
+            ((UserNameAdapter) adapter).setCursor(cursor);
+        }
+
+        //Check the changeType variable to determine what notifyChange method will be called for the RV
+        switch (changeType.ordinal()){
+            case 0:
+                adapter.notifyItemChanged(position);
+                break;
+            case 1:
+                adapter.notifyItemRemoved(position);
+                break;
+            case 2:
+                adapter.notifyItemInserted(position);
+                break;
+            default:
+                if(cursor != null){
+                    cursor.moveToFirst();
+                }
+                RecyclerView rv = HomeFragment.getRv();
+                rv.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
+                break;
+        }
+        Log.d("updateRecViewDataNew", "Exit new the updateRecyclerViewData method in the MainActivity class.");
+        isFirstRun = false;
+    }//End of updateItemInRecyclerView method
+
+    public static Cursor getCursorToUpdateRV(RecyclerView.Adapter adapter){
+        Log.d("getCursorToUpdateRV", "Enter the getCursorToUpdateRV method in the MainActivity class.");
+        //Declare and initialize cursor to be returned by method
+        Cursor cursor = null;
+        if (adapter instanceof AccountAdapter) {
+            //Check search filer boolean flag
             if (isSearchFilter) {
-                if (searchType.equals(SearchType.ACCOUNT_WITH_USERNAME)) {
+                //Check if specific user name or password search filter is used
+                if (isSearchUserNameFilter) {
+                    //If user name search filter required, get username from DB
                     Cursor userName = accountsDB.getUserNameByName(lastSearchText);
                     if (userName != null && userName.getCount() > 0) {
+                        //If username exists, get cursor with all the accounts that hold that user name
                         cursor = accountsDB.getAccountsWithSpecifcValueAndCategory(USER_NAME_ID_COLUMN, userName.getInt(0), MainActivity.getCurrentCategory().get_id());
                     } else {
-                        //Work around to get a Non null cursor with no data as null cursor crashes app when getCount method is called by RV
+                        //Otherwise return:
+                        //a work around to get a Non null cursor with no data as null cursor crashes app when getCount method is called by RV
                         cursor = accountsDB.getAccountsWithSpecifcValue(USER_NAME_ID_COLUMN, -1);
                     }//En of if else statement to check the user name retrieved isn't null
-                } else if (searchType.equals(SearchType.ACCOUNT_WITH_PSSWRD)) {
+                } else if (isSearchPsswrdFilter) {
+                    //If password search filter required, get password from DB
                     Cursor psswrd = accountsDB.getPsswrdByName(lastSearchText);
                     if (psswrd != null && psswrd.getCount() > 0) {
+                        //If password exists, get cursor with all the accounts that hold that password
                         cursor = accountsDB.getAccountsWithSpecifcValueAndCategory(PSSWRD_ID_COLUMN, psswrd.getInt(0), MainActivity.getCurrentCategory().get_id());
                     } else {
-                        //Work around to get a Non null cursor with no data as null cursor crashes app when getCount method is called by RV
+                        //Otherwise return:
+                        //a work around to get a Non null cursor with no data as null cursor crashes app when getCount method is called by RV
                         cursor = accountsDB.getAccountsWithSpecifcValue(PSSWRD_ID_COLUMN, -1);
                     }//End of if else statement to check password retrieved isn't nulll
                 } else {
@@ -679,31 +851,35 @@ public class MainActivity extends AppCompatActivity {
                     cursor = accountsDB.getAccountsThatContainsThisTextInName(lastSearchText, currentCategory.get_id());
                 }//End of if else statement to check if the Account special search feature is being used
             } else if (isSortFilter) {
+                //In case sort filter is the one used, check type of sorting used
                 if (currentSortFilter == SortFilter.ALPHA_ASC) {
+                    //AlphabeticalAscendant
                     cursor = accountsDB.getAccountsSortedByColumnUpOrDown(NAME_COLUMN, ASC);
                 } else if (currentSortFilter == SortFilter.ALPHA_DES) {
+                    //Alphabetical Descendant
                     cursor = accountsDB.getAccountsSortedByColumnUpOrDown(NAME_COLUMN, DESC);
                 } else if (currentSortFilter == SortFilter.DATE_ASC) {
+                    //Date created ascendant
                     cursor = accountsDB.getAccountsSortedByColumnUpOrDown(DATE_CREATED_COLUMN, ASC);
                 } else if (currentSortFilter == SortFilter.DATE_DES) {
+                    //Date created descendant
                     cursor = accountsDB.getAccountsSortedByColumnUpOrDown(DATE_CREATED_COLUMN, DESC);
                 } else if (currentSortFilter == SortFilter.CATEGORY) {
+                    //Category
                     cursor = accountsDB.getAccountsSortedByColumnUpOrDown(CATEGORY_ID_COLUMN, ASC);
-                }
+                }//End of if statement for sort filter flag
             } else {
+                //If not filter is used at the moment, check only for current category
                 //Check current category variable to call method that retrieves proper account list
-                if (MainActivity.getCurrentCategory().get_id() == -1) {
+                if (MainActivity.getCurrentCategory().get_id() == homeCategory.get_id()) {
                     cursor = accountsDB.getAccountsList();
-                } else if (MainActivity.getCurrentCategory().get_id() == -2) {
-                    cursor = accountsDB.getAccountsWithSpecifcValue(MainActivity.getIsFavoriteColumn(), 1);
+                } else if (MainActivity.getCurrentCategory().get_id() == favCategory.get_id()) {
+                    cursor = accountsDB.getAccountsWithSpecifcValue(IS_FAVORITE_COLUMN, 1);
                 } else {
-                    cursor = accountsDB.getAccountsWithSpecifcValue(MainActivity.getCategoryIdColumn(), MainActivity.getCurrentCategory().get_id());
+                    cursor = accountsDB.getAccountsWithSpecifcValue(CATEGORY_ID_COLUMN,currentCategory.get_id());
                 }//End of if else statements to check current category
             }//End of if else statement to check if the search filter is active
-            //Check the isSearch filter flag to define the correct cursor to retrieve from the DB
-
-            ((AccountAdapter) adapter).setCursor(cursor);
-        } else if (adapter instanceof PsswrdAdapter) {
+        }else if(adapter instanceof PsswrdAdapter){
             //Check the isSearch filter flag to define the correct cursor to retrieve from the DB
             if (isSearchFilter) {
                 cursor = accountsDB.getPsswrdByName(lastSearchText);
@@ -718,25 +894,23 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 cursor = accountsDB.getPsswrdList();
             }
-            ((PsswrdAdapter) adapter).setCursor(cursor);
-        } else if (adapter instanceof SecurityQuestionAdapter) {
+        }else if (adapter instanceof SecurityQuestionAdapter) {
             //Check the isSearch filter flag to define the correct cursor to retrieve from the DB
             if (isSearchFilter) {
                 //Call DB method to retrieve the questions that holds specific value in the question text
                 cursor = accountsDB.getQuestionsWithThisTextInValue(lastSearchText);
             } else if (isSortFilter) {
                 if (currentSortFilter == SortFilter.ALPHA_ASC) {
-                    cursor = accountsDB.getQuestionsSortedColumnUpDown(VALUE_COLUMN, ASC);
+                    cursor = accountsDB.getQuestionsSortedColumnUpDown(ASC);
                 } else if (currentSortFilter == SortFilter.ALPHA_DES) {
-                    cursor = accountsDB.getQuestionsSortedColumnUpDown(VALUE_COLUMN, DESC);
+                    cursor = accountsDB.getQuestionsSortedColumnUpDown(DESC);
                 } else if (currentSortFilter == SortFilter.TIMES_USED) {
                     cursor = accountsDB.getQuestionsSortedByTimesUsed();
                 }
             } else {
                 cursor = accountsDB.getListQuestionsAvailableNoAnsw();
             }
-            ((SecurityQuestionAdapter) adapter).setCursor(cursor);
-        } else if (adapter instanceof UserNameAdapter) {
+        }else if (adapter instanceof UserNameAdapter) {
             //Check the isSearch filter flag to define the correct cursor to retrieve from the DB
             if (isSearchFilter) {
                 cursor = accountsDB.getUserNameByName(lastSearchText);
@@ -751,21 +925,12 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 cursor = accountsDB.getUserNameList();
             }
-            ((UserNameAdapter) adapter).setCursor(cursor);
         }//End of if else statement that checks the instance of the adapter
-        //Move to first row of cursor if not empty
-        if (cursor != null) {
-            cursor.moveToFirst();
-        }
-        rv.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
-        isFirstRun = false;
-        Log.d("Ext_updateRecViewData", "Exit the updateRecyclerViewData method in the MainActivity class.");
-    }//End of updateRecyclerViewData method
+        Log.d("getCursorToUpdateRV", "Enter the getCursorToUpdateRV method in the MainActivity class.");
+        return cursor;
+    }//End of getCursorToUpdateRV method
 
-    public static void updateRecyclerViewData(RecyclerView.Adapter adapter) {
-        updateRecyclerViewData(adapter, SearchType.ACCOUNTS);
-    }
+
 
     //@Fixme: try to compress all the throw activity methods into one generic method
     //Method to throw a new Activity and expect a result from it
@@ -799,7 +964,7 @@ public class MainActivity extends AppCompatActivity {
             i.putExtra("timeOutRemainder",(long)this.logoutTimer.getLogOutTimeRemainder());
         }
         //Start the addTaskActivity class
-        startActivityForResult(i, throwAddAccountActReqCode);
+        startActivityForResult(i, THROW_ADD_ACCOUNT_ACT_REQCODE);
         Log.d("ThrowAddAcc", "Exit throwAddAccountActivity method in the MainActivity class.");
     }//End of throwAddAccountActivity
 
@@ -812,7 +977,7 @@ public class MainActivity extends AppCompatActivity {
             i.putExtra("timeOutRemainder",(long)this.logoutTimer.getLogOutTimeRemainder());
         }
         //Start the AddItemActivity class
-        startActivityForResult(i, throwAddUserNameActReqCode);
+        startActivityForResult(i, THROW_ADD_USERNAME_ACT_REQCODE);
         Log.d("ThrowAddUser", "Exit throwAddUserNameActivity method in the MainActivity class.");
     }//End of throwAddTaskActivity
 
@@ -821,7 +986,7 @@ public class MainActivity extends AppCompatActivity {
         //Declare and instantiate a new intent object
         Intent i = new Intent(MainActivity.this, AddPsswrdActivity.class);
         //Start the AddItemActivity class
-        startActivityForResult(i, throwAddPsswrdActReqCode);
+        startActivityForResult(i, THROW_ADD_PSSWRD_ACT_REQCODE);
         Log.d("ThrowAddPsswrd", "Exit throwAddPsswrdActivity method in the MainActivity class.");
     }//End of throwAddTaskActivity
 
@@ -830,7 +995,7 @@ public class MainActivity extends AppCompatActivity {
         //Declare and instantiate a new intent object
         Intent i = new Intent(MainActivity.this, AddQuestionActivity.class);
         //Start the addTaskActivity class
-        startActivityForResult(i, throwAddQuestionActReqCode);
+        startActivityForResult(i, THROW_ADD_QUESTION_ACT_REQCODE);
         Log.d("ThrowAddQuest", "Exit throwAddQuestionActivity method in the MainActivity class.");
     }//End of throwAddTaskActivity
 
@@ -839,7 +1004,7 @@ public class MainActivity extends AppCompatActivity {
         //Declare and instantiate a new intent object
         Intent i = new Intent(MainActivity.this, AddCategoryAcitivity.class);
         //Start the addTaskActivity class
-        startActivityForResult(i, throwAddCategoryReqCode);
+        startActivityForResult(i, TRHOW_ADD_CATEGORY_REQCODE);
         Log.d("ThrowAddCatt", "Exit throwAddCategoryActivity method in the MainActivity class.");
     }//End of throwAddTaskActivity
 
@@ -860,12 +1025,13 @@ public class MainActivity extends AppCompatActivity {
         //Add extras to the intent object, specifically the current category where the add button was pressed from
         i.putExtra("category", this.currentCategory.get_id());
         i.putExtra(ID_COLUMN, account.get_id());
+        i.putExtra("position",itemPosition);
         //Add logout timer remaining time to continue in next activity
         if(isLogOutActive){
             i.putExtra("timeOutRemainder",(long)this.logoutTimer.getLogOutTimeRemainder());
         }
         //Start the AddItemActivity class
-        startActivityForResult(i, throwEditAccountActReqCode);
+        startActivityForResult(i, THROW_EDIT_ACCOUNT_ACT_REQCODE);
         Log.d("ThrowEditAcc", "Exit throwEditAccountActivity method in the MainActivity class.");
     }//End of throwAddTaskActivity
 
@@ -886,11 +1052,12 @@ public class MainActivity extends AppCompatActivity {
         //Add extras to the intent object, specifically the current category where the add button was pressed from
         //i.putExtra("category",this.currentCategory.toString());
         i.putExtra(ID_COLUMN, userName.get_id());
+        i.putExtra("position",itemPosition);
         if(isLogOutActive){
             i.putExtra("timeOutRemainder",(long)this.logoutTimer.getLogOutTimeRemainder());
         }
         //Start the AddItemActivity class
-        startActivityForResult(i, this.throwEditUserNameActReqCode);
+        startActivityForResult(i, this.THROW_EDIT_USERNAME_ACT_REQCODE);
         Log.d("ThrowEditUser", "Exit throwEditUserNameActivity method in the MainActivity class.");
     }//End of throwAddTaskActivity
 
@@ -911,8 +1078,9 @@ public class MainActivity extends AppCompatActivity {
         //Add extras to the intent object, specifically the current category where the add button was pressed from
         //i.putExtra("category",this.currentCategory.toString());
         i.putExtra(ID_COLUMN, psswrd.get_id());
+        i.putExtra("position",itemPosition);
         //Start the AddItemActivity class
-        startActivityForResult(i, this.throwEditPsswrdActReqCode);
+        startActivityForResult(i, this.THROW_EDIT_PSSWRD_ACT_REQCODE);
         Log.d("ThrowAddUser", "Exit throwEditPsswrdActivity method in the MainActivity class.");
     }//End of throwAddTaskActivity
 
@@ -933,8 +1101,9 @@ public class MainActivity extends AppCompatActivity {
         //Add extras to the intent object, specifically the current category where the add button was pressed from
         //i.putExtra("category",this.currentCategory.toString());
         i.putExtra(ID_COLUMN, question.get_id());
+        i.putExtra("position",itemPosition);
         //Start the AddItemActivity class
-        startActivityForResult(i, this.throwEditQuestionActReqCode);
+        startActivityForResult(i, this.THROW_EDIT_QUESTIONS_ACT_REQCODE);
         Log.d("ThrowAddUser", "Exit throwEditQuestionActivity method in the MainActivity class.");
     }//End of throwAddTaskActivity
 
@@ -945,7 +1114,7 @@ public class MainActivity extends AppCompatActivity {
         i.putExtra(ID_COLUMN, _id);
         i.putExtra("positionInCatList", listPosition);
         //Start the addTaskActivity class
-        startActivityForResult(i, throwEditCategoryActReqCode);
+        startActivityForResult(i, THROW_EDIT_CATEGORY_ACT_REQCODE);
         Log.d("ThrowEditCat", "Exit throwEditCategoryActivity method in the MainActivity class.");
     }//End of throwAddTaskActivity
 
@@ -959,7 +1128,7 @@ public class MainActivity extends AppCompatActivity {
         i.putExtra("selectedImgPosition", -1);
         i.putExtra("selectedImgLocation", RESOURCES);
         //Start the addTaskActivity and wait for result
-        startActivityForResult(i, this.throwSelectNavDrawerBckGrndActReqCode);
+        startActivityForResult(i, this.THROW_SELECT_NAVDRAWERBCKGRND_ACT_REQCODE);
         Log.d("throwSelectBckActivity", "Exit the throwSelectNavDrawerBackgroundActivity method in the DisplayAccountActivity class.");
     }//End of throwSelectLogoActivity method
 
@@ -998,132 +1167,211 @@ public class MainActivity extends AppCompatActivity {
         boolean categoryMenuUpdate = false;
         RecyclerView recyclerView = HomeFragment.getRv();
         RecyclerView.Adapter adapter = null;
-        if (requestCode == this.throwAddAccountActReqCode && resultCode == RESULT_OK) {
+        int itemPosition = -1;
+        //Declare and initialize a NotifyChangeType variable to be passed into method that updates RV data
+        NotifyChangeType changeType = null;
+        //Get adapter from rRV
+        adapter = recyclerView.getAdapter();
+        if (requestCode == this.THROW_ADD_ACCOUNT_ACT_REQCODE && resultCode == RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from AddAccountActivity (received by MainActivity).");
             //Update RV data set
-            //Consider the category selected on drawer menu to run correct sql query
             //@FIXME: Investigate--> What's best option? notify adapter about data set change or set up new adapter with method created??
-            //AccountAdapter accountAdapter = new AccountAdapter(getBaseContext(),null);
-            //updateRecyclerViewData(accountAdapter);
-            //((AccountAdapter) recyclerView.getAdapter()).setCursor(accountsDB.getAccountsList());
-            //adapter =  recyclerView.getAdapter();
-            //Define text to display Toast to confirm the account has been added
+            //@Fixme: In Progress
+            //Get current item position in the updated cursor. Use getCursorToUpdateRV with the most up to date data set
+            itemPosition = accountsDB.findItemPositionInCursor(getCursorToUpdateRV((AccountAdapter)adapter),accountsDB.getMaxItemIdInTable(ACCOUNTS_TABLE));
+            //Set notify change type to insert item type
+            changeType = NotifyChangeType.ITEM_INSERTED;
+            //Set proper text to display item insertion with a Toast
+            toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountAdded);
             //Set variable to display Toast
             goodResultDelivered = true;
-
-            toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountAdded);
-        } else if (requestCode == this.throwAddAccountActReqCode && resultCode == RESULT_CANCELED) {
+        } else if (requestCode == this.THROW_ADD_ACCOUNT_ACT_REQCODE && resultCode == RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from AddAccountActivity (received by MainActivity).");
             //Check if result comes from AddAccountActivity
-        } else if(requestCode == this.throwAddAccountActReqCode && resultCode == RESULT_TIMEOUT){
+        } else if(requestCode == this.THROW_ADD_ACCOUNT_ACT_REQCODE && resultCode == RESULT_TIMEOUT){
             Log.d("onActivityResult", "Received TIMEOUT result from AddAccountActivity (received by MainActivity).");
-
-        }else if (requestCode == throwAddUserNameActReqCode && resultCode == RESULT_OK) {
+        }else if (requestCode == THROW_ADD_USERNAME_ACT_REQCODE && resultCode == RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from AddUserNameActivity (received by MainActivity).");
+            //Get current item position in the updated cursor. Use getCursorToUpdateRV with the most up to date data set
+            itemPosition = accountsDB.findItemPositionInCursor(getCursorToUpdateRV((UserNameAdapter)adapter),accountsDB.getMaxItemIdInTable(USERNAME_TABLE));
+            //Set notify change type to insert item type
+            changeType = NotifyChangeType.ITEM_INSERTED;
+            //Define text to display Toast to confirm the user has been added
+            toastText = data.getExtras().getString("userNameValue") + " " + getResources().getString(R.string.userNameAdded);
+            //displayToast(this, toastText, Toast.LENGTH_LONG, Gravity.CENTER);
             //Set variable to display Toast
             goodResultDelivered = true;
-            //Define text to display Toast to confirm the account has been added
-            toastText = getResources().getString(R.string.userNameAdded);
-        } else if (requestCode == throwAddUserNameActReqCode && resultCode == RESULT_CANCELED) {
+        } else if (requestCode == THROW_ADD_USERNAME_ACT_REQCODE && resultCode == RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from AddUserNameActivity (received by MainActivity).");
-        } else if (requestCode == throwAddUserNameActReqCode && resultCode == RESULT_TIMEOUT) {
+        } else if (requestCode == THROW_ADD_USERNAME_ACT_REQCODE && resultCode == RESULT_TIMEOUT) {
             Log.d("onActivityResult", "Received TIMEOUT result from AddUserNameActivity (received by MainActivity).");
             isLogOutTimedOut = true;
-        }else if (requestCode == throwAddPsswrdActReqCode && resultCode == RESULT_OK) {
+        }else if (requestCode == THROW_ADD_PSSWRD_ACT_REQCODE && resultCode == RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from AddPsswrdActivity (received by MainActivity).");
+            //Get current item position in the updated cursor. Use getCursorToUpdateRV with the most up to date data set
+            itemPosition = accountsDB.findItemPositionInCursor(getCursorToUpdateRV((PsswrdAdapter)adapter),accountsDB.getMaxItemIdInTable(PSSWRD_TABLE));
+            //Set notify change type to insert item type
+            changeType = NotifyChangeType.ITEM_INSERTED;
+            //Define text to display Toast to confirm the password has been added
+            toastText = data.getExtras().getString("psswrdValue") + " " + getResources().getString(R.string.psswrdAdded);
             //Set variable to display Toast
             goodResultDelivered = true;
-            //Define text to display Toast to confirm the account has been added
-            toastText = getResources().getString(R.string.psswrdAdded);
-        } else if (requestCode == throwAddPsswrdActReqCode && resultCode == RESULT_CANCELED) {
+        } else if (requestCode == THROW_ADD_PSSWRD_ACT_REQCODE && resultCode == RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from AddPsswrdActivity (received by MainActivity).");
-        } else if (requestCode == throwAddQuestionActReqCode && resultCode == RESULT_OK) {
+        } else if (requestCode == THROW_ADD_QUESTION_ACT_REQCODE && resultCode == RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from AddAccountActivity (received by MainActivity).");
+            //Get current item position in the updated cursor. Use getCursorToUpdateRV with the most up to date data set
+            itemPosition = accountsDB.findItemPositionInCursor(getCursorToUpdateRV((SecurityQuestionAdapter)adapter),accountsDB.getMaxItemIdInTable(QUESTION_TABLE));
+            //Set notify change type to insert item type
+            changeType = NotifyChangeType.ITEM_INSERTED;
+            //Define text to display Toast to confirm the question has been added
+            toastText = data.getExtras().getString("questionValue") + " " +  getResources().getString(R.string.questionAdded);
             //Set variable to display Toast
             goodResultDelivered = true;
-            //Define text to display Toast to confirm the account has been added
-            toastText = getResources().getString(R.string.questionAdded);
-        } else if (requestCode == throwAddQuestionActReqCode && resultCode == RESULT_CANCELED) {
+        } else if (requestCode == THROW_ADD_QUESTION_ACT_REQCODE && resultCode == RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from AddQuestionActivity (received by MainActivity).");
-        } else if (requestCode == throwAddCategoryReqCode && resultCode == Activity.RESULT_OK) {
+        } else if (requestCode == TRHOW_ADD_CATEGORY_REQCODE && resultCode == Activity.RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from AddCategoryActivity (received by HomeFragment).");
             goodResultDelivered = true;
             categoryMenuUpdate = true;
             toastText = data.getExtras().getString("categoryName") + " " + getResources().getString(R.string.catAdded);
-        } else if (requestCode == throwAddCategoryReqCode && resultCode == Activity.RESULT_CANCELED) {
+        } else if (requestCode == TRHOW_ADD_CATEGORY_REQCODE && resultCode == Activity.RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from AddCategoryActivity received by MainAcitvity.");
-        } else if (requestCode == throwEditUserNameActReqCode && resultCode == RESULT_OK) {
+        } else if (requestCode == THROW_EDIT_USERNAME_ACT_REQCODE && resultCode == RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from EditUserNameActivity (received by MainActivity).");
-            //Define text to display Toast to confirm the account has been added
+            //Check data back from Activity to see if item was deleted or just changed to set up proper message text and notify change type
             if (data.getExtras().getBoolean("itemDeleted")) {
+                //If no actual account id is returned, means the account was deleted
+                //Set the NotifyChangeType variable to Item removed
+                changeType = NotifyChangeType.ITEM_REMOVED;
+                //Set text to item removed
                 toastText = data.getExtras().getString("itemDeletedName") + " " + getResources().getString(R.string.userNameDeleted);
             } else {
-                toastText = getResources().getString(R.string.userNameUpdated);
+                //In case user name changed flag is returned, get the user name from DB
+                UserName editedUsername = accountsDB.getUserNameByID(data.getExtras().getInt("userNameID"));
+                //Check if account not null,set up the NotifyChangeType variable
+                if(editedUsername != null){
+                    //To define what type of notify change, call method that will determine it
+                    changeType = getNotifyChangeType(editedUsername);
+                }else{
+                    //Set default notify change type to Data set change
+                    changeType = NotifyChangeType.DATA_SET_CHANGED;
+                }
+                //Set text to display Toast to confirm the user name has been UPDATED
+                toastText = data.getExtras().getString("userNameValue") + " " + getResources().getString(R.string.userNameUpdated);
             }//End of if else statement to check the boolean value retrieved from extra data
-            //Set variable to display Toast
+            //Set item position in the RV
+            itemPosition = data.getExtras().getInt("position");
+            //Set variable to display Toast and update RV
             goodResultDelivered = true;
-        } else if (requestCode == throwEditUserNameActReqCode && resultCode == RESULT_CANCELED) {
+        } else if (requestCode == THROW_EDIT_USERNAME_ACT_REQCODE && resultCode == RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from EditUserNameActivity (received by MainActivity).");
-        } else if (requestCode == throwEditPsswrdActReqCode && resultCode == RESULT_OK) {
-            Log.d("onActivityResult", "Received GOOD result from EditUserNameActivity (received by MainActivity).");
-            //Define text to display Toast to confirm the account has been added
+        } else if (requestCode == THROW_EDIT_PSSWRD_ACT_REQCODE && resultCode == RESULT_OK) {
+            Log.d("onActivityResult", "Received GOOD result from EditPsswrdActivity (received by MainActivity).");
+            //Check data back from Activity to see if item was deleted or just changed to set up proper message text and notify change type
             if (data.getExtras().getBoolean("itemDeleted")) {
+                //If no item deleted boolean flag is returned, means the password was deleted
+                //Set the NotifyChangeType variable to Item removed
+                changeType = NotifyChangeType.ITEM_REMOVED;
+                //Set text to item removed
                 toastText = data.getExtras().getString("itemDeletedName") + " " + getResources().getString(R.string.psswrdDeleted);
             } else {
-                toastText = getResources().getString(R.string.psswrdUpdated);
+                //In case password change flag is returned, get the password from DB
+                Psswrd editedPsswrd = accountsDB.getPsswrdByID(data.getExtras().getInt("psswrdID"));
+                //Check if password not null,set up the NotifyChangeType variable
+                if(editedPsswrd != null){
+                    //To define what type of notify change, call method that will determine it
+                    changeType = getNotifyChangeType(editedPsswrd);
+                }else{
+                    //Set default notify change type to Data set change
+                    changeType = NotifyChangeType.DATA_SET_CHANGED;
+                }
+                //Set text to display Toast to confirm the password has been UPDATED
+                toastText = data.getExtras().getString("psswrdValue") + " " + getResources().getString(R.string.psswrdUpdated);
             }
+            //Set item position in the RV
+            itemPosition = data.getExtras().getInt("position");
             //Set variable to display Toast
             goodResultDelivered = true;
-        } else if (requestCode == throwEditPsswrdActReqCode && resultCode == RESULT_CANCELED) {
+        } else if (requestCode == THROW_EDIT_PSSWRD_ACT_REQCODE && resultCode == RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from EditUserNameActivity (received by MainActivity).");
-        } else if (requestCode == throwEditQuestionActReqCode && resultCode == RESULT_OK) {
+        } else if (requestCode == THROW_EDIT_QUESTIONS_ACT_REQCODE && resultCode == RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from EditQuestionActivity (received by MainActivity).");
             //Define text to display Toast to confirm the account has been added
             if (data.getExtras().getBoolean("itemDeleted")) {
+                //If no item deleted boolean flag id is returned, means the password was deleted
+                //Set the NotifyChangeType variable to Item removed
+                changeType = NotifyChangeType.ITEM_REMOVED;
                 toastText = data.getExtras().getString("itemDeletedName") + " " + getResources().getString(R.string.questionDeleted);
             } else {
-                toastText = getResources().getString(R.string.questionUpdated);
+                //In case actual account id is returned, get the account from DB
+                Question editedQuestion = accountsDB.getQuestionByID(data.getExtras().getInt("questionID"));
+                //Check if account not null,set up the NotifyChangeType variable
+                if(editedQuestion != null){
+                    //To define what type of notify change, call method that will determine it
+                    changeType = getNotifyChangeType(editedQuestion);
+                }else{
+                    //Set default notify change type to Data set change
+                    changeType = NotifyChangeType.DATA_SET_CHANGED;
+                }
+                toastText = data.getExtras().getString("questionValue") + " " +  getResources().getString(R.string.questionUpdated);
             }
+            //Set item position in the RV
+            itemPosition = data.getExtras().getInt("position");
             //Set variable to display Toast
             goodResultDelivered = true;
-        } else if (requestCode == throwEditQuestionActReqCode && resultCode == RESULT_CANCELED) {
+        } else if (requestCode == THROW_EDIT_QUESTIONS_ACT_REQCODE && resultCode == RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from EditQuestionActivity (received by MainActivity).");
-        } else if (requestCode == throwEditAccountActReqCode && resultCode == Activity.RESULT_OK) {
+        } else if (requestCode == THROW_EDIT_ACCOUNT_ACT_REQCODE && resultCode == Activity.RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from EditAccountActivity (received by HomeFragment).");
-            //Define text to display Toast to confirm the account has been added
-            //Set variable to display Toast
-            goodResultDelivered = true;
-            //@Fixme: Check EditAccountActivity, even for deleted accounts returns text account has been updated
+            //Check type of edit returned byt EditAccountActivity: Delete account or edit it
             if (data.getExtras().getInt("accountID") == -1) {
+                //If no actual account id is returned, means the account was deleted
+                //Set the NotifyChangeType variable to Item removed
+                changeType = NotifyChangeType.ITEM_REMOVED;
+                //Set text to display Toast to confirm the account has been DELETED
                 toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountDeleted);
             } else {
+                //In case actual account id is returned, get the account from DB
+                Account editedAccount = accountsDB.getAccountByID(data.getExtras().getInt("accountID"));
+                //Check if account not null,set up the NotifyChangeType variable
+                if(editedAccount != null){
+                    //To define what type of notify change, call method that will determine it
+                    changeType = getNotifyChangeType(editedAccount);
+                }else{
+                    //Set default notify change type to Data set change
+                    changeType = NotifyChangeType.DATA_SET_CHANGED;
+                }
+                //Set text to display Toast to confirm the account has been UPDATED
                 toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountUpdated);
-            }
-        } else if (requestCode == throwEditAccountActReqCode && resultCode == Activity.RESULT_CANCELED) {
+            }//End of if else statement to check account id
+            //Set item position in the RV
+            itemPosition = data.getExtras().getInt("position");
+            //Set variable to display Toast
+            goodResultDelivered = true;
+        } else if (requestCode == THROW_EDIT_ACCOUNT_ACT_REQCODE && resultCode == Activity.RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from EditAccountActivity (received by HomeFragment).");
-        } else if(requestCode == this.throwEditAccountActReqCode && resultCode == RESULT_TIMEOUT){
+        } else if(requestCode == this.THROW_EDIT_ACCOUNT_ACT_REQCODE && resultCode == RESULT_TIMEOUT){
             Log.d("onActivityResult", "Received TIMEOUT result from EditAccountActivity (received by MainActivity).");
             this.logoutTimer.cancel();
             this.finish();
-        } else if (requestCode == throwEditCategoryActReqCode && resultCode == Activity.RESULT_OK) {
+        } else if (requestCode == THROW_EDIT_CATEGORY_ACT_REQCODE && resultCode == Activity.RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from EditCategoryActivity received by MainAcitvity.");
             goodResultDelivered = true;
             categoryMenuUpdate = true;
             toastText = data.getExtras().getString("categoryName") + " " + getResources().getString(R.string.catUpdated);
-        } else if (requestCode == throwEditCategoryActReqCode && resultCode == Activity.RESULT_CANCELED) {
+        } else if (requestCode == THROW_EDIT_CATEGORY_ACT_REQCODE && resultCode == Activity.RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from EditCategoryActivity received by MainAcitvity.");
-        } else if (requestCode == throwSelectNavDrawerBckGrndActReqCode && resultCode == Activity.RESULT_OK) {
+        } else if (requestCode == THROW_SELECT_NAVDRAWERBCKGRND_ACT_REQCODE && resultCode == Activity.RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from SelectNavDrawerBckGrnd received by MainAcitvity.");
             NavigationView navigationView = findViewById(R.id.nav_view);
             View headerView = navigationView.getHeaderView(0);
             headerView.setBackground(getResources().getDrawable(data.getExtras().getInt("selectedImgResourceID"), null));
             ContentValues values = new ContentValues();
-            //@Fixme: Change to get AppLogin ID passed in from LoginActivity and not the max number in the table
-            //@Fixme: This might not be impacted by new AppLoggin table definition with encrypted user and psswrd IDs
             values.put(ID_COLUMN, currentAppLoggin.get_id());
             values.put(PICTUREID_COLUMN, data.getExtras().getInt("selectedImgID"));
             accountsDB.updateTable(APPLOGGIN_TABLE, values);
-        } else if (requestCode == throwSelectNavDrawerBckGrndActReqCode && resultCode == Activity.RESULT_CANCELED) {
+        } else if (requestCode == THROW_SELECT_NAVDRAWERBCKGRND_ACT_REQCODE && resultCode == Activity.RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from SelectNavDrawerBckGrnd received by MainAcitvity.");
         }//End of if else statement chain to check activity results
 
@@ -1137,9 +1385,8 @@ public class MainActivity extends AppCompatActivity {
                 logoutTimer = new LogOutTimer(logOutTimeRemainder,250,this);
                 logoutTimer.start();
             }
-            if (categoryMenuUpdate) {
+            if (categoryMenuUpdate && goodResultDelivered) {
                 //Check if toast would be displayed
-                if (goodResultDelivered) {
                     //Get the updated list of categories
                     this.categoryList = this.accountsDB.getCategoryList();
                     //Get the navigation view to access the menu object
@@ -1148,10 +1395,10 @@ public class MainActivity extends AppCompatActivity {
                     //for the AlartDialog numbering issue
                     int positionInCatList = -1;
                     MenuItem menuItem = null;
-                    if (requestCode == throwAddCategoryReqCode) {
+                    if (requestCode == TRHOW_ADD_CATEGORY_REQCODE) {
                         positionInCatList = navigationView.getMenu().size() - 1;
                         this.updateNavMenu(navigationView.getMenu(), positionInCatList);
-                    } else if (requestCode == throwEditCategoryActReqCode) {
+                    } else if (requestCode == THROW_EDIT_CATEGORY_ACT_REQCODE) {
                         positionInCatList = data.getExtras().getInt("positionInCatList");
                         //Get the menu item in the same position as the one in the categor list
                         menuItem = navigationView.getMenu().getItem(positionInCatList);
@@ -1162,26 +1409,159 @@ public class MainActivity extends AppCompatActivity {
                         //Set up the proper icon for each category (icon data comes from DB), as this might be updated from previous activity
                         idRes = this.getResources().getIdentifier(categoryList.get(positionInCatList).getIcon().getName(), "drawable", this.getPackageName());
                         menuItem.setIcon(idRes);
-                    }
+                        //Check if  category updated is the one already selected, so RV heading is updated with correct name
+                        if(navigationView.getMenu().getItem(positionInCatList ).isChecked()){
+                            Toolbar toolbar = findViewById(R.id.toolbar);
+                            toolbar.setTitle(updatedCategory.getName());
+                        }
+                    }//End of if else statement to check Category activity thrown
                     //Display Toast to confirm the account has been added
                     displayToast(this, toastText, Toast.LENGTH_LONG, Gravity.CENTER);
-                }//End of if statement to check good result was delivered
             } else {
                 //Check if toast would be displayed
                 if (goodResultDelivered) {
-                    adapter = recyclerView.getAdapter();
-                    //recyclerView.getAdapter().notifyDataSetChanged();
-                    updateRecyclerViewData(adapter);
-                    //Move to new account position
+                    //Call method to update RV, pass in the item position and set the notify change method to inset a new item in the position passed in
+                    updateRecyclerViewData(adapter,itemPosition,changeType);
+                    //As RV to scroll up to the item position in case isn't on display
+                    recyclerView.scrollToPosition(itemPosition);
                     //Display Toast to confirm the account has been added
                     displayToast(this, toastText, Toast.LENGTH_LONG, Gravity.CENTER);
                 }//End of if statement to check good result was delivered
             }//End of if else statement that checks if nav drawer menu has to be updated
-        }
+        }//End of if else for timeout logout
 
         //End of if else statement to check the data comes from one of the thrown activities
         Log.d("onActivityResult", "Exit the onActivityResult method in the DisplayAccountActivity class.");
     }//End of onActivityResult method
+
+    public static NotifyChangeType getNotifyChangeType(Account editedAccount){
+        Log.d("getNotifyChangeType", "Enter getNotifyChangeType method in the MainActivity class.");
+        //Declare and initialize the chaneType variable to be returned by method
+        NotifyChangeType changeType = null;
+
+        //Check if any of the following three conditions is met:
+        //Current category is favorites and the edited account isn't anymore a favorite account
+        //UserName search filter active and the account user name doesn't match the search criteria anymore
+        //Password search filter active and the account password doesn't match the search criteria anymore
+        //Account name search filter active and the account name doesn't match the search criteria anymore
+        if(
+                (currentCategory == favCategory && !editedAccount.isFavorite())
+                || (isSearchUserNameFilter && !cryptographer.decryptText(editedAccount.getUserName().getValue(),new IvParameterSpec(editedAccount.getUserName().getIv())).equals(lastSearchText))
+                || (isSearchPsswrdFilter && !cryptographer.decryptText(editedAccount.getPsswrd().getValue(),new IvParameterSpec(editedAccount.getPsswrd().getIv())).equals(lastSearchText))
+                ||(!isSearchUserNameFilter && !isSearchPsswrdFilter && !editedAccount.getName().toLowerCase().contains(lastSearchText.toLowerCase()))){
+            changeType = MainActivity.NotifyChangeType.ITEM_REMOVED;
+            Log.d("getNotifyChangeType", "ITEM_REMOVED selected in getNotifyChangeType method in the MainActivity class for ."+ editedAccount.getName());
+        }else {
+            //Any other edition, the account item must be notified as changed
+            changeType = MainActivity.NotifyChangeType.ITEM_CHANGED;
+            Log.d("getNotifyChangeType", "ITEM_CHANGED selected in getNotifyChangeType method in the MainActivity class for ."+ editedAccount.getName());
+        }
+        //Check if current category is the favorites category
+//        if(currentCategory == favCategory){
+//            //Check edited account parameter and get its isFavorite attribute.
+//            if(!editedAccount.isFavorite()){
+//                //If it isn't the account was unticked as fav and therefore should
+//                //be removed from current RV data set
+//                changeType = MainActivity.NotifyChangeType.ITEM_REMOVED;
+//                Log.d("getNotifyChangeType", "ITEM_REMOVED selected in getNotifyChangeType method in the MainActivity class for ."+ editedAccount.getName());
+//            }else{
+//                //Otherwise, check isSearch filter flag and then specific search flags for user name and password
+//                if(isSearchFilter){
+//                    //Check if any of the following three conditions is met:
+//                    //UserName search filter active and the account user name doesn't match the search criteria anymore
+//                    //Password search filter active and the account password doesn't match the search criteria anymore
+//                    //Account name search filter active and the account name doesn't match the search criteria anymore
+//                    if(isSearchUserNameFilter && !cryptographer.decryptText(editedAccount.getUserName().getValue(),new IvParameterSpec(editedAccount.getUserName().getIv())).equals(lastSearchText)
+//                            ||isSearchPsswrdFilter && !cryptographer.decryptText(editedAccount.getPsswrd().getValue(),new IvParameterSpec(editedAccount.getPsswrd().getIv())).equals(lastSearchText)
+//                            ||!isSearchUserNameFilter && !isSearchPsswrdFilter && !editedAccount.getName().toLowerCase().contains(lastSearchText.toLowerCase())){
+//                        changeType = MainActivity.NotifyChangeType.ITEM_REMOVED;
+//                        Log.d("getNotifyChangeType", "ITEM_REMOVED selected in getNotifyChangeType method in the MainActivity class for ."+ editedAccount.getName());
+//                    }else {
+//                        //Any other edition, the account item must be notified as changed
+//                        changeType = MainActivity.NotifyChangeType.ITEM_CHANGED;
+//                        Log.d("getNotifyChangeType", "ITEM_CHANGED selected in getNotifyChangeType method in the MainActivity class for ."+ editedAccount.getName());
+//                    }
+//                }else{
+//                    //Any other edition, the account item must be notified as changed
+//                    changeType = MainActivity.NotifyChangeType.ITEM_CHANGED;
+//                    Log.d("getNotifyChangeType", "ITEM_CHANGED selected in getNotifyChangeType method in the MainActivity class for ."+ editedAccount.getName());
+//                }
+//            }
+//        }else{
+//            if(isSearchFilter){
+//                if(isSearchUserNameFilter && !cryptographer.decryptText(editedAccount.getUserName().getValue(),new IvParameterSpec(editedAccount.getUserName().getIv())).equals(lastSearchText)){
+//                    changeType = MainActivity.NotifyChangeType.ITEM_REMOVED;
+//                }else if(isSearchPsswrdFilter && !cryptographer.decryptText(editedAccount.getPsswrd().getValue(),new IvParameterSpec(editedAccount.getPsswrd().getIv())).equals(lastSearchText)){
+//                    changeType = MainActivity.NotifyChangeType.ITEM_REMOVED;
+//                }else if (!isSearchUserNameFilter && !isSearchPsswrdFilter && !editedAccount.getName().toLowerCase().contains(lastSearchText.toLowerCase())){
+//                    changeType = MainActivity.NotifyChangeType.ITEM_REMOVED;
+//                }else {
+//                    changeType = MainActivity.NotifyChangeType.ITEM_CHANGED;
+//                }
+//            }else{
+//                changeType = MainActivity.NotifyChangeType.ITEM_CHANGED;
+//            }
+//        }
+        Log.d("getNotifyChangeType", "Exit getNotifyChangeType method in the MainActivity class.");
+        return changeType;
+    }//End of getNotifyChangeType method
+
+    public static NotifyChangeType getNotifyChangeType(UserName editedUserName) {
+        Log.d("getNotifyChangeType", "Enter getNotifyChangeType method ifor UserName class n the MainActivity class.");
+        //Declare and initialize the chaneType variable to be returned by method
+        NotifyChangeType changeType = null;
+        if (isSearchFilter && !cryptographer.decryptText(editedUserName.getValue(), new IvParameterSpec(editedUserName.getIv())).equals(lastSearchText)) {
+            changeType = NotifyChangeType.ITEM_REMOVED;
+            Log.d("getNotifyChangeType", "ITEM_REMOVED selected in getNotifyChangeType method for UserName class in the MainActivity class for user name with id:  " + editedUserName.get_id());
+        }else{
+            //Any other edition, the account item must be notified as changed
+            changeType = MainActivity.NotifyChangeType.ITEM_CHANGED;
+            Log.d("getNotifyChangeType", "ITEM_CHANGED selected in getNotifyChangeType method for UserName class in the MainActivity class for user name with id: "+ editedUserName.get_id());
+        }
+
+//        if(
+//                (currentCategory == favCategory && !editedUserName.isFavorite())
+//                        || (isSearchUserNameFilter && !cryptographer.decryptText(editedUserName.getUserName().getValue(),new IvParameterSpec(editedUserName.getUserName().getIv())).equals(lastSearchText))
+//                        || (isSearchPsswrdFilter && !cryptographer.decryptText(editedUserName.getPsswrd().getValue(),new IvParameterSpec(editedUserName.getPsswrd().getIv())).equals(lastSearchText))
+//                        ||(!isSearchUserNameFilter && !isSearchPsswrdFilter && !editedUserName.getName().toLowerCase().contains(lastSearchText.toLowerCase()))){
+
+
+        Log.d("getNotifyChangeType", "Exit getNotifyChangeType method for UserName class in the MainActivity class.");
+        return changeType;
+    }//End of getNotifyChangeType method for UserName class
+
+    public static NotifyChangeType getNotifyChangeType(Psswrd editedPsswrd) {
+        Log.d("getNotifyChangeType", "Enter getNotifyChangeType method for Psswrd class in the MainActivity class.");
+        //Declare and initialize the chaneType variable to be returned by method
+        NotifyChangeType changeType = null;
+        if (isSearchFilter && !cryptographer.decryptText(editedPsswrd.getValue(), new IvParameterSpec(editedPsswrd.getIv())).equals(lastSearchText)) {
+            changeType = NotifyChangeType.ITEM_REMOVED;
+            Log.d("getNotifyChangeType", "ITEM_REMOVED selected in getNotifyChangeType method for Psswrd class in the MainActivity class for user name with id:  " + editedPsswrd.get_id());
+        }else{
+            //Any other edition, the account item must be notified as changed
+            changeType = MainActivity.NotifyChangeType.ITEM_CHANGED;
+            Log.d("getNotifyChangeType", "ITEM_CHANGED selected in getNotifyChangeType method for Psswrd class in the MainActivity class for user name with id: "+ editedPsswrd.get_id());
+        }
+        Log.d("getNotifyChangeType", "Exit getNotifyChangeType method for Psswrd class in the MainActivity class.");
+        return changeType;
+    }//End of getNotifyChangeType method for UserName class
+
+    public static NotifyChangeType getNotifyChangeType(Question editedQuestion) {
+        Log.d("getNotifyChangeType", "Enter getNotifyChangeType method for Psswrd class in the MainActivity class.");
+        //Declare and initialize the chaneType variable to be returned by method
+        NotifyChangeType changeType = null;
+        if (isSearchFilter && !editedQuestion.getValue().toLowerCase().contains(lastSearchText.toLowerCase())) {
+            changeType = NotifyChangeType.ITEM_REMOVED;
+            Log.d("getNotifyChangeType", "ITEM_REMOVED selected in getNotifyChangeType method for Psswrd class in the MainActivity class for user name with id:  " + editedQuestion.get_id());
+        }else{
+            //Any other edition, the account item must be notified as changed
+            changeType = MainActivity.NotifyChangeType.ITEM_CHANGED;
+            Log.d("getNotifyChangeType", "ITEM_CHANGED selected in getNotifyChangeType method for Psswrd class in the MainActivity class for user name with id: "+ editedQuestion.get_id());
+        }
+        Log.d("getNotifyChangeType", "Exit getNotifyChangeType method for Psswrd class in the MainActivity class.");
+        return changeType;
+    }//End of getNotifyChangeType method for UserName class
+
 
     //Method to display a generic new Dialog Alert view from any activity.
     public static AlertDialog.Builder displayAlertDialogWithInput(Context context, EditText inputField, String title, String message, String hint) {
@@ -1232,24 +1612,24 @@ public class MainActivity extends AppCompatActivity {
         return listOfQuestionLists;
     }
 
-    public static int getThrowAddQuestionActReqCode() {
-        return throwAddQuestionActReqCode;
+    public static int getThrowAddQuestionActReqcode() {
+        return THROW_ADD_QUESTION_ACT_REQCODE;
     }
 
-    public static int getThrowEditAccountActReqCode() {
-        return throwEditAccountActReqCode;
+    public static int getThrowEditAccountActReqcode() {
+        return THROW_EDIT_ACCOUNT_ACT_REQCODE;
     }
 
-    public int getThrowEditUserNameActReqCode() {
-        return throwEditUserNameActReqCode;
+    public int getTHROW_EDIT_USERNAME_ACT_REQCODE() {
+        return THROW_EDIT_USERNAME_ACT_REQCODE;
     }
 
-    public static int getThrowAddUserNameActReqCode() {
-        return throwAddUserNameActReqCode;
+    public static int getThrowAddUsernameActReqcode() {
+        return THROW_ADD_USERNAME_ACT_REQCODE;
     }
 
-    public static int getThrowAddPsswrdActReqCode() {
-        return throwAddPsswrdActReqCode;
+    public static int getThrowAddPsswrdActReqcode() {
+        return THROW_ADD_PSSWRD_ACT_REQCODE;
     }
 
     public static String getUsernameTable() {
@@ -1320,6 +1700,10 @@ public class MainActivity extends AppCompatActivity {
         return CATEGORY_ID_COLUMN;
     }
 
+    public static String getQuestionIdColumn() {
+        return QUESTION_ID_COLUMN;
+    }
+
     public static String getQuestionId1Column() {
         return QUESTION_ID_1_COLUMN;
     }
@@ -1330,6 +1714,34 @@ public class MainActivity extends AppCompatActivity {
 
     public static String getQuestionId3Column() {
         return QUESTION_ID_3_COLUMN;
+    }
+
+    public static String getAnswerIdColumn() {
+        return ANSWER_ID_COLUMN;
+    }
+
+    public static String getIsSearchFilterColumn() {
+        return IS_SEARCH_FILTER_COLUMN;
+    }
+
+    public static String getIsSearchUserFilterColumn() {
+        return IS_SEARCH_USER_FILTER_COLUMN;
+    }
+
+    public static String getIsSearchPsswrdFilterColumn() {
+        return IS_SEARCH_PSSWRD_FILTER_COLUMN;
+    }
+
+    public static String getLastSearchTextColumn() {
+        return LAST_SEARCH_TEXT_COLUMN;
+    }
+
+    public static String getIsSortFilterColumn() {
+        return IS_SORT_FILTER_COLUMN;
+    }
+
+    public static String getCurrentSortFilterColumn() {
+        return CURRENT_SORT_FILTER_COLUMN;
     }
 
     public static int getThrowImageGalleryReqCode() {
@@ -1384,12 +1796,24 @@ public class MainActivity extends AppCompatActivity {
         return NAME_COLUMN;
     }
 
+    public static String getIconLocationColumn() {
+        return ICON_LOCATION_COLUMN;
+    }
+
+    public static String getIconIsSelectedColumn() {
+        return ICON_IS_SELECTED_COLUMN;
+    }
+
     public static String getIsFavoriteColumn() {
         return IS_FAVORITE_COLUMN;
     }
 
     public static String getDateCreatedColumn() {
         return DATE_CREATED_COLUMN;
+    }
+
+    public static String getDateChangeColumn() {
+        return DATE_CHANGE_COLUMN;
     }
 
     public static String getValueColumn() {
@@ -1404,6 +1828,10 @@ public class MainActivity extends AppCompatActivity {
         return PICTUREID_COLUMN;
     }
 
+    public static String getInitVectorColumn() {
+        return INIT_VECTOR_COLUMN;
+    }
+
     public static int getCurrentTabID() {
         return currentTab;
     }
@@ -1411,6 +1839,15 @@ public class MainActivity extends AppCompatActivity {
     public static Category getCurrentCategory() {
         return currentCategory;
     }
+
+    public static String getCurrentCategoryIdColumn() {
+        return CURRENT_CATEGORY_ID_COLUMN;
+    }
+
+    public static String getCurrentTabColumn() {
+        return CURRENT_TAB_COLUMN;
+    }
+
 
     public static Category getHomeCategory() {
         return homeCategory;
@@ -1517,28 +1954,40 @@ public class MainActivity extends AppCompatActivity {
         }//End of if else statement that checks the isFavorite attribute state
         //Call DB method to update the account item in the Accounts table
         ContentValues values = new ContentValues();
-        values.put("_id", account.get_id());
-        values.put("isFavorite", account.isFavorite());
+        values.put(ID_COLUMN, account.get_id());
+        values.put(IS_FAVORITE_COLUMN, account.isFavorite());
+//        SearchType searchType = null;
         if (accountsDB.updateTable(ACCOUNTS_TABLE, values)) {
             //If DB update was successful, call method to update the recyclerview
-            if (isSearchFilter) {
-                if (isSearchUserNameFilter) {
-                    updateRecyclerViewData(accountAdapter, SearchType.ACCOUNT_WITH_USERNAME);
-                } else if (isSearchPsswrdFilter) {
-                    updateRecyclerViewData(accountAdapter, SearchType.ACCOUNT_WITH_PSSWRD);
-                } else {
-                    updateRecyclerViewData(accountAdapter);
-                }
-            } else {
-                updateRecyclerViewData(accountAdapter);
-            }//End of if else statement to check the search filter is active
+//            if (isSearchFilter) {
+//                if (isSearchUserNameFilter) {
+//                    //updateRecyclerViewData(accountAdapter, SearchType.ACCOUNT_WITH_USERNAME);
+//                    searchType = SearchType.ACCOUNT_WITH_USERNAME;
+//                } else if (isSearchPsswrdFilter) {
+//                    //updateRecyclerViewData(accountAdapter, SearchType.ACCOUNT_WITH_PSSWRD);
+//                    searchType = SearchType.ACCOUNT_WITH_USERNAME;
+//                } else {
+//                    searchType = SearchType.ACCOUNTS;
+//                    //updateRecyclerViewData(accountAdapter);
+//                }
+//            } else {
+//
+//                //updateRecyclerViewData(accountAdapter);
+//
+//            }//End of if else statement to check the search filter is active
 
-            recyclerView.scrollToPosition(adapterPosition);
+            //recyclerView.scrollToPosition(adapterPosition);
+            //accountAdapter.notifyItemChanged(adapterPosition);
+            if(currentCategory.equals(favCategory)){
+                updateRecyclerViewData(accountAdapter,adapterPosition,NotifyChangeType.ITEM_REMOVED);
+            }else{
+                updateRecyclerViewData(accountAdapter,adapterPosition,NotifyChangeType.ITEM_CHANGED);
+            }
+
             update = true;
         } else {
-            //@Fixme: Is the prompt to be displayed?
             //Prompt the user about DB problem
-            //MainActivity.displayToast(this.getBaseContext(),"DB Error",Toast.LENGTH_SHORT,Gravity.CENTER);
+            MainActivity.displayToast(v.getContext(),"DB Error",Toast.LENGTH_SHORT,Gravity.CENTER);
         }//End of if else statement to check the item was updated
         Log.d("toggleIsFavorite", "Exit toggleIsFavorite method in the MainActivity class.");
         return update;
@@ -1816,7 +2265,6 @@ public class MainActivity extends AppCompatActivity {
                 //another one to hold the isChecked attribute
                 final boolean[] deletableCategories = new boolean[categoryList.size() - INDEX_TO_GET_LAST_TASK_LIST_ITEM];
                 //For loop to populate the char-sequence array with the category names coming from category list
-                //Fixme: error out of index due the index to get last taks list item
                 for (int i = INDEX_TO_GET_LAST_TASK_LIST_ITEM; i < categoryList.size(); i++) {
                     //For each item in the list, extract name and save it in the string array
 //                    int textID = getResources().getIdentifier(categoryList.get(i).getName(),"string",getPackageName());
@@ -1940,12 +2388,16 @@ public class MainActivity extends AppCompatActivity {
                                                         if (isCurrentCategoryInListToBeDeleted(currentCategory.get_id(), categoriesToBeDeleted)) {
                                                             //If that the case, move current category to Home
                                                             currentCategory = categoryList.get(0);
+                                                            //@Fixme: Update APPState with correct current category
+                                                            ContentValues values =  new ContentValues();
+                                                            updateCategoryInAppState();
                                                             //Then move Nav drawer menu item to Home
                                                             navMenu.getItem(0).setCheckable(true);
                                                             navMenu.getItem(0).setChecked(true);
                                                             NavController navController = Navigation.findNavController(MainActivity.this, R.id.nav_host_fragment);
                                                             //Ask nav controller to load the HomeFragment class
                                                             navController.navigate(R.id.nav_home);
+
                                                         }//End of if statement that checks if current category has been deleted
                                                         //Finally, display toast to confirm category was deleted
                                                         //Check the number of categories that were deleted
@@ -2208,8 +2660,8 @@ public class MainActivity extends AppCompatActivity {
                         isSortFilter = true;
                         //Call method to update RV data
                         //Call method to update the adapter and the recyclerView
-                        updateRecyclerViewData(HomeFragment.getRv().getAdapter());
-                        //@Fixme: Check what is best: setTint or setColourFilter
+                        //updateRecyclerViewData(HomeFragment.getRv().getAdapter());
+                        updateRecyclerViewData(HomeFragment.getRv().getAdapter(),-1,NotifyChangeType.DATA_SET_CHANGED);
                         item.getIcon().setTintList(ColorStateList.valueOf(themeUpdater.fetchThemeColor("colorAccent")));
                         //Update App State
                         updateSortFilterInAppState();
@@ -2222,7 +2674,6 @@ public class MainActivity extends AppCompatActivity {
                         //Call clear search filter method
                         //clearSortFilter();
                         //Update the RV list
-//                                //@Fixme: There's an issue here. Test to remember
 //                                if(isSearchFilter){
 //                                    updateRecyclerViewData(HomeFragment.getRv().getAdapter());
 //                                }
@@ -2253,6 +2704,23 @@ public class MainActivity extends AppCompatActivity {
             Log.d("ExtFullCategory", "Exit full constructor in the Category class.");
         }//End of Full Category constructor
     }//End of SearchType enum
+
+    //Inner Enum to define the possible searches available for the search filter
+    public enum NotifyChangeType {
+        //Define the possible priorities in this app
+        ITEM_CHANGED("Item changed"),
+        ITEM_REMOVED("Item removed"),
+        ITEM_INSERTED("Item inserted"),
+        DATA_SET_CHANGED("Data set changed");
+        String name;
+
+        //Full constructor
+        NotifyChangeType(String name) {
+            Log.d("NotifyChangeType", "Enter full constructor in the NotifyChangeType enum MainActivity class.");
+            this.name = name;
+            Log.d("NotifyChangeType", "Exit full constructor in the NotifyChangeType enum in MainActivity class.");
+        }//End of Full Category constructor
+    }//End of NotifyChangeType enum
 
 
     //Method to filter task or groceries by description content
@@ -2384,21 +2852,25 @@ public class MainActivity extends AppCompatActivity {
                             //or Accounts with this name
                             //Check if switch views were added to linearLayout object
                             if (linearLayout.getChildCount() > 1) {
-                                if (((Switch) linearLayout.getChildAt(0)).isChecked()) {
-                                    //Call method to update the adapter and the recyclerView
-                                    updateRecyclerViewData(HomeFragment.getRv().getAdapter(), SearchType.ACCOUNT_WITH_USERNAME);
-                                } else if (((Switch) linearLayout.getChildAt(1)).isChecked()) {
-                                    //Call method to update the adapter and the recyclerView
-                                    updateRecyclerViewData(HomeFragment.getRv().getAdapter(), SearchType.ACCOUNT_WITH_PSSWRD);
-                                } else {
-                                    //Call method to update the adapter and the recyclerView
-                                    updateRecyclerViewData(HomeFragment.getRv().getAdapter());
-                                }
+                                updateRecyclerViewData(HomeFragment.getRv().getAdapter(),-1,NotifyChangeType.DATA_SET_CHANGED);
+//                                if (((Switch) linearLayout.getChildAt(0)).isChecked()) {
+//                                    //Call method to update the adapter and the recyclerView
+//                                    //updateRecyclerViewData(HomeFragment.getRv().getAdapter(), SearchType.ACCOUNT_WITH_USERNAME);
+//                                    updateRecyclerViewData(HomeFragment.getRv().getAdapter(),-1,NotifyChangeType.DATA_SET_CHANGED);
+//                                } else if (((Switch) linearLayout.getChildAt(1)).isChecked()) {
+//                                    //Call method to update the adapter and the recyclerView
+//                                    //updateRecyclerViewData(HomeFragment.getRv().getAdapter(), SearchType.ACCOUNT_WITH_PSSWRD);
+//                                    updateRecyclerViewData(HomeFragment.getRv().getAdapter(),-1,NotifyChangeType.DATA_SET_CHANGED);
+//                                } else {
+//                                    //Call method to update the adapter and the recyclerView
+//                                   // updateRecyclerViewData(HomeFragment.getRv().getAdapter());
+//                                    updateRecyclerViewData(HomeFragment.getRv().getAdapter(),-1,NotifyChangeType.DATA_SET_CHANGED);
+//                                }
                             } else {
                                 //Call method to update the adapter and the recyclerView
-                                updateRecyclerViewData(HomeFragment.getRv().getAdapter());
+                                //updateRecyclerViewData(HomeFragment.getRv().getAdapter());
+                                updateRecyclerViewData(HomeFragment.getRv().getAdapter(),-1,NotifyChangeType.DATA_SET_CHANGED);
                             }//End of if else statement to check the children count in the linear layout, this defines what tab is being used
-                            //@Fixme: Check what is best: setTint or setColourFilter
                             item.getIcon().setTintList(ColorStateList.valueOf(themeUpdater.fetchThemeColor("colorAccent")));
                             //Update app state in DB
                             ContentValues values = new ContentValues();
@@ -2418,12 +2890,10 @@ public class MainActivity extends AppCompatActivity {
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //Call clear search filter method
-                        //clearSearchFilter();
                         //Update the RV list
-                        //@Fixme: There's an issue here. Test to remember
                         if (isSearchFilter) {
-                            updateRecyclerViewData(HomeFragment.getRv().getAdapter());
+                            //updateRecyclerViewData(HomeFragment.getRv().getAdapter());
+                            updateRecyclerViewData(HomeFragment.getRv().getAdapter(),-1,NotifyChangeType.DATA_SET_CHANGED);
                         }
                     }//End of onClick method
                 })//End of set negative button
@@ -2475,8 +2945,6 @@ public class MainActivity extends AppCompatActivity {
         this.lastSearchText = "";
         Toolbar toolbar = findViewById(R.id.toolbar);
         if (toolbar.getMenu().size() > 0) {
-            //@Fixme: use different method that setTintList?
-//            toolbar.getMenu().getItem(0).getIcon().setColorFilter(null);//.setColorFilter(null);
             toolbar.getMenu().getItem(0).getIcon().setTintList(null);
         }
         //Update app state to remove all search related fields
@@ -2500,8 +2968,7 @@ public class MainActivity extends AppCompatActivity {
         this.currentSortFilter = null;
         Toolbar toolbar = findViewById(R.id.toolbar);
         if (toolbar.getMenu().size() > 0) {
-            //@Fixme: use different method that setTintList?=
-            toolbar.getMenu().getItem(1).getIcon().setTintList(null);//.setColorFilter(null);
+            toolbar.getMenu().getItem(1).getIcon().setTintList(null);
         }
         //Update sort filter in app state
         this.updateSortFilterInAppState();
@@ -2516,6 +2983,7 @@ public class MainActivity extends AppCompatActivity {
         ContentValues values = new ContentValues();
         values.put(ID_COLUMN, accountsDB.getMaxItemIdInTable(APPSTATE_TABLE));
         values.put(CURRENT_CATEGORY_ID_COLUMN, currentCategory.get_id());
+        this.appState = accountsDB.getAppState();
         Log.d("updateCatInAppState", "Exit updateCategoryInAppState method in the MainActivity class.");
         return accountsDB.updateTable(APPSTATE_TABLE, values);
     }//End of updateCategoryInAppState method
@@ -2634,8 +3102,7 @@ public class MainActivity extends AppCompatActivity {
                 logOutTime= 1;
                 break;
         }
-        //@Fixme: Include 60 seconds per minute in the calculation below instead of 10 secs per min
-        logOutTime = logOutTime*10*1000;
+        logOutTime = logOutTime*60*1000;
         Log.d("getLogOutTime", "Exit getLogOutTime method in MainActivity class.");
         return logOutTime;
     }//End of setAppTheme method

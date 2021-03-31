@@ -3,8 +3,6 @@ package io.github.jlrods.mypsswrdsecure.ui.home;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -12,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,8 +17,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.google.android.material.tabs.TabLayout;
 
 import io.github.jlrods.mypsswrdsecure.Account;
 import io.github.jlrods.mypsswrdsecure.AccountAdapter;
@@ -88,8 +83,9 @@ public class HomeFragment extends Fragment {
                 //Add extras to the intent object, specifically the current category where the add button was pressed from
                 //i.putExtra("category",this.currentCategory.toString());
                 i.putExtra("_id",account.get_id());
+                i.putExtra("position",itemPosition);
                 //Start the AddItemActivity class
-                startActivityForResult(i,MainActivity.getThrowEditAccountActReqCode());
+                startActivityForResult(i,MainActivity.getThrowEditAccountActReqcode());
                 Log.d("ThrowEditAcc","Exit throwEditAccountActivity method in the MainActivity class.");
             }//End of onClick method
         });//End of setOnClickListener
@@ -103,13 +99,17 @@ public class HomeFragment extends Fragment {
         if(MainActivity.getCurrentTabID() != 0){
             MainActivity.getTabLayout().selectTab(MainActivity.getTabLayout().getTabAt(MainActivity.getCurrentTabID()));
         }else {
-            if(MainActivity.isSearchUserNameFilter()){
-                MainActivity.updateRecyclerViewData(accountAdapter,MainActivity.SearchType.ACCOUNT_WITH_USERNAME);
-            }else if(MainActivity.isSearchPsswrdFilter()){
-                MainActivity.updateRecyclerViewData(accountAdapter,MainActivity.SearchType.ACCOUNT_WITH_PSSWRD);
-            }else{
-                MainActivity.updateRecyclerViewData(accountAdapter);
-            }
+            MainActivity.updateRecyclerViewData(accountAdapter,-1, MainActivity.NotifyChangeType.DATA_SET_CHANGED);
+//            if(MainActivity.isSearchUserNameFilter()){
+//                //MainActivity.updateRecyclerViewData(accountAdapter,MainActivity.SearchType.ACCOUNT_WITH_USERNAME);
+//                MainActivity.updateRecyclerViewData(accountAdapter,-1, MainActivity.NotifyChangeType.DATA_SET_CHANGED);
+//            }else if(MainActivity.isSearchPsswrdFilter()){
+//                //MainActivity.updateRecyclerViewData(accountAdapter,MainActivity.SearchType.ACCOUNT_WITH_PSSWRD);
+//                MainActivity.updateRecyclerViewData(accountAdapter,-1, MainActivity.NotifyChangeType.DATA_SET_CHANGED);
+//            }else{
+//               // MainActivity.updateRecyclerViewData(accountAdapter);
+//                MainActivity.updateRecyclerViewData(accountAdapter,-1, MainActivity.NotifyChangeType.DATA_SET_CHANGED);
+//            }
         }//End of if else statement that checks the tab to be displayed
     }//End of onActivityCreated method
 
@@ -189,24 +189,82 @@ public class HomeFragment extends Fragment {
         //Check if result comes from AddAccountActivity
         String toastText = "";
         //Flag to display Toast and update RV
-        boolean goodResultDelivered = false;
-        if (requestCode == MainActivity.getThrowEditAccountActReqCode() && resultCode == Activity.RESULT_OK) {
+//        boolean goodResultDelivered = false;
+        if (requestCode == MainActivity.getThrowEditAccountActReqcode() && resultCode == Activity.RESULT_OK) {
             Log.d("onActivityResult","Received GOOD result from EditAccountActivity (received by HomeFragment).");
             //((AccountAdapter) this.rv.getAdapter()).setCursor(accountsDB.getAccountsList());
             //Define text to display Toast to confirm the account has been added
             //Set variable to display Toast
-            goodResultDelivered = true;
-            toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountUpdated);
-        }else if(requestCode == MainActivity.getThrowEditAccountActReqCode() && resultCode == Activity.RESULT_CANCELED){
+            //goodResultDelivered = true;
+
+
+            //recyclerView.getAdapter().notifyDataSetChanged();
+            //updateRecyclerViewData(adapter);
+
+//            MainActivity.NotifyChangeType changeType = null;
+//            if (data.getExtras().getInt("accountID") == -1) {
+//                changeType = MainActivity.NotifyChangeType.ITEM_REMOVED;
+//                toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountDeleted);
+//            }else{
+//                Account editedAccount = accountsDB.getAccountByID(data.getExtras().getInt("accountID"));
+//                if(editedAccount != null){
+//                    changeType = MainActivity.getNotifyChangeType(editedAccount);
+//                }else{
+//                    changeType = MainActivity.NotifyChangeType.DATA_SET_CHANGED;
+//                }
+//
+//            }
+            MainActivity.NotifyChangeType changeType = null;
+            if (data.getExtras().getInt("accountID") == -1) {
+                //If no actual account id is returned, means the account was deleted
+                //Set the NotifyChangeType variable to Item removed
+                changeType = MainActivity.NotifyChangeType.ITEM_REMOVED;
+                //Set text to display Toast to confirm the account has been DELETED
+                toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountDeleted);
+            } else {
+                //In case actual account id is returned, get the account from DB
+                Account editedAccount = accountsDB.getAccountByID(data.getExtras().getInt("accountID"));
+                //Check if account not null,set up the NotifyChangeType variable
+                if(editedAccount != null){
+                    //To define what type of notify change, call method that will determine it
+                    changeType = MainActivity.getNotifyChangeType(editedAccount);
+                }else{
+                    //Set default notify change type to Data set change
+                    changeType = MainActivity.NotifyChangeType.DATA_SET_CHANGED;
+                }
+                //Set text to display Toast to confirm the account has been UPDATED
+                toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountUpdated);
+            }//End of if else statement to check account id
+
+            AccountAdapter adapter = (AccountAdapter) rv.getAdapter();
+            MainActivity.updateRecyclerViewData(adapter,data.getExtras().getInt("position"),changeType);
+            MainActivity.displayToast(getContext(), toastText, Toast.LENGTH_LONG, Gravity.CENTER);
+            //Move to new account position
+            //Display Toast to confirm the account has been added
+            //toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountUpdated)+"in Home fragment";
+
+//            if(editedAccount != null){
+//                if(editedAccount.isFavorite()){
+//                    changeType = MainActivity.NotifyChangeType.ITEM_CHANGED;
+//                    //MainActivity.updateItemInRecyclerView(adapter,data.getExtras().getInt("position"),0);
+//                }else{
+//                    changeType = MainActivity.NotifyChangeType.ITEM_REMOVED;
+//                    //MainActivity.updateItemInRecyclerView(adapter,data.getExtras().getInt("position"),1);
+//                }
+//            }else{
+//                changeType = MainActivity.NotifyChangeType.DATA_SET_CHANGED;
+//            }
+
+        }else if(requestCode == MainActivity.getThrowEditAccountActReqcode() && resultCode == Activity.RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from EditAccountActivity (received by HomeFragment).");
         }
         //Check if toast would be displayed
-        if(goodResultDelivered){
-            MainActivity.updateRecyclerViewData(this.rv.getAdapter());
-            //Move to new account position
-            //Display Toast to confirm the account has been added
-            MainActivity.displayToast(getContext(),toastText, Toast.LENGTH_LONG, Gravity.CENTER);
-        }//End of if statement to check good result was delivered
+//        if(goodResultDelivered){
+//            //MainActivity.updateRecyclerViewData(this.rv.getAdapter());
+//            //Move to new account position
+//            //Display Toast to confirm the account has been added
+//            //MainActivity.displayToast(getContext(),toastText, Toast.LENGTH_LONG, Gravity.CENTER);
+//        }//End of if statement to check good result was delivered
         //End of if else statement to check the data comes from one of the thrown activities
         Log.d("onActivityResult","Exit the onActivityResult method in the DisplayAccountActivity class.");
     }//End of onActivityResult method

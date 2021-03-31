@@ -27,6 +27,7 @@ public class EditQuestionActivity extends AddQuestionActivity {
         getSupportActionBar().setTitle(R.string.editQuestTitle);
         //Extract user name by passing in the _id attribute stored in the extras
         this.question = Question.extractQuestion(this.accountsDB.getQuestionCursorByID(this.extras.getInt("_id")));
+        int position = this.extras.getInt("position");
         this.answer = question.getAnswer();
         //Set the edit text field with the user name value after decryption
         if(isQuestionPreLoaded(this.question,true)){
@@ -50,7 +51,7 @@ public class EditQuestionActivity extends AddQuestionActivity {
                     new FabOnClickEventHandler(question,getResources().getString(R.string.questionDeleteTitle),
                             getResources().getString(R.string.questionDeleteMssg),
                             question.getValue(),
-                            "itemDeleted")
+                            "itemDeleted",position)
             );
         }
 
@@ -110,7 +111,7 @@ public class EditQuestionActivity extends AddQuestionActivity {
                         //Throw user notification toast
                         //Prompt the user the question or answer value have not changed
                         MainActivity.displayToast(this, getResources().getString(R.string.questionAnswerNoTChanged), Toast.LENGTH_SHORT, Gravity.CENTER);
-                    }//End of if else that checks the question or answer value changed//End of if statement to check the answer chated
+                    }//End of if else that checks the question or answer value changed//End of if statement to check the answer changed
                 }else{
                     //If question is preloaded check only the answer changed
                     if(answerChanged){
@@ -139,9 +140,9 @@ public class EditQuestionActivity extends AddQuestionActivity {
                         //Update the new answer in the DB
                         ContentValues values = new ContentValues();
                         if(this.answer.get_id() > 0){
-                            values.put("_id",this.answer.get_id());
-                            values.put("Value",this.answer.getValue());
-                            values.put("initVector",this.answer.getIv());
+                            values.put(MainActivity.getIdColumn(),this.answer.get_id());
+                            values.put(MainActivity.getValueColumn(),this.answer.getValue());
+                            values.put(MainActivity.getInitVectorColumn(),this.answer.getIv());
                             answerDbTransCompleted = this.accountsDB.updateTable(MainActivity.getAnswerTable(),values);
                         }else{
                             newAnswerID = this.accountsDB.addItem(this.answer);
@@ -160,18 +161,20 @@ public class EditQuestionActivity extends AddQuestionActivity {
                         this.question.setValue(this.etNewItemField.getText().toString());
                         //Store the values to be updated in the DB
                         values.put(MainActivity.getIdColumn(),this.question.get_id());
-                        values.put("Value",this.question.getValue());
+                        values.put(MainActivity.getValueColumn(),this.question.getValue());
                     }else{
                         //In case the preloaded questions, if new answer was added, update the question record in the DB
                         values.put(MainActivity.getIdColumn(),this.question.get_id());
-                        values.put("AnswerID",this.answer.get_id());
+                        values.put(MainActivity.getAnswerIdColumn(),this.answer.get_id());
                     }//End of if statement to check for preloaded questions
                     questionDbTransCompleted = this.accountsDB.updateTable(MainActivity.getQuestionTable(),values);
                     //Update the new question in the DB
                     if(questionDbTransCompleted && answerDbTransCompleted){
                         //Go back to previous activity
-                        intent.putExtra("userNameID",this.question.get_id());
+                        intent.putExtra("questionID",this.question.get_id());
+                        intent.putExtra("questionValue",this.question.getValue());
                         intent.putExtra("itemDeleted",false);
+                        intent.putExtra("position",extras.getInt("position"));
                         result = true;
                         setResult(RESULT_OK, intent);
                         finish();
