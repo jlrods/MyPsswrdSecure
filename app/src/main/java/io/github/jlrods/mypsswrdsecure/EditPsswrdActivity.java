@@ -30,15 +30,20 @@ public class EditPsswrdActivity extends AddPsswrdActivity {
         }
         //Set the edit text field with the password value after decryption
         this.etNewItemField.setText(this.cryptographer.decryptText(this.psswrd.getValue(),new IvParameterSpec(this.psswrd.getIv())));
-        this.fabDelete.setVisibility(View.VISIBLE);
-        //Set up fab onClick event listener by creating a new object of the sub class which handles this event
-        this.fabDelete.setOnClickListener(
-                //Create the subclass object by passing in the text required to populate the AlertDialog box and the intent attribute name to be passed to caller activity
-                new FabOnClickEventHandler(psswrd,getResources().getString(R.string.psswrdDeleteTitle),
-                        getResources().getString(R.string.psswrdDeleteMssg),
-                        cryptographer.decryptText(psswrd.getValue(),new IvParameterSpec(psswrd.getIv())),
-                        "itemDeleted",position)
-        );
+        AppLoggin appLoggin = MainActivity.getCurrentAppLoggin();
+        if(this.psswrd.get_id() != appLoggin.getPsswrd().get_id()){
+            this.fabDelete.setVisibility(View.VISIBLE);
+            //Set up fab onClick event listener by creating a new object of the sub class which handles this event
+            this.fabDelete.setOnClickListener(
+                    //Create the subclass object by passing in the text required to populate the AlertDialog box and the intent attribute name to be passed to caller activity
+                    new FabOnClickEventHandler(psswrd,getResources().getString(R.string.psswrdDeleteTitle),
+                            getResources().getString(R.string.psswrdDeleteMssg),
+                            cryptographer.decryptText(psswrd.getValue(),new IvParameterSpec(psswrd.getIv())),
+                            "itemDeleted",position)
+            );
+        }else{
+            MainActivity.displayToast(this,getString(R.string.appLoginPsswrdPrompt),Toast.LENGTH_LONG,Gravity.CENTER);
+        }
         Log.d("OnCreateEditPsswrd","Exit onCreate method in the EditPsswrdActivity class.");
     }//End of onCreate method
 

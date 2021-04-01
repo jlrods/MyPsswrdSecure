@@ -33,15 +33,20 @@ public class EditUserNameActivity extends AddUserNameActivity {
         int position = this.extras.getInt("position");
         //Set the edit text field with the user name value after decryption
         this.etNewItemField.setText(this.cryptographer.decryptText(userName.getValue(),new IvParameterSpec(userName.getIv())));
-        this.fabDelete.setVisibility(View.VISIBLE);
-        //Set up fab onClick event listener by creating a new object of the sub class which handles this event
-        this.fabDelete.setOnClickListener(
-                //Create the subclass object by passing in the text required to populate the AlertDialog box and the intent attribute name to be passed to caller activity
-                new FabOnClickEventHandler(userName,getResources().getString(R.string.userNameDeleteTitle),
-                        getResources().getString(R.string.userNameDeleteMssg),
-                        cryptographer.decryptText(userName.getValue(),new IvParameterSpec(userName.getIv())),
-                        "itemDeleted",position)
-        );
+        AppLoggin appLoggin = MainActivity.getCurrentAppLoggin();
+        if(this.userName.get_id()  != appLoggin.getUserName().get_id()){
+            this.fabDelete.setVisibility(View.VISIBLE);
+            //Set up fab onClick event listener by creating a new object of the sub class which handles this event
+            this.fabDelete.setOnClickListener(
+                    //Create the subclass object by passing in the text required to populate the AlertDialog box and the intent attribute name to be passed to caller activity
+                    new FabOnClickEventHandler(userName,getResources().getString(R.string.userNameDeleteTitle),
+                            getResources().getString(R.string.userNameDeleteMssg),
+                            cryptographer.decryptText(userName.getValue(),new IvParameterSpec(userName.getIv())),
+                            "itemDeleted",position)
+            );
+        }else{
+            MainActivity.displayToast(this,getString(R.string.appLoginUserNamePrompt),Toast.LENGTH_LONG,Gravity.CENTER);
+        }
         Log.d("OnCreateEditUser","Exit onCreate method in the EditUserNameActivity class.");
     }//End of onCreate method
 
