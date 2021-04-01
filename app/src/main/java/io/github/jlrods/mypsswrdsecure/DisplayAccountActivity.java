@@ -59,7 +59,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
 
     //DB
     AccountsDB accountsDB;
-    private static Cryptographer cryptographer;
+
 
     //Objects required to build an account
     Category category = null;
@@ -141,7 +141,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         ActionBar toolbar = getActionBar();
         //Get DB handler cass from the home fragment
         this.accountsDB = HomeFragment.getAccountsDB();
-        cryptographer = MainActivity.getCryptographer();
+
 
         //Initialize layout coordinator required to use Snackbar
         coordinatorLayoutAccAct = (CoordinatorLayout) findViewById(R.id.coordinatorLayoutAccAct);
