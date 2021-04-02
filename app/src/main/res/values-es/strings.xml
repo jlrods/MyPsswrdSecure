@@ -317,5 +317,9 @@
     <string name="appStateErrorMssg">La app falló en actualizar su estado</string>
     <string name="itemNotDeletedMssg">Lo siento, el ítem no fue eliminado de la base de datos</string>
 
+    <!--    AppLoginActivity-->
+    <string name="appLoginUserNamePrompt">Este nombre de usuario es parte de las credenciales de la app. No puede ser eliminada hasta que las credenciales de acceso sean cambiadas</string>
+    <string name="appLoginPsswrdPrompt">Esta contraseña es parte de las credenciales de la app. No puede ser eliminada hasta que las credenciales de acceso sean cambiadas</string>
+
 
 </resources>

@@ -108,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int THROW_EDIT_CATEGORY_ACT_REQCODE = 2002;
     private static final int THROW_EDIT_ACCOUNT_ACT_REQCODE = 1199;
     private static final int THROW_SELECT_NAVDRAWERBCKGRND_ACT_REQCODE = 4473;
+    private final int THROW_UPDATE_APPLOGIN_ACT_REQCODE = 1983;
 
     private static final String ACCOUNTS_LOGOS = "logo_";
     private static final String NAV_DRAWER_BCKGRNDS = "nav_menu_header_bg";
@@ -176,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
     private static ThemeUpdater themeUpdater;
     //Login - Logout variables
     private Bundle extras;
-    private AppLoggin currentAppLoggin;
+    private static AppLoggin currentAppLoggin;
     private LogOutTimer logoutTimer;
     private long logOutTime;
     private static boolean isLogOutActive;
@@ -599,6 +600,10 @@ public class MainActivity extends AppCompatActivity {
         Log.d("onOptionsItemSelected", "Enter the onOptionsItemSelected method in the MainActivity class.");
         // Handle item selection
         switch (item.getItemId()) {
+            case R.id.action_applogin:
+                this.throwUpdateAppLoginActivity();
+                Log.d("onOptionsItemSelected", "Exit the onOptionsItemSelected method in the MainActivity class with App Login option selected.");
+                return true;
             case R.id.action_logout:
                 finish();
                 Log.d("onOptionsItemSelected", "Exit the onOptionsItemSelected method in the MainActivity class with Logout option selected.");
@@ -1132,6 +1137,20 @@ public class MainActivity extends AppCompatActivity {
         Log.d("throwSelectBckActivity", "Exit the throwSelectNavDrawerBackgroundActivity method in the DisplayAccountActivity class.");
     }//End of throwSelectLogoActivity method
 
+    //Method to throw the SelectLogoActivity
+    protected void throwUpdateAppLoginActivity() {
+        Log.d("throwUpAppLogAct", "Enter the throwUpdateAppLoginActivity method in the DisplayAccountActivity class.");
+        //Declare and instantiate a new intent object
+        Intent i = new Intent(this, UpdateAppLoginActivity.class);
+        //Add extras to the intent object, specifically the current category where the add button was pressed from
+        // the current logo data which is sent back if select logo is cancel or updated if new logo has been selected
+        //i.putExtra("selectedImgPosition", -1);
+        //i.putExtra("selectedImgLocation", RESOURCES);
+        //Start the addTaskActivity and wait for result
+        startActivityForResult(i, this.THROW_UPDATE_APPLOGIN_ACT_REQCODE);
+        Log.d("throwUpAppLogAct", "Exit the throwUpdateAppLoginActivity method in the DisplayAccountActivity class.");
+    }//End of throwSelectLogoActivity method
+
     //Method to throw new AddTaskActivity
     private void throwAboutActivity() {
         Log.d("ThrowAbout", "Enter throwAboutActivity method in the MainActivity class.");
@@ -1373,6 +1392,12 @@ public class MainActivity extends AppCompatActivity {
             accountsDB.updateTable(APPLOGGIN_TABLE, values);
         } else if (requestCode == THROW_SELECT_NAVDRAWERBCKGRND_ACT_REQCODE && resultCode == Activity.RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from SelectNavDrawerBckGrnd received by MainAcitvity.");
+        }else if(requestCode == THROW_UPDATE_APPLOGIN_ACT_REQCODE && resultCode == Activity.RESULT_OK){
+            Log.d("onActivityResult", "Received GOOD result from UpdateAppLoginActivity received by MainAcitvity.");
+            toastText = "App Login credentials have been successfully updated. Next time you login, use your new credentials.";
+            displayToast(this, toastText, Toast.LENGTH_LONG, Gravity.CENTER);
+        }else if(requestCode == THROW_UPDATE_APPLOGIN_ACT_REQCODE && resultCode == Activity.RESULT_CANCELED){
+            Log.d("onActivityResult", "Received BAD result from UpdateAppLoginActivity received by MainAcitvity.");
         }//End of if else statement chain to check activity results
 
         if(isLogOutTimedOut){
@@ -1744,6 +1769,10 @@ public class MainActivity extends AppCompatActivity {
         return CURRENT_SORT_FILTER_COLUMN;
     }
 
+    public static AppLoggin getCurrentAppLoggin() {
+        return currentAppLoggin;
+    }
+
     public static int getThrowImageGalleryReqCode() {
         return THROW_IMAGE_GALLERY_REQ_CODE;
     }
@@ -1904,6 +1933,8 @@ public class MainActivity extends AppCompatActivity {
     public static int getRESULT_TIMEOUT() {
         return RESULT_TIMEOUT;
     }
+
+
 
     public static void displayToast(Context context, String text, int toastLength, int gravity) {
         Log.d("displayToast", "Enter displayToast method in the MainActivity class.");

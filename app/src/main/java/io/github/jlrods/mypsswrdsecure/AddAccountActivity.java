@@ -135,6 +135,7 @@ public class AddAccountActivity extends DisplayAccountActivity {
                 //Call method to throw LoginActivity and clear activity stack.
                 Log.d("onOptionsItemSelected","Logout option selected on onOptionsItemSelected method in AddAccountActivity class.");
                 MainActivity.logout(this);
+                break;
         }//End of switch statement
         Log.d("onOptionsItemSelected","Exit successfully onOptionsItemSelected method in AddAccountActivity class.");
         return result;

@@ -328,5 +328,9 @@
     <string name="appStateErrorMssg">App failed to update state.</string>
     <string name="itemNotDeletedMssg">Sorry, item could not be deleted from the database</string>
 
+    <!--    AppLoginActivity-->
+    <string name="appLoginUserNamePrompt">This user name is part of your app login credentials. It cannot be deleted until you updated your login credentials</string>
+    <string name="appLoginPsswrdPrompt">This password is part of your app login credentials. It cannot be deleted until you updated your login credentials</string>
+
 
 </resources>
