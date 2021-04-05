@@ -257,6 +257,7 @@ public class MainActivity extends AppCompatActivity {
                         accountAdapter.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
+//                                throwEditAccountActivity(v);
                                 throwEditAccountActivity(v);
                             }//End of onClick method
                         });//End of setOnClickListener
@@ -1014,8 +1015,7 @@ public class MainActivity extends AppCompatActivity {
     }//End of throwAddTaskActivity
 
     //Method to throw new AddTaskActivity
-    private void throwEditAccountActivity(View v) {
-        Log.d("ThrowEditAcc", "Enter throwEditAccountActivity method in the MainActivity class.");
+    public static Intent prepareThrowEditAccountActivity(Context context, Intent i, View v) {
         //rv
         RecyclerView rv = HomeFragment.getRv();
         //Get the item position in the adapter
@@ -1026,19 +1026,48 @@ public class MainActivity extends AppCompatActivity {
         //Extract the task object from the cursor row
         Account account = Account.extractAccount(cursor);
         //Declare and instantiate a new intent object
-        Intent i = new Intent(MainActivity.this, EditAccountActivity.class);
+        i = new Intent(context, EditAccountActivity.class);
         //Add extras to the intent object, specifically the current category where the add button was pressed from
-        i.putExtra("category", this.currentCategory.get_id());
+        i.putExtra("category", currentCategory.get_id());
         i.putExtra(ID_COLUMN, account.get_id());
         i.putExtra("position",itemPosition);
-        //Add logout timer remaining time to continue in next activity
-        if(isLogOutActive){
-            i.putExtra("timeOutRemainder",(long)this.logoutTimer.getLogOutTimeRemainder());
-        }
+        return i;
+    }
+    //Method to throw new AddTaskActivity
+    private void throwEditAccountActivity(View v) {
+        Intent i = new Intent();
+        i  = prepareThrowEditAccountActivity(MainActivity.this,i,v);
         //Start the AddItemActivity class
         startActivityForResult(i, THROW_EDIT_ACCOUNT_ACT_REQCODE);
-        Log.d("ThrowEditAcc", "Exit throwEditAccountActivity method in the MainActivity class.");
-    }//End of throwAddTaskActivity
+    }
+
+
+    //Method to throw new AddTaskActivity
+//    private void throwEditAccountActivity(View v) {
+//        Log.d("ThrowEditAcc", "Enter throwEditAccountActivity method in the MainActivity class.");
+//        //rv
+//        RecyclerView rv = HomeFragment.getRv();
+//        //Get the item position in the adapter
+//        int itemPosition = rv.getChildAdapterPosition(v);
+//        //move the cursor to the task position in the adapter
+//        Cursor cursor = ((AccountAdapter) rv.getAdapter()).getCursor();
+//        cursor.moveToPosition(itemPosition);
+//        //Extract the task object from the cursor row
+//        Account account = Account.extractAccount(cursor);
+//        //Declare and instantiate a new intent object
+//        Intent i = new Intent(MainActivity.this, EditAccountActivity.class);
+//        //Add extras to the intent object, specifically the current category where the add button was pressed from
+//        i.putExtra("category", this.currentCategory.get_id());
+//        i.putExtra(ID_COLUMN, account.get_id());
+//        i.putExtra("position",itemPosition);
+//        //Add logout timer remaining time to continue in next activity
+//        if(isLogOutActive){
+//            i.putExtra("timeOutRemainder",(long)this.logoutTimer.getLogOutTimeRemainder());
+//        }
+//        //Start the AddItemActivity class
+//        startActivityForResult(i, THROW_EDIT_ACCOUNT_ACT_REQCODE);
+//        Log.d("ThrowEditAcc", "Exit throwEditAccountActivity method in the MainActivity class.");
+//    }//End of throwAddTaskActivity
 
     //Method to throw new AddTaskActivity
     private void throwEditUserNameActivity(View v) {
