@@ -1502,7 +1502,8 @@ public class MainActivity extends AppCompatActivity {
                 (currentCategory == favCategory && !editedAccount.isFavorite())
                 || (isSearchUserNameFilter && !cryptographer.decryptText(editedAccount.getUserName().getValue(),new IvParameterSpec(editedAccount.getUserName().getIv())).equals(lastSearchText))
                 || (isSearchPsswrdFilter && !cryptographer.decryptText(editedAccount.getPsswrd().getValue(),new IvParameterSpec(editedAccount.getPsswrd().getIv())).equals(lastSearchText))
-                ||(!isSearchUserNameFilter && !isSearchPsswrdFilter && !editedAccount.getName().toLowerCase().contains(lastSearchText.toLowerCase()))){
+                ||(!isSearchUserNameFilter && !isSearchPsswrdFilter && !editedAccount.getName().toLowerCase().contains(lastSearchText.toLowerCase()))
+                ||(currentCategory!= homeCategory && currentCategory != editedAccount.getCategory())){
             changeType = MainActivity.NotifyChangeType.ITEM_REMOVED;
             Log.d("getNotifyChangeType", "ITEM_REMOVED selected in getNotifyChangeType method in the MainActivity class for ."+ editedAccount.getName());
         }else {
