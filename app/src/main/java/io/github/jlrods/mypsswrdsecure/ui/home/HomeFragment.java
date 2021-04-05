@@ -161,35 +161,43 @@ public class HomeFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d("onActivityResult","Enter the onActivityResult method in the HomeFragment class.");
         //Check if result comes from AddAccountActivity
-        String toastText = "";
+//        String toastText = "";
         //Flag to display Toast and update RV
 //        boolean goodResultDelivered = false;
         if (requestCode == MainActivity.getThrowEditAccountActReqcode() && resultCode == Activity.RESULT_OK) {
             Log.d("onActivityResult","Received GOOD result from EditAccountActivity (received by HomeFragment).");
+            //Declare and initialize variable to hold the type of change to be notified to RV update
             MainActivity.NotifyChangeType changeType = null;
-            if (data.getExtras().getInt("accountID") == -1) {
-                //If no actual account id is returned, means the account was deleted
-                //Set the NotifyChangeType variable to Item removed
-                changeType = MainActivity.NotifyChangeType.ITEM_REMOVED;
-                //Set text to display Toast to confirm the account has been DELETED
-                toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountDeleted);
-            } else {
-                //In case actual account id is returned, get the account from DB
-                Account editedAccount = accountsDB.getAccountByID(data.getExtras().getInt("accountID"));
-                //Check if account not null,set up the NotifyChangeType variable
-                if(editedAccount != null){
-                    //To define what type of notify change, call method that will determine it
-                    changeType = MainActivity.getNotifyChangeType(editedAccount);
-                }else{
-                    //Set default notify change type to Data set change
-                    changeType = MainActivity.NotifyChangeType.DATA_SET_CHANGED;
-                }
-                //Set text to display Toast to confirm the account has been UPDATED
-                toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountUpdated);
-            }//End of if else statement to check account id
+//            if (data.getExtras().getInt("accountID") == -1) {
+//                //If no actual account id is returned, means the account was deleted
+//                //Set the NotifyChangeType variable to Item removed
+//                changeType = MainActivity.NotifyChangeType.ITEM_REMOVED;
+//                //Set text to display Toast to confirm the account has been DELETED
+//                toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountDeleted);
+//            } else {
+//                //In case actual account id is returned, get the account from DB
+//                Account editedAccount = accountsDB.getAccountByID(data.getExtras().getInt("accountID"));
+//                //Check if account not null,set up the NotifyChangeType variable
+//                if(editedAccount != null){
+//                    //To define what type of notify change, call method that will determine it
+//                    changeType = MainActivity.getNotifyChangeType(editedAccount);
+//                }else{
+//                    //Set default notify change type to Data set change
+//                    changeType = MainActivity.NotifyChangeType.DATA_SET_CHANGED;
+//                }
+//                //Set text to display Toast to confirm the account has been UPDATED
+//                toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountUpdated);
+//            }//End of if else statement to check account id
 
+            //Call MainActivity's method to get the change type based on the data sent back from EditAccountActivity
+            changeType = MainActivity.handleEditAccountActivityResult(data,getResources());
+            //Call MainActivity's method to get the toast text to be displayed based on the type of RV notification type
+            String toastText = MainActivity.setToastText(data,changeType,getResources());
+            //Get current adapter used by RV
             AccountAdapter adapter = (AccountAdapter) rv.getAdapter();
+            //Call MainActivity's method to update RV data
             MainActivity.updateRecyclerViewData(adapter,data.getExtras().getInt("position"),changeType);
+            //Call MainActivity's method to display the corresponding toast text
             MainActivity.displayToast(getContext(), toastText, Toast.LENGTH_LONG, Gravity.CENTER);
         }else if(requestCode == MainActivity.getThrowEditAccountActReqcode() && resultCode == Activity.RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from EditAccountActivity (received by HomeFragment).");
