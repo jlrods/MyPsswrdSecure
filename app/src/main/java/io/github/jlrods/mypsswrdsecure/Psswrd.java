@@ -134,20 +134,25 @@ public class Psswrd extends UserName{
             case 4:
             case 5:
                 strength = PsswrdStrength.WEAK;
+                Log.d("calculatePsswrdStrength","Assigning WEAK strength to password: "+ password+" in calculatePsswrdStrength method in the Psswrd class.");
                 break;
             case 6:
             case 7:
                 strength = PsswrdStrength.MEDIUM;
+                Log.d("calculatePsswrdStrength","Assigning MEDIUM strength to password: "+ password+" in calculatePsswrdStrength method in the Psswrd class.");
                 break;
             case 8:
             case 9:
                 strength = PsswrdStrength.STRONG;
+                Log.d("calculatePsswrdStrength","Assigning STRONG strength to password: "+ password+" in calculatePsswrdStrength method in the Psswrd class.");
                 break;
             case 10:
                 strength = PsswrdStrength.VERY_STRONG;
+                Log.d("calculatePsswrdStrength","Assigning VERY STRONG strength to password: "+ password+" in calculatePsswrdStrength method in the Psswrd class.");
                 break;
             default:
                 strength = PsswrdStrength.VERY_WEEK;
+                Log.d("calculatePsswrdStrength","Assigning  VERY WEAK strength to password: "+ password+" in calculatePsswrdStrength method in the Psswrd class.");
                 break;
         }//End of switch statement
         Log.d("calculatePsswrdStrength","Exit calculatePsswrdStrength method in the Psswrd class.");
