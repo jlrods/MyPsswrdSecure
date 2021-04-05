@@ -91,40 +91,54 @@ public class Psswrd extends UserName{
         PsswrdStrength strength = null;
         //Declare and initialize variables to be used as criteria for assessment
         int strengthRating = 0;
-        int minLength = 10;
+        int minLength = 7;
+        int mediumLength = 9;
+        int goodLength = 12;
         //Declare and initialize cryptographer object to decrypt password passed in as argument
         Cryptographer cryptographer = LoginActivity.getCryptographer();
         String password = cryptographer.decryptText(value,new IvParameterSpec(iv));
         //Check password length
-        if(password.length() >= minLength){
+        if(password.length() >= goodLength){
             strengthRating += 3;
-        }else if(password.length() > 5 && password.length() < minLength){
+        }else if(password.length() >= mediumLength && password.length() < goodLength){
+            strengthRating += 2;
+        }else if(password.length() >= minLength && password.length() < mediumLength){
             strengthRating += 1;
         }
         //Check if password has one special char at least
-        if(password.matches(".*[!-/]+.*")){
-            strengthRating += 2;
+        if(password.matches(".*[!-/].*") || password.matches(".*[:-@].*")){
+            strengthRating += 1;
+            //Check if password has one special char or more
+            if(password.matches(".*[!-/].*[!-/]+.*") || password.matches(".*[:-@].*[:-@]+.*") ||
+                    (password.matches(".*[!-/].*") && password.matches(".*[:-@].*"))){
+                strengthRating += 1;
+            }
         }
         //Check if password has a combination of capital letters and lower case letters
-        if(password.matches(".*[A-Z]+.*") && password.matches(".*[a-z]+.*")){
+        if(password.matches(".*[a-z]+.*") && password.matches(".*[A-Z]+.*")){
             strengthRating += 3;
+        }else if(password.matches(".*[A-Z]+.*") || password.matches(".*[a-z]+.*")){
+            strengthRating += 2;
         }
         //Check if password has one number at least
-        if(password.matches(".*\\d+.*")){
-            strengthRating += 2;
+        if(password.matches(".*\\d.*")){
+            strengthRating += 1;
+            //Check if password has one number or more
+            if(password.matches(".*\\d.*\\d.*")){
+                strengthRating += 1;
+            }
         }//End of if chain to check password composition
 
         //Check the result of assessment against corresponding values in the scale to assign final password strength
         switch (strengthRating){
-            case 3:
             case 4:
+            case 5:
                 strength = PsswrdStrength.WEAK;
                 break;
-            case 5:
             case 6:
+            case 7:
                 strength = PsswrdStrength.MEDIUM;
                 break;
-            case 7:
             case 8:
             case 9:
                 strength = PsswrdStrength.STRONG;
