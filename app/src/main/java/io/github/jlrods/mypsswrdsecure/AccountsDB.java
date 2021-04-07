@@ -150,54 +150,95 @@ public class AccountsDB extends SQLiteOpenHelper {
 
 
         //App resources
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_aa','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+")  VALUES('logo_aerlingus_green','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+")  VALUES('logo_aib','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+")  VALUES('logo_amazon','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+")  VALUES('logo_apple','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_apple_vintange','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_axa','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_booking','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_cpl','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_donedelal','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_dropbox','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_edx','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_eir','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_facebook','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_firefox','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_github','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_glassdoor_green','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_google','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_huawei','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_instagram','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_irish_life','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_irish_life_health','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_linkedin','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_marvin','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_microsoft','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_microsoft_dark','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_netflix','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_netflix_black','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_paypal','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_pinterest','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_ptsb','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_reddit','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_revenue','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_ryanair','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_ryanair_blue','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_samsung','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_small_world','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_sportify_black','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_sportify_fullblack','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_sse_airtricity','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_subway','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_teamviewer','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_three','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_twitter','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_vhi','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_virgin_media','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_vodafone','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_vue','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_aa','Resources');");//1
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_aerlingus_green','Resources');");//2
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_aib','Resources');");//3
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_allianz','Resources');");//4
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_amazon','Resources');");//5
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_amazon_alexa','Resources');");//6
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_amazon_prime_video','Resources');");//7
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_android','Resources');");//8
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_anpost','Resources');");//9
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_apple','Resources');");//10
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_apple_vintange','Resources');");//11
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_argos','Resources');");//12
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_axa','Resources');");//13
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_booking','Resources');");//14
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_chess_com','Resources');");//15
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_conqueror','Resources');");//16
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_cpl','Resources');");//17
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_daft_ie','Resources');");//18
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_disney','Resources');");//19
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_domino','Resources');");//20
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_donedelal','Resources');");//21
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_dropbox','Resources');");//22
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_ebay','Resources');");//23
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_edx','Resources');");//24
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_eir','Resources');");//25
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_ezliving_furniture','Resources');");//26
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_facebook','Resources');");//27
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_finding_pinguins','Resources');");//28
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_firefox','Resources');");//29
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_garmin','Resources');");//30
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_garmin_connect','Resources');");//31
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_github','Resources');");//32
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_glassdoor_green','Resources');");//33
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_google','Resources');");//34
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_huawei','Resources');");//35
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_ikea','Resources');");//36
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_insomnia','Resources');");//37
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_instagram','Resources');");//38
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_instructables','Resources');");//39
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_irish_jobs','Resources');");//40
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_irish_life','Resources');");//41
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_irish_life_health','Resources');");//42
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_jellyfin','Resources');");//43
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_jobs_ie','Resources');");//44
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_kfc','Resources');");//45
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_lana','Resources');");//46
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_lidl','Resources');");//47
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_linkedin','Resources');");//48
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_lotto','Resources');");//49
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_marvin','Resources');");//50
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_medium','Resources');");//51
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_microsoft','Resources');");//52
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_microsoft_dark','Resources');");//53
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_netflix','Resources');");//54
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_netflix_black','Resources');");//55
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_nike','Resources');");//56
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_paypal','Resources');");//57
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_pinterest','Resources');");//58
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_ptsb','Resources');");//59
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_reddit','Resources');");//60
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_revenue','Resources');");//61
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_ryanair','Resources');");//62
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_ryanair_blue','Resources');");//63
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_samsung','Resources');");//64
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_shazam','Resources');");//65
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_small_world','Resources');");//66
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_sonos','Resources');");//67
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_sportify_black','Resources');");//68
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_sportify_fullblack','Resources');");//69
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_sse_airtricity','Resources');");//70
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_star_wars','Resources');");//71
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_starbucks','Resources');");//72
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_subway','Resources');");//73
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_supermacs','Resources');");//74
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_supervalue','Resources');");//75
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_tcl','Resources');");//76
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_teamviewer','Resources');");//77
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_tesco','Resources');");//78
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_tesco_mobile','Resources');");//79
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_the_range','Resources');");//80
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_three','Resources');");//81
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_twitter','Resources');");//82
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_vhi','Resources');");//83
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_virgin_media','Resources');");//84
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_vodafone','Resources');");//85
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_vue','Resources');");//86
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_youtube','Resources');");//87
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_youtube_music','Resources');");//88
+
         //Android resources
         db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('facebook','Resources');");
         db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('popcorn','Resources');");
@@ -223,6 +264,7 @@ public class AccountsDB extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg7','Resources');");
         db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg8','Resources');");
         db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg9','Resources');");
+
 
 
 
