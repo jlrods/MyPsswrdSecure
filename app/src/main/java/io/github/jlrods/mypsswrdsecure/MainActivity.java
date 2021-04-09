@@ -87,6 +87,14 @@ public class MainActivity extends AppCompatActivity {
     private static String dateFormat;
     private static Cryptographer cryptographer;
 
+    private boolean goodResultDelivered = false;
+
+    private int itemPosition = -1;
+    //Set notify change type to insert item type
+    private NotifyChangeType changeType = NotifyChangeType.DATA_SET_CHANGED;
+    //Set proper text to display item insertion with a Toast
+    String toastText = "";
+
     //CONSTANT VALUES
     private static final int INDEX_TO_GET_LAST_TASK_LIST_ITEM = 2;
 
@@ -1207,30 +1215,31 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d("onActivityResult", "Enter the onActivityResult method in the DisplayAccountActivity class.");
         //Check if result comes from AddAccountActivity
-        String toastText = "";
+        //String toastText = "";
         //Flag to display Toast and update RV
-        boolean goodResultDelivered = false;
+        //boolean goodResultDelivered = false;
         boolean isLogOutTimedOut = false;
         //Flag to handle nave drawer menu update when a category has been added, deleted or edited
         boolean categoryMenuUpdate = false;
         RecyclerView recyclerView = HomeFragment.getRv();
         RecyclerView.Adapter adapter = null;
-        int itemPosition = -1;
+        //int itemPosition = -1;
         //Declare and initialize a NotifyChangeType variable to be passed into method that updates RV data
-        NotifyChangeType changeType = null;
+        //NotifyChangeType changeType = null;
         //Get adapter from rRV
         adapter = recyclerView.getAdapter();
         if (requestCode == this.THROW_ADD_ACCOUNT_ACT_REQCODE && resultCode == RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from AddAccountActivity (received by MainActivity).");
-            //Update RV data set
-            //Get current item position in the updated cursor. Use getCursorToUpdateRV with the most up to date data set
-            itemPosition = accountsDB.findItemPositionInCursor(getCursorToUpdateRV((AccountAdapter)adapter),accountsDB.getMaxItemIdInTable(ACCOUNTS_TABLE));
-            //Set notify change type to insert item type
-            changeType = NotifyChangeType.ITEM_INSERTED;
-            //Set proper text to display item insertion with a Toast
-            toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountAdded);
-            //Set variable to display Toast
-            goodResultDelivered = true;
+            this.handleAddItemActivityResult(data,adapter,"accountName",ACCOUNTS_TABLE);
+//            //Update RV data set
+//            //Get current item position in the updated cursor. Use getCursorToUpdateRV with the most up to date data set
+//            itemPosition = accountsDB.findItemPositionInCursor(getCursorToUpdateRV((AccountAdapter)adapter),accountsDB.getMaxItemIdInTable(ACCOUNTS_TABLE));
+//            //Set notify change type to insert item type
+//            changeType = NotifyChangeType.ITEM_INSERTED;
+//            //Set proper text to display item insertion with a Toast
+//            toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountAdded);
+//            //Set variable to display Toast
+//            this.goodResultDelivered = true;
         } else if (requestCode == this.THROW_ADD_ACCOUNT_ACT_REQCODE && resultCode == RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from AddAccountActivity (received by MainActivity).");
             //Check if result comes from AddAccountActivity
@@ -1238,15 +1247,16 @@ public class MainActivity extends AppCompatActivity {
             Log.d("onActivityResult", "Received TIMEOUT result from AddAccountActivity (received by MainActivity).");
         }else if (requestCode == THROW_ADD_USERNAME_ACT_REQCODE && resultCode == RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from AddUserNameActivity (received by MainActivity).");
+            this.handleAddItemActivityResult(data,adapter,"userNameValue",USERNAME_TABLE);
             //Get current item position in the updated cursor. Use getCursorToUpdateRV with the most up to date data set
-            itemPosition = accountsDB.findItemPositionInCursor(getCursorToUpdateRV((UserNameAdapter)adapter),accountsDB.getMaxItemIdInTable(USERNAME_TABLE));
-            //Set notify change type to insert item type
-            changeType = NotifyChangeType.ITEM_INSERTED;
-            //Define text to display Toast to confirm the user has been added
-            toastText = data.getExtras().getString("userNameValue") + " " + getResources().getString(R.string.userNameAdded);
-            //displayToast(this, toastText, Toast.LENGTH_LONG, Gravity.CENTER);
-            //Set variable to display Toast
-            goodResultDelivered = true;
+//            itemPosition = accountsDB.findItemPositionInCursor(getCursorToUpdateRV((UserNameAdapter)adapter),accountsDB.getMaxItemIdInTable(USERNAME_TABLE));
+//            //Set notify change type to insert item type
+//            changeType = NotifyChangeType.ITEM_INSERTED;
+//            //Define text to display Toast to confirm the user has been added
+//            toastText = data.getExtras().getString("userNameValue") + " " + getResources().getString(R.string.userNameAdded);
+//            //displayToast(this, toastText, Toast.LENGTH_LONG, Gravity.CENTER);
+//            //Set variable to display Toast
+//            this.goodResultDelivered = true;
         } else if (requestCode == THROW_ADD_USERNAME_ACT_REQCODE && resultCode == RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from AddUserNameActivity (received by MainActivity).");
         } else if (requestCode == THROW_ADD_USERNAME_ACT_REQCODE && resultCode == RESULT_TIMEOUT) {
@@ -1254,118 +1264,126 @@ public class MainActivity extends AppCompatActivity {
             isLogOutTimedOut = true;
         }else if (requestCode == THROW_ADD_PSSWRD_ACT_REQCODE && resultCode == RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from AddPsswrdActivity (received by MainActivity).");
+            this.handleAddItemActivityResult(data,adapter,"psswrdValue",PSSWRD_TABLE);
             //Get current item position in the updated cursor. Use getCursorToUpdateRV with the most up to date data set
-            itemPosition = accountsDB.findItemPositionInCursor(getCursorToUpdateRV((PsswrdAdapter)adapter),accountsDB.getMaxItemIdInTable(PSSWRD_TABLE));
-            //Set notify change type to insert item type
-            changeType = NotifyChangeType.ITEM_INSERTED;
-            //Define text to display Toast to confirm the password has been added
-            toastText = data.getExtras().getString("psswrdValue") + " " + getResources().getString(R.string.psswrdAdded);
-            //Set variable to display Toast
-            goodResultDelivered = true;
+//            itemPosition = accountsDB.findItemPositionInCursor(getCursorToUpdateRV((PsswrdAdapter)adapter),accountsDB.getMaxItemIdInTable(PSSWRD_TABLE));
+//            //Set notify change type to insert item type
+//            changeType = NotifyChangeType.ITEM_INSERTED;
+//            //Define text to display Toast to confirm the password has been added
+//            toastText = data.getExtras().getString("psswrdValue") + " " + getResources().getString(R.string.psswrdAdded);
+//            //Set variable to display Toast
+//            this.goodResultDelivered = true;
         } else if (requestCode == THROW_ADD_PSSWRD_ACT_REQCODE && resultCode == RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from AddPsswrdActivity (received by MainActivity).");
         } else if (requestCode == THROW_ADD_QUESTION_ACT_REQCODE && resultCode == RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from AddAccountActivity (received by MainActivity).");
+            this.handleAddItemActivityResult(data,adapter,"questionValue",QUESTION_TABLE);
             //Get current item position in the updated cursor. Use getCursorToUpdateRV with the most up to date data set
-            itemPosition = accountsDB.findItemPositionInCursor(getCursorToUpdateRV((SecurityQuestionAdapter)adapter),accountsDB.getMaxItemIdInTable(QUESTION_TABLE));
-            //Set notify change type to insert item type
-            changeType = NotifyChangeType.ITEM_INSERTED;
-            //Define text to display Toast to confirm the question has been added
-            toastText = data.getExtras().getString("questionValue") + " " +  getResources().getString(R.string.questionAdded);
-            //Set variable to display Toast
-            goodResultDelivered = true;
+//            itemPosition = accountsDB.findItemPositionInCursor(getCursorToUpdateRV((SecurityQuestionAdapter)adapter),accountsDB.getMaxItemIdInTable(QUESTION_TABLE));
+//            //Set notify change type to insert item type
+//            changeType = NotifyChangeType.ITEM_INSERTED;
+//            //Define text to display Toast to confirm the question has been added
+//            toastText = data.getExtras().getString("questionValue") + " " +  getResources().getString(R.string.questionAdded);
+//            //Set variable to display Toast
+//            goodResultDelivered = true;
         } else if (requestCode == THROW_ADD_QUESTION_ACT_REQCODE && resultCode == RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from AddQuestionActivity (received by MainActivity).");
         } else if (requestCode == TRHOW_ADD_CATEGORY_REQCODE && resultCode == Activity.RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from AddCategoryActivity (received by HomeFragment).");
-            goodResultDelivered = true;
+            this.goodResultDelivered = true;
             categoryMenuUpdate = true;
-            toastText = data.getExtras().getString("categoryName") + " " + getResources().getString(R.string.catAdded);
+            this.toastText = data.getExtras().getString("categoryName") + " " + getResources().getString(R.string.catAdded);
         } else if (requestCode == TRHOW_ADD_CATEGORY_REQCODE && resultCode == Activity.RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from AddCategoryActivity received by MainAcitvity.");
         } else if (requestCode == THROW_EDIT_USERNAME_ACT_REQCODE && resultCode == RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from EditUserNameActivity (received by MainActivity).");
+
+            handleEditItemActivityResult(data,"userNameID");
             //Check data back from Activity to see if item was deleted or just changed to set up proper message text and notify change type
-            if (data.getExtras().getBoolean("itemDeleted")) {
-                //If no actual account id is returned, means the account was deleted
-                //Set the NotifyChangeType variable to Item removed
-                changeType = NotifyChangeType.ITEM_REMOVED;
-                //Set text to item removed
-                toastText = data.getExtras().getString("itemDeletedName") + " " + getResources().getString(R.string.userNameDeleted);
-            } else {
-                //In case user name changed flag is returned, get the user name from DB
-                UserName editedUsername = accountsDB.getUserNameByID(data.getExtras().getInt("userNameID"));
-                //Check if account not null,set up the NotifyChangeType variable
-                if(editedUsername != null){
-                    //To define what type of notify change, call method that will determine it
-                    changeType = getNotifyChangeType(editedUsername);
-                }else{
-                    //Set default notify change type to Data set change
-                    changeType = NotifyChangeType.DATA_SET_CHANGED;
-                }
-                //Set text to display Toast to confirm the user name has been UPDATED
-                toastText = data.getExtras().getString("userNameValue") + " " + getResources().getString(R.string.userNameUpdated);
-            }//End of if else statement to check the boolean value retrieved from extra data
-            //Set item position in the RV
-            itemPosition = data.getExtras().getInt("position");
-            //Set variable to display Toast and update RV
-            goodResultDelivered = true;
+//            if (data.getExtras().getBoolean("itemDeleted")) {
+//                //If no actual account id is returned, means the account was deleted
+//                //Set the NotifyChangeType variable to Item removed
+//                changeType = NotifyChangeType.ITEM_REMOVED;
+//                //Set text to item removed
+//                toastText = data.getExtras().getString("itemDeletedName") + " " + getResources().getString(R.string.userNameDeleted);
+//            } else {
+//                //In case user name changed flag is returned, get the user name from DB
+//                UserName editedUsername = accountsDB.getUserNameByID(data.getExtras().getInt("userNameID"));
+//                //Check if account not null,set up the NotifyChangeType variable
+//                if(editedUsername != null){
+//                    //To define what type of notify change, call method that will determine it
+//                    changeType = getNotifyChangeType(editedUsername);
+//                }else{
+//                    //Set default notify change type to Data set change
+//                    changeType = NotifyChangeType.DATA_SET_CHANGED;
+//                }
+//                //Set text to display Toast to confirm the user name has been UPDATED
+//                toastText = data.getExtras().getString("userNameValue") + " " + getResources().getString(R.string.userNameUpdated);
+//            }//End of if else statement to check the boolean value retrieved from extra data
+//            //Set item position in the RV
+//            itemPosition = data.getExtras().getInt("position");
+//            //Set variable to display Toast and update RV
+//            goodResultDelivered = true;
         } else if (requestCode == THROW_EDIT_USERNAME_ACT_REQCODE && resultCode == RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from EditUserNameActivity (received by MainActivity).");
         } else if (requestCode == THROW_EDIT_PSSWRD_ACT_REQCODE && resultCode == RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from EditPsswrdActivity (received by MainActivity).");
+
+            handleEditItemActivityResult(data,"psswrdID");
             //Check data back from Activity to see if item was deleted or just changed to set up proper message text and notify change type
-            if (data.getExtras().getBoolean("itemDeleted")) {
-                //If no item deleted boolean flag is returned, means the password was deleted
-                //Set the NotifyChangeType variable to Item removed
-                changeType = NotifyChangeType.ITEM_REMOVED;
-                //Set text to item removed
-                toastText = data.getExtras().getString("itemDeletedName") + " " + getResources().getString(R.string.psswrdDeleted);
-            } else {
-                //In case password change flag is returned, get the password from DB
-                Psswrd editedPsswrd = accountsDB.getPsswrdByID(data.getExtras().getInt("psswrdID"));
-                //Check if password not null,set up the NotifyChangeType variable
-                if(editedPsswrd != null){
-                    //To define what type of notify change, call method that will determine it
-                    changeType = getNotifyChangeType(editedPsswrd);
-                }else{
-                    //Set default notify change type to Data set change
-                    changeType = NotifyChangeType.DATA_SET_CHANGED;
-                }
-                //Set text to display Toast to confirm the password has been UPDATED
-                toastText = data.getExtras().getString("psswrdValue") + " " + getResources().getString(R.string.psswrdUpdated);
-            }
-            //Set item position in the RV
-            itemPosition = data.getExtras().getInt("position");
-            //Set variable to display Toast
-            goodResultDelivered = true;
+//            if (data.getExtras().getBoolean("itemDeleted")) {
+//                //If no item deleted boolean flag is returned, means the password was deleted
+//                //Set the NotifyChangeType variable to Item removed
+//                changeType = NotifyChangeType.ITEM_REMOVED;
+//                //Set text to item removed
+//                toastText = data.getExtras().getString("itemDeletedName") + " " + getResources().getString(R.string.psswrdDeleted);
+//            } else {
+//                //In case password change flag is returned, get the password from DB
+//                Psswrd editedPsswrd = accountsDB.getPsswrdByID(data.getExtras().getInt("psswrdID"));
+//                //Check if password not null,set up the NotifyChangeType variable
+//                if(editedPsswrd != null){
+//                    //To define what type of notify change, call method that will determine it
+//                    changeType = getNotifyChangeType(editedPsswrd);
+//                }else{
+//                    //Set default notify change type to Data set change
+//                    changeType = NotifyChangeType.DATA_SET_CHANGED;
+//                }
+//                //Set text to display Toast to confirm the password has been UPDATED
+//                toastText = data.getExtras().getString("psswrdValue") + " " + getResources().getString(R.string.psswrdUpdated);
+//            }
+//            //Set item position in the RV
+//            itemPosition = data.getExtras().getInt("position");
+//            //Set variable to display Toast
+//            goodResultDelivered = true;
         } else if (requestCode == THROW_EDIT_PSSWRD_ACT_REQCODE && resultCode == RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from EditUserNameActivity (received by MainActivity).");
         } else if (requestCode == THROW_EDIT_QUESTIONS_ACT_REQCODE && resultCode == RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from EditQuestionActivity (received by MainActivity).");
-            //Define text to display Toast to confirm the account has been added
-            if (data.getExtras().getBoolean("itemDeleted")) {
-                //If no item deleted boolean flag id is returned, means the password was deleted
-                //Set the NotifyChangeType variable to Item removed
-                changeType = NotifyChangeType.ITEM_REMOVED;
-                toastText = data.getExtras().getString("itemDeletedName") + " " + getResources().getString(R.string.questionDeleted);
-            } else {
-                //In case actual account id is returned, get the account from DB
-                Question editedQuestion = accountsDB.getQuestionByID(data.getExtras().getInt("questionID"));
-                //Check if account not null,set up the NotifyChangeType variable
-                if(editedQuestion != null){
-                    //To define what type of notify change, call method that will determine it
-                    changeType = getNotifyChangeType(editedQuestion);
-                }else{
-                    //Set default notify change type to Data set change
-                    changeType = NotifyChangeType.DATA_SET_CHANGED;
-                }
-                toastText = data.getExtras().getString("questionValue") + " " +  getResources().getString(R.string.questionUpdated);
-            }
-            //Set item position in the RV
-            itemPosition = data.getExtras().getInt("position");
-            //Set variable to display Toast
-            goodResultDelivered = true;
+
+            handleEditItemActivityResult(data,"questionID");
+//            //Define text to display Toast to confirm the account has been added
+//            if (data.getExtras().getBoolean("itemDeleted")) {
+//                //If no item deleted boolean flag id is returned, means the password was deleted
+//                //Set the NotifyChangeType variable to Item removed
+//                changeType = NotifyChangeType.ITEM_REMOVED;
+//                toastText = data.getExtras().getString("itemDeletedName") + " " + getResources().getString(R.string.questionDeleted);
+//            } else {
+//                //In case actual account id is returned, get the account from DB
+//                Question editedQuestion = accountsDB.getQuestionByID(data.getExtras().getInt("questionID"));
+//                //Check if account not null,set up the NotifyChangeType variable
+//                if(editedQuestion != null){
+//                    //To define what type of notify change, call method that will determine it
+//                    changeType = getNotifyChangeType(editedQuestion);
+//                }else{
+//                    //Set default notify change type to Data set change
+//                    changeType = NotifyChangeType.DATA_SET_CHANGED;
+//                }
+//                toastText = data.getExtras().getString("questionValue") + " " +  getResources().getString(R.string.questionUpdated);
+//            }
+//            //Set item position in the RV
+//            itemPosition = data.getExtras().getInt("position");
+//            //Set variable to display Toast
+//            goodResultDelivered = true;
         } else if (requestCode == THROW_EDIT_QUESTIONS_ACT_REQCODE && resultCode == RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from EditQuestionActivity (received by MainActivity).");
         } else if (requestCode == THROW_EDIT_ACCOUNT_ACT_REQCODE && resultCode == Activity.RESULT_OK) {
@@ -1473,15 +1491,19 @@ public class MainActivity extends AppCompatActivity {
                     }//End of if else statement to check Category activity thrown
                     //Display Toast to confirm the account has been added
                     displayToast(this, toastText, Toast.LENGTH_LONG, Gravity.CENTER);
+                //Reset good result boolean flag
+                this.goodResultDelivered = false;
             } else {
                 //Check if toast would be displayed
-                if (goodResultDelivered) {
+                if (this.goodResultDelivered) {
                     //Call method to update RV, pass in the item position and set the notify change method to inset a new item in the position passed in
                     updateRecyclerViewData(adapter,itemPosition,changeType);
                     //As RV to scroll up to the item position in case isn't on display
                     recyclerView.scrollToPosition(itemPosition);
                     //Display Toast to confirm the account has been added
                     displayToast(this, toastText, Toast.LENGTH_LONG, Gravity.CENTER);
+                    //Reset good result boolean flag
+                    this.goodResultDelivered = false;
                 }//End of if statement to check good result was delivered
             }//End of if else statement that checks if nav drawer menu has to be updated
         }//End of if else for timeout logout
@@ -1489,6 +1511,78 @@ public class MainActivity extends AppCompatActivity {
         //End of if else statement to check the data comes from one of the thrown activities
         Log.d("onActivityResult", "Exit the onActivityResult method in the DisplayAccountActivity class.");
     }//End of onActivityResult method
+
+    private void handleAddItemActivityResult(@Nullable Intent data,RecyclerView.Adapter adapter,String key,String dbTable){
+        Log.d("handleAddAccRes", "Enter the handleAddItemActivityResult method in the DisplayAccountActivity class.");
+        //Update RV data set
+        //Get current item position in the updated cursor. Use getCursorToUpdateRV with the most up to date data set
+        this.itemPosition = accountsDB.findItemPositionInCursor(getCursorToUpdateRV(adapter),accountsDB.getMaxItemIdInTable(dbTable));
+        //Set notify change type to insert item type
+        this.changeType = NotifyChangeType.ITEM_INSERTED;
+        //Set proper text to display item insertion with a Toast
+        this.toastText = setToastText(data,key,changeType); //data.getExtras().getString(key) + " " + getResources().getString(R.string.accountAdded);
+        this.goodResultDelivered = true;
+        Log.d("handleAddAccRes", "Exit the handleAddItemActivityResult method in the DisplayAccountActivity class.");
+    }//End of handleAddItemActivityResult method
+
+    private void handleEditItemActivityResult(@Nullable Intent data,String idKey){
+        Log.d("handleAddAccRes", "Enter the handleAddItemActivityResult method in the DisplayAccountActivity class.");
+        //Check data back from Activity to see if item was deleted or just changed to set up proper message text and notify change type
+        if (data.getExtras().getBoolean("itemDeleted")) {
+            //If no actual account id is returned, means the account was deleted
+            //Set the NotifyChangeType variable to Item removed
+            this.changeType = NotifyChangeType.ITEM_REMOVED;
+            //Set text to item removed
+            this.toastText = setToastText(data,"itemDeletedName",this.changeType);// data.getExtras().getString("itemDeletedName") + " " + getResources().getString(R.string.userNameDeleted);
+        } else {
+            //In case user name changed flag is returned, get the user name from DB
+            Object editedItem = null;
+            int itemID = data.getExtras().getInt(idKey);
+            String toastKey = "";
+            switch(idKey){
+                case "userNameID":
+                    editedItem = accountsDB.getUserNameByID(itemID);
+                    if(editedItem != null){
+                        this.changeType = getNotifyChangeType((UserName) editedItem);
+                    }
+                    toastKey = "userNameValue";
+                    break;
+                case "psswrdID":
+                    editedItem = accountsDB.getPsswrdByID(itemID);
+                    if(editedItem != null){
+                        this.changeType = getNotifyChangeType((Psswrd) editedItem);
+                    }
+                    toastKey = "psswrdValue";
+                    break;
+                case "questionID":
+                    editedItem = accountsDB.getQuestionByID(itemID);
+                    if(editedItem != null){
+                        this.changeType = getNotifyChangeType((Question) editedItem);
+                    }
+                    toastKey = "questionValue";
+                    break;
+                default:
+                    this.changeType = NotifyChangeType.DATA_SET_CHANGED;
+            }
+
+            //Check if account not null,set up the NotifyChangeType variable
+//            if(editedItem != null){
+//                //To define what type of notify change, call method that will determine it
+//                this.changeType = getNotifyChangeType(editedItem);
+//            }else{
+//                //Set default notify change type to Data set change
+//                this.changeType = NotifyChangeType.DATA_SET_CHANGED;
+//            }
+            //Set text to display Toast to confirm the user name has been UPDATED
+            this.toastText = setToastText(data,toastKey,changeType);// data.getExtras().getString("userNameValue") + " " + getResources().getString(R.string.userNameUpdated);
+        }//End of if else statement to check the boolean value retrieved from extra data
+        //Set item position in the RV
+        this.itemPosition = data.getExtras().getInt("position");
+        //Set variable to display Toast and update RV
+        this.goodResultDelivered = true;
+        Log.d("handleAddAccRes", "Exit the handleAddItemActivityResult method in the DisplayAccountActivity class.");
+    }//End of handleAddItemActivityResult method
+
 
     public static NotifyChangeType handleEditAccountActivityResult(@Nullable Intent data,Resources res){
         Log.d("handleEditAccRes", "Enter the handleEditAccountActivityResult method in the DisplayAccountActivity class.");
@@ -1527,6 +1621,69 @@ public class MainActivity extends AppCompatActivity {
         }else if(changeType.equals(NotifyChangeType.ITEM_CHANGED)){
             toastText = data.getExtras().getString("accountName") + " " + res.getString(R.string.accountUpdated);
         }
+        Log.d("handleEditAccRes", "Enter the setToastText method in the DisplayAccountActivity class.");
+        return toastText;
+    }//End of setToastText method
+
+    public String setToastText(@Nullable Intent data,String key,NotifyChangeType changeType){
+        Log.d("handleEditAccRes", "Enter the setToastText method in the MainActivity class.");
+        String toastText= "";
+        Resources res = getResources();
+        toastText = data.getExtras().getString(key);
+        switch (key){
+            case "accountName":
+                Log.d("handleEditAccRes", "accountName key used in the setToastText method in the MainActivity class.");
+                if(changeType.equals(NotifyChangeType.ITEM_REMOVED)){
+                    //Set text to display Toast to confirm the account has been DELETED
+                    toastText += " " + res.getString(R.string.accountDeleted);
+                    //Set text to display Toast to confirm the account has been ADDED
+                }else if(changeType.equals(NotifyChangeType.ITEM_INSERTED)){
+                    toastText += " " + res.getString(R.string.accountAdded);
+                    //Set text to display Toast to confirm the account has been UPDATED
+                }else if(changeType.equals(NotifyChangeType.ITEM_CHANGED)){
+                    toastText += " " + res.getString(R.string.accountUpdated);
+                }
+                break;
+            case "userNameValue":
+                Log.d("handleEditAccRes", "userNameValue key used in the setToastText method in the MainActivity class.");
+                if(changeType.equals(NotifyChangeType.ITEM_REMOVED)){
+                    //Set text to display Toast to confirm the user name has been DELETED
+                    toastText += " " + res.getString(R.string.userNameDeleted);
+                    //Set text to display Toast to confirm the user name has been ADDED
+                }else if(changeType.equals(NotifyChangeType.ITEM_INSERTED)){
+                    toastText += " " + res.getString(R.string.userNameAdded);
+                    //Set text to display Toast to confirm the user name has been UPDATED
+                }else if(changeType.equals(NotifyChangeType.ITEM_CHANGED)){
+                    toastText += " " + res.getString(R.string.userNameUpdated);
+                }
+                break;
+            case "psswrdValue":
+                Log.d("handleEditAccRes", "psswrdValue key used in the setToastText method in the MainActivity class.");
+                if(changeType.equals(NotifyChangeType.ITEM_REMOVED)){
+                    //Set text to display Toast to confirm the psswrd has been DELETED
+                    toastText += " " + res.getString(R.string.psswrdDeleted);
+                    //Set text to display Toast to confirm the psswrd has been ADDED
+                }else if(changeType.equals(NotifyChangeType.ITEM_INSERTED)){
+                    toastText += " " + res.getString(R.string.psswrdAdded);
+                    //Set text to display Toast to confirm the psswrd has been UPDATED
+                }else if(changeType.equals(NotifyChangeType.ITEM_CHANGED)){
+                    toastText += " " + res.getString(R.string.psswrdUpdated);
+                }
+                break;
+            case "questionValue":
+                Log.d("handleEditAccRes", "questionValue key used in the setToastText method in the MainActivity class.");
+                if(changeType.equals(NotifyChangeType.ITEM_REMOVED)){
+                    //Set text to display Toast to confirm the question has been DELETED
+                    toastText += " "  + res.getString(R.string.questionDeleted);
+                    //Set text to display Toast to confirm the psswrd has been ADDED
+                }else if(changeType.equals(NotifyChangeType.ITEM_INSERTED)){
+                    toastText += " " + res.getString(R.string.questionAdded);
+                    //Set text to display Toast to confirm the psswrd has been UPDATED
+                }else if(changeType.equals(NotifyChangeType.ITEM_CHANGED)){
+                    toastText += " " + res.getString(R.string.questionUpdated);
+                }
+                break;
+        }//End of switch statement
         Log.d("handleEditAccRes", "Enter the setToastText method in the DisplayAccountActivity class.");
         return toastText;
     }//End of setToastText method

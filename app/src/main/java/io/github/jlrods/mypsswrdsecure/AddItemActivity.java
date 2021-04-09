@@ -389,7 +389,7 @@ public abstract class AddItemActivity extends AppCompatActivity {
                 if(timesUsed > 1){
                     alertDialogMessage += "\nThe "+ itemType+ " is being used " + timesUsed + " times.\nThe item will be removed from the following accounts:";
                 }else{
-                    alertDialogMessage += "\nThe "+ itemType+ " is being used " + timesUsed + " time.\nThe item will be removed from the following accounts:";
+                    alertDialogMessage += "\nThe "+ itemType+ " is being used " + timesUsed + " time.\nThe item will be removed from the following account:";
                 }
                 //Concat the accounts names to the warning text
                 for(int i=0;i < listOfAccountsUsingTheItem.size();i++){
@@ -402,6 +402,20 @@ public abstract class AddItemActivity extends AppCompatActivity {
             //Otherwise, just alert user is about to delete an item and display the alertDialogMessage
             //Display AlertDialog to warn user it's about to delete an item
             AlertDialog.Builder dialog = MainActivity.displayAlertDialogNoInput(fabDelete.getContext(),alertDiaglogTitle,alertDialogMessage);
+            dialog.setNegativeButton(R.string.cancel,new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //Reset dialog alert text so message is not duplicated when cancelled alert dialog box
+                    alertDialogMessage = "";
+                }
+            });
+            dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    //Reset dialog alert text so message is not duplicated when exit alert dialog box without pressing any button
+                    alertDialogMessage = "";
+                }
+            });
             dialog.setPositiveButton(R.string.dialog_OK, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {

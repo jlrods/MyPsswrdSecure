@@ -140,12 +140,12 @@ public class AccountsDB extends SQLiteOpenHelper {
         //Create a table to store the accounts items
         // Leave empty as user has to create their accounts.
         db.execSQL("CREATE TABLE "+MainActivity.getAccountsTable()+"(_id INTEGER PRIMARY KEY AUTOINCREMENT, "+MainActivity.getNameColumn()+" TEXT, \n" +
-                MainActivity.getCategoryIdColumn()+" INTEGER , "+MainActivity.getUserNameIdColumn()+" INTEGER, "+MainActivity.getPsswrdIdColumn()+" INTEGER, "+MainActivity.getQuestionIdColumn()+" INTEGER,\n" +
+                MainActivity.getCategoryIdColumn()+" INTEGER , "+MainActivity.getUserNameIdColumn()+" INTEGER, "+MainActivity.getPsswrdIdColumn()+" INTEGER, "+MainActivity.getQuestionListIdColumn()+" INTEGER,\n" +
                 MainActivity.getIconIdColumn()+" INTEGER,  "+MainActivity.getIsFavoriteColumn()+" INTEGER, "+MainActivity.getDateCreatedColumn()+" BIGINT, "+MainActivity.getDateChangeColumn()+" BIGINT,\n" +
                 "FOREIGN KEY ("+MainActivity.getCategoryIdColumn()+") REFERENCES CATEGORY(_id),\n" +
                 "FOREIGN KEY ("+MainActivity.getUserNameIdColumn()+") REFERENCES USERNAME(_id),\n" +
                 "FOREIGN KEY ("+MainActivity.getPsswrdIdColumn()+") REFERENCES PSSWRD(_id),\n" +
-                "FOREIGN KEY ("+MainActivity.getQuestionIdColumn()+") REFERENCES QUESTIONLIST(_id),\n" +
+                "FOREIGN KEY ("+MainActivity.getQuestionListIdColumn()+") REFERENCES QUESTIONLIST(_id),\n" +
                 "FOREIGN KEY ("+MainActivity.getIconIdColumn()+") REFERENCES ICON(_id));");
 
 
@@ -652,7 +652,7 @@ public class AccountsDB extends SQLiteOpenHelper {
                 fields.put(MainActivity.getQuestionListIdColumn(),account.getQuestionList().get_id());
             }
             fields.put(MainActivity.getIconIdColumn(),account.getIcon().get_id());
-            fields.put(MainActivity.getIsFavoriteColumn(),account.isFavorite());
+            fields.put(MainActivity.getIsFavoriteColumn(),toInt(account.isFavorite()));
             fields.put(MainActivity.getDateCreatedColumn(),account.getDateCreated());
             //A password renew date is always given,either an actual long number or 0 if not required
             fields.put(MainActivity.getDateChangeColumn(),account.getDateChange());
