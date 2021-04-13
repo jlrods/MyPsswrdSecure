@@ -190,9 +190,9 @@ public class HomeFragment extends Fragment {
 //            }//End of if else statement to check account id
 
             //Call MainActivity's method to get the change type based on the data sent back from EditAccountActivity
-            changeType = MainActivity.handleEditAccountActivityResult(data,getResources());
+            changeType = MainActivity.handleEditAccountActivityResult(data);
             //Call MainActivity's method to get the toast text to be displayed based on the type of RV notification type
-            String toastText = MainActivity.setToastText(data,changeType,getResources());
+            String toastText = MainActivity.setToastText(data,"accountName",changeType,getResources());
             //Get current adapter used by RV
             AccountAdapter adapter = (AccountAdapter) rv.getAdapter();
             //Call MainActivity's method to update RV data

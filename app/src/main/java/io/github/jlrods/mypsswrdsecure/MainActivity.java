@@ -1439,9 +1439,9 @@ public class MainActivity extends AppCompatActivity {
 //                toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountUpdated);
 //            }//End of if else statement to check account id
             //Call MainActivity's method to get the change type based on the data sent back from EditAccountActivity
-            changeType = MainActivity.handleEditAccountActivityResult(data,getResources());
+            changeType = MainActivity.handleEditAccountActivityResult(data);
             //Call MainActivity's method to get the toast text to be displayed based on the type of RV notification type
-            toastText = MainActivity.setToastText(data,changeType,getResources());
+            toastText = MainActivity.setToastText(data,"accountName",changeType,getResources());
             //Set item position in the RV sent back by EditAccountActivity
             itemPosition = data.getExtras().getInt("position");
             //Set good result variable to display Toast appropriate toast text
@@ -1549,7 +1549,7 @@ public class MainActivity extends AppCompatActivity {
         //Set notify change type to insert item type
         this.changeType = NotifyChangeType.ITEM_INSERTED;
         //Set proper text to display item insertion with a Toast
-        this.toastText = setToastText(data,key,changeType); //data.getExtras().getString(key) + " " + getResources().getString(R.string.accountAdded);
+        this.toastText = setToastText(data,key,changeType,getResources()); //data.getExtras().getString(key) + " " + getResources().getString(R.string.accountAdded);
         this.goodResultDelivered = true;
         Log.d("handleAddAccRes", "Exit the handleAddItemActivityResult method in the DisplayAccountActivity class.");
     }//End of handleAddItemActivityResult method
@@ -1562,7 +1562,7 @@ public class MainActivity extends AppCompatActivity {
             //Set the NotifyChangeType variable to Item removed
             this.changeType = NotifyChangeType.ITEM_REMOVED;
             //Set text to item removed
-            this.toastText = setToastText(data,data.getExtras().getString("itemDeletedType"),this.changeType);// data.getExtras().getString("itemDeletedName") + " " + getResources().getString(R.string.userNameDeleted);
+            this.toastText = setToastText(data,"",this.changeType,getResources());// data.getExtras().getString("itemDeletedName") + " " + getResources().getString(R.string.userNameDeleted);
         } else {
             //In case user name changed flag is returned, get the user name from DB
             Object editedItem = null;
@@ -1603,7 +1603,7 @@ public class MainActivity extends AppCompatActivity {
 //                this.changeType = NotifyChangeType.DATA_SET_CHANGED;
 //            }
             //Set text to display Toast to confirm the user name has been UPDATED
-            this.toastText = setToastText(data,toastKey,changeType);// data.getExtras().getString("userNameValue") + " " + getResources().getString(R.string.userNameUpdated);
+            this.toastText = setToastText(data,toastKey,changeType,getResources());// data.getExtras().getString("userNameValue") + " " + getResources().getString(R.string.userNameUpdated);
         }//End of if else statement to check the boolean value retrieved from extra data
         //Set item position in the RV
         this.itemPosition = data.getExtras().getInt("position");
@@ -1613,7 +1613,7 @@ public class MainActivity extends AppCompatActivity {
     }//End of handleAddItemActivityResult method
 
 
-    public static NotifyChangeType handleEditAccountActivityResult(@Nullable Intent data,Resources res){
+    public static NotifyChangeType handleEditAccountActivityResult(@Nullable Intent data){
         Log.d("handleEditAccRes", "Enter the handleEditAccountActivityResult method in the DisplayAccountActivity class.");
         NotifyChangeType changeType;
         //Check type of edit returned byt EditAccountActivity: Delete account or edit it
@@ -1637,31 +1637,32 @@ public class MainActivity extends AppCompatActivity {
         return changeType;
     }//End of handleEditAccountActivityResult method
 
-    public static String setToastText(@Nullable Intent data,NotifyChangeType changeType,Resources res){
-        Log.d("handleEditAccRes", "Enter the setToastText method in the DisplayAccountActivity class.");
-        String toastText= "";
-        if(changeType.equals(NotifyChangeType.ITEM_REMOVED)){
-            //Set text to display Toast to confirm the account has been DELETED
-            toastText = data.getExtras().getString("accountName") + " " + res.getString(R.string.accountDeleted);
-            //Set text to display Toast to confirm the account has been ADDED
-        }else if(changeType.equals(NotifyChangeType.ITEM_INSERTED)){
-            toastText = data.getExtras().getString("accountName") +" " + res.getString(R.string.accountAdded);
-            //Set text to display Toast to confirm the account has been UPDATED
-        }else if(changeType.equals(NotifyChangeType.ITEM_CHANGED)){
-            toastText = data.getExtras().getString("accountName") + " " + res.getString(R.string.accountUpdated);
-        }
-        Log.d("handleEditAccRes", "Enter the setToastText method in the DisplayAccountActivity class.");
-        return toastText;
-    }//End of setToastText method
+//    public static String setToastText(@Nullable Intent data,NotifyChangeType changeType,Resources res){
+//        Log.d("handleEditAccRes", "Enter the setToastText method in the DisplayAccountActivity class.");
+//        String toastText= "";
+//        if(changeType.equals(NotifyChangeType.ITEM_REMOVED)){
+//            //Set text to display Toast to confirm the account has been DELETED
+//            toastText = data.getExtras().getString("accountName") + " " + res.getString(R.string.accountDeleted);
+//            //Set text to display Toast to confirm the account has been ADDED
+//        }else if(changeType.equals(NotifyChangeType.ITEM_INSERTED)){
+//            toastText = data.getExtras().getString("accountName") +" " + res.getString(R.string.accountAdded);
+//            //Set text to display Toast to confirm the account has been UPDATED
+//        }else if(changeType.equals(NotifyChangeType.ITEM_CHANGED)){
+//            toastText = data.getExtras().getString("accountName") + " " + res.getString(R.string.accountUpdated);
+//        }
+//        Log.d("handleEditAccRes", "Enter the setToastText method in the DisplayAccountActivity class.");
+//        return toastText;
+//    }//End of setToastText method
 
-    public String setToastText(@Nullable Intent data,String key,NotifyChangeType changeType){
+    public static String setToastText(@Nullable Intent data,String key,NotifyChangeType changeType, Resources res){
         Log.d("handleEditAccRes", "Enter the setToastText method in the MainActivity class.");
         String toastText= "";
-        Resources res = getResources();
+        //Resources res = getResources();
         if(key.equals("accountName") || key.equals("userNameValue") || key.equals("psswrdValue") || key.equals("questionValue")){
-            toastText = data.getExtras().getString("itemDeletedName");
-        }else{
             toastText = data.getExtras().getString(key);
+        }else{
+            toastText = data.getExtras().getString("itemDeletedName");
+            key = data.getExtras().getString("itemDeletedType");
         }
 
         switch (key){
