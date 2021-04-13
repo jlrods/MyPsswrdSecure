@@ -240,48 +240,48 @@ public class AccountsDB extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_youtube_music','Resources');");//88
 
         //Android resources
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('facebook','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('popcorn','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('ic_cat_cellphone_wireless','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('briefcase_clock','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('web','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('shopping','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('airplane_takeoff','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('android_studio','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('food','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('currency_eur','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('shield_check','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('briefcase_search','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('tools','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('facebook','Resources');");//89
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('popcorn','Resources');");//90
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('ic_cat_cellphone_wireless','Resources');");//91
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('briefcase_clock','Resources');");//92
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('web','Resources');");//93
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('shopping','Resources');");//94
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('airplane_takeoff','Resources');");//95
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('android_studio','Resources');");//96
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('food','Resources');");//97
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('currency_eur','Resources');");//98
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('shield_check','Resources');");//99
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('briefcase_search','Resources');");//100
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('tools','Resources');");//101
         //NavDrawer Resources
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg1','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg2','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg3','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg4','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg5','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg6','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg7','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg8','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg9','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg','Resources');");//102
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg1','Resources');");//103
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg2','Resources');");//104
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg3','Resources');");//105
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg4','Resources');");//106
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg5','Resources');");//109
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg6','Resources');");//108
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg7','Resources');");//109
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg8','Resources');");//110
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg9','Resources');");//111
 
 
 
 
         //Populate the Category table with some default category items
-        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('SocialMedia',49);");
-        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Entertainment',50);");
-        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Communication',51);");
-        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Work',52);");
-        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Internet',53);");
-        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Shopping',54);");
-        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Travel',55);");
-        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Learning',56);");
-        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Food',57);");
-        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Finance',58);");
-        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Insurance',59);");
-        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('JobHunting',60);");
-        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Utilities',61);");
+        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('SocialMedia',89);");
+        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Entertainment',90);");
+        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Communication',91);");
+        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Work',92);");
+        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Internet',93);");
+        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Shopping',94);");
+        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Travel',95);");
+        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Learning',96);");
+        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Food',97);");
+        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Finance',98);");
+        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Insurance',99);");
+        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('JobHunting',100);");
+        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Utilities',101);");
 
 
         //Test and sample data

@@ -197,7 +197,7 @@ public class LoginActivity extends AppCompatActivity {
                             newPsswrd.set_id(accountsDB.addItem(newPsswrd));
 
                             //Add appLogin record to APPLOGGIN table
-                            appLoggin = new AppLoggin(-1,etUserName.getText().toString(),newUserName,newPsswrd,etUserMessage.getText().toString(),accountsDB.getIconByID(62));
+                            appLoggin = new AppLoggin(-1,etUserName.getText().toString(),newUserName,newPsswrd,etUserMessage.getText().toString(),accountsDB.getIconByID(102));
                             //Update appLogin id by inputting result coming from DB insertion
                             appLoggin.set_id(accountsDB.addItem(appLoggin));
                             if(appLoggin.get_id() != -1){
