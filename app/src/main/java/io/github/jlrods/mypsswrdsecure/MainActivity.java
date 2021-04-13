@@ -234,15 +234,19 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case 1:
                         //Call method to throw the AddUserName Activity
-                        throwAddUserNameActivity();
+//                        throwAddUserNameActivity();
+                        throwActivityNoExtras(MainActivity.this,AddUserNameActivity.class,THROW_ADD_USERNAME_ACT_REQCODE);
+                        Intent i = new Intent(MainActivity.this, AddUserNameActivity.class);
                         break;
                     case 2:
                         //Call method to throw the AddPsswrd Activity
-                        throwAddPsswrdActivity();
+//                        throwAddPsswrdActivity();
+                        throwActivityNoExtras(MainActivity.this,AddPsswrdActivity.class,THROW_ADD_PSSWRD_ACT_REQCODE);
                         break;
                     default:
                         //Call method to throw the AddQuestion Activity
-                        throwAddQuestionActivity();
+//                        throwAddQuestionActivity();
+                        throwActivityNoExtras(MainActivity.this,AddQuestionActivity.class,THROW_ADD_QUESTION_ACT_REQCODE);
                         break;
 
                 }//End of switch statement to check current tab selection
@@ -610,7 +614,8 @@ public class MainActivity extends AppCompatActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_applogin:
-                this.throwUpdateAppLoginActivity();
+//                this.throwUpdateAppLoginActivity();
+                this.throwActivityNoExtras(MainActivity.this,UpdateAppLoginActivity.class,THROW_UPDATE_APPLOGIN_ACT_REQCODE);
                 Log.d("onOptionsItemSelected", "Exit the onOptionsItemSelected method in the MainActivity class with App Login option selected.");
                 return true;
             case R.id.action_logout:
@@ -619,11 +624,13 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.action_about:
                 //Call method to throw AboutActivity activity
-                throwAboutActivity();
+                //throwAboutActivity();
+                this.throwActivityNoExtras(MainActivity.this,AboutActivity.class,-1);
                 Log.d("onOptionsItemSelected", "Exit the onOptionsItemSelected method in the MainActivity class with About option selected.");
                 return true;
             case R.id.action_settings:
-                this.ThrowPreferncesActivity(null);
+                //this.ThrowPreferncesActivity(null);
+                this.throwActivityNoExtras(MainActivity.this,PreferencesActivity.class,-1);
                 Log.d("onOptionsItemSelected", "Exit the onOptionsItemSelected method in the MainActivity class with Preferences option selected.");
                 return true;
             case R.id.action_sort:
@@ -947,6 +954,23 @@ public class MainActivity extends AppCompatActivity {
 
 
     //@Fixme: try to compress all the throw activity methods into one generic method
+    //Method to throw a new Activity
+    private void throwActivityNoExtras(Activity activity, Class className,int requestCode) {
+        Log.d("throwActivityNoExtras", "Enter throwActivityNoExtras method in the MainActivity class.");
+        //Declare and instantiate a new intent object
+        //Intent i = new Intent(MainActivity.this, AddPsswrdActivity.class);
+        Intent i = new Intent(activity,className);
+        //Start the AddItemActivity class
+        if(requestCode > 0){
+            startActivityForResult(i, requestCode);
+            Log.d("throwActivityNoExtras", "startActivityForResult called by throwActivityNoExtras method in the MainActivity class with request code: "+requestCode);
+        }else{
+            startActivity(i);
+            Log.d("throwActivityNoExtras", "startActivity called by throwActivityNoExtras method in the MainActivity class.");
+        }
+        Log.d("throwActivityNoExtras", "Exit throwActivityNoExtras method in the MainActivity class.");
+    }//End of throwActivityNoExtras method
+
     //Method to throw a new Activity and expect a result from it
     private void throwActivity(ArrayList<Object> extras,int ResequestCode) {
         Log.d("ThrowAct", "Enter throwActivity method in the MainActivity class.");
@@ -983,48 +1007,83 @@ public class MainActivity extends AppCompatActivity {
     }//End of throwAddAccountActivity
 
     //Method to throw new AddTaskActivity
-    private void throwAddUserNameActivity() {
-        Log.d("ThrowAddUser", "Enter throwAddUserNameActivity method in the MainActivity class.");
-        //Declare and instantiate a new intent object
-        Intent i = new Intent(MainActivity.this, AddUserNameActivity.class);
-        if(isLogOutActive){
-            i.putExtra("timeOutRemainder",(long)this.logoutTimer.getLogOutTimeRemainder());
-        }
-        //Start the AddItemActivity class
-        startActivityForResult(i, THROW_ADD_USERNAME_ACT_REQCODE);
-        Log.d("ThrowAddUser", "Exit throwAddUserNameActivity method in the MainActivity class.");
-    }//End of throwAddTaskActivity
+//    private void throwAddUserNameActivity() {
+//        Log.d("ThrowAddUser", "Enter throwAddUserNameActivity method in the MainActivity class.");
+//        //Declare and instantiate a new intent object
+//        Intent i = new Intent(MainActivity.this, AddUserNameActivity.class);
+//        if(isLogOutActive){
+//            i.putExtra("timeOutRemainder",(long)this.logoutTimer.getLogOutTimeRemainder());
+//        }
+//        //Start the AddItemActivity class
+//        startActivityForResult(i, THROW_ADD_USERNAME_ACT_REQCODE);
+//        Log.d("ThrowAddUser", "Exit throwAddUserNameActivity method in the MainActivity class.");
+//    }//End of throwAddTaskActivity
 
-    private void throwAddPsswrdActivity() {
-        Log.d("ThrowAddPsswrd", "Enter throwAddPsswrdActivity method in the MainActivity class.");
-        //Declare and instantiate a new intent object
-        Intent i = new Intent(MainActivity.this, AddPsswrdActivity.class);
-        //Start the AddItemActivity class
-        startActivityForResult(i, THROW_ADD_PSSWRD_ACT_REQCODE);
-        Log.d("ThrowAddPsswrd", "Exit throwAddPsswrdActivity method in the MainActivity class.");
-    }//End of throwAddTaskActivity
+//    private void throwAddPsswrdActivity() {
+//        Log.d("ThrowAddPsswrd", "Enter throwAddPsswrdActivity method in the MainActivity class.");
+//        //Declare and instantiate a new intent object
+//        Intent i = new Intent(MainActivity.this, AddPsswrdActivity.class);
+//        //Start the AddItemActivity class
+//        startActivityForResult(i, THROW_ADD_PSSWRD_ACT_REQCODE);
+//        Log.d("ThrowAddPsswrd", "Exit throwAddPsswrdActivity method in the MainActivity class.");
+//    }//End of throwAddTaskActivity
 
-    private void throwAddQuestionActivity() {
-        Log.d("ThrowAddQuest", "Enter throwAddQuestionActivity method in the MainActivity class.");
-        //Declare and instantiate a new intent object
-        Intent i = new Intent(MainActivity.this, AddQuestionActivity.class);
-        //Start the addTaskActivity class
-        startActivityForResult(i, THROW_ADD_QUESTION_ACT_REQCODE);
-        Log.d("ThrowAddQuest", "Exit throwAddQuestionActivity method in the MainActivity class.");
-    }//End of throwAddTaskActivity
+//    private void throwAddQuestionActivity() {
+//        Log.d("ThrowAddQuest", "Enter throwAddQuestionActivity method in the MainActivity class.");
+//        //Declare and instantiate a new intent object
+//        Intent i = new Intent(MainActivity.this, AddQuestionActivity.class);
+//        //Start the addTaskActivity class
+//        startActivityForResult(i, THROW_ADD_QUESTION_ACT_REQCODE);
+//        Log.d("ThrowAddQuest", "Exit throwAddQuestionActivity method in the MainActivity class.");
+//    }//End of throwAddTaskActivity
 
-    private void throwAddCategoryActivity() {
-        Log.d("ThrowAddCatt", "Enter throwAddCategoryActivity method in the MainActivity class.");
-        //Declare and instantiate a new intent object
-        Intent i = new Intent(MainActivity.this, AddCategoryAcitivity.class);
-        //Start the addTaskActivity class
-        startActivityForResult(i, TRHOW_ADD_CATEGORY_REQCODE);
-        Log.d("ThrowAddCatt", "Exit throwAddCategoryActivity method in the MainActivity class.");
-    }//End of throwAddTaskActivity
+//    private void throwAddCategoryActivity() {
+//        Log.d("ThrowAddCatt", "Enter throwAddCategoryActivity method in the MainActivity class.");
+//        //Declare and instantiate a new intent object
+//        Intent i = new Intent(MainActivity.this, AddCategoryAcitivity.class);
+//        //Start the addTaskActivity class
+//        startActivityForResult(i, TRHOW_ADD_CATEGORY_REQCODE);
+//        Log.d("ThrowAddCatt", "Exit throwAddCategoryActivity method in the MainActivity class.");
+//    }//End of throwAddTaskActivity
+
+    //Method to throw the SelectLogoActivity
+//    protected void throwUpdateAppLoginActivity() {
+//        Log.d("throwUpAppLogAct", "Enter the throwUpdateAppLoginActivity method in the DisplayAccountActivity class.");
+//        //Declare and instantiate a new intent object
+//        Intent i = new Intent(this, UpdateAppLoginActivity.class);
+//        //Add extras to the intent object, specifically the current category where the add button was pressed from
+//        // the current logo data which is sent back if select logo is cancel or updated if new logo has been selected
+//        //i.putExtra("selectedImgPosition", -1);
+//        //i.putExtra("selectedImgLocation", RESOURCES);
+//        //Start the addTaskActivity and wait for result
+//        startActivityForResult(i, this.THROW_UPDATE_APPLOGIN_ACT_REQCODE);
+//        Log.d("throwUpAppLogAct", "Exit the throwUpdateAppLoginActivity method in the DisplayAccountActivity class.");
+//    }//End of throwSelectLogoActivity method
+
+    //Method to throw new AddTaskActivity
+//    private void throwAboutActivity() {
+//        Log.d("ThrowAbout", "Enter throwAboutActivity method in the MainActivity class.");
+//        //Declare and instantiate a new intent object
+//        Intent i = new Intent(getBaseContext(), AboutActivity.class);
+//        //Start the addTaskActivity class
+//        startActivity(i);
+//        Log.d("ThrowAbout", "Exit throwAboutActivity method in the MainActivity class.");
+//    }//End of throwAddTaskActivity
+
+    //Method to call the Preferences screen
+//    private void ThrowPreferncesActivity(View view) {
+//        Log.d("Ent_callPrefernce", "Enter the callPreferences method in MainActivity.");
+//        //Declare and instantiate a new Intent object, passing the PreferencesActivity class as argument
+//        Intent i = new Intent(this, PreferencesActivity.class);
+//        //Start the activity by passin in the intent
+//        startActivity(i);
+//        Log.d("Ext_callPrefernce", "Exit the callPreferences method in MainActivity.");
+//    }// End of callPreferences method
 
     //Method to throw new AddTaskActivity
     public static Intent prepareThrowEditAccountActivity(Context context, Intent i, View v) {
-        //rv
+        Log.d("PrepThrowEdAcc", "Enter prepareThrowEditAccountActivity method in the MainActivity class.");
+        //Get RV object from home fragment
         RecyclerView rv = HomeFragment.getRv();
         //Get the item position in the adapter
         int itemPosition = rv.getChildAdapterPosition(v);
@@ -1039,15 +1098,18 @@ public class MainActivity extends AppCompatActivity {
         i.putExtra("category", currentCategory.get_id());
         i.putExtra(ID_COLUMN, account.get_id());
         i.putExtra("position",itemPosition);
+        Log.d("PrepThrowEdAcc", "Exit prepareThrowEditAccountActivity method in the MainActivity class.");
         return i;
-    }
+    }//End of prepareThrowEditAccountActivity method
     //Method to throw new AddTaskActivity
     private void throwEditAccountActivity(View v) {
+        Log.d("ThrowEditAcc", "Enter throwEditAccountActivity method in the MainActivity class.");
         Intent i = new Intent();
         i  = prepareThrowEditAccountActivity(MainActivity.this,i,v);
         //Start the AddItemActivity class
         startActivityForResult(i, THROW_EDIT_ACCOUNT_ACT_REQCODE);
-    }
+        Log.d("ThrowEditAcc", "Exit throwEditAccountActivity method in the MainActivity class.");
+    }//End of throwEditAccountActivity
 
 
     //Method to throw new AddTaskActivity
@@ -1174,39 +1236,6 @@ public class MainActivity extends AppCompatActivity {
         Log.d("throwSelectBckActivity", "Exit the throwSelectNavDrawerBackgroundActivity method in the DisplayAccountActivity class.");
     }//End of throwSelectLogoActivity method
 
-    //Method to throw the SelectLogoActivity
-    protected void throwUpdateAppLoginActivity() {
-        Log.d("throwUpAppLogAct", "Enter the throwUpdateAppLoginActivity method in the DisplayAccountActivity class.");
-        //Declare and instantiate a new intent object
-        Intent i = new Intent(this, UpdateAppLoginActivity.class);
-        //Add extras to the intent object, specifically the current category where the add button was pressed from
-        // the current logo data which is sent back if select logo is cancel or updated if new logo has been selected
-        //i.putExtra("selectedImgPosition", -1);
-        //i.putExtra("selectedImgLocation", RESOURCES);
-        //Start the addTaskActivity and wait for result
-        startActivityForResult(i, this.THROW_UPDATE_APPLOGIN_ACT_REQCODE);
-        Log.d("throwUpAppLogAct", "Exit the throwUpdateAppLoginActivity method in the DisplayAccountActivity class.");
-    }//End of throwSelectLogoActivity method
-
-    //Method to throw new AddTaskActivity
-    private void throwAboutActivity() {
-        Log.d("ThrowAbout", "Enter throwAboutActivity method in the MainActivity class.");
-        //Declare and instantiate a new intent object
-        Intent i = new Intent(getBaseContext(), AboutActivity.class);
-        //Start the addTaskActivity class
-        startActivity(i);
-        Log.d("ThrowAbout", "Exit throwAboutActivity method in the MainActivity class.");
-    }//End of throwAddTaskActivity
-
-    //Method to call the Preferences screen
-    private void ThrowPreferncesActivity(View view) {
-        Log.d("Ent_callPrefernce", "Enter the callPreferences method in MainActivity.");
-        //Declare and instantiate a new Intent object, passing the PreferencesActivity class as argument
-        Intent i = new Intent(this, PreferencesActivity.class);
-        //Start the activity by passin in the intent
-        startActivity(i);
-        Log.d("Ext_callPrefernce", "Exit the callPreferences method in MainActivity.");
-    }// End of callPreferences method
 
     //Method to receive and handle data coming from other activities such as: SelectLogoActivity,
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -1533,7 +1562,7 @@ public class MainActivity extends AppCompatActivity {
             //Set the NotifyChangeType variable to Item removed
             this.changeType = NotifyChangeType.ITEM_REMOVED;
             //Set text to item removed
-            this.toastText = setToastText(data,"itemDeletedName",this.changeType);// data.getExtras().getString("itemDeletedName") + " " + getResources().getString(R.string.userNameDeleted);
+            this.toastText = setToastText(data,data.getExtras().getString("itemDeletedType"),this.changeType);// data.getExtras().getString("itemDeletedName") + " " + getResources().getString(R.string.userNameDeleted);
         } else {
             //In case user name changed flag is returned, get the user name from DB
             Object editedItem = null;
@@ -1629,7 +1658,12 @@ public class MainActivity extends AppCompatActivity {
         Log.d("handleEditAccRes", "Enter the setToastText method in the MainActivity class.");
         String toastText= "";
         Resources res = getResources();
-        toastText = data.getExtras().getString(key);
+        if(key.equals("accountName") || key.equals("userNameValue") || key.equals("psswrdValue") || key.equals("questionValue")){
+            toastText = data.getExtras().getString("itemDeletedName");
+        }else{
+            toastText = data.getExtras().getString(key);
+        }
+
         switch (key){
             case "accountName":
                 Log.d("handleEditAccRes", "accountName key used in the setToastText method in the MainActivity class.");
@@ -2458,7 +2492,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 //Start the AddItemActivity class
-                throwAddCategoryActivity();
+//                throwAddCategoryActivity();
+                throwActivityNoExtras(MainActivity.this,AddCategoryAcitivity.class,TRHOW_ADD_CATEGORY_REQCODE);
                 return false;
             }//End of onMenuItemClick method
         });//End of setOnMenuItemClickListener method call
@@ -2650,8 +2685,7 @@ public class MainActivity extends AppCompatActivity {
                                                         if (isCurrentCategoryInListToBeDeleted(currentCategory.get_id(), categoriesToBeDeleted)) {
                                                             //If that the case, move current category to Home
                                                             currentCategory = categoryList.get(0);
-                                                            //@Fixme: Update APPState with correct current category
-                                                            ContentValues values =  new ContentValues();
+                                                            //Update app state in DB
                                                             updateCategoryInAppState();
                                                             //Then move Nav drawer menu item to Home
                                                             navMenu.getItem(0).setCheckable(true);

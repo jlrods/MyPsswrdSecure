@@ -174,7 +174,8 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         this.btnAccNewUserName.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                addNewUserName();
+//                addNewUserName();
+                throwActivityNoExtras(AddUserNameActivity.class, MainActivity.getThrowAddUsernameActReqcode());
             }//End of onClick method
         });//End of setOnClickListener method
 
@@ -184,7 +185,8 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         this.btnAccNewPsswrd.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                addNewPsswrd();
+//                addNewPsswrd();
+                throwActivityNoExtras(AddPsswrdActivity.class, MainActivity.getThrowAddPsswrdActReqcode());
             }//End of onClick method
         });//End of setOnClickListener method
         //Initialize QuestionList relates variables
@@ -200,7 +202,8 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         this.btnAccNewSecQuestion.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                addNewQuestion();
+//                addNewQuestion();
+                throwActivityNoExtras(AddQuestionActivity.class,MainActivity.getThrowAddQuestionActReqcode());
             }
         });//End of setOnClickListener method
         this.spAccSecQuestionList = (NoDefaultSpinner) findViewById(R.id.spAccSecQuestionList);
@@ -619,32 +622,49 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
 
 
     //Method to add a new userName to the user name dropdown menu
-    protected void addNewUserName(){
-        Log.d("addNewQuestion","Enter the addNewQuestion method in the DisplayAccountActivity class.");
+//    protected void addNewUserName(){
+//        Log.d("addNewUserName","Enter the addNewQuestion method in the DisplayAccountActivity class.");
+//        //Declare and instantiate a new intent object
+//        Intent i= new Intent(this, AddUserNameActivity.class);
+//        startActivityForResult(i,MainActivity.getThrowAddUsernameActReqcode());
+//        Log.d("addNewUserName","Exit the addNewQuestion method in the DisplayAccountActivity class.");
+//    }
+
+    //Method to throw a new Activity
+    private void throwActivityNoExtras(Class className,int requestCode) {
+        Log.d("throwActivityNoExtras", "Enter throwActivityNoExtras method in the DisplayAccountActivity class.");
         //Declare and instantiate a new intent object
-        Intent i= new Intent(this, AddUserNameActivity.class);
-        startActivityForResult(i,MainActivity.getThrowAddUsernameActReqcode());
-        Log.d("addNewPsswrd","Exit the addNewQuestion method in the DisplayAccountActivity class.");
-    }
+        //Intent i = new Intent(MainActivity.this, AddPsswrdActivity.class);
+        Intent i = new Intent(this,className);
+        //Start the AddItemActivity class
+        if(requestCode > 0){
+            startActivityForResult(i, requestCode);
+            Log.d("throwActivityNoExtras", "startActivityForResult called by throwActivityNoExtras method in the DisplayAccountActivity class with request code: "+requestCode);
+        }else{
+            startActivity(i);
+            Log.d("throwActivityNoExtras", "startActivity called by throwActivityNoExtras method in the DisplayAccountActivity class.");
+        }
+        Log.d("throwActivityNoExtras", "Exit throwActivityNoExtras method in the MainActivity class.");
+    }//End of throwActivityNoExtras method
 
     //Method to add a new password to the password dropdown menu
-    protected void addNewPsswrd(){
-        Log.d("addNewQuestion","Enter the addNewQuestion method in the DisplayAccountActivity class.");
-        //Declare and instantiate a new intent object
-        Intent i= new Intent(this, AddPsswrdActivity.class);
-        startActivityForResult(i,MainActivity.getThrowAddPsswrdActReqcode());
-        Log.d("addNewPsswrd","Exit the addNewQuestion method in the DisplayAccountActivity class.");
-    }
-
-
-    //Method to add a new question to the security question  dropdown menu
-    protected void addNewQuestion(){
-        Log.d("addNewQuestion","Enter the addNewQuestion method in the DisplayAccountActivity class.");
-        //Declare and instantiate a new intent object
-        Intent i= new Intent(this, AddQuestionActivity.class);
-        startActivityForResult(i,MainActivity.getThrowAddQuestionActReqcode());
-        Log.d("addNewPsswrd","Exit the addNewQuestion method in the DisplayAccountActivity class.");
-    }//End of addNewQuestion method
+//    protected void addNewPsswrd(){
+//        Log.d("addNewQuestion","Enter the addNewQuestion method in the DisplayAccountActivity class.");
+//        //Declare and instantiate a new intent object
+//        Intent i= new Intent(this, AddPsswrdActivity.class);
+//        startActivityForResult(i,MainActivity.getThrowAddPsswrdActReqcode());
+//        Log.d("addNewPsswrd","Exit the addNewQuestion method in the DisplayAccountActivity class.");
+//    }
+//
+//
+//    //Method to add a new question to the security question  dropdown menu
+//    protected void addNewQuestion(){
+//        Log.d("addNewQuestion","Enter the addNewQuestion method in the DisplayAccountActivity class.");
+//        //Declare and instantiate a new intent object
+//        Intent i= new Intent(this, AddQuestionActivity.class);
+//        startActivityForResult(i,MainActivity.getThrowAddQuestionActReqcode());
+//        Log.d("addNewPsswrd","Exit the addNewQuestion method in the DisplayAccountActivity class.");
+//    }//End of addNewQuestion method
 
     //Method to add a question from question available list to security question list spinner
     protected void addQuestionToSecList(int questionPositionInAvailableList){

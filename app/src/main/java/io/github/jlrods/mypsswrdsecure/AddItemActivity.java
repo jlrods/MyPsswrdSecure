@@ -440,7 +440,7 @@ public abstract class AddItemActivity extends AppCompatActivity {
                             boolean only1QuestionAssignmentToDelete = false;
 
                             //When removing a question from a question list there are there main possibilities:
-                            //1.- The question to be removed is not the only quesntion in the list
+                            //1.- The question to be removed is not the only question in the list
                             //2.- The question to be removed is the only question in the list
 
                             if(questionListUsingTheQuestionToBeDeleted != null){
@@ -535,6 +535,16 @@ public abstract class AddItemActivity extends AppCompatActivity {
                         Intent intent = new Intent();
                         intent.putExtra("itemDeletedName",itemDeletedName);
                         intent.putExtra(itemDeletedNameForIntent,true);
+                        String itemDeletedType = "";
+                        //Check the type of item deleted and associate it's type accordingly
+                        if(item instanceof Psswrd){
+                            itemDeletedType = "psswrdValue";
+                        }else if(item instanceof UserName){
+                            itemDeletedType = "userNameValue";
+                        }else if(item instanceof Question){
+                            itemDeletedType = "questionValue";
+                        }
+                        intent.putExtra("itemDeletedType",itemDeletedType);
                         intent.putExtra("position",itemPosition);
                         setResult(RESULT_OK,intent);
                         finish();
