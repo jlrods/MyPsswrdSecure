@@ -332,5 +332,10 @@
     <string name="appLoginUserNamePrompt">This user name is part of your app login credentials. It cannot be deleted until you updated your login credentials</string>
     <string name="appLoginPsswrdPrompt">This password is part of your app login credentials. It cannot be deleted until you updated your login credentials</string>
 
+    <!--    Push Notification-->
+    <string name="pushNotificationPsswrdExpMssg">Password expired</string>
+    <string name="pushNotPsswrHasExp2">\'s password has expired</string>
+    <string name="pushNotPsswrdHasExp1"></string>
+
 
 </resources>

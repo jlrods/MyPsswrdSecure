@@ -4,15 +4,18 @@ import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -52,7 +55,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.crypto.spec.IvParameterSpec;
 
@@ -101,6 +103,8 @@ public class MainActivity extends AppCompatActivity {
     private NotifyChangeType changeType = NotifyChangeType.DATA_SET_CHANGED;
     //Set proper text to display item insertion with a Toast
     String toastText = "";
+
+//    public static ActivityResultReceiver broadCastReceiver;
 
     //CONSTANT VALUES
     private static final int INDEX_TO_GET_LAST_TASK_LIST_ITEM = 2;
@@ -526,7 +530,7 @@ public class MainActivity extends AppCompatActivity {
             this.logoutTimer.start();
         }//End of if statement to check logout is active
 
-        //@Fixme: in progress
+        //Check for expired password accounts to display push notifications
         //Get from DB a list of accounts with password due for renewal
         Cursor expiredPsswrdAccounts = accountsDB.getExpiredPsswrdAccounts();
         //Check the list returned at least one item in it
@@ -543,26 +547,21 @@ public class MainActivity extends AppCompatActivity {
             //intent.putExtra("position",accountsDB.findItemPositionInCursor(((AccountAdapter)HomeFragment.getRv().getAdapter()).getCursor(),expiredPsswrdAccount.get_id()));
             stackBuilder.addNextIntentWithParentStack(intent);
             //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
             PendingIntent pendingIntent = stackBuilder.getPendingIntent(THROW_EDIT_ACCOUNT_ACT_REQCODE, PendingIntent.FLAG_UPDATE_CURRENT);
 //                PendingIntent.getActivity(this, 0, intent, 0);
-
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this,CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_stat_my_psswrd_secure_full)
-                    .setContentTitle("Password expired")
-                    .setContentText("The "+expiredPsswrdAccount.getName()+"'s account password has expired")
+                    .setContentTitle(getString(R.string.pushNotificationPsswrdExpMssg))
+                    .setContentText(getString(R.string.pushNotPsswrdHasExp1)+" "+expiredPsswrdAccount.getName()+" "+getString(R.string.pushNotPsswrHasExp2))
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                     .setContentIntent(pendingIntent)
                     .setAutoCancel(true);
             this.createNotificationChannel();
-
             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-// notificationId is a unique int for each notification that you must define
-            notificationManager.notify(1, notificationBuilder.build());
-        }
-        //If list is greater than 0, push notification for the first one on the list
-
-
+            // notificationId is a unique int for each notification that you must define
+            notificationManager.notify(expiredPsswrdAccount.get_id(), notificationBuilder.build());
+//             broadCastReceiver = new ActivityResultReceiver();
+        }//End of if statement to check at least one account has expired password
         Log.d("Ext_onCreateMain", "Exit onCreate method in MainActivity class.");
     }//End of onCreate method
 
@@ -628,26 +627,26 @@ public class MainActivity extends AppCompatActivity {
     }//End of getCategoryNameFromRes method
 
 
-    private void testCriptogrpher() {
-        //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-        counter++;
-        if (counter <= 1) {
-            encrypted = cryptographer.encryptText("jlrods@gmail.com");
-            try {
-                Toast.makeText(MainActivity.this, new String(encrypted, "UTF8"), Toast.LENGTH_LONG).show();
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-//                    encrypted =cryptographer.encryptText("jlrods@gmail.com");
-//                    Snackbar snackbar = Snackbar.make(view, new String(encrypted), Snackbar.LENGTH_LONG);
-//                    snackbar.setAction("Action", null).show();
-            //Toast.makeText(MainActivity.this, new String(encrypted), Toast.LENGTH_LONG).show();
-        } else {
-            decrypted = cryptographer.decryptText(encrypted, cryptographer.getIv());
-            Toast.makeText(MainActivity.this, decrypted, Toast.LENGTH_LONG).show();
-        }
-    }
+//    private void testCriptogrpher() {
+//        //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+////                        .setAction("Action", null).show();
+//        counter++;
+//        if (counter <= 1) {
+//            encrypted = cryptographer.encryptText("jlrods@gmail.com");
+//            try {
+//                Toast.makeText(MainActivity.this, new String(encrypted, "UTF8"), Toast.LENGTH_LONG).show();
+//            } catch (UnsupportedEncodingException e) {
+//                e.printStackTrace();
+//            }
+////                    encrypted =cryptographer.encryptText("jlrods@gmail.com");
+////                    Snackbar snackbar = Snackbar.make(view, new String(encrypted), Snackbar.LENGTH_LONG);
+////                    snackbar.setAction("Action", null).show();
+//            //Toast.makeText(MainActivity.this, new String(encrypted), Toast.LENGTH_LONG).show();
+//        } else {
+//            decrypted = cryptographer.decryptText(encrypted, cryptographer.getIv());
+//            Toast.makeText(MainActivity.this, decrypted, Toast.LENGTH_LONG).show();
+//        }
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -3496,9 +3495,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private Cursor getkDuePsswrdAccounts(){
-        return  accountsDB.getExpiredPsswrdAccounts();
-    }
+//
+//    private class ActivityResultReceiver extends BroadcastReceiver {
+//
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            // Retrieve data from intent
+//            onActivityResult(THROW_EDIT_ACCOUNT_ACT_REQCODE,RESULT_OK,intent);
+//        }
+//
+//    }
 
 
 }//End of MainActivity class.

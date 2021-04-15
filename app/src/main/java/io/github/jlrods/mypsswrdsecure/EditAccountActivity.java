@@ -1,10 +1,13 @@
 package io.github.jlrods.mypsswrdsecure;
 
 
+import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,7 +19,7 @@ import androidx.appcompat.app.AlertDialog;
 
 import java.lang.reflect.Field;
 
-public class EditAccountActivity extends DisplayAccountActivity {
+public class EditAccountActivity extends DisplayAccountActivity{
     //Attribute definition
     //private Bundle extras;
     final private Intent[] intents = {new Intent()};
@@ -104,7 +107,7 @@ public class EditAccountActivity extends DisplayAccountActivity {
         Log.d("onOptionsItemSelected","Enter onOptionsItemSelected method in EditAccountActivity class.");
         //Boolean to return method result
         boolean result = false;
-        Intent intent = new Intent();
+        final Intent intent = new Intent();
         this.intents[0] = intent;
         //Check the id of item selected in menu
         switch (item.getItemId()) {
@@ -237,6 +240,12 @@ public class EditAccountActivity extends DisplayAccountActivity {
                                     intents[0].putExtra("position",extras.getInt("position"));
                                     setResult(RESULT_OK, intents[0]);
                                     Log.d("onOptionsItemSelected","Set activity result to OK  on onOptionsItemSelected method in EditAccountActivity class.");
+//                                    IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+//                                    filter.addAction(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+//                                    registerReceiver(MainActivity.broadCastReceiver, filter);
+//
+//                                    sendBroadcast(intent);
+//                                    onSendFinished(null,intents[0],RESULT_OK,"RESULT_OK",extras);
                                     finish();
                                 }else{
                                     //Display error message
@@ -261,6 +270,7 @@ public class EditAccountActivity extends DisplayAccountActivity {
         Log.d("onOptionsItemSelected","Exit successfully onOptionsItemSelected method in EditAccountActivity class.");
         return result;
     }//End of onOptionsItemSelected method
+
 
     //Method to check two accounts have different question list (including null list)
     private boolean isItemTheSame(UserName item1,UserName item2){
@@ -357,4 +367,8 @@ public class EditAccountActivity extends DisplayAccountActivity {
         Log.d("deleteAccount","Exit the deleteAccount static method in the EditAccountActivity class.");
         return isAccountDeleted;
     }//End of deleteAccount static method
+//    @Override
+//    public void onSendFinished(PendingIntent pendingIntent, Intent intent, int resultCode, String resultData, Bundle resultExtras) {
+//
+//    }
 }//End of EditAccountActivity class

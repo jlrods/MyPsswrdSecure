@@ -321,5 +321,10 @@
     <string name="appLoginUserNamePrompt">Este nombre de usuario es parte de las credenciales de la app. No puede ser eliminada hasta que las credenciales de acceso sean cambiadas</string>
     <string name="appLoginPsswrdPrompt">Esta contraseña es parte de las credenciales de la app. No puede ser eliminada hasta que las credenciales de acceso sean cambiadas</string>
 
+    <!--    Push Notification-->
+    <string name="pushNotificationPsswrdExpMssg">Contraseña expiró</string>
+    <string name="pushNotPsswrHasExp2"> ha expirado</string>
+    <string name="pushNotPsswrdHasExp1">La contraseña de </string>
+
 
 </resources>
