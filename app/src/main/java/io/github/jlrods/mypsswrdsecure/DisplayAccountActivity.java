@@ -62,7 +62,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
 
 
     //Objects required to build an account
-    Category category = null;
+//    Category category = null;
     UserName userName = null;
     Psswrd psswrd = null;
     Account account = null;
@@ -1206,9 +1206,9 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         Calendar calendar = Calendar.getInstance();
         //Declare a new date object
         Date date;
-        //Check if date text view is empty
-        if(this.tvAccDateRenewValue.getText().equals("")){
-            //if that is the case, add an argument to hold the current time in millisecs
+        //Check if date text view is empty or the checkbox isn't ticked anymore, date must be set to null and therefore return 0
+        if(this.tvAccDateRenewValue.getText().equals("") || !this.cbHasToBeChanged.isChecked()){
+            //if that is the case, add an argument to hold the current time in milliseconds
             //date = Calendar.getInstance().getTime();
             date = null;
         }else{
@@ -1242,6 +1242,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         Log.d("isValidRenewDate","Enter the isValidRenewDate method in the DisplayActivity abstract class.");
         boolean isValid = false;
         if(this.cbHasToBeChanged.isChecked()){
+            //The criteria to be valid is the renew date is in the future so it must be greater than current time in millseconds
             if(renewDate > System.currentTimeMillis()){
                 isValid = true;
                 Log.d("isValidRenewDate","Exit with valid date the isValidRenewDate method in the DisplayActivity abstract class.");
