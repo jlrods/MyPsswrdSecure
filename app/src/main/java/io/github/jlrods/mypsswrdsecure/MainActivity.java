@@ -548,7 +548,7 @@ public class MainActivity extends AppCompatActivity {
 //                PendingIntent.getActivity(this, 0, intent, 0);
 
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this,CHANNEL_ID)
-                    .setSmallIcon(R.drawable.ic_menu_slideshow)
+                    .setSmallIcon(R.drawable.ic_stat_my_psswrd_secure_full)
                     .setContentTitle("Password expired")
                     .setContentText("The "+expiredPsswrdAccount.getName()+"'s account password has expired")
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
