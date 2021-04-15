@@ -1,6 +1,9 @@
 package io.github.jlrods.mypsswrdsecure;
 
 import android.app.Activity;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -35,6 +38,9 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.app.TaskStackBuilder;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -46,6 +52,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.crypto.spec.IvParameterSpec;
 
@@ -97,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
 
     //CONSTANT VALUES
     private static final int INDEX_TO_GET_LAST_TASK_LIST_ITEM = 2;
+    private static final String CHANNEL_ID = "CHANNEL_ID";
 
     //Throw intent codes
     private static final int THROW_IMAGE_GALLERY_REQ_CODE = 1642;
@@ -461,7 +469,15 @@ public class MainActivity extends AppCompatActivity {
 
 
         //Create current AppLoggin by passing extra information coming from login activity. This was intended to support multiple user login.
-        this.currentAppLoggin = AppLoggin.extractAppLoggin(accountsDB.getAppLoginCursor(extras.getInt("appLoginID")));
+        //Workaround to fix push notification task stack reset
+        if(this.extras!=null){
+            //If extras are sent from LogginActivity, get ID from extras
+            this.currentAppLoggin = AppLoggin.extractAppLoggin(accountsDB.getAppLoginCursor(this.extras.getInt("appLoginID")));
+        }else{
+            //Otherwise, get applogin ID from DB
+            this.currentAppLoggin = AppLoggin.extractAppLoggin(accountsDB.getAppLoginCursor(accountsDB.getMaxItemIdInTable(APPLOGGIN_TABLE)));
+        }
+
 
         View headerView = navigationView.getHeaderView(0);
 
@@ -509,6 +525,43 @@ public class MainActivity extends AppCompatActivity {
             //Start timer
             this.logoutTimer.start();
         }//End of if statement to check logout is active
+
+        //@Fixme: in progress
+        //Get from DB a list of accounts with password due for renewal
+        Cursor expiredPsswrdAccounts = accountsDB.getExpiredPsswrdAccounts();
+        //Check the list returned at least one item in it
+        if(expiredPsswrdAccounts.moveToFirst()){
+            //Extract first item in the list of accounts with expired password
+            Account expiredPsswrdAccount = Account.extractAccount(expiredPsswrdAccounts);
+
+            // Create an explicit intent for an Activity
+            Intent intent = new Intent(this, EditAccountActivity.class);
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+            //Set up extra information into the intent to be sent the the EditAccountActivity
+            intent.putExtra("category", expiredPsswrdAccount.getCategory().get_id());
+            intent.putExtra(ID_COLUMN, expiredPsswrdAccount.get_id());
+            //intent.putExtra("position",accountsDB.findItemPositionInCursor(((AccountAdapter)HomeFragment.getRv().getAdapter()).getCursor(),expiredPsswrdAccount.get_id()));
+            stackBuilder.addNextIntentWithParentStack(intent);
+            //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+            PendingIntent pendingIntent = stackBuilder.getPendingIntent(THROW_EDIT_ACCOUNT_ACT_REQCODE, PendingIntent.FLAG_UPDATE_CURRENT);
+//                PendingIntent.getActivity(this, 0, intent, 0);
+
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this,CHANNEL_ID)
+                    .setSmallIcon(R.drawable.ic_menu_slideshow)
+                    .setContentTitle("Password expired")
+                    .setContentText("The "+expiredPsswrdAccount.getName()+"'s account password has expired")
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setContentIntent(pendingIntent)
+                    .setAutoCancel(true);
+            this.createNotificationChannel();
+
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+// notificationId is a unique int for each notification that you must define
+            notificationManager.notify(1, notificationBuilder.build());
+        }
+        //If list is greater than 0, push notification for the first one on the list
+
 
         Log.d("Ext_onCreateMain", "Exit onCreate method in MainActivity class.");
     }//End of onCreate method
@@ -972,23 +1025,26 @@ public class MainActivity extends AppCompatActivity {
     }//End of throwActivityNoExtras method
 
     //Method to throw a new Activity and expect a result from it
-    private void throwActivity(ArrayList<Object> extras,int ResequestCode) {
-        Log.d("ThrowAct", "Enter throwActivity method in the MainActivity class.");
-        //Declare and instantiate a new intent object
-        Intent i = new Intent(getBaseContext(), AddAccountActivity.class);
-        if (extras != null && extras.size()>0){
-            for(int j=0;j<extras.size();j++){
-//                i.putExtra(((Map) extras.get(j)).,extras.get)
-            }
-        }
-
-        //Add extras to the intent object, specifically the current category where the add button was pressed from
-        i.putExtra("category", this.currentCategory.get_id());
-        //i.putExtra("sql",this.getSQLForRecyclerView());
-        //Start the addTaskActivity class
-        startActivityForResult(i, ResequestCode);
-        Log.d("ThrowAct", "Exit throwActivity method in the MainActivity class.");
-    }//End of throwAddTaskActivity
+//    private void throwActivityWithExtras(Activity activity, Class className,int resequestCode, Map extras) {
+//        Log.d("ThrowAct", "Enter throwActivity method in the MainActivity class.");
+//        //Declare and instantiate a new intent object
+//        Intent intent = new Intent(activity, className);
+//
+//        if (extras != null && extras.size()>0){
+//            extras.forEach();
+//            for(int i=0;i<extras.size();i++){
+////                intent.putExtra(((Map) extras.get(j)).,extras.get)
+//                intent.putExtra(extras.get)
+//            }
+//        }
+//
+//        //Add extras to the intent object, specifically the current category where the add button was pressed from
+//        intent.putExtra("category", this.currentCategory.get_id());
+//        //intent.putExtra("sql",this.getSQLForRecyclerView());
+//        //Start the addTaskActivity class
+//        startActivityForResult(intent, ResequestCode);
+//        Log.d("ThrowAct", "Exit throwActivity method in the MainActivity class.");
+//    }//End of throwAddTaskActivity
 
 
     //Method to throw new AddTaskActivity
@@ -1657,7 +1713,7 @@ public class MainActivity extends AppCompatActivity {
     public static String setToastText(@Nullable Intent data,String key,NotifyChangeType changeType, Resources res){
         Log.d("handleEditAccRes", "Enter the setToastText method in the MainActivity class.");
         String toastText= "";
-        //Resources res = getResources();
+        //Check the key text since when method is called from delete item section, the key must change to itemDeletedName
         if(key.equals("accountName") || key.equals("userNameValue") || key.equals("psswrdValue") || key.equals("questionValue")){
             toastText = data.getExtras().getString(key);
         }else{
@@ -1665,6 +1721,7 @@ public class MainActivity extends AppCompatActivity {
             key = data.getExtras().getString("itemDeletedType");
         }
 
+        //Check key value to set up Toast text accordingly based on type of item and RV type of update
         switch (key){
             case "accountName":
                 Log.d("handleEditAccRes", "accountName key used in the setToastText method in the MainActivity class.");
@@ -3422,6 +3479,26 @@ public class MainActivity extends AppCompatActivity {
         Log.d("logout", "Exit logout method in MainActivity class called by: "+ context.toString());
     }//End of logout method
 
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "MyPsswrdNotificationChannel";
+            String description = "Password update required!";
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    private Cursor getkDuePsswrdAccounts(){
+        return  accountsDB.getExpiredPsswrdAccounts();
+    }
 
 
 }//End of MainActivity class.

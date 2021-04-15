@@ -43,7 +43,8 @@
         <activity
             android:name=".EditQuestionActivity" />
         <activity
-            android:name=".EditAccountActivity" />
+            android:name=".EditAccountActivity"
+            android:parentActivityName=".MainActivity"/>
         <activity
             android:name=".AddCategoryAcitivity" />
         <activity

@@ -3,6 +3,8 @@ package io.github.jlrods.mypsswrdsecure;
 import android.database.Cursor;
 import android.util.Log;
 import java.util.ArrayList;
+
+import io.github.jlrods.mypsswrdsecure.login.LoginActivity;
 import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
 
 public class Account extends Loggin {
@@ -161,7 +163,7 @@ public class Account extends Loggin {
    public static Account extractAccount(Cursor c){
        Log.d("Ent_ExtractAccount","Enter extractAccount method in the Account class.");
        //Declare and initialize a db manager class to run sql queries
-       AccountsDB accountsDB = HomeFragment.getAccountsDB();
+       AccountsDB accountsDB = LoginActivity.getAccountsDB();
        //Declare and initialize a null category object, the one to be returned by the method
        Account account = null;
        //Declare and initialize objects required to create a new account object

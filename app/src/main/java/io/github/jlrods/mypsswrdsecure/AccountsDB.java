@@ -1508,6 +1508,15 @@ public class AccountsDB extends SQLiteOpenHelper {
         return listOfAccountIDsUsingTheItem;
     }//End of getAccountsUsingItemWithID method
 
+    //Method to return a cursor with rows of accouts with ChangeDate greater than 0 and less than current date in milliseconds. All accounts with expired passowrds.
+    public Cursor getExpiredPsswrdAccounts(){
+        Log.d("getExpiredPsswrdAcc","Enter the getExpiredPsswrdAccounts method in the AccountsDB class.");
+        Cursor expiredPsswrdAccounts = null;
+        expiredPsswrdAccounts = runQuery("SELECT * FROM "+ MainActivity.getAccountsTable()+ " WHERE "+MainActivity.getDateChangeColumn()+" > 0 AND "+ MainActivity.getDateChangeColumn()+ " < " + System.currentTimeMillis());
+        Log.d("getExpiredPsswrdAcc","Exit the getExpiredPsswrdAccounts method in the AccountsDB class.");
+        return expiredPsswrdAccounts;
+    }//End of getExpiredPsswrdAccounts method
+
     //Method to return cursor with rows from the accounts table with specific value in the column name passed in as argument
     public Cursor getAccountsWithSpecifcValue(String column, int itemID){
         Log.d("getAccWithSpecifcValue","Enter the getAccountCursorByName method in the AccountsDB class.");
