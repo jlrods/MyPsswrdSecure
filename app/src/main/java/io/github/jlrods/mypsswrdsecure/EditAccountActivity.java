@@ -142,13 +142,14 @@ public class EditAccountActivity extends DisplayAccountActivity{
                                             //Check at least one value has change on the UI, otherwise prompt the user
                                             if(this.account != null){
                                                 //Check at least one value has change on the UI, otherwise prompt the user
+                                                //First call method to compare the two question lists and record its result
+                                                Boolean isQuestionListsTheSame = this.isQuestionListTheSame(this.account.getQuestionList(),newAccount.getQuestionList());
                                                 if(!(this.account.getName().equals(newAccount.getName())
                                                         && this.account.getIcon().get_id() == newAccount.getIcon().get_id()
                                                         && this.account.getCategory().get_id() == newAccount.getCategory().get_id()
                                                         && this.isItemTheSame(this.account.getUserName(),newAccount.getUserName())
                                                         && this.isItemTheSame(this.account.getPsswrd(),newAccount.getPsswrd())
-                                                        //@Fixme: improve the way question lists are checked and recorded on DB
-                                                        && this.isQuestionListTheSame(this.account.getQuestionList(),newAccount.getQuestionList())
+                                                        && isQuestionListsTheSame
                                                         && this.account.isFavorite() == newAccount.isFavorite()
                                                         //Date created is not checked as this value is not editable, so it must remain the same in the DB
                                                         //&& this.account.getDateCreated() == newAccount.getDateCreated()
@@ -160,7 +161,7 @@ public class EditAccountActivity extends DisplayAccountActivity{
                                                     values.put(MainActivity.getUserNameIdColumn(),newAccount.getUserName().get_id());
                                                     values.put(MainActivity.getPsswrdIdColumn(),newAccount.getPsswrd().get_id());
 
-                                                    if(!this.isQuestionListTheSame(this.account.getQuestionList(),newAccount.getQuestionList())){
+                                                    if(!isQuestionListsTheSame){
                                                         if(this.account.getQuestionList() == null && newAccount.getQuestionList() != null){
                                                             values.put(MainActivity.getQuestionListIdColumn(),newAccount.getQuestionList().get_id());
                                                         }else if(this.account.getQuestionList() != null && newAccount.getQuestionList() == null){
