@@ -293,8 +293,6 @@ public class LoginActivity extends AppCompatActivity {
                         //Extract user name object
                         UserName inputUserName = UserName.extractUserName(inputUserNameCursor);
                         //Query the DB to get the APPLOGGIN record with the userName id found for the user name typed in
-//                        Cursor appLoginCursor = accountsDB.getAppLoginCursorUserAndPsswrdData(inputUserName.get_id());
-                        //@Fixme: Inclusion of new logic accounting for changes on AppLoggin table
                         Cursor appLoginCursor = accountsDB.getAllAppLoginCursor();
 
                         if(appLoginCursor.getCount() == 1 && appLoginCursor.moveToFirst()){
@@ -322,18 +320,6 @@ public class LoginActivity extends AppCompatActivity {
                             loginError = true;
                             errorMessageText =getString(R.string.moreThanOneLoginError);
                         }//End of if statement that checks the user name passed in matches applogin user name
-
-                        //If APPLOGGIN record with same user name is found on the DB, check the password
-//                        if(appLoginCursor.moveToNext()){
-//                            //Only then check for password validity
-//                            //@Fixme: If DB doesn't offer a query to return same structure, but including new fields for envrypted UN and Psswrd in the AppLogin, this will need fixing
-//                            if(cryptographer.decryptText(appLoginCursor.getBlob(7),new IvParameterSpec(appLoginCursor.getBlob(8))).equals(etPassword.getText().toString().trim()) ){
-//                                loginSuccess = true;
-//                                appLoggin = AppLoggin.extractAppLoggin(appLoginCursor);
-//                            }else{
-//                                errorMessageText ="Sorry, the user name and password combination is invalid.Try again...";
-//                            }//End of if statement that checks password passed in matches applogin password
-//                        }//End of if statement that checks the user name passed in matches applogin user name
                     }else{
                         loginError = true;
                     }//End of if statement that checks user name exists in DB

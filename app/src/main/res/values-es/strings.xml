@@ -103,6 +103,7 @@
     <string name="accountNoUserSelected">Los siento, no ha seleccionado un nombre de usuario en el menu despegable</string>
     <string name="accountNoPsswrdSelected">Los siento, no ha seleccionado una contraseña en el menu despegable</string>
     <string name="accountAdded"> has sido agregada a sus lista!</string>
+    <string name="accountRepeatQuestion">Esta pregunta ya se encuentra en la lista</string>
 
     <!--    Edit Account Activity-->
     <string name="editAccTitle">Editar cuenta</string>

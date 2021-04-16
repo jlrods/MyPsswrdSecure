@@ -118,8 +118,8 @@ public class EditAccountActivity extends DisplayAccountActivity{
                 //Check all data input is valid and correct (Account name not in use and valid password renew date, as most data come from dropdown menus which are already valid)
                 //Check the name entered is not empty
                 if(!accountName.equals("")){
-                    //Check account name is available but first check if it contains apostrophe so the sql query contains scape character
-                    //Fixme: it might be possible to remove this as nadroid update method manages the apostrophe issue
+                    //Check account name is available but first check if it contains apostrophe so the sql query to check name is used contains scape character
+                    // to avoid app crash
                     if(accountName.contains("'")){
                         accountName = accountsDB.includeApostropheEscapeChar(accountName);
                     }//End of if to check the name contains apostrophe

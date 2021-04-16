@@ -103,6 +103,7 @@
     <string name="accountNoUserSelected">Sorry, no user name has been selected from the drop down menu</string>
     <string name="accountNoPsswrdSelected">Sorry, no password has been selected from the drop down menu</string>
     <string name="accountAdded"> account has been added to your list!</string>
+    <string name="accountRepeatQuestion">This question is in the list already</string>
 
     <!--    Edit Account Activity-->
     <string name="editAccTitle">Edit Account</string>

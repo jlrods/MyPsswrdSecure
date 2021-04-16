@@ -700,7 +700,6 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
                 }else{
                     //In case it is, set the boolean flag for repeated question to true
                     repeatedQuestion = true;
-                    //FIXME: Ideally a snackbar or toast to be configured, but it crashes here???
                 }//End of if else statement
                 break;
                 //2 questions in the security question list
@@ -723,9 +722,6 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
                 }//End of if else statement to check for repeated questions
                 break;
             default:
-                //Return Toast to warn user the max number of sec questions is 3
-                //FIXME: Ideally a snackbar or toast to be configured, but it crashes here???
-                //Toast.makeText(getBaseContext(),"Max number reached",Toast.LENGTH_LONG).show();
                 break;
         }//End of switch statement
         //Populate the questionList spinner with Question data
@@ -734,6 +730,9 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             this.spAccSecQuestionList.setPrompt(this.getSecQuestListPrompt(c.getCount()));
             //Setup the spinner data
             this.setUpQuestionListSpinnerData(c,this.spAccSecQuestionList);
+        }else{
+            //If question is repeated, display a toast indicating so
+            MainActivity.displayToast(this,getString(R.string.accountRepeatQuestion),Toast.LENGTH_SHORT,Gravity.CENTER);
         }//End of if statement to check it's not a repeated question
         Log.d("addQuestionToSecList","Exit the addQuestionToSecList method in the DisplayAccountActivity class.");
     }//End of addQuestionToSecList method
