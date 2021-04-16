@@ -2612,8 +2612,8 @@ public class MainActivity extends AppCompatActivity {
         navMenu.findItem(R.id.nav_deleteCategory).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                final int[] selectedCategoryID = {0};
-                final int[] positionInList = {0};
+//                final int[] selectedCategoryID = {0};
+//                final int[] positionInList = {0};
                 //Iterate through the category list to transform into a charsequence list
                 final CharSequence[] categories = new CharSequence[categoryList.size() - INDEX_TO_GET_LAST_TASK_LIST_ITEM];
                 //another one to hold the isChecked attribute
@@ -2790,56 +2790,59 @@ public class MainActivity extends AppCompatActivity {
         Log.d("setUpLowerCategoryMenu", "Enter the updateNavMenu method in MainActivity class.");
     }//End of setUpLowerCategoryMenu method
 
-    //@Fixme: Can I merge these three methods in one? they are very similar: isCurrentCategoryInListToBeDeleted, getCategoryInListByID, getCategoryPositionByID
+
     //Method to update the Nav Menu items when new task list are created or deleted. Used to populate the menu on onCreate method too
-    public static boolean isCurrentCategoryInListToBeDeleted(int _id, ArrayList<Category> categoriesToBeDeleted) {
-        Log.d("isCatInListToBeDeleted", "Enter the isCurrentCategoryInListToBeDeleted static method in MainActivity class.");
+    public static int getCategoryPositionByID(int _id,ArrayList<Category>  categoryList) {
+        Log.d("getCategoryByName", "Enter the getCategoryByName 1.1 method in MainActivity class.");
         boolean found = false;
         int i = 0;
-        while (i < categoriesToBeDeleted.size() && !found) {
-            if (categoriesToBeDeleted.get(i).get_id() == _id) {
+        while (i < categoryList.size() && !found) {
+            if (categoryList.get(i).get_id() == _id) {
                 found = true;
                 break;
             }//End of if statement to check the category id
             i++;
         }//End of while loop to iterate through the category list
-        Log.d("isCatInListToBeDeleted", "Exit the isCurrentCategoryInListToBeDeleted static method in MainActivity class.");
-        return found;
-    }//End of isCurrentCategoryInListToBeDeleted method
+        //Check if found, if not, retrun -1 instead of category id
+        if(!found){
+            i = -1;
+        }
+        Log.d("getCategoryByName", "Exit the getCategoryByName 1.1 method in MainActivity class.");
+        return i;
+    }//End of getCategoryPositionByID method
+
+    //Method to update the Nav Menu items when new task list are created or deleted. Used to populate the menu on onCreate method too
+    public static int getCategoryPositionByID(int _id) {
+        Log.d("getCategoryByName", "Enter the getCategoryByName 1.2 method in MainActivity class.");
+        int i = getCategoryPositionByID(_id,categoryList);
+        Log.d("getCategoryByName", "Exit the getCategoryByName 1.2 method in MainActivity class.");
+        return i;
+    }//End of getCategoryPositionByID method
 
     //Method to update the Nav Menu items when new task list are created or deleted. Used to populate the menu on onCreate method too
     public static Category getCategoryInListByID(int _id) {
         Log.d("getCategoryPositionByID", "Enter the getCategoryPositionByID method in MainActivity class.");
-        boolean found = false;
-        int i = 0;
-        Category category = null;
-        while (i < categoryList.size() && !found) {
-            if (categoryList.get(i).get_id() == _id) {
-                category = categoryList.get(i);
-                found = true;
-                break;
-            }//End of if statement to check the category id
-            i++;
-        }//End of while loop to iterate through the category list
+        //Call method above to get position in the category list by passing it's _id
+        int position = getCategoryPositionByID(_id);
+        //Set the category object to be return to match the object in the position found
+        Category category = categoryList.get(position);
         Log.d("getCategoryPositionByID", "Exit the getCategoryPositionByID method in MainActivity class.");
         return category;
     }//End of getCategoryPositionByID method
 
     //Method to update the Nav Menu items when new task list are created or deleted. Used to populate the menu on onCreate method too
-    public static int getCategoryPositionByID(int _id) {
-        Log.d("getCategoryByName", "Enter the getCategoryByName method in MainActivity class.");
+    public static boolean isCurrentCategoryInListToBeDeleted(int _id, ArrayList<Category> categoriesToBeDeleted) {
+        Log.d("isCatInListToBeDeleted", "Enter the isCurrentCategoryInListToBeDeleted static method in MainActivity class.");
         boolean found = false;
-        int i = 0;
-        while (i < categoryList.size() && !found) {
-            if (categoryList.get(i).get_id() == _id) {
-                found = true;
-                break;
-            }//End of if statement to check the category id
-            i++;
-        }//End of while loop to iterate through the category list
-        Log.d("getCategoryByName", "Exit the getCategoryByName method in MainActivity class.");
-        return i;
-    }//End of getCategoryPositionByID method
+        //Call method above to get position in the category list by passing it's _id
+        int position = getCategoryPositionByID(_id,categoriesToBeDeleted);
+        if(position >= 0){
+            found = true;
+        }
+        Log.d("isCatInListToBeDeleted", "Exit the isCurrentCategoryInListToBeDeleted static method in MainActivity class.");
+        return found;
+    }//End of isCurrentCategoryInListToBeDeleted method
+
 
     //Method to update User Profile Name
     private void setUserProfileText(int type, final TextView tvUserText) {
