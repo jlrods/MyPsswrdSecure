@@ -332,6 +332,9 @@
     <!--    AppLoginActivity-->
     <string name="appLoginUserNamePrompt">This user name is part of your app login credentials. It cannot be deleted until you updated your login credentials</string>
     <string name="appLoginPsswrdPrompt">This password is part of your app login credentials. It cannot be deleted until you updated your login credentials</string>
+    <string name="appLoginCredentialsNotChanged">Sorry, credentials have not changed, change at least one of the fields in the menus</string>
+    <string name="appLoginPsswrdNotSelected">"Please, select a password from the respective dropdown menu</string>
+    <string name="appLoginUserNotSelected">"Please, select a user name from the respective dropdown menu</string>
 
     <!--    Push Notification-->
     <string name="pushNotificationPsswrdExpMssg">Password expired</string>

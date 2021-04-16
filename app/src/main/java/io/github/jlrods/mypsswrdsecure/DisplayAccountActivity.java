@@ -1167,7 +1167,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
                 securityQuestionList.set_id(secQuestionListID);
             }else{
                 //If the account data extraction is done from EditAccountActivity, it will be required to check what to do with
-                //the old security question, as it must be removed from DB if not in use
+                //the old security question list, as it must be removed from DB if not in use
                 if(this.account != null && this.account.get_id() > 0){
                     //Check if old securityQuestion list isn't being used, if that is the case, remove from DB and remove QuestionAssignments link to that list
                     QuestionList oldSecurityQuestionList = this.account.getQuestionList();
@@ -1184,7 +1184,6 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
                         }//End of if statement that checks the old question list is not being used
                     }//End of if statement to check the old question list was not null or empty
                 }// End of if statement to check if data extraction comes from EditAccountActivity, which means the this.account attribute won't be null
-                //@Fixme: This seems to be a risk... The question list is being recorded on the DB even though the proof check hasnt' been finished, which means the transaction  can still fail
                 securityQuestionList.set_id(accountsDB.addItem(securityQuestionList));
             }//End of if else statement that check the new security question list does already exists in the DB
         }//End of if statement that checks the new security list isn't null
@@ -1493,5 +1492,17 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         Log.d("isAddIconRequired", "Exit isAddIconRequired method in DisplayAccountActivity abstract class.");
         return logoID;
     }//End of isAddIconRequired
+
+    protected boolean rollBackQuestionListInsertion(QuestionList questionList) {
+        Log.d("rollbackQuestionList","Enter  questionList method in AddAccountActivity class.");
+        //Check the number of times the list is used, if more than once do nothing, if 1 or 0 then delete the list
+        boolean rollbackResult = true;
+        int timesUsedQuestionList = accountsDB.getTimesUsedQuestionList(questionList.get_id());
+        if(timesUsedQuestionList < 1){
+            rollbackResult = accountsDB.deleteItem(questionList);
+        }
+        Log.d("rollbackQuestionList","Exit  questionList method in AddAccountActivity class.");
+        return rollbackResult;
+    }//End of rollBackQuestionListInsertion
 
 }//End of AddAccountActivity

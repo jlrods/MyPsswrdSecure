@@ -117,14 +117,16 @@ public class UpdateAppLoginActivity extends DisplayAccountActivity{
                                 finish();
                             }
                         }else{
-                            //@Fixme:  Prompt user the data has not changed
-                            MainActivity.displayToast(this,"Sorry, credentials have not changed, change at least one of the fields in the menus.", Toast.LENGTH_LONG,Gravity.CENTER);
+                            //Display error message to prompt user about no change on credentials
+                            MainActivity.displayToast(this,getString(R.string.appLoginCredentialsNotChanged), Toast.LENGTH_LONG,Gravity.CENTER);
                         }
                     }else{
-                        //@Fixme:  Prompt error
+                        //Display error message to prompt user no password has been selected
+                        MainActivity.displayToast(this,getString(R.string.appLoginPsswrdNotSelected), Toast.LENGTH_LONG,Gravity.CENTER);
                     }
                 }else{
-                    //@Fixme: Prompt error
+                    //Display error message to prompt user no user name has been selected
+                    MainActivity.displayToast(this,getString(R.string.appLoginUserNotSelected), Toast.LENGTH_LONG,Gravity.CENTER);
                 }
                 Log.d("onOptionsItemSelected","Save option selected on onOptionsItemSelected method in UpdateAppLoginActivity class.");
                 break;

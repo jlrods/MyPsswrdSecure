@@ -94,9 +94,19 @@ public class AddAccountActivity extends DisplayAccountActivity {
                                                 setResult(RESULT_OK, intent);
                                                 Log.d("onOptionsItemSelected","Set activity result to OK  on onOptionsItemSelected method in AddAccountActivity class.");
                                                 finish();
+                                            }else{
+                                                setResult(RESULT_CANCELED, intent);
+                                                //Call method to roll back QuesitonList insertion
+                                                if(account.getQuestionList()!=null || account.getQuestionList().getSize() > 0){
+                                                    rollBackQuestionListInsertion(account.getQuestionList());
+                                                }
+                                                //Display error about DB insertion
+                                                MainActivity.displayToast(this,getResources().getString(R.string.accountUpdateError),Toast.LENGTH_LONG,Gravity.CENTER);
                                             }//End of if statement to check the accountID is not -1
                                         }else{
                                             setResult(RESULT_CANCELED, intent);
+                                            //Display error about DB insertion
+                                            MainActivity.displayToast(this,getResources().getString(R.string.accountUpdateError),Toast.LENGTH_LONG,Gravity.CENTER);
                                             Log.d("onOptionsItemSelected","Set activity result to CANCELED  on onOptionsItemSelected method in AddAccountActivity class.");
                                         }//End of if else statement to check the account retrieved form UI isn't null
                                     }else{

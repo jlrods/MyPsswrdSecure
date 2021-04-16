@@ -85,8 +85,6 @@ public class Cryptographer {
                 keyGen.init(keySpec);
                 keyGen.generateKey();
                 Log.d("Crypt_createKey","Exit createSecurityKey method in Cryptographer class, key created.");
-            }else{
-                //FIXME: Investigate and implement how to manage keystore for older versions below version M
             }
         }else{
             Log.d("Crypt_createKey","Exit createSecurityKey method in Cryptographer class, key already exists.");

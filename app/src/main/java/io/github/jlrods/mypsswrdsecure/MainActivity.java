@@ -4,18 +4,15 @@ import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
-import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -52,12 +49,9 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Locale;
-
 import javax.crypto.spec.IvParameterSpec;
-
 import io.github.jlrods.mypsswrdsecure.login.LoginActivity;
 import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
 
@@ -1003,9 +997,6 @@ public class MainActivity extends AppCompatActivity {
         return cursor;
     }//End of getCursorToUpdateRV method
 
-
-
-    //@Fixme: try to compress all the throw activity methods into one generic method
     //Method to throw a new Activity
     private void throwActivityNoExtras(Activity activity, Class className,int requestCode) {
         Log.d("throwActivityNoExtras", "Enter throwActivityNoExtras method in the MainActivity class.");
@@ -1527,6 +1518,8 @@ public class MainActivity extends AppCompatActivity {
             Log.d("onActivityResult", "Received BAD result from SelectNavDrawerBckGrnd received by MainAcitvity.");
         }else if(requestCode == THROW_UPDATE_APPLOGIN_ACT_REQCODE && resultCode == Activity.RESULT_OK){
             Log.d("onActivityResult", "Received GOOD result from UpdateAppLoginActivity received by MainAcitvity.");
+            //update current appLogin so it matches same data from DB, otherwise it will keep old value during current session
+            currentAppLoggin = AppLoggin.extractAppLoggin(accountsDB.getAppLoginCursor(currentAppLoggin.get_id()));
             toastText = "App Login credentials have been successfully updated. Next time you login, use your new credentials.";
             displayToast(this, toastText, Toast.LENGTH_LONG, Gravity.CENTER);
         }else if(requestCode == THROW_UPDATE_APPLOGIN_ACT_REQCODE && resultCode == Activity.RESULT_CANCELED){

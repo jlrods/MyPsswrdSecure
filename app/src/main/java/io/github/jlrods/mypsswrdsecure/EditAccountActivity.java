@@ -18,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 
 public class EditAccountActivity extends DisplayAccountActivity{
     //Attribute definition
@@ -186,6 +187,37 @@ public class EditAccountActivity extends DisplayAccountActivity{
                                                         Log.d("onOptionsItemSelected","Set activity result to OK  on onOptionsItemSelected method in EditAccountActivity class.");
                                                         finish();
                                                     }else{
+                                                        //In case of failure updating the account, try to roll back the question list assigned to account on DB
+                                                        //Check the new and old list are not the same
+                                                        if(!isQuestionListsTheSame){
+                                                            //If not the same, remove the new question list from DB
+                                                            rollBackQuestionListInsertion(newAccount.getQuestionList());
+                                                            //Try to bring back old list to DB
+                                                            //Get the old question list from the original account object
+                                                            QuestionList oldSecurityQuestionList = this.account.getQuestionList();
+                                                            //Check it's not null
+                                                            if(oldSecurityQuestionList != null) {
+                                                                //Check if the current list is in use
+                                                                int timesUsedQuestionList = accountsDB.getTimesUsedQuestionList(oldSecurityQuestionList.get_id());
+                                                                if(timesUsedQuestionList > 0){
+                                                                    //If is in use, proceed to update the account ????
+                                                                    values = new ContentValues();
+                                                                    values.put(MainActivity.getIdColumn(),account.get_id());
+                                                                    values.put(MainActivity.getQuestionListIdColumn(),oldSecurityQuestionList.get_id());
+                                                                    accountsDB.updateTable(MainActivity.getAccountsTable(),values);
+                                                                }else{
+                                                                    //add the list and retrieve new list _id
+                                                                    int _id = accountsDB.addItem(oldSecurityQuestionList);
+                                                                    //Update the account row with old list, but new list _id
+                                                                    values = new ContentValues();
+                                                                    values.put(MainActivity.getIdColumn(),account.get_id());
+                                                                    values.put(MainActivity.getQuestionListIdColumn(),_id);
+                                                                    //update account with new list _id
+                                                                    accountsDB.updateTable(MainActivity.getAccountsTable(),values);
+                                                                }//End of if else statement
+                                                            }//End of if statement to check the old question list isn't null
+                                                        }//End of if  statement to check the questions list are not the same
+
                                                         //Report DB error when updating the record
                                                         MainActivity.displayToast(this,getResources().getString(R.string.accountUpdateError),Toast.LENGTH_LONG,Gravity.CENTER);
                                                     }//End of if statement to check the accountID is not -1
@@ -197,6 +229,8 @@ public class EditAccountActivity extends DisplayAccountActivity{
                                             //Check the id from the DB is valid and different than the dummy one.
                                         }else{
                                             setResult(RESULT_CANCELED, intent);
+                                            //Display error about DB insertion
+                                            MainActivity.displayToast(this,getResources().getString(R.string.accountUpdateError),Toast.LENGTH_LONG,Gravity.CENTER);
                                             Log.d("onOptionsItemSelected","Set activity result to CANCELED  on onOptionsItemSelected method in EditAccountActivity class.");
                                         }//End of if else statement to check the account retrieved form UI isn't null
                                     }else{
