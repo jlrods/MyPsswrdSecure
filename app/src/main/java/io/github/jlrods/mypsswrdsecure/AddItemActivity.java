@@ -15,16 +15,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import java.util.ArrayList;
-
 import javax.crypto.spec.IvParameterSpec;
-
 import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
 
 public abstract class AddItemActivity extends AppCompatActivity {
@@ -295,6 +290,7 @@ public abstract class AddItemActivity extends AppCompatActivity {
         return this.isDataValid(type,-1);
     }//End of isDataValid overloaded method
 
+    //Method to check if a question was preloaded and populated on DB during app install process
     protected boolean isQuestionPreLoaded(Question question, boolean isStringID){
         Log.d("isQuestionPreLoaded","Enter the isQuestionPreLoaded method in AddQuestionActivity class.");
         //Declare and instantiate variables to look for the questions
@@ -525,13 +521,11 @@ public abstract class AddItemActivity extends AppCompatActivity {
                             }//End of for loop to iterate through list of Accounts holding the item to be deleted
                         }
                         //If item to delete isn't a question, start iterating through list of accounts that hold the item to be deleted
-
                     }//End of if else statement to check if item is a Question or any type of object
 
                     //All different paths merge here, final deletion of the item and preparation of result transfer to caller method
                     //Request delete item on DB and handle bad result
                     if(accountsDB.deleteItem(item)){
-                        //MainActivity.displayToast(getBaseContext(),itemDeletedToastText,Toast.LENGTH_LONG,Gravity.CENTER);
                         Intent intent = new Intent();
                         intent.putExtra("itemDeletedName",itemDeletedName);
                         intent.putExtra(itemDeletedNameForIntent,true);

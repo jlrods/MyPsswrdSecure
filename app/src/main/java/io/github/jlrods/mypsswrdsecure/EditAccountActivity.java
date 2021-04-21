@@ -1,13 +1,9 @@
 package io.github.jlrods.mypsswrdsecure;
 
-
-import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.database.Cursor;
-import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,20 +13,14 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-
 public class EditAccountActivity extends DisplayAccountActivity{
     //Attribute definition
-    //private Bundle extras;
     final private Intent[] intents = {new Intent()};
     //Method definition
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("OnCreateEditAcc","Enter onCreate method in the EditAccountActivity abstract class.");
-        //Extract extra data from owner Activity
-        //this.extras = getIntent().getExtras();
         //Set activity title
         getSupportActionBar().setTitle(R.string.editAccTitle);
         //Extract account details by passing in the _id attribute stored in the extras
@@ -58,7 +48,7 @@ public class EditAccountActivity extends DisplayAccountActivity{
                     found =true;
                 }
                 i++;
-            }
+            }//End of while statement
         }else if(this.account.getIcon().getLocation().equals(String.valueOf(R.mipmap.ic_my_psswrd_secure))){
             //Setup the app logo if required
             this.imgAccLogo.setImageResource(R.mipmap.ic_my_psswrd_secure);
@@ -217,7 +207,6 @@ public class EditAccountActivity extends DisplayAccountActivity{
                                                                 }//End of if else statement
                                                             }//End of if statement to check the old question list isn't null
                                                         }//End of if  statement to check the questions list are not the same
-
                                                         //Report DB error when updating the record
                                                         MainActivity.displayToast(this,getResources().getString(R.string.accountUpdateError),Toast.LENGTH_LONG,Gravity.CENTER);
                                                     }//End of if statement to check the accountID is not -1
@@ -275,19 +264,16 @@ public class EditAccountActivity extends DisplayAccountActivity{
                                     intents[0].putExtra("position",extras.getInt("position"));
                                     setResult(RESULT_OK, intents[0]);
                                     Log.d("onOptionsItemSelected","Set activity result to OK  on onOptionsItemSelected method in EditAccountActivity class.");
-//                                    IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-//                                    filter.addAction(Intent.ACTION_AIRPLANE_MODE_CHANGED);
-//                                    registerReceiver(MainActivity.broadCastReceiver, filter);
-//
-//                                    sendBroadcast(intent);
-//                                    onSendFinished(null,intents[0],RESULT_OK,"RESULT_OK",extras);
                                     finish();
                                 }else{
                                     //Display error message
-                                }
+                                    //Prompt the user about a DB error while updating the user name
+                                    MainActivity.displayToast(getBaseContext(),getResources().getString(R.string.itemNotDeletedMssg),Toast.LENGTH_LONG,Gravity.CENTER);
+                                    Log.d("onOptionsItemSelected","The account "+ account.getName() +" has not been updated due to DB issue.");
+                                }//End of if else statement that checks account deletion was successful
                                 //Check the boolean flag that confirms the account was deleted so proper info is passed back to caller activity
                             }//End of onClick method
-                });//End of
+                });//End of setPositive button action
                 dialog.show();
                 Log.d("onOptionsItemSelected","Delete option selected on onOptionsItemSelected method in EditAccountActivity class.");
                 break;
@@ -402,8 +388,4 @@ public class EditAccountActivity extends DisplayAccountActivity{
         Log.d("deleteAccount","Exit the deleteAccount static method in the EditAccountActivity class.");
         return isAccountDeleted;
     }//End of deleteAccount static method
-//    @Override
-//    public void onSendFinished(PendingIntent pendingIntent, Intent intent, int resultCode, String resultData, Bundle resultExtras) {
-//
-//    }
 }//End of EditAccountActivity class

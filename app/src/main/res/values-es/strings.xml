@@ -127,7 +127,6 @@
     <string name="userNameDeleteTitle">Eliminar nombre de usuario</string>
     <string name="userNameDeleteMssg">Está seguro que desea eliminar este nombre du usuario?</string>
 
-
     <!--    AddPsswrd Activity-->
     <string name="addPsswrdTitle">Añadir contraseña</string>
     <string name="psswrdAdded">New password added successfully!</string>
@@ -286,7 +285,6 @@
     <string name="moreAppsTag">Para más apps:</string>
     <string name="softwareInfoTitle">Información sobre el software</string>
 
-
     <!--    Login Activity-->
     <string name="prompt_password">Clave</string>
     <string name="action_sign_in">Iniciar sesión</string>
@@ -313,7 +311,7 @@
     <string name="moreThanOneLoginError">Lo siento, hay más de una cuenta registrada en la app. Por favor, desinstalle y vuelva a instalar.</string>
     <string name="wrongCredentialsError">Lo siento, la combinación de usuario y contraseña es inválida, intent de nuevo...</string>
 
-
+    <!--    App state-->
     <string name="appStateError">Error de estado de la app</string>
     <string name="appStateErrorMssg">La app falló en actualizar su estado</string>
     <string name="itemNotDeletedMssg">Lo siento, el ítem no fue eliminado de la base de datos</string>
@@ -329,6 +327,10 @@
     <string name="pushNotificationPsswrdExpMssg">Contraseña expiró</string>
     <string name="pushNotPsswrHasExp2"> ha expirado</string>
     <string name="pushNotPsswrdHasExp1">La contraseña de </string>
+    <string name="imgSourceTitle">Selecione una imagen</string>
 
-
+    <!--    Extra messages-->
+    <string name="errorLoadCamera">Error al cargar image desde la cámara</string>
+    <string name="errorSearchTextEmpty">Sorry, the searched text was empty</string>
+    <string name="appLoginUpdateError">Los siento, la base de datos ha fallado en registrar los cambios en el login!</string>
 </resources>

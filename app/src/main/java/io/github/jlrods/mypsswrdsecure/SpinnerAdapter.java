@@ -9,8 +9,6 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
-import androidx.core.content.ContextCompat;
-
 /**
  * Created by rodjose1 on 05/09/2018.
  */
@@ -31,7 +29,7 @@ public class SpinnerAdapter extends CursorAdapter implements android.widget.Spin
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         return LayoutInflater.from(context).inflate(R.layout.spinner_item_string_value,parent,false);
-    }
+    }//End of newView method
 
     //Method to bind the view and the data via a cursor
     @Override
@@ -51,11 +49,10 @@ public class SpinnerAdapter extends CursorAdapter implements android.widget.Spin
             //tvItem.setText(stringName);
             tvItem.setText(stringName);
         }//End of if else statement
-
         Log.d("Ent_bindView","Exit bindView method to populate spinners in SpinnerAdapter class.");
     }//End of bindView method
 
-    //Method to return int number when its name is passed as argumen
+    //Method to return int number when its name is passed as argument
     public int findItemPosition(String itemName){
         Log.d("Ent_findspItem","Enter  findItemPosition to find sp item by name in SpinnerAdapter class.");
         boolean found = false;
@@ -72,13 +69,13 @@ public class SpinnerAdapter extends CursorAdapter implements android.widget.Spin
         return position;
     }//End of findItemPosition method
 
+    //Getter and setter method
     public Cursor getCursor() {
         return c;
-    }
+    }//End of getCursor method
 
     public void setCursor(Cursor c) {
         this.c = c;
-    }
-
+    }//End of getCursor method
 
 }//End of SpinnerAdapter class

@@ -3,7 +3,6 @@ package io.github.jlrods.mypsswrdsecure;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,7 +40,7 @@ public class SelectLogoActivity extends AppCompatActivity {
             iconAdapter.getIconList().get(this.selectedPosition).setSelected(true);
         }else{
             selectedIcon = MainActivity.getMyPsswrdSecureLogo();
-        }
+        }//End of if else statement to check selected position is positive value
         selectedImgLocation = extras.getString("selectedImgLocation");
         //Set the logo OnClickListener object so the Logo is selected when clicked on it
         iconAdapter.setOnItemClickListener(new View.OnClickListener() {
@@ -57,6 +56,7 @@ public class SelectLogoActivity extends AppCompatActivity {
                     //If that's the case, set it to false
                     iconAdapter.getIconList().get(adapterPosition).setSelected(false);
                 }else{
+                    //Otherwise, set to true and iterate through the rest of the icon list to set any other icon to not selected
                     iconAdapter.getIconList().get(adapterPosition).setSelected(true);
                     for(int i=0;i<iconAdapter.getIconList().size();i++){
                         if(i!=adapterPosition){
@@ -66,13 +66,12 @@ public class SelectLogoActivity extends AppCompatActivity {
                     selectedIcon = iconAdapter.getIconList().get(adapterPosition);
                     selectedPosition = adapterPosition;
                 };// End of if else statement to check if logo is selected
-
+                //Update the SparseBooleanArray to keep record of logo selection
                 iconAdapter.updateItemIsSelected(adapterPosition,true);
-                //iconAdapter.getIconList().get(adapterPosition).setSelected(true);
                 iconAdapter.notifyDataSetChanged();
                 Log.d("IconSetOnClickList","Exit onClick method of setOnItemClickListener in SelectLogoActivity class.");
             }//End of OnClick method
-        });
+        });//End of setOnItemClickListener method
         rvLogos.setAdapter(iconAdapter);
         rvLogos.setLayoutManager(new StaggeredGridLayoutManager(2,RecyclerView.VERTICAL));
         //Check if RV position is beyond first 6 items
@@ -86,13 +85,13 @@ public class SelectLogoActivity extends AppCompatActivity {
                 rvLogos.getLayoutManager().scrollToPosition(this.selectedPosition-1);
             }//End of if else statement
         }//End of if statement to check position is out of screen
-
         Log.d("SelLogOnCreate","Exit  onCreate method in SelectLogoActivity class.");
     }//End of onCreate
 
     //Method to inflate the menu into the addTaskActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        Log.d("onCreateOptionsMenu","Enter|Exit  onCreate method in SelectLogoActivity class.");
         getMenuInflater().inflate(R.menu.activity_menu_save_cancel, menu);
         return true;
     }// Find fe OnCreateOptionsMenu
@@ -107,6 +106,7 @@ public class SelectLogoActivity extends AppCompatActivity {
         //Check the id of item selected in menu
         switch (item.getItemId()) {
             case R.id.select_logo_save:
+                //Load the extra info to be sent back to caller activity
                 intent.putExtra("selectedImgID",this.selectedIcon.get_id());
                 intent.putExtra("selectedImgLocation",this.selectedIcon.getLocation());
                 intent.putExtra("selectedImgPosition",this.selectedPosition);
@@ -123,36 +123,8 @@ public class SelectLogoActivity extends AppCompatActivity {
                 Log.d("onOptionsItemSelected","Logout option selected on onOptionsItemSelected method in SelectLogoActivity class.");
                 MainActivity.logout(this);
         }//End of switch statement
-
         Log.d("onOptionsItemSelected","Exit successfully onOptionsItemSelected method in SelectLogoActivity class.");
         finish();
         return result;
-    }
-
-//    @Override
-//    //Method to retrieve the theme color resource id of the color name passed in as argument
-//    public int fetchThemeColor(String colorName) {
-//        Log.d("fetchThemeColor","Enter the fetchThemeColor method in the MainActivity class.");
-//        //Declare and initialize attribute color id
-//        int attributeColor = 0;
-//        //Check color name passed in as argument and assign it resource id to attributeColor variable
-//        switch(colorName){
-//            case "colorAccent":
-//                attributeColor = R.attr.colorAccent;
-//                break;
-//            case "colorPrimary":
-//                attributeColor = R.attr.colorPrimary;
-//                break;
-//            case "colorPrimaryDark":
-//                attributeColor = R.attr.colorPrimaryDark;
-//                break;
-//        }//End of switch statement
-//        //Create TypedValue object to hold the theme attribute data
-//        TypedValue value = new TypedValue ();
-//        //Call method to retrieve theme attribute data
-//        this.getTheme().resolveAttribute (attributeColor, value, true);
-//        Log.d("fetchThemeColor","Exit the fetchThemeColor method in the MainActivity class.");
-//        //return the data for the color required
-//        return value.data;
-//    }//End of fetchThemeColor method
+    }//End of onOptionsItemSelected method
 }//End of SelectLogoActivity class

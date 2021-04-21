@@ -7,7 +7,6 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 
 public class AddAccountActivity extends DisplayAccountActivity {
@@ -158,6 +157,4 @@ public class AddAccountActivity extends DisplayAccountActivity {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d("onActivityResult","Enter/Exit the onActivityResult method in the AddAccountActivity class.");
     }//End of onActivityResult method
-
-
 }//End of AddAccountActivity method

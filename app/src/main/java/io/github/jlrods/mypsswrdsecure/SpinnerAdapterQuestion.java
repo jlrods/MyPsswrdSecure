@@ -7,20 +7,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import javax.crypto.spec.IvParameterSpec;
 
+//Class to handle the adapter objects to link spinners UI and question data
 class SpinnerAdapterQuestion extends SpinnerAdapter {
 
+    //Constructor method
     public SpinnerAdapterQuestion(Context context, Cursor c, int flags) {
         super(context, c, flags);
-    }
+        Log.d("SpinnerAdapterQuestion","Enter|Exit SpinnerAdapterQuestion constructor method in SpinnerAdapterEncrypted class.");
+    }//End of SpinnerAdapterQuestion constructor
 
     //Method to create a new view
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         return LayoutInflater.from(context).inflate(R.layout.spinner_item_question,parent,false);
-    }
+    }//End of newView method
 
     //Method to bind the view and the data via a cursor
     @Override
@@ -29,9 +31,7 @@ class SpinnerAdapterQuestion extends SpinnerAdapter {
         //Declare and instantiate a TextView object to hold the unit name and symbol
         TextView tvQuestionItem = (TextView) view.findViewById(R.id.tvQuestionItem);
         TextView tvAnswer = (TextView) view.findViewById(R.id.tvAnswer);
-        //TextView tvItem = (TextView) view.findViewById(R.id.tvItem);
         //Declare and instantiate a String to hold the name by extracting data from cursor (Column 1 will hold the name attribute)
-        //String itemText = cursor.getString(1);
         String questionText = cursor.getString(1);
         //As brand new app has no answers for preloaded questions... Check the answer field isn't null, otherwise skip populating the answer value
         String answerText = "";

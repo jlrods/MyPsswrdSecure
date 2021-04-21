@@ -1,8 +1,6 @@
 package io.github.jlrods.mypsswrdsecure;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
@@ -17,9 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHolder> {
     //Attribute definition
-    private static int OPEN_DIRECTORY_REQUEST_CODE = 1111;
     private View.OnClickListener listener;
-    //private static SparseBooleanArray itemStateArray= new SparseBooleanArray();
     private Context context;
     private Cursor cursor;// List to hold all User or Password data coming from the database
     private View.OnClickListener starImgOnClickListener;
@@ -56,7 +52,6 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Log.d("AccountOnBindVH","Enter onBindViewHolder method in AccountAdapter class.");
-        //AccountsDB accounts = new AccountsDB(getContext());
         //Move current cursor to position passed in as parameter
         this.cursor.moveToPosition(position);
         //Extract the data from cursor to create a new User or Password
@@ -113,7 +108,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
 
     // Define the method that allows the parent activity or fragment to define the listener
     public void setStarImgOnClickListener(View.OnClickListener listener) {
-        Log.d("AccAdapterVHOnClick","Enter setOnClickListener in the AccountAdapter class.");
+        Log.d("AccAdapterVHOnClick","Enter|Exit setOnClickListener in the AccountAdapter class.");
         this.starImgOnClickListener= listener;
     }//End of setOnItemClickListener
 

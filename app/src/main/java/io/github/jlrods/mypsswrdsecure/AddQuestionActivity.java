@@ -106,6 +106,4 @@ public class AddQuestionActivity extends AddItemActivity {
         Log.d("onOptionsItemSelected","Exit successfully onOptionsItemSelected method in AddQuestionActivity class.");
         return result;
     }//End of onOptionsItemSelected
-
-
 }//End of AddQuestionActivity

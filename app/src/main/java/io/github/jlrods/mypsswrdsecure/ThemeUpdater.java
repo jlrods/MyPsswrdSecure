@@ -6,11 +6,14 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.TypedValue;
 
+//Implementation of the ThemeHandler interface
 public class ThemeUpdater  implements ThemeHandler{
+    //Attributes definition
     private Context context;
+    //Constructor method
     public ThemeUpdater(Context context){
         this.context = context;
-    }
+    }//Endof ThemeUpdater constructor
     @Override
     //Method to retrieve the theme color resource id of the color name passed in as argument
     public int fetchThemeColor(String colorName) {
@@ -49,5 +52,4 @@ public class ThemeUpdater  implements ThemeHandler{
         //Assign the preferred value to the global variable
         return this.context.getResources().getStringArray(R.array.dateFormats)[Integer.parseInt(preferredDateFormat)];
     }//End of setDateFormat method
-
 }//End of ThemeUpdater class

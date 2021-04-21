@@ -9,7 +9,6 @@
     <string name="menu_home">Home</string>
     <string name="menu_favorites">Favorites</string>
     <string name="home_second">Home Second</string>
-
     <string name="whatsTheNameOfYourFirstPet">What\'s the name of your first pet?</string>
     <string name="whatWasTheModelOfYourFirstCar">What was the model of your first car?</string>
     <string name="whatsYourGrannysName">What\'s your Granny\'s name?</string>
@@ -88,7 +87,6 @@
     <!--    User/Password Recyclerviewer elements layout -->
     <string name="strVal_times_used">Times used:</string>
     <string name="strVal_date_created">Created on:</string>
-
 
     <!--    Add Account Activity-->
     <string name="addAccTitle">Add Account</string>
@@ -236,14 +234,11 @@
     <string name="snackBarQuestionNotAdded">Sorry, the question was not saved</string>
     <string name="snackBarQuestionExists">Sorry, the question already exists</string>
 
-
     <!--    Image resource diaglog alert-->
     <string name="camera">&#128247; Camera</string>
     <string name="gallery">&#127966; Gallery</string>
     <string name="appResources">&#x1F4F1; Resources</string>
     <string name="defaultLog">&#x1F50F; App logo</string>
-
-
 
     <!--    Sort Criteria Tex-->
     <string name="action_sort">Sort</string>
@@ -324,7 +319,7 @@
     <string name="moreThanOneLoginError">Sorry, There\'s more than one account registered to this app. Please, uninstall and reinstall the app.</string>
     <string name="wrongCredentialsError">Sorry, the user name and password combination is invalid.Try again...</string>
 
-
+    <!--App State-->
     <string name="appStateError">App state error</string>
     <string name="appStateErrorMssg">App failed to update state.</string>
     <string name="itemNotDeletedMssg">Sorry, item could not be deleted from the database</string>
@@ -340,6 +335,10 @@
     <string name="pushNotificationPsswrdExpMssg">Password expired</string>
     <string name="pushNotPsswrHasExp2">\'s password has expired</string>
     <string name="pushNotPsswrdHasExp1"></string>
+    <string name="imgSourceTitle">Select image source</string>
 
-
+    <!--    Extra messages-->
+    <string name="errorLoadCamera">Error when loading picture from camera</string>
+    <string name="errorSearchTextEmpty">Lo siento,el texto a buscar está vacíoi</string>
+    <string name="appLoginUpdateError">Sorry, the DB failed to record the changes in the app login!</string>
 </resources>

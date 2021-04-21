@@ -60,13 +60,10 @@ public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
     private CoordinatorLayout coordinatorLayout;
 
-
     //Declare and initialize variables to define the current app state saved on DB
     private static Cursor appState = null;
     private static Category currentCategory = null;
     private static int currentTab = 0;
-//    private boolean showAllAccounts = true;
-//    private boolean isFavoriteFilter = false;
     private static boolean isSearchFilter = false;
     private static boolean isSearchUserNameFilter = false;
     private static boolean isSearchPsswrdFilter = false;
@@ -74,9 +71,6 @@ public class MainActivity extends AppCompatActivity {
     private static boolean isSortFilter = false;
     private static SortFilter currentSortFilter = null;
     private static boolean isFirstRun = false;
-    private int counter = 0;
-    private byte[] encrypted = null;
-    private String decrypted = null;
     private static TabLayout tabLayout = null;
     private int idRes;
     private static Icon myPsswrdSecureLogo = null;
@@ -86,19 +80,15 @@ public class MainActivity extends AppCompatActivity {
     private static Category homeCategory = null;
     private static Category favCategory = null;
     private static ArrayList<QuestionList> listOfQuestionLists = null;
-
     private static String dateFormat;
     private static Cryptographer cryptographer;
-
     private boolean goodResultDelivered = false;
-
     private int itemPosition = -1;
+
     //Set notify change type to insert item type
     private NotifyChangeType changeType = NotifyChangeType.DATA_SET_CHANGED;
     //Set proper text to display item insertion with a Toast
     String toastText = "";
-
-//    public static ActivityResultReceiver broadCastReceiver;
 
     //CONSTANT VALUES
     private static final int INDEX_TO_GET_LAST_TASK_LIST_ITEM = 2;
@@ -127,7 +117,6 @@ public class MainActivity extends AppCompatActivity {
     private static final String ACCOUNTS_LOGOS = "logo_";
     private static final String NAV_DRAWER_BCKGRNDS = "nav_menu_header_bg";
     private static String RESOURCES = "Resources";
-
 
     //CONSTANTS: DB Table names
     private static final String USERNAME_TABLE = "USERNAME";
@@ -162,8 +151,6 @@ public class MainActivity extends AppCompatActivity {
     private static final String CURRENT_CATEGORY_ID_COLUMN = "currentCategoryID";
     private static final String CURRENT_TAB_COLUMN = "currentTab";
     private static final String ANSWER_ID_COLUMN ="AnswerID";
-//    private static final String SHOW_ALL_ACCOUNTS_COLUMN = "showAllAccounts";
-//    private static final String IS_FAVORITE_FILTER_COLUMN = "isFavoriteFilter";
     private static final String IS_SEARCH_FILTER_COLUMN = "isSearchFilter";
     private static final String IS_SEARCH_USER_FILTER_COLUMN = "isSearchUserInAccountsFilter";
     private static final String IS_SEARCH_PSSWRD_FILTER_COLUMN = "isSearchPsswrdInAccountsFilter";
@@ -179,16 +166,16 @@ public class MainActivity extends AppCompatActivity {
     private static final String PICTUREID_COLUMN = "PictureID";
     private static final String INIT_VECTOR_COLUMN="initVector";
 
-
     private static Uri uriCameraImage = null;
     private static final String EXTERNAL_IMAGE_STORAGE_CLUE = "content://";
-
     private static final String USER_NAME = "user name";
     private static final String PASSWORD = "password";
     private static final String QUESTION = "question";
     private static final String QUESTION_LIST = "question list";
+
     //Object used to retrieve theme colors
     private static ThemeUpdater themeUpdater;
+
     //Login - Logout variables
     private Bundle extras;
     private static AppLoggin currentAppLoggin;
@@ -197,7 +184,6 @@ public class MainActivity extends AppCompatActivity {
     private static boolean isLogOutActive;
     private long logOutTimeRemainder;
     private static int RESULT_TIMEOUT = -2;
-
 
 
     @Override
@@ -240,27 +226,23 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case 1:
                         //Call method to throw the AddUserName Activity
-//                        throwAddUserNameActivity();
                         throwActivityNoExtras(MainActivity.this,AddUserNameActivity.class,THROW_ADD_USERNAME_ACT_REQCODE);
                         Intent i = new Intent(MainActivity.this, AddUserNameActivity.class);
                         break;
                     case 2:
                         //Call method to throw the AddPsswrd Activity
-//                        throwAddPsswrdActivity();
                         throwActivityNoExtras(MainActivity.this,AddPsswrdActivity.class,THROW_ADD_PSSWRD_ACT_REQCODE);
                         break;
                     default:
                         //Call method to throw the AddQuestion Activity
-//                        throwAddQuestionActivity();
                         throwActivityNoExtras(MainActivity.this,AddQuestionActivity.class,THROW_ADD_QUESTION_ACT_REQCODE);
                         break;
-
                 }//End of switch statement to check current tab selection
             }//End of on click method implementation
         });//End of set on click listener method
         //Get the tablayout from layout
         tabLayout = (TabLayout) findViewById(R.id.tabs);
-        //Declare and initialize a context object to hold the MainActivity context whithin ghte onTabSelectedListener method
+        //Declare and initialize a context object to hold the MainActivity context within the onTabSelectedListener method
         //Used to update password strength colors based on app theme
         final Context mainActivityContext = this;
         //Set up the onclick behaviour for each tab in the tablayout object
@@ -275,7 +257,6 @@ public class MainActivity extends AppCompatActivity {
                         accountAdapter.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-//                                throwEditAccountActivity(v);
                                 throwEditAccountActivity(v);
                             }//End of onClick method
                         });//End of setOnClickListener
@@ -289,7 +270,6 @@ public class MainActivity extends AppCompatActivity {
                             clearSearchFilter();
                             clearSortFilter();
                         }
-                        //MainActivity.updateRecyclerViewData(accountAdapter);
                         updateRecyclerViewData(accountAdapter,-1, NotifyChangeType.DATA_SET_CHANGED);
                         break;
                     case 1:
@@ -306,7 +286,6 @@ public class MainActivity extends AppCompatActivity {
                             clearSearchFilter();
                             clearSortFilter();
                         }
-                        //MainActivity.updateRecyclerViewData(userNameAdapter);
                         updateRecyclerViewData(userNameAdapter,-1,NotifyChangeType.DATA_SET_CHANGED);
                         break;
                     case 2:
@@ -322,7 +301,6 @@ public class MainActivity extends AppCompatActivity {
                             clearSearchFilter();
                             clearSortFilter();
                         }
-                        //MainActivity.updateRecyclerViewData(psswrdAdapter);
                         updateRecyclerViewData(psswrdAdapter,-1,NotifyChangeType.DATA_SET_CHANGED);
                         break;
                     case 3:
@@ -331,7 +309,6 @@ public class MainActivity extends AppCompatActivity {
                             clearSearchFilter();
                             clearSortFilter();
                         }
-                        //MainActivity.updateRecyclerViewData(secQuestionAdapter);
                         updateRecyclerViewData(secQuestionAdapter,-1,NotifyChangeType.DATA_SET_CHANGED);
                         secQuestionAdapter.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -352,9 +329,6 @@ public class MainActivity extends AppCompatActivity {
                 if (appStateUpdated) {
                     Cursor c = accountsDB.getAppState();
                     c.moveToFirst();
-//                    String search = c.getString(6);
-//                    Snackbar snackbar = Snackbar.make(coordinatorLayout, search, Snackbar.LENGTH_LONG);
-//                    snackbar.setAction("Action", null).show();
                 } else {
                     //Display error message
                     displayAlertDialogNoInput(getBaseContext(),getString(R.string.appStateError),getString(R.string.appStateErrorMssg));
@@ -391,22 +365,10 @@ public class MainActivity extends AppCompatActivity {
                 isFirstRun = true;
             }
         } else {
+            //Set default app state values
             accountsDB.getWritableDatabase().execSQL("INSERT INTO APPSTATE VALUES(null,-1,1,0,0,0,'',0,-1);");
             this.appState = accountsDB.getAppState();
             this.currentTab = this.appState.getInt(2);
-            //Set default app state values
-//            this.currentCategory = this.getCategoryByID(0);
-//            this.showAllAccounts = true;
-//            this.isFavoriteFilter = false;
-//            this.isSearchFilter = false;
-//            this.isSearchUserNameFilter = false;
-//            this.isSearchPsswrdFilter = false;
-//            this.lastSearchText = "";
-//            this.isSortFilter = false;
-//            this.currentSortFilter = null;
-            //Insert default app state to be loaded
-            //Populate default state of app
-
         }//End of if statement to check and extract the app state from dB
         //Get the current category and tab stored from app state
         this.currentCategory = this.getCategoryByID(this.appState.getInt(1));
@@ -419,11 +381,8 @@ public class MainActivity extends AppCompatActivity {
             ContentValues values = new ContentValues();
             values.put(CURRENT_CATEGORY_ID_COLUMN,-1);
             accountsDB.updateTable(APPSTATE_TABLE,values);
-        }
+        }//End of if statement to check the current category isn't null
 
-        //Update the nav drawer to display appropriate item in the menu
-//        this.showAllAccounts = this.accountsDB.toBoolean(this.appState.getInt(3));
-//        this.isFavoriteFilter = this.accountsDB.toBoolean(this.appState.getInt(4));
         this.isSearchFilter = this.accountsDB.toBoolean(this.appState.getInt(3));
         this.isSearchUserNameFilter = this.accountsDB.toBoolean(this.appState.getInt(4));
         this.isSearchPsswrdFilter = this.accountsDB.toBoolean(this.appState.getInt(5));
@@ -465,7 +424,6 @@ public class MainActivity extends AppCompatActivity {
             toolbar.setTitle(R.string.menu_home);
         }
 
-
         //Create current AppLoggin by passing extra information coming from login activity. This was intended to support multiple user login.
         //Workaround to fix push notification task stack reset
         if(this.extras!=null){
@@ -476,9 +434,7 @@ public class MainActivity extends AppCompatActivity {
             this.currentAppLoggin = AppLoggin.extractAppLoggin(accountsDB.getAppLoginCursor(accountsDB.getMaxItemIdInTable(APPLOGGIN_TABLE)));
         }
 
-
         View headerView = navigationView.getHeaderView(0);
-
         headerView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -538,11 +494,8 @@ public class MainActivity extends AppCompatActivity {
             //Set up extra information into the intent to be sent the the EditAccountActivity
             intent.putExtra("category", expiredPsswrdAccount.getCategory().get_id());
             intent.putExtra(ID_COLUMN, expiredPsswrdAccount.get_id());
-            //intent.putExtra("position",accountsDB.findItemPositionInCursor(((AccountAdapter)HomeFragment.getRv().getAdapter()).getCursor(),expiredPsswrdAccount.get_id()));
             stackBuilder.addNextIntentWithParentStack(intent);
-            //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             PendingIntent pendingIntent = stackBuilder.getPendingIntent(THROW_EDIT_ACCOUNT_ACT_REQCODE, PendingIntent.FLAG_UPDATE_CURRENT);
-//                PendingIntent.getActivity(this, 0, intent, 0);
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this,CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_stat_my_psswrd_secure_full)
                     .setContentTitle(getString(R.string.pushNotificationPsswrdExpMssg))
@@ -554,7 +507,6 @@ public class MainActivity extends AppCompatActivity {
             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
             // notificationId is a unique int for each notification that you must define
             notificationManager.notify(expiredPsswrdAccount.get_id(), notificationBuilder.build());
-//             broadCastReceiver = new ActivityResultReceiver();
         }//End of if statement to check at least one account has expired password
         Log.d("Ext_onCreateMain", "Exit onCreate method in MainActivity class.");
     }//End of onCreate method
@@ -581,7 +533,9 @@ public class MainActivity extends AppCompatActivity {
         //logoutTimer.cancel();
     }
 
+    //Method to logout app
     private void logout() {
+        Log.d("logout", "Enter logout method in MainActivity class.");
         //Display alert with justification about why permit is necessary
         AlertDialog.Builder alert = displayAlertDialogNoInput(this, "Logout", "Log out Timeout!");
         alert.setPositiveButton("Continue",new DialogInterface.OnClickListener() {
@@ -597,12 +551,16 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                 }).show();
-    }
+        Log.d("logout", "Exit logout method in MainActivity class.");
+    }//End of logout method
 
+    //Method to call android finish method
     public void callFinish(){
+        Log.d("callFinish", "Enter|Exit logout method in MainActivity class.");
         this.finish();
-    }
+    }//End of callFinish method
 
+    //Method to get category name from the resource id
     private String getCategoryNameFromRes(String name) {
         Log.d("getCategoryNameFromRes", "Enter getCategoryNameFromRes method in MainActivity class.");
         //Declare and instantiate an int to hold the string id from resources and a String variable to hold the actual category name
@@ -621,29 +579,10 @@ public class MainActivity extends AppCompatActivity {
     }//End of getCategoryNameFromRes method
 
 
-//    private void testCriptogrpher() {
-//        //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-////                        .setAction("Action", null).show();
-//        counter++;
-//        if (counter <= 1) {
-//            encrypted = cryptographer.encryptText("jlrods@gmail.com");
-//            try {
-//                Toast.makeText(MainActivity.this, new String(encrypted, "UTF8"), Toast.LENGTH_LONG).show();
-//            } catch (UnsupportedEncodingException e) {
-//                e.printStackTrace();
-//            }
-////                    encrypted =cryptographer.encryptText("jlrods@gmail.com");
-////                    Snackbar snackbar = Snackbar.make(view, new String(encrypted), Snackbar.LENGTH_LONG);
-////                    snackbar.setAction("Action", null).show();
-//            //Toast.makeText(MainActivity.this, new String(encrypted), Toast.LENGTH_LONG).show();
-//        } else {
-//            decrypted = cryptographer.decryptText(encrypted, cryptographer.getIv());
-//            Toast.makeText(MainActivity.this, decrypted, Toast.LENGTH_LONG).show();
-//        }
-//    }
-
     @Override
+    //Method to create top menu
     public boolean onCreateOptionsMenu(Menu menu) {
+        Log.d("onCreateOptionsMenu", "Enter onCreateOptionsMenu method in MainActivity class.");
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         if (this.isSearchFilter) {
@@ -651,31 +590,30 @@ public class MainActivity extends AppCompatActivity {
         } else if (this.isSortFilter) {
             menu.getItem(1).getIcon().setTintList(ColorStateList.valueOf(themeUpdater.fetchThemeColor("colorAccent")));
         }
+        Log.d("onCreateOptionsMenu", "Exit onCreateOptionsMenu method in MainActivity class.");
         return true;
-    }
+    }//End of onCreateOptionsMenu method
 
     @Override
+    //Menu to handle menu selections
     public boolean onOptionsItemSelected(MenuItem item) {
         Log.d("onOptionsItemSelected", "Enter the onOptionsItemSelected method in the MainActivity class.");
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_applogin:
-//                this.throwUpdateAppLoginActivity();
                 this.throwActivityNoExtras(MainActivity.this,UpdateAppLoginActivity.class,THROW_UPDATE_APPLOGIN_ACT_REQCODE);
                 Log.d("onOptionsItemSelected", "Exit the onOptionsItemSelected method in the MainActivity class with App Login option selected.");
                 return true;
             case R.id.action_logout:
-                finish();
+                logout(this);
                 Log.d("onOptionsItemSelected", "Exit the onOptionsItemSelected method in the MainActivity class with Logout option selected.");
                 return true;
             case R.id.action_about:
                 //Call method to throw AboutActivity activity
-                //throwAboutActivity();
                 this.throwActivityNoExtras(MainActivity.this,AboutActivity.class,-1);
                 Log.d("onOptionsItemSelected", "Exit the onOptionsItemSelected method in the MainActivity class with About option selected.");
                 return true;
             case R.id.action_settings:
-                //this.ThrowPreferncesActivity(null);
                 this.throwActivityNoExtras(MainActivity.this,PreferencesActivity.class,-1);
                 Log.d("onOptionsItemSelected", "Exit the onOptionsItemSelected method in the MainActivity class with Preferences option selected.");
                 return true;
@@ -695,15 +633,17 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
+        Log.d("onSupportNavigateUp", "Enter the onSupportNavigateUp method in the MainActivity class.");
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
-    }
+    }//End of onSupportNavigateUp
 
-
+    //Method to return current tab the app is displaying at the moment
     public TabLayout.Tab getCurrentTab() {
+        Log.d("getCurrentTab", "Enter|Exit the getCurrentTab method in the MainActivity class.");
         return this.tabLayout.getTabAt(this.tabLayout.getSelectedTabPosition());
-    }
+    }//End of getCurrentTab method
 
     //Method to return a category by passing in its DB id
     public static Category getCategoryByID(int _id) {
@@ -723,125 +663,8 @@ public class MainActivity extends AppCompatActivity {
         return category;
     }// End of getCategoryID method
 
-//    public static void updateRecyclerViewData(RecyclerView.Adapter adapter, MainActivity.SearchType searchType) {
-//        Log.d("Ent_updateRecViewData", "Enter the updateRecyclerViewData method in the MainActivity class.");
-//        RecyclerView rv = HomeFragment.getRv();
-//        AccountsDB accountsDB = HomeFragment.getAccountsDB();
-//        Cursor cursor = null;
-//        //Check the class of the adapter passed in as argument#
-//        if (adapter instanceof AccountAdapter) {
-//            if (isSearchFilter) {
-//                if (searchType.equals(SearchType.ACCOUNT_WITH_USERNAME)) {
-//                    Cursor userName = accountsDB.getUserNameByName(lastSearchText);
-//                    if (userName != null && userName.getCount() > 0) {
-//                        cursor = accountsDB.getAccountsWithSpecifcValueAndCategory(USER_NAME_ID_COLUMN, userName.getInt(0), MainActivity.getCurrentCategory().get_id());
-//                    } else {
-//                        //Work around to get a Non null cursor with no data as null cursor crashes app when getCount method is called by RV
-//                        cursor = accountsDB.getAccountsWithSpecifcValue(USER_NAME_ID_COLUMN, -1);
-//                    }//En of if else statement to check the user name retrieved isn't null
-//                } else if (searchType.equals(SearchType.ACCOUNT_WITH_PSSWRD)) {
-//                    Cursor psswrd = accountsDB.getPsswrdByName(lastSearchText);
-//                    if (psswrd != null && psswrd.getCount() > 0) {
-//                        cursor = accountsDB.getAccountsWithSpecifcValueAndCategory(PSSWRD_ID_COLUMN, psswrd.getInt(0), MainActivity.getCurrentCategory().get_id());
-//                    } else {
-//                        //Work around to get a Non null cursor with no data as null cursor crashes app when getCount method is called by RV
-//                        cursor = accountsDB.getAccountsWithSpecifcValue(PSSWRD_ID_COLUMN, -1);
-//                    }//End of if else statement to check password retrieved isn't nulll
-//                } else {
-//                    //Since user name and password specific search is not category limited, if the search text is searched in the account name
-//                    //include the current category in the search criteria
-//                    cursor = accountsDB.getAccountsThatContainsThisTextInName(lastSearchText, currentCategory.get_id());
-//                }//End of if else statement to check if the Account special search feature is being used
-//            } else if (isSortFilter) {
-//                if (currentSortFilter == SortFilter.ALPHA_ASC) {
-//                    cursor = accountsDB.getAccountsSortedByColumnUpOrDown(NAME_COLUMN, ASC);
-//                } else if (currentSortFilter == SortFilter.ALPHA_DES) {
-//                    cursor = accountsDB.getAccountsSortedByColumnUpOrDown(NAME_COLUMN, DESC);
-//                } else if (currentSortFilter == SortFilter.DATE_ASC) {
-//                    cursor = accountsDB.getAccountsSortedByColumnUpOrDown(DATE_CREATED_COLUMN, ASC);
-//                } else if (currentSortFilter == SortFilter.DATE_DES) {
-//                    cursor = accountsDB.getAccountsSortedByColumnUpOrDown(DATE_CREATED_COLUMN, DESC);
-//                } else if (currentSortFilter == SortFilter.CATEGORY) {
-//                    cursor = accountsDB.getAccountsSortedByColumnUpOrDown(CATEGORY_ID_COLUMN, ASC);
-//                }
-//            } else {
-//                //Check current category variable to call method that retrieves proper account list
-//                if (MainActivity.getCurrentCategory().get_id() == homeCategory.get_id()) {
-//                    cursor = accountsDB.getAccountsList();
-//                } else if (MainActivity.getCurrentCategory().get_id() == favCategory.get_id()) {
-//                    cursor = accountsDB.getAccountsWithSpecifcValue(IS_FAVORITE_COLUMN, 1);
-//                } else {
-//                    cursor = accountsDB.getAccountsWithSpecifcValue(CATEGORY_ID_COLUMN,currentCategory.get_id());
-//                }//End of if else statements to check current category
-//            }//End of if else statement to check if the search filter is active
-//            //Check the isSearch filter flag to define the correct cursor to retrieve from the DB
-//
-//            ((AccountAdapter) adapter).setCursor(cursor);
-//        } else if (adapter instanceof PsswrdAdapter) {
-//            //Check the isSearch filter flag to define the correct cursor to retrieve from the DB
-//            if (isSearchFilter) {
-//                cursor = accountsDB.getPsswrdByName(lastSearchText);
-//            } else if (isSortFilter) {
-//                if (currentSortFilter == SortFilter.DATE_ASC) {
-//                    cursor = accountsDB.getPsswrdsSortedColumnUpDown(DATE_CREATED_COLUMN, ASC);
-//                } else if (currentSortFilter == SortFilter.DATE_DES) {
-//                    cursor = accountsDB.getPsswrdsSortedColumnUpDown(DATE_CREATED_COLUMN, DESC);
-//                } else if (currentSortFilter == SortFilter.TIMES_USED) {
-//                    cursor = accountsDB.getPsswrdsSortedByTimesUsed();
-//                }
-//            } else {
-//                cursor = accountsDB.getPsswrdList();
-//            }
-//            ((PsswrdAdapter) adapter).setCursor(cursor);
-//        } else if (adapter instanceof SecurityQuestionAdapter) {
-//            //Check the isSearch filter flag to define the correct cursor to retrieve from the DB
-//            if (isSearchFilter) {
-//                //Call DB method to retrieve the questions that holds specific value in the question text
-//                cursor = accountsDB.getQuestionsWithThisTextInValue(lastSearchText);
-//            } else if (isSortFilter) {
-//                if (currentSortFilter == SortFilter.ALPHA_ASC) {
-//                    cursor = accountsDB.getQuestionsSortedColumnUpDown(ASC);
-//                } else if (currentSortFilter == SortFilter.ALPHA_DES) {
-//                    cursor = accountsDB.getQuestionsSortedColumnUpDown(DESC);
-//                } else if (currentSortFilter == SortFilter.TIMES_USED) {
-//                    cursor = accountsDB.getQuestionsSortedByTimesUsed();
-//                }
-//            } else {
-//                cursor = accountsDB.getListQuestionsAvailableNoAnsw();
-//            }
-//            ((SecurityQuestionAdapter) adapter).setCursor(cursor);
-//        } else if (adapter instanceof UserNameAdapter) {
-//            //Check the isSearch filter flag to define the correct cursor to retrieve from the DB
-//            if (isSearchFilter) {
-//                cursor = accountsDB.getUserNameByName(lastSearchText);
-//            } else if (isSortFilter) {
-//                if (currentSortFilter == SortFilter.DATE_ASC) {
-//                    cursor = accountsDB.getUserNamesSortedColumnUpDown(DATE_CREATED_COLUMN, ASC);
-//                } else if (currentSortFilter == SortFilter.DATE_DES) {
-//                    cursor = accountsDB.getUserNamesSortedColumnUpDown(DATE_CREATED_COLUMN, DESC);
-//                } else if (currentSortFilter == SortFilter.TIMES_USED) {
-//                    cursor = accountsDB.getUserNameCursorSortedByTimesUsed();
-//                }
-//            } else {
-//                cursor = accountsDB.getUserNameList();
-//            }
-//            ((UserNameAdapter) adapter).setCursor(cursor);
-//        }//End of if else statement that checks the instance of the adapter
-//        //Move to first row of cursor if not empty
-//        if (cursor != null) {
-//            cursor.moveToFirst();
-//        }
-//        rv.setAdapter(adapter);
-//        adapter.notifyDataSetChanged();
-//        isFirstRun = false;
-//        Log.d("Ext_updateRecViewData", "Exit the updateRecyclerViewData method in the MainActivity class.");
-//    }//End of updateRecyclerViewData method
-
-
-//    public static void updateRecyclerViewData(RecyclerView.Adapter adapter) {
-//        updateRecyclerViewData(adapter, SearchType.ACCOUNTS);
-//    }
-
+    //Method to update data displayed on RecyclerView. This new method includes propriate notification for insertion, deletion or change of items
+    //and/or full data set change.
     public static void updateRecyclerViewData(RecyclerView.Adapter adapter, int position, NotifyChangeType changeType){
         Log.d("updateRecViewDataNew", "Enter new the updateRecyclerViewData method in the MainActivity class.");
         //Call method to get updated cursor for current app state (current category, search and sort filter status).
@@ -856,20 +679,24 @@ public class MainActivity extends AppCompatActivity {
             ((SecurityQuestionAdapter) adapter).setCursor(cursor);
         }else if(adapter instanceof UserNameAdapter){
             ((UserNameAdapter) adapter).setCursor(cursor);
-        }
+        }//End of if else chain to check type of adapter passed in
 
         //Check the changeType variable to determine what notifyChange method will be called for the RV
         switch (changeType.ordinal()){
             case 0:
+                //0 corresponds to Item in "postion" has been changed
                 adapter.notifyItemChanged(position);
                 break;
             case 1:
+                //1 corresponds to item removed in "position"
                 adapter.notifyItemRemoved(position);
                 break;
             case 2:
+                //2 corresponds to item inserted in "position"
                 adapter.notifyItemInserted(position);
                 break;
             default:
+                //Default would correspond to full data set change
                 if(cursor != null){
                     cursor.moveToFirst();
                 }
@@ -877,11 +704,12 @@ public class MainActivity extends AppCompatActivity {
                 rv.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
                 break;
-        }
+        }//End of switch statment to check change type variable
         Log.d("updateRecViewDataNew", "Exit new the updateRecyclerViewData method in the MainActivity class.");
         isFirstRun = false;
     }//End of updateItemInRecyclerView method
 
+    //Method to get cursor with data to be populated on the RV object
     public static Cursor getCursorToUpdateRV(RecyclerView.Adapter adapter){
         Log.d("getCursorToUpdateRV", "Enter the getCursorToUpdateRV method in the MainActivity class.");
         //Declare and initialize cursor to be returned by method
@@ -901,13 +729,13 @@ public class MainActivity extends AppCompatActivity {
                         //a work around to get a Non null cursor with no data as null cursor crashes app when getCount method is called by RV
                         cursor = accountsDB.getAccountsWithSpecifcValue(USER_NAME_ID_COLUMN, -1);
                     }//En of if else statement to check the user name retrieved isn't null
-                } else if (isSearchPsswrdFilter) {
+                }else if (isSearchPsswrdFilter) {
                     //If password search filter required, get password from DB
                     Cursor psswrd = accountsDB.getPsswrdByName(lastSearchText);
                     if (psswrd != null && psswrd.getCount() > 0) {
                         //If password exists, get cursor with all the accounts that hold that password
                         cursor = accountsDB.getAccountsWithSpecifcValueAndCategory(PSSWRD_ID_COLUMN, psswrd.getInt(0), MainActivity.getCurrentCategory().get_id());
-                    } else {
+                    }else {
                         //Otherwise return:
                         //a work around to get a Non null cursor with no data as null cursor crashes app when getCount method is called by RV
                         cursor = accountsDB.getAccountsWithSpecifcValue(PSSWRD_ID_COLUMN, -1);
@@ -997,11 +825,10 @@ public class MainActivity extends AppCompatActivity {
         return cursor;
     }//End of getCursorToUpdateRV method
 
-    //Method to throw a new Activity
+    //Generic method to throw a new Activity with no extras added to intent
     private void throwActivityNoExtras(Activity activity, Class className,int requestCode) {
         Log.d("throwActivityNoExtras", "Enter throwActivityNoExtras method in the MainActivity class.");
         //Declare and instantiate a new intent object
-        //Intent i = new Intent(MainActivity.this, AddPsswrdActivity.class);
         Intent i = new Intent(activity,className);
         //Start the AddItemActivity class
         if(requestCode > 0){
@@ -1010,32 +837,9 @@ public class MainActivity extends AppCompatActivity {
         }else{
             startActivity(i);
             Log.d("throwActivityNoExtras", "startActivity called by throwActivityNoExtras method in the MainActivity class.");
-        }
+        }//End of if else statement to check request code is greater than 0
         Log.d("throwActivityNoExtras", "Exit throwActivityNoExtras method in the MainActivity class.");
     }//End of throwActivityNoExtras method
-
-    //Method to throw a new Activity and expect a result from it
-//    private void throwActivityWithExtras(Activity activity, Class className,int resequestCode, Map extras) {
-//        Log.d("ThrowAct", "Enter throwActivity method in the MainActivity class.");
-//        //Declare and instantiate a new intent object
-//        Intent intent = new Intent(activity, className);
-//
-//        if (extras != null && extras.size()>0){
-//            extras.forEach();
-//            for(int i=0;i<extras.size();i++){
-////                intent.putExtra(((Map) extras.get(j)).,extras.get)
-//                intent.putExtra(extras.get)
-//            }
-//        }
-//
-//        //Add extras to the intent object, specifically the current category where the add button was pressed from
-//        intent.putExtra("category", this.currentCategory.get_id());
-//        //intent.putExtra("sql",this.getSQLForRecyclerView());
-//        //Start the addTaskActivity class
-//        startActivityForResult(intent, ResequestCode);
-//        Log.d("ThrowAct", "Exit throwActivity method in the MainActivity class.");
-//    }//End of throwAddTaskActivity
-
 
     //Method to throw new AddTaskActivity
     private void throwAddAccountActivity() {
@@ -1052,82 +856,8 @@ public class MainActivity extends AppCompatActivity {
         Log.d("ThrowAddAcc", "Exit throwAddAccountActivity method in the MainActivity class.");
     }//End of throwAddAccountActivity
 
-    //Method to throw new AddTaskActivity
-//    private void throwAddUserNameActivity() {
-//        Log.d("ThrowAddUser", "Enter throwAddUserNameActivity method in the MainActivity class.");
-//        //Declare and instantiate a new intent object
-//        Intent i = new Intent(MainActivity.this, AddUserNameActivity.class);
-//        if(isLogOutActive){
-//            i.putExtra("timeOutRemainder",(long)this.logoutTimer.getLogOutTimeRemainder());
-//        }
-//        //Start the AddItemActivity class
-//        startActivityForResult(i, THROW_ADD_USERNAME_ACT_REQCODE);
-//        Log.d("ThrowAddUser", "Exit throwAddUserNameActivity method in the MainActivity class.");
-//    }//End of throwAddTaskActivity
-
-//    private void throwAddPsswrdActivity() {
-//        Log.d("ThrowAddPsswrd", "Enter throwAddPsswrdActivity method in the MainActivity class.");
-//        //Declare and instantiate a new intent object
-//        Intent i = new Intent(MainActivity.this, AddPsswrdActivity.class);
-//        //Start the AddItemActivity class
-//        startActivityForResult(i, THROW_ADD_PSSWRD_ACT_REQCODE);
-//        Log.d("ThrowAddPsswrd", "Exit throwAddPsswrdActivity method in the MainActivity class.");
-//    }//End of throwAddTaskActivity
-
-//    private void throwAddQuestionActivity() {
-//        Log.d("ThrowAddQuest", "Enter throwAddQuestionActivity method in the MainActivity class.");
-//        //Declare and instantiate a new intent object
-//        Intent i = new Intent(MainActivity.this, AddQuestionActivity.class);
-//        //Start the addTaskActivity class
-//        startActivityForResult(i, THROW_ADD_QUESTION_ACT_REQCODE);
-//        Log.d("ThrowAddQuest", "Exit throwAddQuestionActivity method in the MainActivity class.");
-//    }//End of throwAddTaskActivity
-
-//    private void throwAddCategoryActivity() {
-//        Log.d("ThrowAddCatt", "Enter throwAddCategoryActivity method in the MainActivity class.");
-//        //Declare and instantiate a new intent object
-//        Intent i = new Intent(MainActivity.this, AddCategoryAcitivity.class);
-//        //Start the addTaskActivity class
-//        startActivityForResult(i, TRHOW_ADD_CATEGORY_REQCODE);
-//        Log.d("ThrowAddCatt", "Exit throwAddCategoryActivity method in the MainActivity class.");
-//    }//End of throwAddTaskActivity
-
-    //Method to throw the SelectLogoActivity
-//    protected void throwUpdateAppLoginActivity() {
-//        Log.d("throwUpAppLogAct", "Enter the throwUpdateAppLoginActivity method in the DisplayAccountActivity class.");
-//        //Declare and instantiate a new intent object
-//        Intent i = new Intent(this, UpdateAppLoginActivity.class);
-//        //Add extras to the intent object, specifically the current category where the add button was pressed from
-//        // the current logo data which is sent back if select logo is cancel or updated if new logo has been selected
-//        //i.putExtra("selectedImgPosition", -1);
-//        //i.putExtra("selectedImgLocation", RESOURCES);
-//        //Start the addTaskActivity and wait for result
-//        startActivityForResult(i, this.THROW_UPDATE_APPLOGIN_ACT_REQCODE);
-//        Log.d("throwUpAppLogAct", "Exit the throwUpdateAppLoginActivity method in the DisplayAccountActivity class.");
-//    }//End of throwSelectLogoActivity method
-
-    //Method to throw new AddTaskActivity
-//    private void throwAboutActivity() {
-//        Log.d("ThrowAbout", "Enter throwAboutActivity method in the MainActivity class.");
-//        //Declare and instantiate a new intent object
-//        Intent i = new Intent(getBaseContext(), AboutActivity.class);
-//        //Start the addTaskActivity class
-//        startActivity(i);
-//        Log.d("ThrowAbout", "Exit throwAboutActivity method in the MainActivity class.");
-//    }//End of throwAddTaskActivity
-
-    //Method to call the Preferences screen
-//    private void ThrowPreferncesActivity(View view) {
-//        Log.d("Ent_callPrefernce", "Enter the callPreferences method in MainActivity.");
-//        //Declare and instantiate a new Intent object, passing the PreferencesActivity class as argument
-//        Intent i = new Intent(this, PreferencesActivity.class);
-//        //Start the activity by passin in the intent
-//        startActivity(i);
-//        Log.d("Ext_callPrefernce", "Exit the callPreferences method in MainActivity.");
-//    }// End of callPreferences method
-
-    //Method to throw new AddTaskActivity
-    public static Intent prepareThrowEditAccountActivity(Context context, Intent i, View v) {
+    //Method to carry out all required prep before throwing EditAccountActivity
+    public static Intent prepareThrowEditAccountActivity(Context context, View v) {
         Log.d("PrepThrowEdAcc", "Enter prepareThrowEditAccountActivity method in the MainActivity class.");
         //Get RV object from home fragment
         RecyclerView rv = HomeFragment.getRv();
@@ -1139,7 +869,7 @@ public class MainActivity extends AppCompatActivity {
         //Extract the task object from the cursor row
         Account account = Account.extractAccount(cursor);
         //Declare and instantiate a new intent object
-        i = new Intent(context, EditAccountActivity.class);
+        Intent i = new Intent(context, EditAccountActivity.class);
         //Add extras to the intent object, specifically the current category where the add button was pressed from
         i.putExtra("category", currentCategory.get_id());
         i.putExtra(ID_COLUMN, account.get_id());
@@ -1147,45 +877,18 @@ public class MainActivity extends AppCompatActivity {
         Log.d("PrepThrowEdAcc", "Exit prepareThrowEditAccountActivity method in the MainActivity class.");
         return i;
     }//End of prepareThrowEditAccountActivity method
-    //Method to throw new AddTaskActivity
+
+    //Method to throw new EditAccountActivity
     private void throwEditAccountActivity(View v) {
         Log.d("ThrowEditAcc", "Enter throwEditAccountActivity method in the MainActivity class.");
-        Intent i = new Intent();
-        i  = prepareThrowEditAccountActivity(MainActivity.this,i,v);
+        Intent i  = prepareThrowEditAccountActivity(MainActivity.this,v);
         //Start the AddItemActivity class
         startActivityForResult(i, THROW_EDIT_ACCOUNT_ACT_REQCODE);
         Log.d("ThrowEditAcc", "Exit throwEditAccountActivity method in the MainActivity class.");
-    }//End of throwEditAccountActivity
+    }//End of throwEditAccountActivity method
 
 
-    //Method to throw new AddTaskActivity
-//    private void throwEditAccountActivity(View v) {
-//        Log.d("ThrowEditAcc", "Enter throwEditAccountActivity method in the MainActivity class.");
-//        //rv
-//        RecyclerView rv = HomeFragment.getRv();
-//        //Get the item position in the adapter
-//        int itemPosition = rv.getChildAdapterPosition(v);
-//        //move the cursor to the task position in the adapter
-//        Cursor cursor = ((AccountAdapter) rv.getAdapter()).getCursor();
-//        cursor.moveToPosition(itemPosition);
-//        //Extract the task object from the cursor row
-//        Account account = Account.extractAccount(cursor);
-//        //Declare and instantiate a new intent object
-//        Intent i = new Intent(MainActivity.this, EditAccountActivity.class);
-//        //Add extras to the intent object, specifically the current category where the add button was pressed from
-//        i.putExtra("category", this.currentCategory.get_id());
-//        i.putExtra(ID_COLUMN, account.get_id());
-//        i.putExtra("position",itemPosition);
-//        //Add logout timer remaining time to continue in next activity
-//        if(isLogOutActive){
-//            i.putExtra("timeOutRemainder",(long)this.logoutTimer.getLogOutTimeRemainder());
-//        }
-//        //Start the AddItemActivity class
-//        startActivityForResult(i, THROW_EDIT_ACCOUNT_ACT_REQCODE);
-//        Log.d("ThrowEditAcc", "Exit throwEditAccountActivity method in the MainActivity class.");
-//    }//End of throwAddTaskActivity
-
-    //Method to throw new AddTaskActivity
+    //Method to throw new EditUserNameActivity
     private void throwEditUserNameActivity(View v) {
         Log.d("ThrowEditUser", "Enter throwEditUserNameActivity method in the MainActivity class.");
         //rv
@@ -1199,8 +902,7 @@ public class MainActivity extends AppCompatActivity {
         UserName userName = UserName.extractUserName(cursor);
         //Declare and instantiate a new intent object
         Intent i = new Intent(MainActivity.this, EditUserNameActivity.class);
-        //Add extras to the intent object, specifically the current category where the add button was pressed from
-        //i.putExtra("category",this.currentCategory.toString());
+        //Add extras to the intent object
         i.putExtra(ID_COLUMN, userName.get_id());
         i.putExtra("position",itemPosition);
         if(isLogOutActive){
@@ -1209,7 +911,7 @@ public class MainActivity extends AppCompatActivity {
         //Start the AddItemActivity class
         startActivityForResult(i, this.THROW_EDIT_USERNAME_ACT_REQCODE);
         Log.d("ThrowEditUser", "Exit throwEditUserNameActivity method in the MainActivity class.");
-    }//End of throwAddTaskActivity
+    }//End of ThrowEditUser method
 
     //Method to throw new EditPsswrdActivity
     private void throwEditPsswrdActivity(View v) {
@@ -1225,8 +927,7 @@ public class MainActivity extends AppCompatActivity {
         Psswrd psswrd = Psswrd.extractPsswrd(cursor);
         //Declare and instantiate a new intent object
         Intent i = new Intent(MainActivity.this, EditPsswrdActivity.class);
-        //Add extras to the intent object, specifically the current category where the add button was pressed from
-        //i.putExtra("category",this.currentCategory.toString());
+        //Add extras to the intent object
         i.putExtra(ID_COLUMN, psswrd.get_id());
         i.putExtra("position",itemPosition);
         //Start the AddItemActivity class
@@ -1248,11 +949,10 @@ public class MainActivity extends AppCompatActivity {
         Question question = Question.extractQuestion(cursor);
         //Declare and instantiate a new intent object
         Intent i = new Intent(MainActivity.this, EditQuestionActivity.class);
-        //Add extras to the intent object, specifically the current category where the add button was pressed from
-        //i.putExtra("category",this.currentCategory.toString());
+        //Add extras to the intent object
         i.putExtra(ID_COLUMN, question.get_id());
         i.putExtra("position",itemPosition);
-        //Start the AddItemActivity class
+        //Start the EditQuestionActivity class
         startActivityForResult(i, this.THROW_EDIT_QUESTIONS_ACT_REQCODE);
         Log.d("ThrowAddUser", "Exit throwEditQuestionActivity method in the MainActivity class.");
     }//End of throwAddTaskActivity
@@ -1266,7 +966,7 @@ public class MainActivity extends AppCompatActivity {
         //Start the addTaskActivity class
         startActivityForResult(i, THROW_EDIT_CATEGORY_ACT_REQCODE);
         Log.d("ThrowEditCat", "Exit throwEditCategoryActivity method in the MainActivity class.");
-    }//End of throwAddTaskActivity
+    }//End of throwEditCategoryActivity method
 
     //Method to throw the SelectLogoActivity
     protected void throwSelectNavDrawerBackgroundActivity() {
@@ -1290,48 +990,25 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d("onActivityResult", "Enter the onActivityResult method in the DisplayAccountActivity class.");
         //Check if result comes from AddAccountActivity
-        //String toastText = "";
-        //Flag to display Toast and update RV
-        //boolean goodResultDelivered = false;
         boolean isLogOutTimedOut = false;
         //Flag to handle nave drawer menu update when a category has been added, deleted or edited
         boolean categoryMenuUpdate = false;
         RecyclerView recyclerView = HomeFragment.getRv();
         RecyclerView.Adapter adapter = null;
-        //int itemPosition = -1;
-        //Declare and initialize a NotifyChangeType variable to be passed into method that updates RV data
-        //NotifyChangeType changeType = null;
         //Get adapter from rRV
         adapter = recyclerView.getAdapter();
         if (requestCode == this.THROW_ADD_ACCOUNT_ACT_REQCODE && resultCode == RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from AddAccountActivity (received by MainActivity).");
+            //Call generic method to handle item insertion  and update RV accordingly
             this.handleAddItemActivityResult(data,adapter,"accountName",ACCOUNTS_TABLE);
-//            //Update RV data set
-//            //Get current item position in the updated cursor. Use getCursorToUpdateRV with the most up to date data set
-//            itemPosition = accountsDB.findItemPositionInCursor(getCursorToUpdateRV((AccountAdapter)adapter),accountsDB.getMaxItemIdInTable(ACCOUNTS_TABLE));
-//            //Set notify change type to insert item type
-//            changeType = NotifyChangeType.ITEM_INSERTED;
-//            //Set proper text to display item insertion with a Toast
-//            toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountAdded);
-//            //Set variable to display Toast
-//            this.goodResultDelivered = true;
         } else if (requestCode == this.THROW_ADD_ACCOUNT_ACT_REQCODE && resultCode == RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from AddAccountActivity (received by MainActivity).");
-            //Check if result comes from AddAccountActivity
         } else if(requestCode == this.THROW_ADD_ACCOUNT_ACT_REQCODE && resultCode == RESULT_TIMEOUT){
             Log.d("onActivityResult", "Received TIMEOUT result from AddAccountActivity (received by MainActivity).");
         }else if (requestCode == THROW_ADD_USERNAME_ACT_REQCODE && resultCode == RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from AddUserNameActivity (received by MainActivity).");
+            //Call generic method to handle item insertion  and update RV accordingly
             this.handleAddItemActivityResult(data,adapter,"userNameValue",USERNAME_TABLE);
-            //Get current item position in the updated cursor. Use getCursorToUpdateRV with the most up to date data set
-//            itemPosition = accountsDB.findItemPositionInCursor(getCursorToUpdateRV((UserNameAdapter)adapter),accountsDB.getMaxItemIdInTable(USERNAME_TABLE));
-//            //Set notify change type to insert item type
-//            changeType = NotifyChangeType.ITEM_INSERTED;
-//            //Define text to display Toast to confirm the user has been added
-//            toastText = data.getExtras().getString("userNameValue") + " " + getResources().getString(R.string.userNameAdded);
-//            //displayToast(this, toastText, Toast.LENGTH_LONG, Gravity.CENTER);
-//            //Set variable to display Toast
-//            this.goodResultDelivered = true;
         } else if (requestCode == THROW_ADD_USERNAME_ACT_REQCODE && resultCode == RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from AddUserNameActivity (received by MainActivity).");
         } else if (requestCode == THROW_ADD_USERNAME_ACT_REQCODE && resultCode == RESULT_TIMEOUT) {
@@ -1339,28 +1016,14 @@ public class MainActivity extends AppCompatActivity {
             isLogOutTimedOut = true;
         }else if (requestCode == THROW_ADD_PSSWRD_ACT_REQCODE && resultCode == RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from AddPsswrdActivity (received by MainActivity).");
+            //Call generic method to handle item insertion  and update RV accordingly
             this.handleAddItemActivityResult(data,adapter,"psswrdValue",PSSWRD_TABLE);
-            //Get current item position in the updated cursor. Use getCursorToUpdateRV with the most up to date data set
-//            itemPosition = accountsDB.findItemPositionInCursor(getCursorToUpdateRV((PsswrdAdapter)adapter),accountsDB.getMaxItemIdInTable(PSSWRD_TABLE));
-//            //Set notify change type to insert item type
-//            changeType = NotifyChangeType.ITEM_INSERTED;
-//            //Define text to display Toast to confirm the password has been added
-//            toastText = data.getExtras().getString("psswrdValue") + " " + getResources().getString(R.string.psswrdAdded);
-//            //Set variable to display Toast
-//            this.goodResultDelivered = true;
         } else if (requestCode == THROW_ADD_PSSWRD_ACT_REQCODE && resultCode == RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from AddPsswrdActivity (received by MainActivity).");
         } else if (requestCode == THROW_ADD_QUESTION_ACT_REQCODE && resultCode == RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from AddAccountActivity (received by MainActivity).");
+            //Call generic method to handle item insertion  and update RV accordingly
             this.handleAddItemActivityResult(data,adapter,"questionValue",QUESTION_TABLE);
-            //Get current item position in the updated cursor. Use getCursorToUpdateRV with the most up to date data set
-//            itemPosition = accountsDB.findItemPositionInCursor(getCursorToUpdateRV((SecurityQuestionAdapter)adapter),accountsDB.getMaxItemIdInTable(QUESTION_TABLE));
-//            //Set notify change type to insert item type
-//            changeType = NotifyChangeType.ITEM_INSERTED;
-//            //Define text to display Toast to confirm the question has been added
-//            toastText = data.getExtras().getString("questionValue") + " " +  getResources().getString(R.string.questionAdded);
-//            //Set variable to display Toast
-//            goodResultDelivered = true;
         } else if (requestCode == THROW_ADD_QUESTION_ACT_REQCODE && resultCode == RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from AddQuestionActivity (received by MainActivity).");
         } else if (requestCode == TRHOW_ADD_CATEGORY_REQCODE && resultCode == Activity.RESULT_OK) {
@@ -1372,119 +1035,25 @@ public class MainActivity extends AppCompatActivity {
             Log.d("onActivityResult", "Received BAD result from AddCategoryActivity received by MainAcitvity.");
         } else if (requestCode == THROW_EDIT_USERNAME_ACT_REQCODE && resultCode == RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from EditUserNameActivity (received by MainActivity).");
-
+            //Call generic method to handle item edition and update RV accordingly
             handleEditItemActivityResult(data,"userNameID");
-            //Check data back from Activity to see if item was deleted or just changed to set up proper message text and notify change type
-//            if (data.getExtras().getBoolean("itemDeleted")) {
-//                //If no actual account id is returned, means the account was deleted
-//                //Set the NotifyChangeType variable to Item removed
-//                changeType = NotifyChangeType.ITEM_REMOVED;
-//                //Set text to item removed
-//                toastText = data.getExtras().getString("itemDeletedName") + " " + getResources().getString(R.string.userNameDeleted);
-//            } else {
-//                //In case user name changed flag is returned, get the user name from DB
-//                UserName editedUsername = accountsDB.getUserNameByID(data.getExtras().getInt("userNameID"));
-//                //Check if account not null,set up the NotifyChangeType variable
-//                if(editedUsername != null){
-//                    //To define what type of notify change, call method that will determine it
-//                    changeType = getNotifyChangeType(editedUsername);
-//                }else{
-//                    //Set default notify change type to Data set change
-//                    changeType = NotifyChangeType.DATA_SET_CHANGED;
-//                }
-//                //Set text to display Toast to confirm the user name has been UPDATED
-//                toastText = data.getExtras().getString("userNameValue") + " " + getResources().getString(R.string.userNameUpdated);
-//            }//End of if else statement to check the boolean value retrieved from extra data
-//            //Set item position in the RV
-//            itemPosition = data.getExtras().getInt("position");
-//            //Set variable to display Toast and update RV
-//            goodResultDelivered = true;
         } else if (requestCode == THROW_EDIT_USERNAME_ACT_REQCODE && resultCode == RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from EditUserNameActivity (received by MainActivity).");
         } else if (requestCode == THROW_EDIT_PSSWRD_ACT_REQCODE && resultCode == RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from EditPsswrdActivity (received by MainActivity).");
-
+            //Call generic method to handle item edition and update RV accordingly
             handleEditItemActivityResult(data,"psswrdID");
-            //Check data back from Activity to see if item was deleted or just changed to set up proper message text and notify change type
-//            if (data.getExtras().getBoolean("itemDeleted")) {
-//                //If no item deleted boolean flag is returned, means the password was deleted
-//                //Set the NotifyChangeType variable to Item removed
-//                changeType = NotifyChangeType.ITEM_REMOVED;
-//                //Set text to item removed
-//                toastText = data.getExtras().getString("itemDeletedName") + " " + getResources().getString(R.string.psswrdDeleted);
-//            } else {
-//                //In case password change flag is returned, get the password from DB
-//                Psswrd editedPsswrd = accountsDB.getPsswrdByID(data.getExtras().getInt("psswrdID"));
-//                //Check if password not null,set up the NotifyChangeType variable
-//                if(editedPsswrd != null){
-//                    //To define what type of notify change, call method that will determine it
-//                    changeType = getNotifyChangeType(editedPsswrd);
-//                }else{
-//                    //Set default notify change type to Data set change
-//                    changeType = NotifyChangeType.DATA_SET_CHANGED;
-//                }
-//                //Set text to display Toast to confirm the password has been UPDATED
-//                toastText = data.getExtras().getString("psswrdValue") + " " + getResources().getString(R.string.psswrdUpdated);
-//            }
-//            //Set item position in the RV
-//            itemPosition = data.getExtras().getInt("position");
-//            //Set variable to display Toast
-//            goodResultDelivered = true;
         } else if (requestCode == THROW_EDIT_PSSWRD_ACT_REQCODE && resultCode == RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from EditUserNameActivity (received by MainActivity).");
         } else if (requestCode == THROW_EDIT_QUESTIONS_ACT_REQCODE && resultCode == RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from EditQuestionActivity (received by MainActivity).");
-
+            //Call generic method to handle item edition and update RV accordingly
             handleEditItemActivityResult(data,"questionID");
-//            //Define text to display Toast to confirm the account has been added
-//            if (data.getExtras().getBoolean("itemDeleted")) {
-//                //If no item deleted boolean flag id is returned, means the password was deleted
-//                //Set the NotifyChangeType variable to Item removed
-//                changeType = NotifyChangeType.ITEM_REMOVED;
-//                toastText = data.getExtras().getString("itemDeletedName") + " " + getResources().getString(R.string.questionDeleted);
-//            } else {
-//                //In case actual account id is returned, get the account from DB
-//                Question editedQuestion = accountsDB.getQuestionByID(data.getExtras().getInt("questionID"));
-//                //Check if account not null,set up the NotifyChangeType variable
-//                if(editedQuestion != null){
-//                    //To define what type of notify change, call method that will determine it
-//                    changeType = getNotifyChangeType(editedQuestion);
-//                }else{
-//                    //Set default notify change type to Data set change
-//                    changeType = NotifyChangeType.DATA_SET_CHANGED;
-//                }
-//                toastText = data.getExtras().getString("questionValue") + " " +  getResources().getString(R.string.questionUpdated);
-//            }
-//            //Set item position in the RV
-//            itemPosition = data.getExtras().getInt("position");
-//            //Set variable to display Toast
-//            goodResultDelivered = true;
         } else if (requestCode == THROW_EDIT_QUESTIONS_ACT_REQCODE && resultCode == RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from EditQuestionActivity (received by MainActivity).");
         } else if (requestCode == THROW_EDIT_ACCOUNT_ACT_REQCODE && resultCode == Activity.RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from EditAccountActivity (received by HomeFragment).");
-            //Check type of edit returned byt EditAccountActivity: Delete account or edit it
-//            if (data.getExtras().getInt("accountID") == -1) {
-//                //If no actual account id is returned, means the account was deleted
-//                //Set the NotifyChangeType variable to Item removed
-//                changeType = NotifyChangeType.ITEM_REMOVED;
-//                //Set text to display Toast to confirm the account has been DELETED
-//                toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountDeleted);
-//            } else {
-//                //In case actual account id is returned, get the account from DB
-//                Account editedAccount = accountsDB.getAccountByID(data.getExtras().getInt("accountID"));
-//                //Check if account not null,set up the NotifyChangeType variable
-//                if(editedAccount != null){
-//                    //To define what type of notify change, call method that will determine it
-//                    changeType = getNotifyChangeType(editedAccount);
-//                }else{
-//                    //Set default notify change type to Data set change
-//                    changeType = NotifyChangeType.DATA_SET_CHANGED;
-//                }
-//                //Set text to display Toast to confirm the account has been UPDATED
-//                toastText = data.getExtras().getString("accountName") + " " + getResources().getString(R.string.accountUpdated);
-//            }//End of if else statement to check account id
-            //Call MainActivity's method to get the change type based on the data sent back from EditAccountActivity
+            //Call method to get change type for EditAccountActivity
             changeType = MainActivity.handleEditAccountActivityResult(data);
             //Call MainActivity's method to get the toast text to be displayed based on the type of RV notification type
             toastText = MainActivity.setToastText(data,"accountName",changeType,getResources());
@@ -1500,27 +1069,35 @@ public class MainActivity extends AppCompatActivity {
             this.finish();
         } else if (requestCode == THROW_EDIT_CATEGORY_ACT_REQCODE && resultCode == Activity.RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from EditCategoryActivity received by MainAcitvity.");
+            //Set overall good result flag to true and the category update menu flag to true too
             goodResultDelivered = true;
             categoryMenuUpdate = true;
+            //Setup propper message for the category edition
             toastText = data.getExtras().getString("categoryName") + " " + getResources().getString(R.string.catUpdated);
         } else if (requestCode == THROW_EDIT_CATEGORY_ACT_REQCODE && resultCode == Activity.RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from EditCategoryActivity received by MainAcitvity.");
         } else if (requestCode == THROW_SELECT_NAVDRAWERBCKGRND_ACT_REQCODE && resultCode == Activity.RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from SelectNavDrawerBckGrnd received by MainAcitvity.");
+            //Get the nadvigationView object
             NavigationView navigationView = findViewById(R.id.nav_view);
+            //Get the header view object
             View headerView = navigationView.getHeaderView(0);
+            //Set the background with the proper resource file
             headerView.setBackground(getResources().getDrawable(data.getExtras().getInt("selectedImgResourceID"), null));
+            //Populate the values to be updated on the applogin table
             ContentValues values = new ContentValues();
             values.put(ID_COLUMN, currentAppLoggin.get_id());
             values.put(PICTUREID_COLUMN, data.getExtras().getInt("selectedImgID"));
+            //Call DB method to updated APPLOGIN table with new background selected
             accountsDB.updateTable(APPLOGGIN_TABLE, values);
         } else if (requestCode == THROW_SELECT_NAVDRAWERBCKGRND_ACT_REQCODE && resultCode == Activity.RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from SelectNavDrawerBckGrnd received by MainAcitvity.");
         }else if(requestCode == THROW_UPDATE_APPLOGIN_ACT_REQCODE && resultCode == Activity.RESULT_OK){
             Log.d("onActivityResult", "Received GOOD result from UpdateAppLoginActivity received by MainAcitvity.");
-            //update current appLogin so it matches same data from DB, otherwise it will keep old value during current session
+            //Update current appLogin so it matches same data from DB, otherwise it will keep old value during current session
             currentAppLoggin = AppLoggin.extractAppLoggin(accountsDB.getAppLoginCursor(currentAppLoggin.get_id()));
             toastText = "App Login credentials have been successfully updated. Next time you login, use your new credentials.";
+            //Display toast when applogin credentials were updated and no need to update RV data set
             displayToast(this, toastText, Toast.LENGTH_LONG, Gravity.CENTER);
         }else if(requestCode == THROW_UPDATE_APPLOGIN_ACT_REQCODE && resultCode == Activity.RESULT_CANCELED){
             Log.d("onActivityResult", "Received BAD result from UpdateAppLoginActivity received by MainAcitvity.");
@@ -1536,6 +1113,7 @@ public class MainActivity extends AppCompatActivity {
                 logoutTimer = new LogOutTimer(logOutTimeRemainder,250,this);
                 logoutTimer.start();
             }
+            //Check if category menu required updating and result from previous activity is good
             if (categoryMenuUpdate && goodResultDelivered) {
                 //Check if toast would be displayed
                     //Get the updated list of categories
@@ -1584,11 +1162,10 @@ public class MainActivity extends AppCompatActivity {
                 }//End of if statement to check good result was delivered
             }//End of if else statement that checks if nav drawer menu has to be updated
         }//End of if else for timeout logout
-
-        //End of if else statement to check the data comes from one of the thrown activities
         Log.d("onActivityResult", "Exit the onActivityResult method in the DisplayAccountActivity class.");
     }//End of onActivityResult method
 
+    //Generic method to handle item insertion into RV
     private void handleAddItemActivityResult(@Nullable Intent data,RecyclerView.Adapter adapter,String key,String dbTable){
         Log.d("handleAddAccRes", "Enter the handleAddItemActivityResult method in the DisplayAccountActivity class.");
         //Update RV data set
@@ -1602,6 +1179,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d("handleAddAccRes", "Exit the handleAddItemActivityResult method in the DisplayAccountActivity class.");
     }//End of handleAddItemActivityResult method
 
+    //Generic method to handle item edition into RV
     private void handleEditItemActivityResult(@Nullable Intent data,String idKey){
         Log.d("handleAddAccRes", "Enter the handleAddItemActivityResult method in the DisplayAccountActivity class.");
         //Check data back from Activity to see if item was deleted or just changed to set up proper message text and notify change type
@@ -1640,16 +1218,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 default:
                     this.changeType = NotifyChangeType.DATA_SET_CHANGED;
-            }
-
-            //Check if account not null,set up the NotifyChangeType variable
-//            if(editedItem != null){
-//                //To define what type of notify change, call method that will determine it
-//                this.changeType = getNotifyChangeType(editedItem);
-//            }else{
-//                //Set default notify change type to Data set change
-//                this.changeType = NotifyChangeType.DATA_SET_CHANGED;
-//            }
+            }//End of switch statement
             //Set text to display Toast to confirm the user name has been UPDATED
             this.toastText = setToastText(data,toastKey,changeType,getResources());// data.getExtras().getString("userNameValue") + " " + getResources().getString(R.string.userNameUpdated);
         }//End of if else statement to check the boolean value retrieved from extra data
@@ -1660,7 +1229,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d("handleAddAccRes", "Exit the handleAddItemActivityResult method in the DisplayAccountActivity class.");
     }//End of handleAddItemActivityResult method
 
-
+    //Specific method to handle account edition and RV update
     public static NotifyChangeType handleEditAccountActivityResult(@Nullable Intent data){
         Log.d("handleEditAccRes", "Enter the handleEditAccountActivityResult method in the DisplayAccountActivity class.");
         NotifyChangeType changeType;
@@ -1685,23 +1254,7 @@ public class MainActivity extends AppCompatActivity {
         return changeType;
     }//End of handleEditAccountActivityResult method
 
-//    public static String setToastText(@Nullable Intent data,NotifyChangeType changeType,Resources res){
-//        Log.d("handleEditAccRes", "Enter the setToastText method in the DisplayAccountActivity class.");
-//        String toastText= "";
-//        if(changeType.equals(NotifyChangeType.ITEM_REMOVED)){
-//            //Set text to display Toast to confirm the account has been DELETED
-//            toastText = data.getExtras().getString("accountName") + " " + res.getString(R.string.accountDeleted);
-//            //Set text to display Toast to confirm the account has been ADDED
-//        }else if(changeType.equals(NotifyChangeType.ITEM_INSERTED)){
-//            toastText = data.getExtras().getString("accountName") +" " + res.getString(R.string.accountAdded);
-//            //Set text to display Toast to confirm the account has been UPDATED
-//        }else if(changeType.equals(NotifyChangeType.ITEM_CHANGED)){
-//            toastText = data.getExtras().getString("accountName") + " " + res.getString(R.string.accountUpdated);
-//        }
-//        Log.d("handleEditAccRes", "Enter the setToastText method in the DisplayAccountActivity class.");
-//        return toastText;
-//    }//End of setToastText method
-
+    //Method to setup ToastText for onActivityResult method when updating  RV accordingly
     public static String setToastText(@Nullable Intent data,String key,NotifyChangeType changeType, Resources res){
         Log.d("handleEditAccRes", "Enter the setToastText method in the MainActivity class.");
         String toastText= "";
@@ -1711,7 +1264,7 @@ public class MainActivity extends AppCompatActivity {
         }else{
             toastText = data.getExtras().getString("itemDeletedName");
             key = data.getExtras().getString("itemDeletedType");
-        }
+        }//End of if else statement to check key text
 
         //Check key value to set up Toast text accordingly based on type of item and RV type of update
         switch (key){
@@ -1772,7 +1325,7 @@ public class MainActivity extends AppCompatActivity {
         return toastText;
     }//End of setToastText method
 
-
+    //Method to get the notify change enum for edited accounts
     public static NotifyChangeType getNotifyChangeType(Account editedAccount){
         Log.d("getNotifyChangeType", "Enter getNotifyChangeType method in the MainActivity class.");
         //Declare and initialize the chaneType variable to be returned by method
@@ -1795,57 +1348,12 @@ public class MainActivity extends AppCompatActivity {
             //Any other edition, the account item must be notified as changed
             changeType = MainActivity.NotifyChangeType.ITEM_CHANGED;
             Log.d("getNotifyChangeType", "ITEM_CHANGED selected in getNotifyChangeType method in the MainActivity class for ."+ editedAccount.getName());
-        }
-        //Check if current category is the favorites category
-//        if(currentCategory == favCategory){
-//            //Check edited account parameter and get its isFavorite attribute.
-//            if(!editedAccount.isFavorite()){
-//                //If it isn't the account was unticked as fav and therefore should
-//                //be removed from current RV data set
-//                changeType = MainActivity.NotifyChangeType.ITEM_REMOVED;
-//                Log.d("getNotifyChangeType", "ITEM_REMOVED selected in getNotifyChangeType method in the MainActivity class for ."+ editedAccount.getName());
-//            }else{
-//                //Otherwise, check isSearch filter flag and then specific search flags for user name and password
-//                if(isSearchFilter){
-//                    //Check if any of the following three conditions is met:
-//                    //UserName search filter active and the account user name doesn't match the search criteria anymore
-//                    //Password search filter active and the account password doesn't match the search criteria anymore
-//                    //Account name search filter active and the account name doesn't match the search criteria anymore
-//                    if(isSearchUserNameFilter && !cryptographer.decryptText(editedAccount.getUserName().getValue(),new IvParameterSpec(editedAccount.getUserName().getIv())).equals(lastSearchText)
-//                            ||isSearchPsswrdFilter && !cryptographer.decryptText(editedAccount.getPsswrd().getValue(),new IvParameterSpec(editedAccount.getPsswrd().getIv())).equals(lastSearchText)
-//                            ||!isSearchUserNameFilter && !isSearchPsswrdFilter && !editedAccount.getName().toLowerCase().contains(lastSearchText.toLowerCase())){
-//                        changeType = MainActivity.NotifyChangeType.ITEM_REMOVED;
-//                        Log.d("getNotifyChangeType", "ITEM_REMOVED selected in getNotifyChangeType method in the MainActivity class for ."+ editedAccount.getName());
-//                    }else {
-//                        //Any other edition, the account item must be notified as changed
-//                        changeType = MainActivity.NotifyChangeType.ITEM_CHANGED;
-//                        Log.d("getNotifyChangeType", "ITEM_CHANGED selected in getNotifyChangeType method in the MainActivity class for ."+ editedAccount.getName());
-//                    }
-//                }else{
-//                    //Any other edition, the account item must be notified as changed
-//                    changeType = MainActivity.NotifyChangeType.ITEM_CHANGED;
-//                    Log.d("getNotifyChangeType", "ITEM_CHANGED selected in getNotifyChangeType method in the MainActivity class for ."+ editedAccount.getName());
-//                }
-//            }
-//        }else{
-//            if(isSearchFilter){
-//                if(isSearchUserNameFilter && !cryptographer.decryptText(editedAccount.getUserName().getValue(),new IvParameterSpec(editedAccount.getUserName().getIv())).equals(lastSearchText)){
-//                    changeType = MainActivity.NotifyChangeType.ITEM_REMOVED;
-//                }else if(isSearchPsswrdFilter && !cryptographer.decryptText(editedAccount.getPsswrd().getValue(),new IvParameterSpec(editedAccount.getPsswrd().getIv())).equals(lastSearchText)){
-//                    changeType = MainActivity.NotifyChangeType.ITEM_REMOVED;
-//                }else if (!isSearchUserNameFilter && !isSearchPsswrdFilter && !editedAccount.getName().toLowerCase().contains(lastSearchText.toLowerCase())){
-//                    changeType = MainActivity.NotifyChangeType.ITEM_REMOVED;
-//                }else {
-//                    changeType = MainActivity.NotifyChangeType.ITEM_CHANGED;
-//                }
-//            }else{
-//                changeType = MainActivity.NotifyChangeType.ITEM_CHANGED;
-//            }
-//        }
+        }//End of if else statement that checks the specific cases where change type requires to be set to item removed
         Log.d("getNotifyChangeType", "Exit getNotifyChangeType method in the MainActivity class.");
         return changeType;
     }//End of getNotifyChangeType method
 
+    //Method to get the notify change enum for edited user names
     public static NotifyChangeType getNotifyChangeType(UserName editedUserName) {
         Log.d("getNotifyChangeType", "Enter getNotifyChangeType method ifor UserName class n the MainActivity class.");
         //Declare and initialize the chaneType variable to be returned by method
@@ -1857,19 +1365,12 @@ public class MainActivity extends AppCompatActivity {
             //Any other edition, the account item must be notified as changed
             changeType = MainActivity.NotifyChangeType.ITEM_CHANGED;
             Log.d("getNotifyChangeType", "ITEM_CHANGED selected in getNotifyChangeType method for UserName class in the MainActivity class for user name with id: "+ editedUserName.get_id());
-        }
-
-//        if(
-//                (currentCategory == favCategory && !editedUserName.isFavorite())
-//                        || (isSearchUserNameFilter && !cryptographer.decryptText(editedUserName.getUserName().getValue(),new IvParameterSpec(editedUserName.getUserName().getIv())).equals(lastSearchText))
-//                        || (isSearchPsswrdFilter && !cryptographer.decryptText(editedUserName.getPsswrd().getValue(),new IvParameterSpec(editedUserName.getPsswrd().getIv())).equals(lastSearchText))
-//                        ||(!isSearchUserNameFilter && !isSearchPsswrdFilter && !editedUserName.getName().toLowerCase().contains(lastSearchText.toLowerCase()))){
-
-
+        }//End of if else statement to check cases where notify change type must be set to item removed
         Log.d("getNotifyChangeType", "Exit getNotifyChangeType method for UserName class in the MainActivity class.");
         return changeType;
     }//End of getNotifyChangeType method for UserName class
 
+    //Method to get the notify change enum for edited passwords
     public static NotifyChangeType getNotifyChangeType(Psswrd editedPsswrd) {
         Log.d("getNotifyChangeType", "Enter getNotifyChangeType method for Psswrd class in the MainActivity class.");
         //Declare and initialize the chaneType variable to be returned by method
@@ -1881,11 +1382,12 @@ public class MainActivity extends AppCompatActivity {
             //Any other edition, the account item must be notified as changed
             changeType = MainActivity.NotifyChangeType.ITEM_CHANGED;
             Log.d("getNotifyChangeType", "ITEM_CHANGED selected in getNotifyChangeType method for Psswrd class in the MainActivity class for user name with id: "+ editedPsswrd.get_id());
-        }
+        }//End of if else statement to check cases where notify change type must be set to item removed
         Log.d("getNotifyChangeType", "Exit getNotifyChangeType method for Psswrd class in the MainActivity class.");
         return changeType;
     }//End of getNotifyChangeType method for UserName class
 
+    //Method to get the notify change enum for edited questions
     public static NotifyChangeType getNotifyChangeType(Question editedQuestion) {
         Log.d("getNotifyChangeType", "Enter getNotifyChangeType method for Psswrd class in the MainActivity class.");
         //Declare and initialize the chaneType variable to be returned by method
@@ -1897,7 +1399,7 @@ public class MainActivity extends AppCompatActivity {
             //Any other edition, the account item must be notified as changed
             changeType = MainActivity.NotifyChangeType.ITEM_CHANGED;
             Log.d("getNotifyChangeType", "ITEM_CHANGED selected in getNotifyChangeType method for Psswrd class in the MainActivity class for user name with id: "+ editedQuestion.get_id());
-        }
+        }//End of if else statement to check cases where notify change type must be set to item removed
         Log.d("getNotifyChangeType", "Exit getNotifyChangeType method for Psswrd class in the MainActivity class.");
         return changeType;
     }//End of getNotifyChangeType method for UserName class
@@ -1928,6 +1430,7 @@ public class MainActivity extends AppCompatActivity {
                 .setNegativeButton(R.string.cancel, null);
     }//End of displayAlertDialog
 
+    //Getter and setter methods
     public static Cryptographer getCryptographer() {
         return cryptographer;
     }
@@ -2249,8 +1752,7 @@ public class MainActivity extends AppCompatActivity {
         return RESULT_TIMEOUT;
     }
 
-
-
+    //Generic method to display a toast with control vocer the duritation length and the gravity  position
     public static void displayToast(Context context, String text, int toastLength, int gravity) {
         Log.d("displayToast", "Enter displayToast method in the MainActivity class.");
         Toast toast = Toast.makeText(context, text, toastLength);
@@ -2302,38 +1804,19 @@ public class MainActivity extends AppCompatActivity {
         ContentValues values = new ContentValues();
         values.put(ID_COLUMN, account.get_id());
         values.put(IS_FAVORITE_COLUMN, account.isFavorite());
-//        SearchType searchType = null;
+        //Call DB method to update the accounts table
         if (accountsDB.updateTable(ACCOUNTS_TABLE, values)) {
-            //If DB update was successful, call method to update the recyclerview
-//            if (isSearchFilter) {
-//                if (isSearchUserNameFilter) {
-//                    //updateRecyclerViewData(accountAdapter, SearchType.ACCOUNT_WITH_USERNAME);
-//                    searchType = SearchType.ACCOUNT_WITH_USERNAME;
-//                } else if (isSearchPsswrdFilter) {
-//                    //updateRecyclerViewData(accountAdapter, SearchType.ACCOUNT_WITH_PSSWRD);
-//                    searchType = SearchType.ACCOUNT_WITH_USERNAME;
-//                } else {
-//                    searchType = SearchType.ACCOUNTS;
-//                    //updateRecyclerViewData(accountAdapter);
-//                }
-//            } else {
-//
-//                //updateRecyclerViewData(accountAdapter);
-//
-//            }//End of if else statement to check the search filter is active
-
-            //recyclerView.scrollToPosition(adapterPosition);
-            //accountAdapter.notifyItemChanged(adapterPosition);
+            //Check if current category is the favorites category to setup corrent notifyChange action for RV update
             if(currentCategory.equals(favCategory)){
                 updateRecyclerViewData(accountAdapter,adapterPosition,NotifyChangeType.ITEM_REMOVED);
             }else{
                 updateRecyclerViewData(accountAdapter,adapterPosition,NotifyChangeType.ITEM_CHANGED);
-            }
-
+            }//End of if else statement to check current category
+            //set boolean flag to be returned to true
             update = true;
         } else {
-            //Prompt the user about DB problem
-            MainActivity.displayToast(v.getContext(),"DB Error",Toast.LENGTH_SHORT,Gravity.CENTER);
+            //Otherwise, prompt the user about DB problem
+            MainActivity.displayToast(v.getContext(),v.getContext().getString(R.string.accountUpdateError),Toast.LENGTH_SHORT,Gravity.CENTER);
         }//End of if else statement to check the item was updated
         Log.d("toggleIsFavorite", "Exit toggleIsFavorite method in the MainActivity class.");
         return update;
@@ -2347,7 +1830,6 @@ public class MainActivity extends AppCompatActivity {
             //Log the current verison
             Log.i("Build.VERSION", "< 19");
             //Initialize the intent object and set it up for calling the Gallery app
-            //intent = new Intent();
             intent.setAction(Intent.ACTION_GET_CONTENT);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             //startActivityForResult(intent, RESULT_PROFILE_IMAGE_GALLERY);
@@ -2378,7 +1860,8 @@ public class MainActivity extends AppCompatActivity {
                 intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
             }
         } else {
-            MainActivity.displayToast(activity, "", Toast.LENGTH_LONG, Gravity.BOTTOM);
+            //Display error message
+            MainActivity.displayToast(activity, activity.getString(R.string.errorLoadCamera), Toast.LENGTH_LONG, Gravity.BOTTOM);
         }//End of if else statement
         Log.d("LoadCamPicture", "Exit loadPictureFromCamera method in the MainActivity class.");
     }//End of loadPicture method
@@ -2473,8 +1956,7 @@ public class MainActivity extends AppCompatActivity {
         //Declare and initialize variables to be used during method
         //int to store each menu item order in the menu
         int order = 0;
-        //Iterator. Starts at 2 because there are two menus already in the hard coded menu layout
-        //startPosition = 2;
+
         //Get the nav controller to so HomeFragment navigation can be possible
         final NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         //Iterate through the category list (skipping first two categories: Home and Favorites) so each category menu item
@@ -2541,8 +2023,7 @@ public class MainActivity extends AppCompatActivity {
         navMenu.findItem(R.id.nav_addCategory).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                //Start the AddItemActivity class
-//                throwAddCategoryActivity();
+                //Call generic method to start an activity, AddCategoryActivity in this case
                 throwActivityNoExtras(MainActivity.this,AddCategoryAcitivity.class,TRHOW_ADD_CATEGORY_REQCODE);
                 return false;
             }//End of onMenuItemClick method
@@ -2605,8 +2086,6 @@ public class MainActivity extends AppCompatActivity {
         navMenu.findItem(R.id.nav_deleteCategory).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-//                final int[] selectedCategoryID = {0};
-//                final int[] positionInList = {0};
                 //Iterate through the category list to transform into a charsequence list
                 final CharSequence[] categories = new CharSequence[categoryList.size() - INDEX_TO_GET_LAST_TASK_LIST_ITEM];
                 //another one to hold the isChecked attribute
@@ -2614,22 +2093,10 @@ public class MainActivity extends AppCompatActivity {
                 //For loop to populate the char-sequence array with the category names coming from category list
                 for (int i = INDEX_TO_GET_LAST_TASK_LIST_ITEM; i < categoryList.size(); i++) {
                     //For each item in the list, extract name and save it in the string array
-//                    int textID = getResources().getIdentifier(categoryList.get(i).getName(),"string",getPackageName());
                     CharSequence categoryName = "";
-//                    //Get the name from the cursor
-//                    if(textID > 0){
-//                        //If res id number exists, set the category name as per the string text, not the string ID
-//                        categoryName = getResources().getString(textID);
-//                    }else{
-//                        //In the case of not being a resource, print the text retrieved from DB
-//                        categoryName = MainActivity.getCategoryList().get(i).getName();
-//                    }//End of if else statement
                     categoryName = getCategoryNameFromRes(categoryList.get(i).getName());
-                    //String categoryName = categoryList.get(i).getName();
                     //Save the name into the array to be passed into the AlertDialog constructor
                     categories[i - INDEX_TO_GET_LAST_TASK_LIST_ITEM] = categoryName;
-                    //Set the isChecked to false for all the categories
-                    //editableCategories[i]= false;
                 }//End of for loop to populate the taskList array
                 //Create a dialog box to display the grocery types
                 new AlertDialog.Builder(MainActivity.this)
@@ -2654,7 +2121,6 @@ public class MainActivity extends AppCompatActivity {
                                         //Check the category was selected to be deleted
                                         if (deletableCategories[i]) {
                                             categoriesToBeDeleted.add(categoryList.get(i + INDEX_TO_GET_LAST_TASK_LIST_ITEM));
-                                            //positionsToBeDeleted.add(i+INDEX_TO_GET_LAST_TASK_LIST_ITEM);
                                             notEmpty = true;
                                         }///End of for loop to go through the deletableTasks list
                                     }//End of for loop to iterate through the list of Categories
@@ -2710,7 +2176,6 @@ public class MainActivity extends AppCompatActivity {
                                                         //Check the deletion process went smoothly for the account list
                                                         if (isCategoryDeleteProcessWithoutFault[0]) {
                                                             //Once the accounts associated to this category has been deleted, delete the category itself
-                                                            //accountsDB.deleteItem(categoriesToBeDeleted.get(i));
                                                             if (accountsDB.deleteItem(categoriesToBeDeleted.get(i))) {
                                                                 isCategoryDeleteProcessWithoutFault[0] = true;
                                                             } else {
@@ -2743,7 +2208,6 @@ public class MainActivity extends AppCompatActivity {
                                                             NavController navController = Navigation.findNavController(MainActivity.this, R.id.nav_host_fragment);
                                                             //Ask nav controller to load the HomeFragment class
                                                             navController.navigate(R.id.nav_home);
-
                                                         }//End of if statement that checks if current category has been deleted
                                                         //Finally, display toast to confirm category was deleted
                                                         //Check the number of categories that were deleted
@@ -2836,7 +2300,6 @@ public class MainActivity extends AppCompatActivity {
         return found;
     }//End of isCurrentCategoryInListToBeDeleted method
 
-
     //Method to update User Profile Name
     private void setUserProfileText(int type, final TextView tvUserText) {
         Log.d("Ent_setProfName", "Enter setUserProfileName method in the MainActivity class.");
@@ -2865,7 +2328,7 @@ public class MainActivity extends AppCompatActivity {
                 emptyFieldErrorMessage[0] = getResources().getString(R.string.blankUserMessage);
                 columnToBeUpdated[0] = "Message";
                 break;
-        }
+        }//End of switch statement
         //Display a Dialog to ask for the List name (New Category)
         new AlertDialog.Builder(this)
                 .setTitle(title)//Set title
@@ -2888,7 +2351,6 @@ public class MainActivity extends AppCompatActivity {
                         } else {
                             //If input field is empty, display an error message
                             displayToast(MainActivity.this, emptyFieldErrorMessage[0], Toast.LENGTH_SHORT, Gravity.CENTER);
-                            //input.requestFocus();
                         }//End of if else statement to check the input field is not left blank
                     }//Define the positive button
                 })//End of AlertDialog Builder
@@ -3009,7 +2471,6 @@ public class MainActivity extends AppCompatActivity {
                         isSortFilter = true;
                         //Call method to update RV data
                         //Call method to update the adapter and the recyclerView
-                        //updateRecyclerViewData(HomeFragment.getRv().getAdapter());
                         updateRecyclerViewData(HomeFragment.getRv().getAdapter(),-1,NotifyChangeType.DATA_SET_CHANGED);
                         item.getIcon().setTintList(ColorStateList.valueOf(themeUpdater.fetchThemeColor("colorAccent")));
                         //Update App State
@@ -3020,18 +2481,10 @@ public class MainActivity extends AppCompatActivity {
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //Call clear search filter method
-                        //clearSortFilter();
-                        //Update the RV list
-//                                if(isSearchFilter){
-//                                    updateRecyclerViewData(HomeFragment.getRv().getAdapter());
-//                                }
                     }//End of onClick method)
                 })//End of set negative button
                 .create()
                 .show();
-        //Iterate through the sort criteria list to transform into a charsequence list
-
         Log.d("Ent_sort", "Exit the sort method in the MainActivity class.");
     }//End of the sort method
 
@@ -3088,10 +2541,8 @@ public class MainActivity extends AppCompatActivity {
         if (this.isSearchFilter) {
             input.setText(this.lastSearchText);
             if (this.isSearchUserNameFilter) {
-                //switchOnOff(isSearchAccountWithUserName, isSearchAccountWithPsswrd,input);
                 isSearchAccountWithUserName.setChecked(true);
             } else if (this.isSearchPsswrdFilter) {
-                //switchOnOff(isSearchAccountWithPsswrd,isSearchAccountWithUserName,input);
                 isSearchAccountWithPsswrd.setChecked(true);
             }
         } else {
@@ -3201,23 +2652,10 @@ public class MainActivity extends AppCompatActivity {
                             //or Accounts with this name
                             //Check if switch views were added to linearLayout object
                             if (linearLayout.getChildCount() > 1) {
+                                //Call method to update the adapter and the recyclerView
                                 updateRecyclerViewData(HomeFragment.getRv().getAdapter(),-1,NotifyChangeType.DATA_SET_CHANGED);
-//                                if (((Switch) linearLayout.getChildAt(0)).isChecked()) {
-//                                    //Call method to update the adapter and the recyclerView
-//                                    //updateRecyclerViewData(HomeFragment.getRv().getAdapter(), SearchType.ACCOUNT_WITH_USERNAME);
-//                                    updateRecyclerViewData(HomeFragment.getRv().getAdapter(),-1,NotifyChangeType.DATA_SET_CHANGED);
-//                                } else if (((Switch) linearLayout.getChildAt(1)).isChecked()) {
-//                                    //Call method to update the adapter and the recyclerView
-//                                    //updateRecyclerViewData(HomeFragment.getRv().getAdapter(), SearchType.ACCOUNT_WITH_PSSWRD);
-//                                    updateRecyclerViewData(HomeFragment.getRv().getAdapter(),-1,NotifyChangeType.DATA_SET_CHANGED);
-//                                } else {
-//                                    //Call method to update the adapter and the recyclerView
-//                                   // updateRecyclerViewData(HomeFragment.getRv().getAdapter());
-//                                    updateRecyclerViewData(HomeFragment.getRv().getAdapter(),-1,NotifyChangeType.DATA_SET_CHANGED);
-//                                }
                             } else {
                                 //Call method to update the adapter and the recyclerView
-                                //updateRecyclerViewData(HomeFragment.getRv().getAdapter());
                                 updateRecyclerViewData(HomeFragment.getRv().getAdapter(),-1,NotifyChangeType.DATA_SET_CHANGED);
                             }//End of if else statement to check the children count in the linear layout, this defines what tab is being used
                             item.getIcon().setTintList(ColorStateList.valueOf(themeUpdater.fetchThemeColor("colorAccent")));
@@ -3228,11 +2666,11 @@ public class MainActivity extends AppCompatActivity {
                             values.put(IS_SEARCH_USER_FILTER_COLUMN, accountsDB.toInt(isSearchAccountWithUserName.isChecked()));
                             values.put(IS_SEARCH_PSSWRD_FILTER_COLUMN, accountsDB.toInt(isSearchAccountWithPsswrd.isChecked()));
                             values.put(LAST_SEARCH_TEXT_COLUMN, lastSearchText);
-                            //Log.d("updateCatInAppState","Exit updateCategoryInAppState method in the MainActivity class.");
                             accountsDB.updateTable(APPSTATE_TABLE, values);
                         } else {
+                            //Clear serach filter and display error message
                             clearSearchFilter();
-                            displayToast(MainActivity.this, "Sorry, the searched text was empty", Toast.LENGTH_SHORT, Gravity.CENTER);
+                            displayToast(MainActivity.this, getString(R.string.errorSearchTextEmpty), Toast.LENGTH_SHORT, Gravity.CENTER);
                         }
                     }//End of Onclick method
                 })//End of setPossitiveButton method
@@ -3241,7 +2679,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         //Update the RV list
                         if (isSearchFilter) {
-                            //updateRecyclerViewData(HomeFragment.getRv().getAdapter());
+                            //If search filter already in use, keep current search instead of clearing it when canceling a new search
                             updateRecyclerViewData(HomeFragment.getRv().getAdapter(),-1,NotifyChangeType.DATA_SET_CHANGED);
                         }
                     }//End of onClick method
@@ -3249,22 +2687,22 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }//End of the search method
 
-    //Method to update UI switch when clicked on
+    //Method to update Search UI switch when clicked on
     private void switchOnOff(Switch switchView1, Switch switchView2, EditText input) {
         Log.d("switchOnOff", "Enter the switchOnOff method in the MainActivity class.");
-        //Check if the switch is checked
+        //Check if the switch 1 is checked
         if ((switchView1).isChecked()) {
             //Set the On Text if checked
             switchView1.setText(switchView1.getTextOn());
         } else {
             //Otherwise, set the Off text
             switchView1.setText(switchView1.getTextOff());
-        }
+        }//End of if else statement to check switch 1 is checked
         //Check if the other switch is check, since they are mutually exclusive it must be switched off
         if (switchView2.isChecked()) {
             switchView2.setChecked(false);
             switchView2.setText(switchView2.getTextOff());
-        }
+        }//End of if statement to check if switch 2 is checked
         //Identify if switchView1 is the one for looking for specif user name or specific password
         if (switchView1.getTextOn().equals(getResources().getString(R.string.searchAccountsWithUserNameTextOn))) {
             //If On text is the one for user name, set proper hint for looking for accounts with specific user name
@@ -3295,14 +2733,16 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         if (toolbar.getMenu().size() > 0) {
             toolbar.getMenu().getItem(0).getIcon().setTintList(null);
-        }
+        }//End of if statement to check the menu size is greater than 0
         //Update app state to remove all search related fields
         ContentValues values = new ContentValues();
         values.put(this.ID_COLUMN, accountsDB.getMaxItemIdInTable(APPSTATE_TABLE));
         values.put(this.IS_SEARCH_FILTER_COLUMN, this.isSearchFilter);
         values.put(this.IS_SEARCH_USER_FILTER_COLUMN, this.isSearchPsswrdFilter);
         values.put(this.LAST_SEARCH_TEXT_COLUMN, this.lastSearchText);
+        //Call DB method to update the APPSTATE table
         if (this.accountsDB.updateTable(APPSTATE_TABLE, values)) {
+            //Set boolean flag to true if update result is good
             isSearchFilterCleared = true;
         }//End of if statement to check the app state has been successfully updated
         Log.d("clearSearchFilter", "Exit the clearSearchFilter method in the MainActivity class.");
@@ -3318,7 +2758,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         if (toolbar.getMenu().size() > 0) {
             toolbar.getMenu().getItem(1).getIcon().setTintList(null);
-        }
+        }//End of if statement to check the menu size is greater than 0
         //Update sort filter in app state
         this.updateSortFilterInAppState();
         Log.d("clearSortFilter", "Exit the clearSortFilter method in the MainActivity class.");
@@ -3337,7 +2777,7 @@ public class MainActivity extends AppCompatActivity {
         return accountsDB.updateTable(APPSTATE_TABLE, values);
     }//End of updateCategoryInAppState method
 
-    //Method to update the sort filter selectection and the current sort filter in the app state
+    //Method to update the sort filter selection and the current sort filter in the app state
     private boolean updateSortFilterInAppState() {
         Log.d("updateSortInAppState", "Enter updateSortFilterInAppState method in the MainActivity class.");
         //Update app state in DB
@@ -3348,13 +2788,13 @@ public class MainActivity extends AppCompatActivity {
             values.put(CURRENT_SORT_FILTER_COLUMN, this.currentSortFilter.ordinal());
         } else {
             values.put(CURRENT_SORT_FILTER_COLUMN, -1);
-        }
+        }//End of if else statement to check sort filter type
         //Log.d("updateCatInAppState","Exit updateCategoryInAppState method in the MainActivity class.");
         Log.d("updateSortInAppState", "Exit updateSortFilterInAppState method in the MainActivity class.");
         return accountsDB.updateTable(APPSTATE_TABLE, values);
     }//End of updateSortFilterInAppState method
 
-
+    //Static method to setup the APP theme to the caller activity
     public static int setAppTheme(Context context) {
         Log.d("Ent_setAppTheme", "Enter setAppTheme method in MainActivity class.");
         //Get prefered app theme from preferences xml file
@@ -3413,6 +2853,7 @@ public class MainActivity extends AppCompatActivity {
         return themeId;
     }//End of setAppTheme method
 
+    //Static method to setup language to the caller activity
     public static void setAppLanguage(Context context) {
         Log.d("Ent_setAppLang", "Enter setAppLanguage method in MainActivity class.");
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
@@ -3422,18 +2863,16 @@ public class MainActivity extends AppCompatActivity {
             language = "en";
         } else {
             language = "es";
-        }
+        }//End of if else statement to check the language value
         // Change locale settings in the app.
         Resources res = context.getResources();
         DisplayMetrics dm = res.getDisplayMetrics();
         Configuration conf = res.getConfiguration();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            conf.setLocale(new Locale(language.toLowerCase())); // API 17+ only.
-        }
-        // Use conf.locale = new Locale(...) if targeting lower versions
+        conf.setLocale(new Locale(language.toLowerCase())); // API 17+ only.
         res.updateConfiguration(conf, dm);
         Log.d("Ext_setAppLang", "Exit setAppLanguage method in MainActivity class.");
     }//End of setAppTheme method
+
 
     public long getLogOutTime(Context context) {
         Log.d("getLogOutTime", "Enter getLogOutTime method in MainActivity class.");
@@ -3457,7 +2896,6 @@ public class MainActivity extends AppCompatActivity {
     }//End of setAppTheme method
 
 
-
     public static boolean getIsLogOutActive(Context context) {
         Log.d("getIsLogOut", "Enter getIsLogOut method in MainActivity class.");
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
@@ -3474,8 +2912,9 @@ public class MainActivity extends AppCompatActivity {
         Log.d("logout", "Exit logout method in MainActivity class called by: "+ context.toString());
     }//End of logout method
 
-
+    //Method to create Push notification channel
     private void createNotificationChannel() {
+        Log.d("createNotChannel", "Enter createNotificationChannel method in MainActivity class.");
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -3488,19 +2927,7 @@ public class MainActivity extends AppCompatActivity {
             // or other notification behaviors after this
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
-        }
-    }
-
-//
-//    private class ActivityResultReceiver extends BroadcastReceiver {
-//
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            // Retrieve data from intent
-//            onActivityResult(THROW_EDIT_ACCOUNT_ACT_REQCODE,RESULT_OK,intent);
-//        }
-//
-//    }
-
-
+        }//End of if statement to check SDK version
+        Log.d("createNotChannel", "Exit createNotificationChannel method in MainActivity class.");
+    }//End of createNotificationChannel method
 }//End of MainActivity class.

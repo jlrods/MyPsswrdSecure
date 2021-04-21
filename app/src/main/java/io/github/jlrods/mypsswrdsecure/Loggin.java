@@ -2,7 +2,6 @@ package io.github.jlrods.mypsswrdsecure;
 
 import android.database.Cursor;
 import android.util.Log;
-
 import java.util.ArrayList;
 
 //Interface to define Loggin attributes and methods to be implemented
@@ -14,9 +13,7 @@ abstract class Loggin {
     protected UserName userName;
     protected Psswrd psswrd;
 
-
     // Methods definition
-
     //Constructors
     protected Loggin(){
         Log.d("LogginDef_Ent","Enter Loggin Default Constructor");
@@ -44,6 +41,7 @@ abstract class Loggin {
     public void setName(String name) {
         this.name = name;
     }
+
     public int get_id() {
         return _id;
     }
@@ -90,5 +88,4 @@ abstract class Loggin {
         Log.d("Ext_ExtractLoggin","Exit extractLoggin method in the Loggin abstract class.");
         return attributes;
     }// End of extractAnswer method
-
 }// End of Loggin abstract class

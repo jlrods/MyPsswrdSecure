@@ -2,6 +2,7 @@ package io.github.jlrods.mypsswrdsecure;
 
 import android.util.Log;
 
+//Enum to define all possible levels of password strength
 enum PsswrdStrength {
     //Define the possible priorities in this app
     VERY_WEEK("Very weak"),
@@ -26,11 +27,11 @@ enum PsswrdStrength {
 
     public String getName() {
         return this.name;
-    }
+    }//End of getName method
 
     public void setName(String name) {
         this.name = name;
-    }
+    }//End of setName method
 
     //Method to print password strength name when a string is required
     public String toString(){
@@ -40,7 +41,7 @@ enum PsswrdStrength {
     //Method to increase the System ordinal
     public int increaseOrdinal(){
         return this.ordinal()+1;
-    }
+    }//End of increaseOrdinal method
 
     //Find a strength enum by passing in the ordinal value
     public static PsswrdStrength findPsswrdStrengthById(int ordinal){

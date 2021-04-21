@@ -28,13 +28,11 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
-
 import com.google.android.material.snackbar.Snackbar;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -42,27 +40,19 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
 import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
 
 abstract class DisplayAccountActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
     //Attribute definition
     //Constants
-
-
     //Spinner types constants
     static final int CATEGORY_SPINNER = 0;
     static final int USERNAME_SPINNER = 1;
     static final int PSSWRD_SPINNER = 2;
     static final int QUESTION_SPINNER = 3;
-
-
     //DB
     AccountsDB accountsDB;
-
-
     //Objects required to build an account
-//    Category category = null;
     UserName userName = null;
     Psswrd psswrd = null;
     Account account = null;
@@ -109,7 +99,6 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
     boolean isFavorite = false;
     IconAdapter iconAdapter = null;
     int throwSelectLogoActReqCode = 5555;
-
     Icon logo = null;
     int selectedPosition = -1;
     LogOutTimer logOutTimer;
@@ -142,7 +131,6 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         //Get DB handler cass from the home fragment
         this.accountsDB = HomeFragment.getAccountsDB();
 
-
         //Initialize layout coordinator required to use Snackbar
         coordinatorLayoutAccAct = (CoordinatorLayout) findViewById(R.id.coordinatorLayoutAccAct);
 
@@ -164,17 +152,15 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         this.etAccountName = (EditText) findViewById(R.id.etAccountName);
         //Set the description input text hint to refer to an account name
         this.etAccountName.setHint(R.string.addEditAccName);
-
         //Initialize Category spinner related variables
         this.spCategory = (NoDefaultSpinner) findViewById(R.id.spCategory);
-
         //Initialize User name spinner related variables
         this.spAccUserName = (NoDefaultSpinner) findViewById(R.id.spAccUserName);
         this.btnAccNewUserName = (Button) findViewById(R.id.btnAccNewUserName);
         this.btnAccNewUserName.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-//                addNewUserName();
+                //Call method to throw AddUserNameActivity
                 throwActivityNoExtras(AddUserNameActivity.class, MainActivity.getThrowAddUsernameActReqcode());
             }//End of onClick method
         });//End of setOnClickListener method
@@ -185,7 +171,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         this.btnAccNewPsswrd.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-//                addNewPsswrd();
+                //Call method to throw AddPssswrdActivity
                 throwActivityNoExtras(AddPsswrdActivity.class, MainActivity.getThrowAddPsswrdActReqcode());
             }//End of onClick method
         });//End of setOnClickListener method
@@ -202,7 +188,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         this.btnAccNewSecQuestion.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-//                addNewQuestion();
+                //Call method to throw AddQuestionActivity
                 throwActivityNoExtras(AddQuestionActivity.class,MainActivity.getThrowAddQuestionActReqcode());
             }
         });//End of setOnClickListener method
@@ -353,7 +339,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         }else{
             //Otherwise, save -1 (even though there's a dummy item selected)
             saveState.putInt("spSecQuestListSelectedPos",-1);
-        }
+        }//End of if else statement to check if question list dropdown is enabled
         //Save the Question Available spinner item position selected
         saveState.putInt("spQuestAvailableSelectedPos",this.spQuestionsAvailable.getSelectedItemPosition());
         //Save the current isFavorite attribute state
@@ -595,16 +581,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         }else{
             //Disable the spinner if cursor has no data
             sp.setEnabled(false);
-            //Check if spinner type is username or psswrd spinner to setup texts and enable respective buttons
-//            if(type == USERNAME_SPINNER){
-//                this.etAccNewUserName.setEnabled(true);
-//            }else if(type == PSSWRD_SPINNER){
-//                this.etAccNewPsswrd.setHint(etHint);
-//                this.etAccNewPsswrd.setEnabled(true);
-//            }//End of if else statement to check the spinner type
         }// End of if else statement to check cursor isn't null or empty
-
-        //adapter = new SpinnerAdapter(this,cursor, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER) ;
         //Set the adapter for the Category spinner
         sp.setAdapter(adapter);
         Log.d("setUpSpinnerData","Exit the setUpSpinnerData method in the DisplayAccountActivity class.");
@@ -619,16 +596,6 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         sp.setEnabled(true);
         Log.d("setUpQuestListSpData","Exit the setUpQuestionListSpinnerData method in the DisplayAccountActivity class.");
     }//End of setUpQuestionListSpinnerData
-
-
-    //Method to add a new userName to the user name dropdown menu
-//    protected void addNewUserName(){
-//        Log.d("addNewUserName","Enter the addNewQuestion method in the DisplayAccountActivity class.");
-//        //Declare and instantiate a new intent object
-//        Intent i= new Intent(this, AddUserNameActivity.class);
-//        startActivityForResult(i,MainActivity.getThrowAddUsernameActReqcode());
-//        Log.d("addNewUserName","Exit the addNewQuestion method in the DisplayAccountActivity class.");
-//    }
 
     //Method to throw a new Activity
     private void throwActivityNoExtras(Class className,int requestCode) {
@@ -647,32 +614,11 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         Log.d("throwActivityNoExtras", "Exit throwActivityNoExtras method in the MainActivity class.");
     }//End of throwActivityNoExtras method
 
-    //Method to add a new password to the password dropdown menu
-//    protected void addNewPsswrd(){
-//        Log.d("addNewQuestion","Enter the addNewQuestion method in the DisplayAccountActivity class.");
-//        //Declare and instantiate a new intent object
-//        Intent i= new Intent(this, AddPsswrdActivity.class);
-//        startActivityForResult(i,MainActivity.getThrowAddPsswrdActReqcode());
-//        Log.d("addNewPsswrd","Exit the addNewQuestion method in the DisplayAccountActivity class.");
-//    }
-//
-//
-//    //Method to add a new question to the security question  dropdown menu
-//    protected void addNewQuestion(){
-//        Log.d("addNewQuestion","Enter the addNewQuestion method in the DisplayAccountActivity class.");
-//        //Declare and instantiate a new intent object
-//        Intent i= new Intent(this, AddQuestionActivity.class);
-//        startActivityForResult(i,MainActivity.getThrowAddQuestionActReqcode());
-//        Log.d("addNewPsswrd","Exit the addNewQuestion method in the DisplayAccountActivity class.");
-//    }//End of addNewQuestion method
-
     //Method to add a question from question available list to security question list spinner
     protected void addQuestionToSecList(int questionPositionInAvailableList){
         Log.d("addQuestionToSecList","Enter the addQuestionToSecList method in the DisplayAccountActivity class.");
         Cursor c = null;
         boolean repeatedQuestion = false;
-        //Find the question selected
-        //questionPositionInAvailableList = this.spQuestionsAvailable.getSelectedItemPosition() ;
         //Get its DB _id number
         int selectedQuestionID = (int) this.spQuestionsAvailable.getAdapter().getItemId(questionPositionInAvailableList);
         //Check if spinner is holding dummy item by checking if spinner is disabled
@@ -817,7 +763,6 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         Log.d("getNewQuestionList","Enter the getNewQuestionList method in the DisplayAccountActivity class.");
         ArrayList questionsIds = new ArrayList();
         boolean found = false;
-        //SpinnerAdapterQuestion adapter = (SpinnerAdapterQuestion) this.spAccSecQuestionList.getAdapter();
         for(int i=0;i< this.spAccSecQuestionList.getAdapter().getCount();i++){
             if(selectedID != this.spAccSecQuestionList.getAdapter().getItemId(i) ){
                 questionsIds.add((int)this.spAccSecQuestionList.getAdapter().getItemId(i));
@@ -834,7 +779,6 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         if(isChecked){
             //If it is true, make hour and date layouts visible
             this.subLayout_accDateChangeInt.setVisibility(View.VISIBLE);
-            //this.layoutHour.setVisibility(View.VISIBLE);
         }else{
             //Otherwise, make hour and date layouts invisible and not use any layout room
             this.subLayout_accDateChangeInt.setVisibility(View.GONE);
@@ -864,11 +808,13 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
 
     //Method to set text of Date created field
     protected void setDateText(TextView tvDate,long timeInMills){
+        Log.d("setDateText","Enter the setDateText method in the DisplayAccountActivity class.");
         //Set up current date into the Created date field
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date(timeInMills));
         tvDate.setText(new SimpleDateFormat(MainActivity.getDateFormat()).format(calendar.getTime()));
-    }
+        Log.d("setDateText","Enter the setDateText method in the DisplayAccountActivity class.");
+    }//End of setDateText method
 
     //Method to throw the SelectLogoActivity
     protected void throwSelectLogoActivity(){
@@ -893,9 +839,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             Log.d("onActivityResult","Received GOOD result from SelectLogoActivity in the DisplayAccountActivity class.");
             //Check icon location
             if(data.getExtras().getString("selectedImgLocation").equals(MainActivity.getRESOURCES())){
-                //this.imgAccLogo.setImageResource(data.getExtras().getInt("selectedImgID"));
                 this.selectedPosition = data.getExtras().getInt("selectedImgPosition");
-                        //iconAdapter.getIconList().get().get_id();
                 this.logo = this.iconAdapter.getIconList().get(this.selectedPosition);
                 this.imgAccLogo.setImageResource(this.logo.getResourceID());
             }else if(data.getExtras().getString("selectedImgLocation").equals(String.valueOf(R.mipmap.ic_my_psswrd_secure))){
@@ -1008,7 +952,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
                 this.imgAccLogo.setImageURI(uri);
             }else{
                 MainActivity.displayToast(this,"Error with camera", Toast.LENGTH_SHORT, Gravity.BOTTOM);
-            }
+            }//End of if else statement to check uri isn't null or empty string
         }else if(requestCode == MainActivity.getThrowImageCameraReqCode() && resultCode == Activity.RESULT_CANCELED){
             Log.d("onActivityResult","Received BAD result from Camera intent received by the DisplayAccountActivity class.");
         }//End of if statement that checks the resultCode is OK
@@ -1077,8 +1021,6 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         Log.d("Ext_chageDate","Exit changeDate method in the AddTaskActivity class.");
     }//End of changeDate method
 
-    //Getter and setter methods
-
     //Private and Protected inner classes
 
     //Inner Class to handle snackbar undo click events
@@ -1103,7 +1045,6 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             Log.d("SnackBarOnClick","Enter the onClick method method in the SnackBarClickHandler subclass from DisplayTaskActivity abstract class.");
             int spinnerType;
             //Call DB method to delete item from DB
-
             if(item instanceof Question){
                 //Delete the answer first
                 accountsDB.deleteItem(((Question) item).getAnswer());
@@ -1206,8 +1147,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         Date date;
         //Check if date text view is empty or the checkbox isn't ticked anymore, date must be set to null and therefore return 0
         if(this.tvAccDateRenewValue.getText().equals("") || !this.cbHasToBeChanged.isChecked()){
-            //if that is the case, add an argument to hold the current time in milliseconds
-            //date = Calendar.getInstance().getTime();
+            //Set date object to null
             date = null;
         }else{
             //Otherwise, declare and instantiate a new DateFormat object to define the date format
@@ -1216,7 +1156,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             try {
                 //set the date to be the one parsed from the text in the tvDate view
                 date = format.parse(tvAccDateRenewValue.getText().toString());
-            } catch (ParseException e) {
+            } catch (ParseException e){
                 //if an error comes up when parsing the expression, create a new date with current time
                 date = new Date();
                 //Print trace error message
@@ -1291,7 +1231,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
                     break;
             }//End of switch statement
         }//If disabled, means no security question in list
-
+        //Check cursro is not null or empty
         if(cursorQuestionList != null && cursorQuestionList.getCount() > 0){
             questionList = new QuestionList();
             cursorQuestionList.moveToFirst();
@@ -1305,9 +1245,9 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
     }//End of extractQuestionsFromSpinner method
 
     protected int getSecQuestionListID(QuestionList questionList){
-        int _id = this.accountsDB.getSecQuestionListID(questionList);
-        return _id;
-    }
+        Log.d("getSecQuestionListID","Enter|Exit the getSecQuestionListID method in the DisplayActivity abstract class.");
+        return this.accountsDB.getSecQuestionListID(questionList);
+    }//End of getSecQuestionListID method
 
     //Method to find Item position in a cursor by passing in it's text value
     protected int getItemPositionInSpinner(Cursor cursor, int _id){
@@ -1364,7 +1304,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         Log.d("AlertDiagImgSource", "Enter displayAlertDialogForImgSource  method in DisplayAccountActivity abstract class.");
         final int[] selectedValue = {1};
         new AlertDialog.Builder(this)
-                .setTitle("Select image source")
+                .setTitle(R.string.imgSourceTitle)
                 //.setMessage("Select an option to load a profile picture:")
                 .setSingleChoiceItems(R.array.profileImageSources,0, null)//End of setSingleChoice method
                 .setPositiveButton(R.string.dialog_OK,new DialogInterface.OnClickListener(){
@@ -1391,19 +1331,6 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
                                 break;
                         }//End of switch statement
                         selectedValue[0] = selectedOption;
-//                        if(selectedPosition == 0){
-//                            if (ContextCompat.checkSelfPermission(MainActivity.this,
-//                                    Manifest.permission.WRITE_EXTERNAL_STORAGE)
-//                                    == PackageManager.PERMISSION_GRANTED) {
-//                                //If permit has been granted Call method to take image via the camera
-//                                takePicture(null);
-//                            } else {
-//                                //Otherwise, call method to display justification for this permit and request access to it
-//                                permissionRequest(Manifest.permission.WRITE_EXTERNAL_STORAGE, "Without this permit"+
-//                                                " the app won't be able to take pictures with the camera.",
-//                                        CAMERA_ACCESS_REQUEST, MainActivity.this);
-//                            }//End of if else statement to check the Camera access rights has been granted or not
-
                     }//End of Onclick method
                 })
                 .setNegativeButton(R.string.cancel,null)
@@ -1464,7 +1391,6 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         Log.d("isAddIconRequired", "Enter isAddIconRequired method in DisplayAccountActivity abstract class.");
         //Declare and initialize variables to be used in method and the return variable
         int logoID = -1;
-        //int isIconAddedToDB = false;
         //Check the account icon isn't null
         if(account.getIcon()!=null){
             //Check the icon doesn't come from app resources or isn't the default app logo
@@ -1476,13 +1402,11 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
                     logoID = this.accountsDB.addItem(account.getIcon());
                 }else{
                     logoID = selectedLogo.get_id();
-                }
+                }//End of if else statement to check logo id
                 //Check the DB insertion was successful
                 if(logoID != -1){
                     //Update the account object Icon ID
                     account.getIcon().set_id(logoID);
-                    //Set boolean flag to true, to denote the icon had to be inserted in DB
-                    //isIconAddedToDB = true;
                 }else{
                     //Otherwise, set the account attribute's icon id for the account object
                     account.getIcon().set_id(this.account.getIcon().get_id());
@@ -1504,5 +1428,4 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         Log.d("rollbackQuestionList","Exit  questionList method in AddAccountActivity class.");
         return rollbackResult;
     }//End of rollBackQuestionListInsertion
-
 }//End of AddAccountActivity

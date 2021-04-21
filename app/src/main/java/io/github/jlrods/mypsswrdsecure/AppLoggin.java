@@ -9,10 +9,8 @@ import io.github.jlrods.mypsswrdsecure.login.LoginActivity;
 public class AppLoggin extends Loggin {
 
     //Attribute expansion definition
-
     String message; //Message to be display on the drawer nav menu
     Icon picture; //Picture location of image to be displayed on the drawer nav menu
-
 
     //Constructors
     //Default Constructor
@@ -22,7 +20,7 @@ public class AppLoggin extends Loggin {
         this.message = "";
         this.picture = null;
         Log.d("AppLoggin_Def_Ext","Exit AppLoggin Default Constructor");
-    }
+    }//End of AppLoggin constructor
 
     //Constructor with no password given
     public AppLoggin(UserName userName){
@@ -32,7 +30,8 @@ public class AppLoggin extends Loggin {
         this.message ="";
         this.picture = null;
         Log.d("AppLoggin_NoPass_Ext","Exit AppLoggin Constructor 2");
-    }
+    }//End of AppLoggin constructor
+
     //Full Constructor
     public AppLoggin(int _id, String name, UserName userName, Psswrd psswrd,String message, Icon picture){
         super(_id, name, userName, psswrd);
@@ -40,7 +39,7 @@ public class AppLoggin extends Loggin {
         this.message = message;
         this.picture = picture;
         Log.d("AppLog_Full_Ext","Exit AppLoggin Full Constructor");
-    }
+    }//End of AppLoggin full constructor
 
     //Getter and Setter methods
 

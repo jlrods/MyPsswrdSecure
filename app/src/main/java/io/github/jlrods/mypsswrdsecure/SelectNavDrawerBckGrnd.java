@@ -1,15 +1,12 @@
 package io.github.jlrods.mypsswrdsecure;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -59,13 +56,13 @@ public class SelectNavDrawerBckGrnd extends AppCompatActivity {
                     }// End of for loop
                     selectedIcon = iconAdapter.getIconList().get(adapterPosition);
                 };// End of if else statement to check if logo is selected
-
+                //Update the SparseBooleanArray to keep record of logo selection
                 iconAdapter.updateItemIsSelected(adapterPosition,true);
                 //iconAdapter.getIconList().get(adapterPosition).setSelected(true);
                 iconAdapter.notifyDataSetChanged();
                 Log.d("IconSetOnClickList","Exit onClick method of setOnItemClickListener in SelectLogoActivity class.");
             }//End of OnClick method
-        });
+        });//End of setOnItemClickListener method
         rvLogos.setAdapter(iconAdapter);
         rvLogos.setLayoutManager(new LinearLayoutManager(getBaseContext()));
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(getBaseContext(), DividerItemDecoration.VERTICAL);
@@ -112,5 +109,4 @@ public class SelectNavDrawerBckGrnd extends AppCompatActivity {
         finish();
         return result;
     }//End of onOptionsItem selected method
-
 }//End of SelectNavDrawerBckGrd class

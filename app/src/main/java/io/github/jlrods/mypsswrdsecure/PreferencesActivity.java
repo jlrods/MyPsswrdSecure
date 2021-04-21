@@ -5,9 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 
 /**
  * Created by rodjose1 on 18/07/2018.
@@ -32,11 +30,14 @@ public class PreferencesActivity extends AppCompatActivity {
 
     }// End of constructor method
 
+    //Method to populate menu object and configure menu items visibility
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        Log.d("onCreateOptionsMenu","Enter onCreateOptionsMenu method in PreferencesActivity  class.");
         getMenuInflater().inflate(R.menu.activity_menu_save_cancel, menu);
         menu.getItem(0).setVisible(false);
         menu.getItem(1).setVisible(false);
+        Log.d("onCreateOptionsMenu","Exit onCreateOptionsMenu method in PreferencesActivity  class.");
         return true;
     }// Find fe OnCreateOptionsMenu
 

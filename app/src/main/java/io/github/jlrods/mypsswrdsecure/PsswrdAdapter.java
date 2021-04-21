@@ -1,34 +1,25 @@
 package io.github.jlrods.mypsswrdsecure;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
-import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.util.Log;
-import android.util.TypedValue;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 import javax.crypto.spec.IvParameterSpec;
 
 public class PsswrdAdapter extends UserNameAdapter {
 
     public PsswrdAdapter(Context context, Cursor cursor) {
         super(context, cursor);
-    }
+    }//End of Constructor method
 
     @Override
     public UserNameAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
         Log.d("PsswrdAdaptVHOnCre","Enter onCreateViewHolder method in the PsswrdAdapter class.");
         // Return a new holder instance
         PsswrdAdapter.ViewHolder viewHolder = super.onCreateViewHolder(parent,viewType);
@@ -53,6 +44,7 @@ public class PsswrdAdapter extends UserNameAdapter {
         @ColorInt int colorPrimary =  this.themeUpdater.fetchThemeColor("colorPrimary");
         @ColorInt int colorPrimaryDark =  this.themeUpdater.fetchThemeColor("colorPrimaryDark");
 
+        //Check the password strength to assign correspoinding colour
         if(psswrd.getStrength().equals(PsswrdStrength.VERY_WEEK) || psswrd.getStrength().equals(PsswrdStrength.WEAK)){
             holder.tvStrength.setTextColor(Color.RED);
         }else if(psswrd.getStrength().equals(PsswrdStrength.MEDIUM)){

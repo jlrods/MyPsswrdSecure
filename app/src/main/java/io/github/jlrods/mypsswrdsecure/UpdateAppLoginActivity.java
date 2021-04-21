@@ -13,8 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
-
+//Activity to display and update current app credentials for login into the app
 public class UpdateAppLoginActivity extends DisplayAccountActivity{
     private Cursor appState = null;
     private AppLoggin appLoggin = null;
@@ -24,10 +23,8 @@ public class UpdateAppLoginActivity extends DisplayAccountActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("OnCreateUpAppLog", "Enter onCreate method in the a UpdateAppLoginActivity class.");
-
         //Set activity title
         getSupportActionBar().setTitle("Update credentials");
-
         //Initialize view objects from layout to have access to them and set different texts and other properties
         //Set all non necessary layouts to gone or invisible
         LinearLayout layoutAccLogo = (LinearLayout) findViewById(R.id.layoutAccLogo);
@@ -57,7 +54,6 @@ public class UpdateAppLoginActivity extends DisplayAccountActivity{
         if(layoutAccDateCreated != null){
             layoutAccDateCreated.setVisibility(View.GONE);
         }
-
         //Get the appLogin object from main activity
         this.appLoggin = MainActivity.getCurrentAppLoggin();
         //Populate user current user name and password
@@ -115,19 +111,22 @@ public class UpdateAppLoginActivity extends DisplayAccountActivity{
                                 setResult(RESULT_OK, intent);
                                 result = true;
                                 finish();
-                            }
+                            }else{
+                                //Display error message to prompt user about DB problem
+                                MainActivity.displayToast(this,getString(R.string.appLoginUpdateError), Toast.LENGTH_LONG,Gravity.CENTER);
+                            }//End of if else statement statement to check the APPLogin table was updated successfully
                         }else{
                             //Display error message to prompt user about no change on credentials
                             MainActivity.displayToast(this,getString(R.string.appLoginCredentialsNotChanged), Toast.LENGTH_LONG,Gravity.CENTER);
-                        }
+                        }//End of if else statement to check at least one field changed
                     }else{
                         //Display error message to prompt user no password has been selected
                         MainActivity.displayToast(this,getString(R.string.appLoginPsswrdNotSelected), Toast.LENGTH_LONG,Gravity.CENTER);
-                    }
+                    }//End of if else statement to check at least one password is selected
                 }else{
                     //Display error message to prompt user no user name has been selected
                     MainActivity.displayToast(this,getString(R.string.appLoginUserNotSelected), Toast.LENGTH_LONG,Gravity.CENTER);
-                }
+                }//End of if else statement to check at least one user name is selected
                 Log.d("onOptionsItemSelected","Save option selected on onOptionsItemSelected method in UpdateAppLoginActivity class.");
                 break;
             case R.id.select_logo_cancel:

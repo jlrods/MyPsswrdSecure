@@ -5,7 +5,6 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,8 +15,6 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.Toast;
 
-import androidx.core.content.ContextCompat;
-
 public class AddCategoryAcitivity extends AddItemActivity{
     //Attribute definition
     protected ImageView imgSelectedIcon = null;
@@ -26,7 +23,7 @@ public class AddCategoryAcitivity extends AddItemActivity{
     protected Category category = null;
     protected Icon categoryIcon = null;
     protected ThemeUpdater themeUpdater;
-    //Method definiton
+    //Method definition
 
     //Method definition
     @Override
@@ -45,8 +42,6 @@ public class AddCategoryAcitivity extends AddItemActivity{
         ScrollView catIconList = findViewById(R.id.categoryIconScrallView);
         this.categoryIconTable = findViewById(R.id.categoryIconTable);
         this.imgSelectedIcon = findViewById(R.id.format_list_bulleted);
-        //this.imgSelectedIcon.setColorFilter(this.themeUpdater.fetchThemeColor("colorAccent"), android.graphics.PorterDuff.Mode.SRC_IN);
-        //this.imgSelectedIcon.setColorFilter(ContextCompat.getColor(this, R.color.colorPrimaryDark), android.graphics.PorterDuff.Mode.SRC_IN);
         this.imgSelectedIcon.setImageTintList(ColorStateList.valueOf(this.themeUpdater.fetchThemeColor("colorAccent")));
         for(int i=0;i< categoryIconTable.getChildCount();i++){
             TableRow row = (TableRow) categoryIconTable.getChildAt(i);
@@ -71,7 +66,6 @@ public class AddCategoryAcitivity extends AddItemActivity{
         //Boolean to return method result
         boolean result = false;
         int categoryID = -1;
-
         Intent intent = new Intent();
         //Flag to make sure all data was added on DB
         boolean dbTransCompleted = true;
@@ -134,15 +128,13 @@ public class AddCategoryAcitivity extends AddItemActivity{
             this.categoryIcon.setName(getResources().getResourceEntryName(v.getId()));
             this.categoryIcon.setResourceID(v.getId());
             ((ImageView) v).setImageTintList(ColorStateList.valueOf(themeUpdater.fetchThemeColor("colorAccent")));
-            //((ImageView) v).setColorFilter(this.themeUpdater.fetchThemeColor("colorAccent"), android.graphics.PorterDuff.Mode.SRC_IN);
-            //((ImageView) v).setColorFilter(ContextCompat.getColor(this, R.color.colorPrimaryDark), android.graphics.PorterDuff.Mode.SRC_IN);
-            //imgSelectedIcon.setColorFilter(ContextCompat.getColor(this, R.color.colorBlack), android.graphics.PorterDuff.Mode.SRC_IN);
             imgSelectedIcon.setImageTintList(ColorStateList.valueOf(Color.BLACK));
             imgSelectedIcon = (ImageView) v;
         }//End of if statement to check the selected image isn't the same
         Log.d("toggleCatIconSelection","Exit toggleCatIconSelection method in AddCategoryActivity class.");
     }//End of toggleCatIconSelection method
 
+    //Method to check if icon is already in DB, add it to DB otherwise
     protected boolean isIconAssigned(){
         Log.d("isIconAssigned","Enter isIconAssigned method in AddCategoryActivity class.");
         boolean isIconAssigned = false;
@@ -162,4 +154,4 @@ public class AddCategoryAcitivity extends AddItemActivity{
         Log.d("isIconAssigned","Enter isIconAssigned method in AddCategoryActivity class.");
         return isIconAssigned;
     }//End of isIconAssigned method
-}//End of AddCategoryAcitivity class
+}//End of AddCategoryActivity class

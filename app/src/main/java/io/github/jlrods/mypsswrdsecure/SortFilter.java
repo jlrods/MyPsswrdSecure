@@ -2,6 +2,7 @@ package io.github.jlrods.mypsswrdsecure;
 
 import android.util.Log;
 
+//Enum that defines the types of sort filters
 public enum SortFilter {
     //Define the possible priorities in this app
     ALPHA_ASC("AlphaUp"),
@@ -27,11 +28,11 @@ public enum SortFilter {
 
     public String getName() {
         return this.name;
-    }
+    } //End of getName method
 
     public void setName(String name) {
         this.name = name;
-    }
+    } //End of setName method
 
     //Method to print password strength name when a string is required
     public String toString(){
@@ -41,10 +42,11 @@ public enum SortFilter {
     //Method to increase the System ordinal
     public int increaseOrdinal(){
         return this.ordinal()+1;
-    }
+    }//End of increaseOrdinal method
 
     //Method to get the corresponding SortFilter type based on the ordinal passed in as argument
     public static SortFilter getSortFilterByOrdinal(int ordinal){
+        Log.d("PsswrdStrength","Enter getSortFilterByOrdinal method in the SortFilter enum.");
         SortFilter sortFilter;
         int i = 0;
         if(ordinal == SortFilter.ALPHA_ASC.ordinal()){
@@ -61,7 +63,8 @@ public enum SortFilter {
             sortFilter = SortFilter.TIMES_USED;
         }else{
             sortFilter = null;
-        }
+        }//End of if else chain to check for ordinal number match
+        Log.d("PsswrdStrength","Enter getSortFilterByOrdinal method in the SortFilter enum.");
         return sortFilter;
     }//End of getSortFilterByOrdinal method
 }//End of SortFilter enum definition

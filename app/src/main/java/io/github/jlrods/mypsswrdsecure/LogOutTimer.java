@@ -1,17 +1,10 @@
 package io.github.jlrods.mypsswrdsecure;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.CountDownTimer;
-import android.preference.PreferenceManager;
 import android.util.Log;
-
 import androidx.appcompat.app.AlertDialog;
-
-import io.github.jlrods.mypsswrdsecure.login.LoginActivity;
 
 public class LogOutTimer extends CountDownTimer {
     long logOutTimeRemainder;
@@ -26,24 +19,24 @@ public class LogOutTimer extends CountDownTimer {
     public LogOutTimer(long logOutTime, long countDownInterval, Context context) {
         super(logOutTime, countDownInterval);
         this.context = context;
-    }
+    }//End of Contructor method
 
     @Override
     public void onTick(long millisUntilFinished) {
         this.logOutTimeRemainder = millisUntilFinished;
         Log.d("onTick", "Enter/Exit  CountDownTimer onTick method for logout in MainActivity class.");
-    }
+    }//End of onTick method
 
     @Override
     public void onFinish() {
         Log.d("onFinish", "Enter/Exit CountDownTimer onFinish method for logout in MainActivity class.");
         logout();
-    }
+    }//End of onFinish method
 
     public long getLogOutTimeRemainder() {
+        Log.d("onTick", "Enter/Exit  getLogOutTimeRemainder method for logout in MainActivity class.");
         return this.logOutTimeRemainder;
-    }
-
+    }//End of getLogOutTimeRemainder method
 
 
     private void logout() {
@@ -59,14 +52,8 @@ public class LogOutTimer extends CountDownTimer {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 MainActivity.logout(context);
-//                Intent i = new Intent((Activity)context, LoginActivity.class);
-//                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                ((Activity)context).startActivity(i);
-                //((Activity) context).setResult(MainActivity.getRESULT_TIMEOUT());
-                //((Activity) context).finish();
             }
 
         }).show();
-    }
-
-}
+    }//End of logout method
+}//End of LogoOutTimer class

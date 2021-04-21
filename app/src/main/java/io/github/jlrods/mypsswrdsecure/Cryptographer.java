@@ -4,21 +4,16 @@ import android.os.Build;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 import android.util.Log;
-
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
-import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
-
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 
 public class Cryptographer {
@@ -80,7 +75,6 @@ public class Cryptographer {
                         .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
                         .setRandomizedEncryptionRequired(true)
                         .setUserAuthenticationRequired(false)
-                        //.setUserAuthenticationValidityDurationSeconds(getKeyPinDuration())
                         .build();;
                 keyGen.init(keySpec);
                 keyGen.generateKey();
@@ -89,7 +83,6 @@ public class Cryptographer {
         }else{
             Log.d("Crypt_createKey","Exit createSecurityKey method in Cryptographer class, key already exists.");
         }//End of if statement to check the key already exists in store
-
     }// End of createSecurityKey method
 
 
@@ -106,15 +99,13 @@ public class Cryptographer {
             }else{
                 keyEntry = (KeyStore.SecretKeyEntry) keyStore.getEntry(KEYSTORE_ALIAS,null);
             }
-            //this.cipher = Cipher.getInstance(CIPHER_TYPE);
             this.cipher = Cipher.getInstance(CIPHER_TYPE);
             this.cipher.init(Cipher.ENCRYPT_MODE,keyEntry.getSecretKey());
             encryptedText = this.cipher.doFinal(plainText.getBytes("UTF8"));
             this.iv = new IvParameterSpec(this.cipher.getIV());
             Log.d("Crypt_encrypt","Exit successfully encryptText method in Cryptographer class.");
             return encryptedText;
-        }
-        catch(Exception e){
+        }catch(Exception e){
             Log.d("Crypt_encrypt","Exit encryptText method in Cryptographer class with error: "+e.getMessage());
             return e.getMessage().getBytes();
         }//End of try catch block
@@ -129,7 +120,6 @@ public class Cryptographer {
             KeyStore keyStore =  KeyStore.getInstance(KEYSTORE_PROVIDER);
             keyStore.load(null);
             KeyStore.SecretKeyEntry keyEntry = (KeyStore.SecretKeyEntry) keyStore.getEntry(KEYSTORE_ALIAS,null);
-            //this.cipher = Cipher.getInstance(CIPHER_TYPE);
             this.cipher.init(cipher.DECRYPT_MODE,keyEntry.getSecretKey(),initVector);
             decryptedText = new String(cipher.doFinal(encryptedText));
             Log.d("Crypt_decrypt","Exit successfully decryptText method in Cryptographer class.");
@@ -149,6 +139,5 @@ public class Cryptographer {
         IvParameterSpec ivParSpec = new IvParameterSpec(initVector);
         Log.d("Crypt_iv","Exit getInitVector method in Cryptographer class.");
         return ivParSpec;
-    }
-
+    }//End of getInitVector method
 }// End of Cryptographer class
