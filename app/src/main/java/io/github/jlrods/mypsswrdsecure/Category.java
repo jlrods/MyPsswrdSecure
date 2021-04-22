@@ -3,7 +3,7 @@ package io.github.jlrods.mypsswrdsecure;
 import android.database.Cursor;
 import android.util.Log;
 
-class Category {
+public class Category {
 
     //Attribute definition
     private int _id; // DB unique ID

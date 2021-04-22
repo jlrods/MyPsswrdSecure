@@ -30,9 +30,13 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import java.util.concurrent.Executor;
 import javax.crypto.spec.IvParameterSpec;
+
+import io.github.jlrods.mypsswrdsecure.Account;
 import io.github.jlrods.mypsswrdsecure.AccountsDB;
 import io.github.jlrods.mypsswrdsecure.AppLoggin;
+import io.github.jlrods.mypsswrdsecure.Category;
 import io.github.jlrods.mypsswrdsecure.Cryptographer;
+import io.github.jlrods.mypsswrdsecure.EditAccountActivity;
 import io.github.jlrods.mypsswrdsecure.Psswrd;
 import io.github.jlrods.mypsswrdsecure.R;
 import io.github.jlrods.mypsswrdsecure.MainActivity;
@@ -248,7 +252,19 @@ public class LoginActivity extends AppCompatActivity {
                 }//End of if else statement that checks it's first time login
                 //Check if login was successful
                 if(loginSuccess){
-                    throwMainActivity(appLoggin.get_id());
+                    Bundle extras = getIntent().getExtras();
+                    if(extras.getBoolean("isActivityCalledFromNotification")){
+                        int accountID = extras.getInt("expiredPasswordAccountID");
+                        Account expiredPasswordAccount = Account.extractAccount(accountsDB.getAccountCursorByID(accountID));
+                        Intent i = new Intent(getBaseContext(), EditAccountActivity.class);
+                        //Add extras to the intent object, specifically the current category where the add button was pressed from
+                        i.putExtra("category", expiredPasswordAccount.getCategory().get_id());
+                        i.putExtra(MainActivity.getIdColumn(), expiredPasswordAccount.get_id());
+                        //i.putExtra("position",itemPosition);
+                        startActivity(i);
+                    }else{
+                        throwMainActivity(appLoggin.get_id());
+                    }
                 }else{
                     //If user name not even present in the username table, throw an error message
                     MainActivity.displayToast(v.getContext(),errorMessageText,Toast.LENGTH_LONG, Gravity.CENTER);
@@ -336,8 +352,29 @@ public class LoginActivity extends AppCompatActivity {
                     super.onAuthenticationSucceeded(result);
                     Toast.makeText(getApplicationContext(),
                             getString(R.string.authenSuccessful), Toast.LENGTH_SHORT).show();
-                    //Call throw MainActivity method
-                    throwMainActivity(appLoginID);
+
+                    Bundle extras = getIntent().getExtras();
+                    if(extras!=null){
+                        if(extras.getBoolean("isActivityCalledFromNotification")){
+                            int accountID = extras.getInt("expiredPasswordAccountID");
+                            Account expiredPasswordAccount = Account.extractAccount(accountsDB.getAccountCursorByID(accountID));
+                            Intent i = new Intent(getBaseContext(), EditAccountActivity.class);
+                            //Add extras to the intent object, specifically the current category where the add button was pressed from
+                            i.putExtra("category", expiredPasswordAccount.getCategory().get_id());
+                            i.putExtra(MainActivity.getIdColumn(), expiredPasswordAccount.get_id());
+                            i.putExtra("isActivityCalledFromNotification",extras.getBoolean("isActivityCalledFromNotification"));
+
+                            //i.putExtra("position",itemPosition);
+                            startActivity(i);
+                        }else{
+                            //Call throw MainActivity method
+                            throwMainActivity(appLoginID);
+                        }
+                    }else{
+                        //Call throw MainActivity method
+                        throwMainActivity(appLoginID);
+                    }
+
                 }
 
                 @Override

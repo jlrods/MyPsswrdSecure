@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
 
     //CONSTANT VALUES
     private static final int INDEX_TO_GET_LAST_TASK_LIST_ITEM = 2;
-    private static final String CHANNEL_ID = "CHANNEL_ID";
+    private static final String CHANNEL_ID = "TESTCHANNEL";
 
     //Throw intent codes
     private static final int THROW_IMAGE_GALLERY_REQ_CODE = 1642;
@@ -184,6 +184,10 @@ public class MainActivity extends AppCompatActivity {
     private static boolean isLogOutActive;
     private long logOutTimeRemainder;
     private static int RESULT_TIMEOUT = -2;
+    private static boolean isPushNotificationSent = false;
+    private static int expiredPasswordAccountID = -1;
+    NotificationManagerCompat notificationManager = null;
+    NotificationCompat.Builder notificationBuilder = null;
 
 
     @Override
@@ -494,19 +498,25 @@ public class MainActivity extends AppCompatActivity {
             //Set up extra information into the intent to be sent the the EditAccountActivity
             intent.putExtra("category", expiredPsswrdAccount.getCategory().get_id());
             intent.putExtra(ID_COLUMN, expiredPsswrdAccount.get_id());
+            intent.putExtra("isActivityCalledFromNotification",true);
             stackBuilder.addNextIntentWithParentStack(intent);
             PendingIntent pendingIntent = stackBuilder.getPendingIntent(THROW_EDIT_ACCOUNT_ACT_REQCODE, PendingIntent.FLAG_UPDATE_CURRENT);
-            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this,CHANNEL_ID)
+            notificationBuilder = new NotificationCompat.Builder(this,CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_stat_my_psswrd_secure_full)
                     .setContentTitle(getString(R.string.pushNotificationPsswrdExpMssg))
                     .setContentText(getString(R.string.pushNotPsswrdHasExp1)+" "+expiredPsswrdAccount.getName()+" "+getString(R.string.pushNotPsswrHasExp2))
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .setContentIntent(pendingIntent)
+                    .setOnlyAlertOnce(true)
+                    //.setDefaults(DEFAULT_SOUND | DEFAULT_VIBRATE) //Important for heads-up notification
                     .setAutoCancel(true);
             this.createNotificationChannel();
-            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+            notificationManager = NotificationManagerCompat.from(this);
             // notificationId is a unique int for each notification that you must define
-            notificationManager.notify(expiredPsswrdAccount.get_id(), notificationBuilder.build());
+            isPushNotificationSent = true;
+            expiredPasswordAccountID = expiredPsswrdAccount.get_id();
+            notificationManager.notify(expiredPasswordAccountID, notificationBuilder.build());
+
         }//End of if statement to check at least one account has expired password
         Log.d("Ext_onCreateMain", "Exit onCreate method in MainActivity class.");
     }//End of onCreate method
@@ -522,6 +532,34 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onStop(){
         super.onStop();
+        if(isPushNotificationSent){
+            //Update the intent so it calls the login screen
+            Intent intent = new Intent(this, LoginActivity.class);
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+            //Set up extra information into the intent to be sent the the EditAccountActivity
+            //intent.putExtra("category", expiredPsswrdAccount.getCategory().get_id());
+            intent.putExtra("isActivityCalledFromNotification", true);
+            intent.putExtra("expiredPasswordAccountID",expiredPasswordAccountID);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            stackBuilder.addNextIntentWithParentStack(intent);
+            PendingIntent pendingIntent = stackBuilder.getPendingIntent(THROW_EDIT_ACCOUNT_ACT_REQCODE, PendingIntent.FLAG_UPDATE_CURRENT);
+//            PendingIntent pendingIntent = PendingIntent.getActivity(this, THROW_EDIT_ACCOUNT_ACT_REQCODE, intent, 0);
+//            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this,CHANNEL_ID)
+//                    .setSmallIcon(R.drawable.ic_stat_my_psswrd_secure_full)
+//                    .setContentTitle(getString(R.string.pushNotificationPsswrdExpMssg))
+//                    //.setContentText(getString(R.string.pushNotPsswrdHasExp1)+" "+expiredPsswrdAccount.getName()+" "+getString(R.string.pushNotPsswrHasExp2))
+//                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+//                    .setContentIntent(pendingIntent)
+//                    .setAutoCancel(true);
+//            this.createNotificationChannel();
+            //NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+            // notificationId is a unique int for each notification that you must define
+            notificationBuilder.setContentIntent(pendingIntent);
+            if(notificationManager != null){
+                notificationManager.notify(expiredPasswordAccountID,notificationBuilder.build());
+            }
+
+        }
         if(isIsLogOutActive()){
             logoutTimer.cancel();
         }
@@ -531,6 +569,12 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         //logoutTimer.cancel();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
     }
 
     //Method to logout app
@@ -1168,14 +1212,78 @@ public class MainActivity extends AppCompatActivity {
     //Generic method to handle item insertion into RV
     private void handleAddItemActivityResult(@Nullable Intent data,RecyclerView.Adapter adapter,String key,String dbTable){
         Log.d("handleAddAccRes", "Enter the handleAddItemActivityResult method in the DisplayAccountActivity class.");
+        boolean requiresRVUpdate = false;
         //Update RV data set
         //Get current item position in the updated cursor. Use getCursorToUpdateRV with the most up to date data set
+        Account addedAccount = null;
+        UserName addedUserName = null;
+        Psswrd addedPsswrd = null;
+        Question addedQuestion = null;
+        //Get item position in the current data set to be displayed on the RV
         this.itemPosition = accountsDB.findItemPositionInCursor(getCursorToUpdateRV(adapter),accountsDB.getMaxItemIdInTable(dbTable));
-        //Set notify change type to insert item type
-        this.changeType = NotifyChangeType.ITEM_INSERTED;
-        //Set proper text to display item insertion with a Toast
-        this.toastText = setToastText(data,key,changeType,getResources()); //data.getExtras().getString(key) + " " + getResources().getString(R.string.accountAdded);
-        this.goodResultDelivered = true;
+        //Check if key is for Account object
+        if(key.equals("accountName")){
+            //Retrieve the added account from DB
+            addedAccount = accountsDB.getAccountByID(data.getExtras().getInt("accountID"));
+            //Call method to check if account is congruent with data set criteria for RV
+            if(isAccountCongruentWithRVData(addedAccount)){
+                this.changeType = NotifyChangeType.ITEM_INSERTED;
+                requiresRVUpdate = true;
+            }else{
+                //If not congruent, the data set should not be changed, so set result deliverd to false
+                //That way the RV will not be updated.
+                this.goodResultDelivered = false;
+                //Display the toast manually as
+                MainActivity.displayToast(this,data.getExtras().getString("accountName")+ " "+ getString(R.string.accountAdded),Toast.LENGTH_LONG,Gravity.BOTTOM);
+            }//End of if else statement to check added item is congruent with RV
+        //Check if it's user name object
+        }else if(key.equals("userNameValue")){
+            //Retrieve the added user name from DB
+            addedUserName = accountsDB.getUserNameByID(data.getExtras().getInt("userNameID"));
+            if(!(isSearchFilter && !cryptographer.decryptText(addedUserName.getValue(), new IvParameterSpec(addedUserName.getIv())).equals(lastSearchText))){
+                this.changeType = NotifyChangeType.ITEM_INSERTED;
+                requiresRVUpdate = true;
+            }else{
+                //If not congruent, the data set should not be changed, so set result delivered to false
+                //That way the RV will not be updated.
+                this.goodResultDelivered = false;
+                //Display the toast manually as
+                MainActivity.displayToast(this,data.getExtras().getString("userNameValue")+ " "+ getString(R.string.userNameAdded),Toast.LENGTH_LONG,Gravity.BOTTOM);
+            }//End of if else statement to check added item is congruent with RV
+        //Check if it's psswrd object
+        }else if(key.equals("psswrdValue")){
+            //Retrieve the added user name from DB
+            addedPsswrd = accountsDB.getPsswrdByID(data.getExtras().getInt("psswrdID"));
+            if(!(isSearchFilter && !cryptographer.decryptText(addedPsswrd.getValue(), new IvParameterSpec(addedPsswrd.getIv())).equals(lastSearchText))){
+                this.changeType = NotifyChangeType.ITEM_INSERTED;
+                requiresRVUpdate = true;
+            }else{
+                //If not congruent, the data set should not be changed, so set result deliverd to false
+                //That way the RV will not be updated.
+                this.goodResultDelivered = false;
+                //Display the toast manually as
+                MainActivity.displayToast(this,data.getExtras().getString("psswrdValue")+ " "+ getString(R.string.psswrdAdded),Toast.LENGTH_LONG,Gravity.BOTTOM);
+            }//End of if else statement to check added item is congruent with RV
+        //Check if it's question object
+        }else if(key.equals("questionValue")){
+            //Retrieve the added user name from DB
+            addedQuestion = accountsDB.getQuestionByID(data.getExtras().getInt("questionID"));
+            if(!(isSearchFilter && !addedQuestion.getValue().toLowerCase().contains(lastSearchText.toLowerCase()))){
+                this.changeType = NotifyChangeType.ITEM_INSERTED;
+                requiresRVUpdate = true;
+            }else{
+                //If not congruent, the data set should not be changed, so set result deliverd to false
+                //That way the RV will not be updated.
+                this.goodResultDelivered = false;
+                //Display the toast manually as
+                MainActivity.displayToast(this,data.getExtras().getString("questionValue")+ " "+ getString(R.string.questionAdded),Toast.LENGTH_LONG,Gravity.BOTTOM);
+            }//End of if else statement to check added item is congruent with RV
+        }//End of if else chain to check the type of object added
+        //Final check to set boolean flag for RV updated and Toast display
+        if(requiresRVUpdate){
+            this.toastText = setToastText(data,key,changeType,getResources());
+            this.goodResultDelivered = true;
+        }//End of if statement to check RV update flag
         Log.d("handleAddAccRes", "Exit the handleAddItemActivityResult method in the DisplayAccountActivity class.");
     }//End of handleAddItemActivityResult method
 
@@ -1325,24 +1433,34 @@ public class MainActivity extends AppCompatActivity {
         return toastText;
     }//End of setToastText method
 
+    //Method to check if account passed in is congruent with current data displayed on RV
+    public static boolean isAccountCongruentWithRVData(Account account){
+        Log.d("handleAddAccRes", "Enter|Exit the handleAddItemActivityResult method in the DisplayAccountActivity class.");
+        //false if any of the following conditions is met:
+        //1.-The current category is Fav, but the account isn't fav
+        //2.-There's a search filter for user name and current account user name doesn't match filter
+        //3.-There's a search filter for password and current account password doesn't match filter
+        //4.-There's a search filter for account name and current account name doesn't contain the filter text
+        //5.- Current category is other than home or fav and account category isn't the same as the current category
+        return !((currentCategory == favCategory && !account.isFavorite())
+                || (isSearchUserNameFilter && !cryptographer.decryptText(account.getUserName().getValue(),new IvParameterSpec(account.getUserName().getIv())).equals(lastSearchText))
+                || (isSearchPsswrdFilter && !cryptographer.decryptText(account.getPsswrd().getValue(),new IvParameterSpec(account.getPsswrd().getIv())).equals(lastSearchText))
+                ||(isSearchFilter && !isSearchUserNameFilter && !isSearchPsswrdFilter && !account.getName().toLowerCase().contains(lastSearchText.toLowerCase()))
+                ||(currentCategory != homeCategory && currentCategory != favCategory && currentCategory != account.getCategory()));
+    }//End of isAccountCongruent method
+
     //Method to get the notify change enum for edited accounts
     public static NotifyChangeType getNotifyChangeType(Account editedAccount){
         Log.d("getNotifyChangeType", "Enter getNotifyChangeType method in the MainActivity class.");
         //Declare and initialize the chaneType variable to be returned by method
         NotifyChangeType changeType = null;
-
         //Check if any of the following three conditions is met:
         //Current category is favorites and the edited account isn't anymore a favorite account
         //UserName search filter active and the account user name doesn't match the search criteria anymore
         //Password search filter active and the account password doesn't match the search criteria anymore
         //Account name search filter active and the account name doesn't match the search criteria anymore
-        if(
-                (currentCategory == favCategory && !editedAccount.isFavorite())
-                || (isSearchUserNameFilter && !cryptographer.decryptText(editedAccount.getUserName().getValue(),new IvParameterSpec(editedAccount.getUserName().getIv())).equals(lastSearchText))
-                || (isSearchPsswrdFilter && !cryptographer.decryptText(editedAccount.getPsswrd().getValue(),new IvParameterSpec(editedAccount.getPsswrd().getIv())).equals(lastSearchText))
-                ||(!isSearchUserNameFilter && !isSearchPsswrdFilter && !editedAccount.getName().toLowerCase().contains(lastSearchText.toLowerCase()))
-                ||(currentCategory!= homeCategory && currentCategory != editedAccount.getCategory())){
-            changeType = MainActivity.NotifyChangeType.ITEM_REMOVED;
+            if(!isAccountCongruentWithRVData(editedAccount)){
+                changeType = MainActivity.NotifyChangeType.ITEM_REMOVED;
             Log.d("getNotifyChangeType", "ITEM_REMOVED selected in getNotifyChangeType method in the MainActivity class for ."+ editedAccount.getName());
         }else {
             //Any other edition, the account item must be notified as changed
@@ -1750,6 +1868,14 @@ public class MainActivity extends AppCompatActivity {
 
     public static int getRESULT_TIMEOUT() {
         return RESULT_TIMEOUT;
+    }
+
+    public static boolean isIsPushNotificationSent() {
+        return isPushNotificationSent;
+    }
+
+    public static void setIsPushNotificationSent(boolean isPushNotificationSent) {
+        MainActivity.isPushNotificationSent = isPushNotificationSent;
     }
 
     //Generic method to display a toast with control vocer the duritation length and the gravity  position
@@ -2921,11 +3047,11 @@ public class MainActivity extends AppCompatActivity {
             CharSequence name = "MyPsswrdNotificationChannel";
             String description = "Password update required!";
             int importance = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name,importance);
             channel.setDescription(description);
             // Register the channel with the system; you can't change the importance
             // or other notification behaviors after this
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            NotificationManager  notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }//End of if statement to check SDK version
         Log.d("createNotChannel", "Exit createNotificationChannel method in MainActivity class.");

@@ -12,6 +12,9 @@ import android.view.MenuItem;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.TaskStackBuilder;
+
+import io.github.jlrods.mypsswrdsecure.login.LoginActivity;
 
 public class EditAccountActivity extends DisplayAccountActivity{
     //Attribute definition
@@ -21,6 +24,11 @@ public class EditAccountActivity extends DisplayAccountActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("OnCreateEditAcc","Enter onCreate method in the EditAccountActivity abstract class.");
+        //Check if Activity was call by notification pending intent
+        if(extras.getBoolean("isActivityCalledFromNotification")){
+            //Reset boolean flag to display notification
+            MainActivity.setIsPushNotificationSent(false);
+        }
         //Set activity title
         getSupportActionBar().setTitle(R.string.editAccTitle);
         //Extract account details by passing in the _id attribute stored in the extras
@@ -91,6 +99,12 @@ public class EditAccountActivity extends DisplayAccountActivity{
         }//End of if statement that checks the renew password date is to be updated on UI
         Log.d("OnCreateEditAcc","Exit onCreate method in the EditAccountActivity abstract class.");
     }//End of onCreate method
+
+    @Override
+    public void onResume() {
+        super.onResume();
+//        MainActivity.displayToast(this,"OnResume called",Toast.LENGTH_LONG,Gravity.CENTER);
+    }//End of onResume method
 
     // Method to check the menu item selected and execute the corresponding actions
     @Override
@@ -168,14 +182,29 @@ public class EditAccountActivity extends DisplayAccountActivity{
                                                     //values.put("DateCreated",this.account.getDateCreated());
                                                     values.put(MainActivity.getDateChangeColumn(),newAccount.getDateChange());
                                                     if(result = this.accountsDB.updateTable(MainActivity.getAccountsTable(),values)){
-                                                        //Call method to update data set displayed on the recycler view and display proper message after adding the grocery to the DB
-                                                        //Put extra info to transfer to the Main activity
-                                                        intent.putExtra("accountID",newAccount.get_id());
-                                                        intent.putExtra("accountName",newAccount.getName());
-                                                        intent.putExtra("position",extras.getInt("position"));
-                                                        setResult(RESULT_OK, intent);
-                                                        Log.d("onOptionsItemSelected","Set activity result to OK  on onOptionsItemSelected method in EditAccountActivity class.");
-                                                        finish();
+
+
+                                                        if(extras.getBoolean("isActivityCalledFromNotification")){
+                                                            MainActivity.displayToast(this,accountName + getResources().getString(R.string.accountUpdated),Toast.LENGTH_LONG,Gravity.CENTER);
+                                                            //If that is the case we need to manually force MainActivity to be displayed
+                                                            Intent i = new Intent(this,MainActivity.class);
+//                                                            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                    TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+//// Adds the back stack
+//                    stackBuilder.addParentStack(LoginActivity.class);
+                                                            startActivity(i);
+                                                        }else{
+                                                            //Call method to update data set displayed on the recycler view and display proper message after adding the grocery to the DB
+                                                            //Put extra info to transfer to the Main activity
+                                                            intent.putExtra("accountID",newAccount.get_id());
+                                                            intent.putExtra("accountName",newAccount.getName());
+                                                            intent.putExtra("position",extras.getInt("position"));
+                                                            setResult(RESULT_OK, intent);
+                                                            Log.d("onOptionsItemSelected","Set activity result to OK  on onOptionsItemSelected method in EditAccountActivity class.");
+                                                            finish();
+                                                        }
+
+
                                                     }else{
                                                         //In case of failure updating the account, try to roll back the question list assigned to account on DB
                                                         //Check the new and old list are not the same
@@ -281,7 +310,19 @@ public class EditAccountActivity extends DisplayAccountActivity{
                 //Set activity result as cancelled so DisplayAccActivity can decide what to do if this is the case
                 setResult(RESULT_CANCELED, intent);
                 //Go back to previous activity
-                finish();
+                //Check if activity got call from a notification
+                if(extras.getBoolean("isActivityCalledFromNotification")){
+                    //If that is the case we need to manually force MainActivity to be displayed
+                    Intent i = new Intent(this,MainActivity.class);
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                    TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+//// Adds the back stack
+//                    stackBuilder.addParentStack(LoginActivity.class);
+                    startActivity(i);
+                }else{
+                    finish();
+                }
+
                 break;
             case R.id.action_logout:
                 //Call method to throw LoginActivity and clear activity stack.
