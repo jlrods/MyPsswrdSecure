@@ -253,18 +253,24 @@ public class LoginActivity extends AppCompatActivity {
                 //Check if login was successful
                 if(loginSuccess){
                     Bundle extras = getIntent().getExtras();
-                    if(extras.getBoolean("isActivityCalledFromNotification")){
-                        int accountID = extras.getInt("expiredPasswordAccountID");
-                        Account expiredPasswordAccount = Account.extractAccount(accountsDB.getAccountCursorByID(accountID));
-                        Intent i = new Intent(getBaseContext(), EditAccountActivity.class);
-                        //Add extras to the intent object, specifically the current category where the add button was pressed from
-                        i.putExtra("category", expiredPasswordAccount.getCategory().get_id());
-                        i.putExtra(MainActivity.getIdColumn(), expiredPasswordAccount.get_id());
-                        //i.putExtra("position",itemPosition);
-                        startActivity(i);
+                    if(extras!=null){
+                        if(extras.getBoolean("isActivityCalledFromNotification")){
+                            int accountID = extras.getInt("expiredPasswordAccountID");
+                            Account expiredPasswordAccount = Account.extractAccount(accountsDB.getAccountCursorByID(accountID));
+                            Intent i = new Intent(getBaseContext(), EditAccountActivity.class);
+                            //Add extras to the intent object, specifically the current category where the add button was pressed from
+                            i.putExtra("category", expiredPasswordAccount.getCategory().get_id());
+                            i.putExtra(MainActivity.getIdColumn(), expiredPasswordAccount.get_id());
+                            //i.putExtra("position",itemPosition);
+                            startActivity(i);
+                        }else{
+                            throwMainActivity(appLoggin.get_id());
+                        }//End of if else statement to check if call comes from push notification
                     }else{
+                        //Call throw MainActivity method
                         throwMainActivity(appLoggin.get_id());
-                    }
+                    }//End of if else statment to check extras aren't null
+
                 }else{
                     //If user name not even present in the username table, throw an error message
                     MainActivity.displayToast(v.getContext(),errorMessageText,Toast.LENGTH_LONG, Gravity.CENTER);
@@ -369,13 +375,12 @@ public class LoginActivity extends AppCompatActivity {
                         }else{
                             //Call throw MainActivity method
                             throwMainActivity(appLoginID);
-                        }
+                        }//End of if else statment to check activity was called by push notification
                     }else{
                         //Call throw MainActivity method
                         throwMainActivity(appLoginID);
-                    }
-
-                }
+                    }//End of if else statement to check extras aren't null
+                }//End of onAuthenticationSucceeded
 
                 @Override
                 public void onAuthenticationFailed() {
