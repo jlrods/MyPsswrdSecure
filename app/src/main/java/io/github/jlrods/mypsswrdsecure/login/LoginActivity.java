@@ -34,6 +34,7 @@ import javax.crypto.spec.IvParameterSpec;
 import io.github.jlrods.mypsswrdsecure.Account;
 import io.github.jlrods.mypsswrdsecure.AccountsDB;
 import io.github.jlrods.mypsswrdsecure.AppLoggin;
+import io.github.jlrods.mypsswrdsecure.AutoLogOutService;
 import io.github.jlrods.mypsswrdsecure.Category;
 import io.github.jlrods.mypsswrdsecure.Cryptographer;
 import io.github.jlrods.mypsswrdsecure.EditAccountActivity;
@@ -423,6 +424,11 @@ public class LoginActivity extends AppCompatActivity {
     //Method to throw new MainActivity method
     private void throwMainActivity(int appLoginId){
         Log.d("ThrowMain","Enter throwMainActivity method in the LoginActivity class.");
+        //Start service
+        if(MainActivity.isAutoLogOutActive(this)){
+            Intent autoLogOutService = new Intent(this, AutoLogOutService.class);
+            startService(autoLogOutService);
+        }
         //Create new intent to launch MainActivity
         Intent i= new Intent(LoginActivity.this, MainActivity.class);
         //Put appLogin

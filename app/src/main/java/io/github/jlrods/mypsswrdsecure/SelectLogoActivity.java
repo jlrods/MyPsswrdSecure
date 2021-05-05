@@ -88,6 +88,15 @@ public class SelectLogoActivity extends AppCompatActivity {
         Log.d("SelLogOnCreate","Exit  onCreate method in SelectLogoActivity class.");
     }//End of onCreate
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(MainActivity.isAutoLogOutActive()){
+            //Set current activity context for the Logout timer in order to display auto logout prompt
+            ((LogOutTimer)AutoLogOutService.getLogOutTimer()).setContext(this);
+        }
+    }//End of onResume method
+
     //Method to inflate the menu into the addTaskActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -30,6 +30,15 @@ public class PreferencesActivity extends AppCompatActivity {
 
     }// End of constructor method
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(MainActivity.isAutoLogOutActive()){
+            //Set current activity context for the Logout timer in order to display auto logout prompt
+            ((LogOutTimer)AutoLogOutService.getLogOutTimer()).setContext(this);
+        }
+    }//End of onResume method
+
     //Method to populate menu object and configure menu items visibility
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

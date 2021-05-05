@@ -35,8 +35,8 @@ public abstract class AddItemActivity extends AppCompatActivity {
     protected Cryptographer cryptographer = MainActivity.getCryptographer();
     //Floating action button to delete existing item
     protected FloatingActionButton fabDelete = null;
-    protected LogOutTimer logOutTimer;
-    protected long logOutTime;
+//    protected LogOutTimer logOutTimer;
+//    protected long logOutTime;
     Bundle extras;
 
     //Method definition
@@ -52,11 +52,11 @@ public abstract class AddItemActivity extends AppCompatActivity {
         //Set language as per preferences
         MainActivity.setAppLanguage(this);
         this.extras = getIntent().getExtras();
-        if(MainActivity.isIsLogOutActive()){
-            logOutTime = this.extras.getLong("timeOutRemainder");
-            logOutTimer = new LogOutTimer(logOutTime, 250,this);
-            logOutTimer.start();
-        }
+//        if(MainActivity.isAutoLogOutActive()){
+//            logOutTime = this.extras.getLong("timeOutRemainder");
+//            logOutTimer = new LogOutTimer(logOutTime, 250,this);
+//            logOutTimer.start();
+//        }
         //Set layout for this activity
         setContentView(R.layout.activity_add_item);
         this.accountsDB = HomeFragment.getAccountsDB();
@@ -67,6 +67,15 @@ public abstract class AddItemActivity extends AppCompatActivity {
         this.fabDelete = findViewById(R.id.fabDelete);
         Log.d("OnCreateAddQuest","Exit onCreate method in the AddItemActivity class.");
     }//End of onCreate method
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        //Set current activity context for the Logout timer in order to display auto logout prompt
+        if(MainActivity.isAutoLogOutActive()){
+            ((LogOutTimer)AutoLogOutService.getLogOutTimer()).setContext(this);
+        }
+    }//End of onResume method
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

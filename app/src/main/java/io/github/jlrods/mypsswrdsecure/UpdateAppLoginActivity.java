@@ -70,6 +70,15 @@ public class UpdateAppLoginActivity extends DisplayAccountActivity{
     }//End of onCreate method
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if(MainActivity.isAutoLogOutActive()){
+            //Set current activity context for the Logout timer in order to display auto logout prompt
+            ((LogOutTimer)AutoLogOutService.getLogOutTimer()).setContext(this);
+        }
+    }//End of onResume method
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.d("onCreateOptionsMenu","Enter onCreateOptionsMenu method in the UpdateAppLoginActivity class.");
         // Inflate the menu; this adds items to the action bar if it is present.

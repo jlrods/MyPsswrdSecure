@@ -88,8 +88,6 @@ public class AddAccountActivity extends DisplayAccountActivity {
                                                 //Put extra info to transfer to the Main activity
                                                 intent.putExtra("accountID",this.account.get_id());
                                                 intent.putExtra("accountName",this.account.getName());
-                                                //Put remainder time for logout so MainActivity can continue the count down
-                                                intent.putExtra("timeOutRemainder",logOutTimeRemainder);
                                                 setResult(RESULT_OK, intent);
                                                 Log.d("onOptionsItemSelected","Set activity result to OK  on onOptionsItemSelected method in AddAccountActivity class.");
                                                 finish();

@@ -71,6 +71,15 @@ public class SelectNavDrawerBckGrnd extends AppCompatActivity {
         //Set the logo OnClickListener object so the Logo is selected when clicked on it
     }//End of onCreate method
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(MainActivity.isAutoLogOutActive()){
+            //Set current activity context for the Logout timer in order to display auto logout prompt
+            ((LogOutTimer)AutoLogOutService.getLogOutTimer()).setContext(this);
+        }
+    }//End of onResume method
+
     //Method to inflate the menu into the addTaskActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

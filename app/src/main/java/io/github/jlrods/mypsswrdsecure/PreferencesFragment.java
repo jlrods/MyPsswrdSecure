@@ -2,6 +2,7 @@ package io.github.jlrods.mypsswrdsecure;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
@@ -45,8 +46,28 @@ public class PreferencesFragment extends androidx.preference.PreferenceFragmentC
             startActivity(intent);
         }else if(((SwitchPreference)preference).equals(findPreference("isAutoLogOutActive"))){
             ListPreference timeOutTime = (ListPreference) findPreference("logOutTime");
-            //Set new state of switch as thenew time out time preference visibility
+            //Set new state of switch as the new time out time preference visibility
             timeOutTime.setEnabled((boolean) newValue);
+            if((boolean)newValue){
+                Intent autoLogOutService = new Intent(getContext(), AutoLogOutService.class);
+                getActivity().startService(autoLogOutService);
+            }else{
+                Intent autoLogOutService = new Intent(getContext(), AutoLogOutService.class);
+                getActivity().stopService(autoLogOutService);
+                CountDownTimer delayTimer = new CountDownTimer(2000,250) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        ((LogOutTimer)AutoLogOutService.getLogOutTimer()).setContext(getActivity());
+                    }
+                };
+                delayTimer.start();
+            }
+
         }// End of if else statements to check what preference changed
         return true;
     }//End of onPreferenceChange method

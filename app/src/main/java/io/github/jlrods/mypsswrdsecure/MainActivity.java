@@ -179,11 +179,7 @@ public class MainActivity extends AppCompatActivity {
     //Login - Logout variables
     private Bundle extras;
     private static AppLoggin currentAppLoggin;
-    private LogOutTimer logoutTimer;
-    private long logOutTime;
-    private static boolean isLogOutActive;
-    private long logOutTimeRemainder;
-    private static int RESULT_TIMEOUT = -2;
+    private static boolean isAutoLogOutActive;
     private static boolean isPushNotificationSent = false;
     private static int expiredPasswordAccountID = -1;
     NotificationManagerCompat notificationManager = null;
@@ -205,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
         //Call method to setup date format based on app preferences
         dateFormat = themeUpdater.getDateFormat();
         //Get the logout timeout from preferences
-        isLogOutActive = getIsLogOutActive(this);
+        isAutoLogOutActive = isAutoLogOutActive(this);
         //Set the main activity layout
         setContentView(R.layout.activity_main);
         //Get the coordinator layout off layout
@@ -475,15 +471,6 @@ public class MainActivity extends AppCompatActivity {
             displayToast(((Activity)this).getParent(),"Log in error, the app loggin supplied doesn't match the one in the app records!",Toast.LENGTH_LONG,Gravity.CENTER);
             logout();
         }//End of if statement to check user cursor is not empty
-        if(isLogOutActive){
-            //Get logOutTime form preferences
-            this.logOutTime = getLogOutTime(this);
-            //Create new logout time object to manage remainder time and actions to be done on timeout
-            this.logoutTimer = new LogOutTimer(logOutTime,250,this);
-            //Start timer
-            this.logoutTimer.start();
-        }//End of if statement to check logout is active
-
         //Check for expired password accounts to display push notifications
         //Get from DB a list of accounts with password due for renewal
         Cursor expiredPsswrdAccounts = accountsDB.getExpiredPsswrdAccounts();
@@ -524,9 +511,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onPause(){
         super.onPause();
-        if(isIsLogOutActive()){
-            logoutTimer.cancel();
-        }
     }
 
     @Override
@@ -543,33 +527,22 @@ public class MainActivity extends AppCompatActivity {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             stackBuilder.addNextIntentWithParentStack(intent);
             PendingIntent pendingIntent = stackBuilder.getPendingIntent(THROW_EDIT_ACCOUNT_ACT_REQCODE, PendingIntent.FLAG_UPDATE_CURRENT);
-//            PendingIntent pendingIntent = PendingIntent.getActivity(this, THROW_EDIT_ACCOUNT_ACT_REQCODE, intent, 0);
-//            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this,CHANNEL_ID)
-//                    .setSmallIcon(R.drawable.ic_stat_my_psswrd_secure_full)
-//                    .setContentTitle(getString(R.string.pushNotificationPsswrdExpMssg))
-//                    //.setContentText(getString(R.string.pushNotPsswrdHasExp1)+" "+expiredPsswrdAccount.getName()+" "+getString(R.string.pushNotPsswrHasExp2))
-//                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-//                    .setContentIntent(pendingIntent)
-//                    .setAutoCancel(true);
-//            this.createNotificationChannel();
-            //NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-            // notificationId is a unique int for each notification that you must define
             notificationBuilder.setContentIntent(pendingIntent);
             if(notificationManager != null){
                 notificationManager.notify(expiredPasswordAccountID,notificationBuilder.build());
             }
 
-        }
-        if(isIsLogOutActive()){
-            logoutTimer.cancel();
-        }
-    }
+        }//End of if statement to check if push notification has been sent to OS
+    }//End of onStop method
 
     @Override
     public void onResume() {
         super.onResume();
-        //logoutTimer.cancel();
-    }
+        if(MainActivity.isAutoLogOutActive()){
+            //Set current activity context for the Logout timer in order to display auto logout prompt
+            ((LogOutTimer)AutoLogOutService.getLogOutTimer()).setContext(this);
+        }
+    }//End of onResume method
 
     @Override
     protected void onDestroy() {
@@ -585,7 +558,7 @@ public class MainActivity extends AppCompatActivity {
         alert.setPositiveButton("Continue",new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                logoutTimer.start();
+                ((LogOutTimer)AutoLogOutService.getLogOutTimer()).start();
             }
 
         }).setNegativeButton("LogOut",new DialogInterface.OnClickListener() {
@@ -892,9 +865,6 @@ public class MainActivity extends AppCompatActivity {
         Intent i = new Intent(getBaseContext(), AddAccountActivity.class);
         //Add extras to the intent object, specifically the current category where the add button was pressed from
         i.putExtra("category", this.currentCategory.get_id());
-        if(isLogOutActive){
-            i.putExtra("timeOutRemainder",(long)this.logoutTimer.getLogOutTimeRemainder());
-        }
         //Start the addTaskActivity class
         startActivityForResult(i, THROW_ADD_ACCOUNT_ACT_REQCODE);
         Log.d("ThrowAddAcc", "Exit throwAddAccountActivity method in the MainActivity class.");
@@ -949,9 +919,6 @@ public class MainActivity extends AppCompatActivity {
         //Add extras to the intent object
         i.putExtra(ID_COLUMN, userName.get_id());
         i.putExtra("position",itemPosition);
-        if(isLogOutActive){
-            i.putExtra("timeOutRemainder",(long)this.logoutTimer.getLogOutTimeRemainder());
-        }
         //Start the AddItemActivity class
         startActivityForResult(i, this.THROW_EDIT_USERNAME_ACT_REQCODE);
         Log.d("ThrowEditUser", "Exit throwEditUserNameActivity method in the MainActivity class.");
@@ -1034,7 +1001,6 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d("onActivityResult", "Enter the onActivityResult method in the DisplayAccountActivity class.");
         //Check if result comes from AddAccountActivity
-        boolean isLogOutTimedOut = false;
         //Flag to handle nave drawer menu update when a category has been added, deleted or edited
         boolean categoryMenuUpdate = false;
         RecyclerView recyclerView = HomeFragment.getRv();
@@ -1047,18 +1013,13 @@ public class MainActivity extends AppCompatActivity {
             this.handleAddItemActivityResult(data,adapter,"accountName",ACCOUNTS_TABLE);
         } else if (requestCode == this.THROW_ADD_ACCOUNT_ACT_REQCODE && resultCode == RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from AddAccountActivity (received by MainActivity).");
-        } else if(requestCode == this.THROW_ADD_ACCOUNT_ACT_REQCODE && resultCode == RESULT_TIMEOUT){
-            Log.d("onActivityResult", "Received TIMEOUT result from AddAccountActivity (received by MainActivity).");
-        }else if (requestCode == THROW_ADD_USERNAME_ACT_REQCODE && resultCode == RESULT_OK) {
+        } else if (requestCode == THROW_ADD_USERNAME_ACT_REQCODE && resultCode == RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from AddUserNameActivity (received by MainActivity).");
             //Call generic method to handle item insertion  and update RV accordingly
             this.handleAddItemActivityResult(data,adapter,"userNameValue",USERNAME_TABLE);
         } else if (requestCode == THROW_ADD_USERNAME_ACT_REQCODE && resultCode == RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from AddUserNameActivity (received by MainActivity).");
-        } else if (requestCode == THROW_ADD_USERNAME_ACT_REQCODE && resultCode == RESULT_TIMEOUT) {
-            Log.d("onActivityResult", "Received TIMEOUT result from AddUserNameActivity (received by MainActivity).");
-            isLogOutTimedOut = true;
-        }else if (requestCode == THROW_ADD_PSSWRD_ACT_REQCODE && resultCode == RESULT_OK) {
+        } else if (requestCode == THROW_ADD_PSSWRD_ACT_REQCODE && resultCode == RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from AddPsswrdActivity (received by MainActivity).");
             //Call generic method to handle item insertion  and update RV accordingly
             this.handleAddItemActivityResult(data,adapter,"psswrdValue",PSSWRD_TABLE);
@@ -1107,10 +1068,6 @@ public class MainActivity extends AppCompatActivity {
             goodResultDelivered = true;
         } else if (requestCode == THROW_EDIT_ACCOUNT_ACT_REQCODE && resultCode == Activity.RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from EditAccountActivity (received by HomeFragment).");
-        } else if(requestCode == this.THROW_EDIT_ACCOUNT_ACT_REQCODE && resultCode == RESULT_TIMEOUT){
-            Log.d("onActivityResult", "Received TIMEOUT result from EditAccountActivity (received by MainActivity).");
-            this.logoutTimer.cancel();
-            this.finish();
         } else if (requestCode == THROW_EDIT_CATEGORY_ACT_REQCODE && resultCode == Activity.RESULT_OK) {
             Log.d("onActivityResult", "Received GOOD result from EditCategoryActivity received by MainAcitvity.");
             //Set overall good result flag to true and the category update menu flag to true too
@@ -1147,65 +1104,54 @@ public class MainActivity extends AppCompatActivity {
             Log.d("onActivityResult", "Received BAD result from UpdateAppLoginActivity received by MainAcitvity.");
         }//End of if else statement chain to check activity results
 
-        if(isLogOutTimedOut){
-            //this.logoutTimer.cancel();
-            this.logoutTimer.onFinish();
-            this.finish();
-        }else{
-            if(isLogOutActive){
-                logOutTimeRemainder = data.getExtras().getLong("timeOutRemainder");
-                logoutTimer = new LogOutTimer(logOutTimeRemainder,250,this);
-                logoutTimer.start();
-            }
-            //Check if category menu required updating and result from previous activity is good
-            if (categoryMenuUpdate && goodResultDelivered) {
-                //Check if toast would be displayed
-                    //Get the updated list of categories
-                    this.categoryList = this.accountsDB.getCategoryList();
-                    //Get the navigation view to access the menu object
-                    NavigationView navigationView = findViewById(R.id.nav_view);
-                    //Get the position number of the updated menu item, which is already fixed on EditCategoryActivity
-                    //for the AlartDialog numbering issue
-                    int positionInCatList = -1;
-                    MenuItem menuItem = null;
-                    if (requestCode == TRHOW_ADD_CATEGORY_REQCODE) {
-                        positionInCatList = navigationView.getMenu().size() - 1;
-                        this.updateNavMenu(navigationView.getMenu(), positionInCatList);
-                    } else if (requestCode == THROW_EDIT_CATEGORY_ACT_REQCODE) {
-                        positionInCatList = data.getExtras().getInt("positionInCatList");
-                        //Get the menu item in the same position as the one in the categor list
-                        menuItem = navigationView.getMenu().getItem(positionInCatList);
-                        //Create category object pointing to category list position retrieved above
-                        Category updatedCategory = this.categoryList.get(positionInCatList);
-                        //Set up the proper name, as this might be updated on previous activity
-                        menuItem.setTitle(updatedCategory.getName());
-                        //Set up the proper icon for each category (icon data comes from DB), as this might be updated from previous activity
-                        idRes = this.getResources().getIdentifier(categoryList.get(positionInCatList).getIcon().getName(), "drawable", this.getPackageName());
-                        menuItem.setIcon(idRes);
-                        //Check if  category updated is the one already selected, so RV heading is updated with correct name
-                        if(navigationView.getMenu().getItem(positionInCatList ).isChecked()){
-                            Toolbar toolbar = findViewById(R.id.toolbar);
-                            toolbar.setTitle(updatedCategory.getName());
-                        }
-                    }//End of if else statement to check Category activity thrown
-                    //Display Toast to confirm the account has been added
-                    displayToast(this, toastText, Toast.LENGTH_LONG, Gravity.CENTER);
+        //Check if category menu required updating and result from previous activity is good
+        if (categoryMenuUpdate && goodResultDelivered) {
+            //Check if toast would be displayed
+            //Get the updated list of categories
+            this.categoryList = this.accountsDB.getCategoryList();
+            //Get the navigation view to access the menu object
+            NavigationView navigationView = findViewById(R.id.nav_view);
+            //Get the position number of the updated menu item, which is already fixed on EditCategoryActivity
+            //for the AlartDialog numbering issue
+            int positionInCatList = -1;
+            MenuItem menuItem = null;
+            if (requestCode == TRHOW_ADD_CATEGORY_REQCODE) {
+                positionInCatList = navigationView.getMenu().size() - 1;
+                this.updateNavMenu(navigationView.getMenu(), positionInCatList);
+            } else if (requestCode == THROW_EDIT_CATEGORY_ACT_REQCODE) {
+                positionInCatList = data.getExtras().getInt("positionInCatList");
+                //Get the menu item in the same position as the one in the categor list
+                menuItem = navigationView.getMenu().getItem(positionInCatList);
+                //Create category object pointing to category list position retrieved above
+                Category updatedCategory = this.categoryList.get(positionInCatList);
+                //Set up the proper name, as this might be updated on previous activity
+                menuItem.setTitle(updatedCategory.getName());
+                //Set up the proper icon for each category (icon data comes from DB), as this might be updated from previous activity
+                idRes = this.getResources().getIdentifier(categoryList.get(positionInCatList).getIcon().getName(), "drawable", this.getPackageName());
+                menuItem.setIcon(idRes);
+                //Check if  category updated is the one already selected, so RV heading is updated with correct name
+                if(navigationView.getMenu().getItem(positionInCatList ).isChecked()){
+                    Toolbar toolbar = findViewById(R.id.toolbar);
+                    toolbar.setTitle(updatedCategory.getName());
+                }
+            }//End of if else statement to check Category activity thrown
+            //Display Toast to confirm the account has been added
+            displayToast(this, toastText, Toast.LENGTH_LONG, Gravity.CENTER);
+            //Reset good result boolean flag
+            this.goodResultDelivered = false;
+        } else {
+            //Check if toast would be displayed
+            if (this.goodResultDelivered) {
+                //Call method to update RV, pass in the item position and set the notify change method to inset a new item in the position passed in
+                updateRecyclerViewData(adapter,itemPosition,changeType);
+                //As RV to scroll up to the item position in case isn't on display
+                recyclerView.scrollToPosition(itemPosition);
+                //Display Toast to confirm the account has been added
+                displayToast(this, toastText, Toast.LENGTH_LONG, Gravity.CENTER);
                 //Reset good result boolean flag
                 this.goodResultDelivered = false;
-            } else {
-                //Check if toast would be displayed
-                if (this.goodResultDelivered) {
-                    //Call method to update RV, pass in the item position and set the notify change method to inset a new item in the position passed in
-                    updateRecyclerViewData(adapter,itemPosition,changeType);
-                    //As RV to scroll up to the item position in case isn't on display
-                    recyclerView.scrollToPosition(itemPosition);
-                    //Display Toast to confirm the account has been added
-                    displayToast(this, toastText, Toast.LENGTH_LONG, Gravity.CENTER);
-                    //Reset good result boolean flag
-                    this.goodResultDelivered = false;
-                }//End of if statement to check good result was delivered
-            }//End of if else statement that checks if nav drawer menu has to be updated
-        }//End of if else for timeout logout
+            }//End of if statement to check good result was delivered
+        }//End of if else statement that checks if nav drawer menu has to be updated
         Log.d("onActivityResult", "Exit the onActivityResult method in the DisplayAccountActivity class.");
     }//End of onActivityResult method
 
@@ -1862,14 +1808,10 @@ public class MainActivity extends AppCompatActivity {
         return isFirstRun;
     }
 
-    public static boolean isIsLogOutActive() {
-        return isLogOutActive;
+    public static boolean isAutoLogOutActive() {
+        return isAutoLogOutActive;
     }
-
-    public static int getRESULT_TIMEOUT() {
-        return RESULT_TIMEOUT;
-    }
-
+    
     public static boolean isIsPushNotificationSent() {
         return isPushNotificationSent;
     }
@@ -3000,7 +2942,7 @@ public class MainActivity extends AppCompatActivity {
     }//End of setAppTheme method
 
 
-    public long getLogOutTime(Context context) {
+    public static long getLogOutTime(Context context) {
         Log.d("getLogOutTime", "Enter getLogOutTime method in MainActivity class.");
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
         String timeOutValue = pref.getString("logOutTime", "1");
@@ -3016,13 +2958,13 @@ public class MainActivity extends AppCompatActivity {
                 logOutTime= 1;
                 break;
         }
-        logOutTime = logOutTime*60*1000;
+        logOutTime = logOutTime*10*1000;
         Log.d("getLogOutTime", "Exit getLogOutTime method in MainActivity class.");
         return logOutTime;
     }//End of setAppTheme method
 
 
-    public static boolean getIsLogOutActive(Context context) {
+    public static boolean isAutoLogOutActive(Context context) {
         Log.d("getIsLogOut", "Enter getIsLogOut method in MainActivity class.");
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
         boolean isLogOut = pref.getBoolean("isAutoLogOutActive", false);

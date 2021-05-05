@@ -58,6 +58,9 @@
             android:name=".AboutActivity" />
         <activity
             android:name=".UpdateAppLoginActivity" />
+        <service android:name=".AutoLogOutService"
+            android:exported="false"
+            android:description="@string/logOutServiceDescription"/>
     </application>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>

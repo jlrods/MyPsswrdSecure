@@ -101,9 +101,9 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
     int throwSelectLogoActReqCode = 5555;
     Icon logo = null;
     int selectedPosition = -1;
-    LogOutTimer logOutTimer;
-    long logOutTime;
-    long logOutTimeRemainder;
+//    LogOutTimer logOutTimer;
+//    long logOutTime;
+//    long logOutTimeRemainder;
 
 
     //Method definition
@@ -113,11 +113,11 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         super.onCreate(savedInstanceState);
         Log.d("OnCreateDispAcc","Enter onCreate method in the DisplayAccountActivity abstract class.");
         this.extras = getIntent().getExtras();
-        if(MainActivity.isIsLogOutActive()){
-            logOutTime = this.extras.getLong("timeOutRemainder");
-            logOutTimer = new LogOutTimer(logOutTime, 250,this);
-            logOutTimer.start();
-        }
+//        if(MainActivity.isAutoLogOutActive()){
+//            logOutTime = this.extras.getLong("timeOutRemainder");
+//            logOutTimer = new LogOutTimer(logOutTime, 250,this);
+//            logOutTimer.start();
+//        }
 
         //Get default current app theme from preferences
         int appThemeSelected = MainActivity.setAppTheme(this);
@@ -307,6 +307,13 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         this.iconAdapter = new IconAdapter(this,MainActivity.getAccountsLogos());
         Log.d("OnCreateDispAcc","Exit onCreate method in the DisplayAccountActivity abstract class.");
     }//End of onCreate method
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        //Set current activity context for the Logout timer in order to display auto logout prompt
+        ((LogOutTimer)AutoLogOutService.getLogOutTimer()).setContext(this);
+    }//End of onResume method
 
     @Override
     protected void onSaveInstanceState(Bundle saveState) {

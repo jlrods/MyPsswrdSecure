@@ -34,6 +34,17 @@ public class AboutActivity extends AppCompatActivity {
         tvAuthorWebsiteDownloads.setMovementMethod(LinkMovementMethod.getInstance());
         Log.d("OnCreate", "Exit onCreate method in the AboutActivity abstract class.");
     }//End of onCreate method
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(MainActivity.isAutoLogOutActive()){
+            //Set current activity context for the Logout timer in order to display auto logout prompt
+            ((LogOutTimer)AutoLogOutService.getLogOutTimer()).setContext(this);
+        }
+
+    }//End of onResume method
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.d("onCreateOptionsMenu","Enter onCreateOptionsMenu method in AboutActivity abstract class.");
