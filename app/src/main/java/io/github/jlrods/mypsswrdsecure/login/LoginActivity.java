@@ -256,6 +256,7 @@ public class LoginActivity extends AppCompatActivity {
                     Bundle extras = getIntent().getExtras();
                     if(extras!=null){
                         if(extras.getBoolean("isActivityCalledFromNotification")){
+                            checkIsAutoLogOutActive();
                             int accountID = extras.getInt("expiredPasswordAccountID");
                             Account expiredPasswordAccount = Account.extractAccount(accountsDB.getAccountCursorByID(accountID));
                             Intent i = new Intent(getBaseContext(), EditAccountActivity.class);
@@ -264,6 +265,7 @@ public class LoginActivity extends AppCompatActivity {
                             i.putExtra(MainActivity.getIdColumn(), expiredPasswordAccount.get_id());
                             //i.putExtra("position",itemPosition);
                             startActivity(i);
+
                         }else{
                             throwMainActivity(appLoggin.get_id());
                         }//End of if else statement to check if call comes from push notification
@@ -363,6 +365,8 @@ public class LoginActivity extends AppCompatActivity {
                     Bundle extras = getIntent().getExtras();
                     if(extras!=null){
                         if(extras.getBoolean("isActivityCalledFromNotification")){
+                            //@Fixme: There's duplication here, create a method
+                            checkIsAutoLogOutActive();
                             int accountID = extras.getInt("expiredPasswordAccountID");
                             Account expiredPasswordAccount = Account.extractAccount(accountsDB.getAccountCursorByID(accountID));
                             Intent i = new Intent(getBaseContext(), EditAccountActivity.class);
@@ -424,11 +428,8 @@ public class LoginActivity extends AppCompatActivity {
     //Method to throw new MainActivity method
     private void throwMainActivity(int appLoginId){
         Log.d("ThrowMain","Enter throwMainActivity method in the LoginActivity class.");
-        //Start service
-        if(MainActivity.isAutoLogOutActive(this)){
-            Intent autoLogOutService = new Intent(this, AutoLogOutService.class);
-            startService(autoLogOutService);
-        }
+        //Start service if required
+        this.checkIsAutoLogOutActive();
         //Create new intent to launch MainActivity
         Intent i= new Intent(LoginActivity.this, MainActivity.class);
         //Put appLogin
@@ -437,6 +438,23 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(i);
         Log.d("ThrowMain","Exit throwMainActivity method in the LoginActivity class.");
     }//End of throwAddTaskActivity
+
+    private boolean checkIsAutoLogOutActive(){
+        Log.d("checkAutoLog","Enter checkIsAutoLogOutActive method in the LoginActivity class.");
+        boolean result = false;
+        try{
+            if(MainActivity.isAutoLogOutActive(this)){
+                Intent autoLogOutService = new Intent(this, AutoLogOutService.class);
+                startService(autoLogOutService);
+            }//End of if statement to check auto logout feature is on
+            result = true;
+            Log.d("checkAutoLog","Exit checkIsAutoLogOutActive method successfully in the LoginActivity class.");
+        }catch (Exception e){
+            Log.d("checkAutoLog","Exit checkIsAutoLogOutActive method  in the LoginActivity class with error: " + e.getMessage());
+        }finally{
+            return result;
+        }//End of try catch finally block
+    }//End of checkIsAutoLogOutActive method
 
     //Method to delay and wait for login activity then call biometric authentication method
     private void callBiometricAuthentication(){

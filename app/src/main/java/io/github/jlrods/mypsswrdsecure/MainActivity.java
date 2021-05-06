@@ -530,8 +530,7 @@ public class MainActivity extends AppCompatActivity {
             notificationBuilder.setContentIntent(pendingIntent);
             if(notificationManager != null){
                 notificationManager.notify(expiredPasswordAccountID,notificationBuilder.build());
-            }
-
+            }//End of if statement to check if push notification has been sent to Android OS
         }//End of if statement to check if push notification has been sent to OS
     }//End of onStop method
 

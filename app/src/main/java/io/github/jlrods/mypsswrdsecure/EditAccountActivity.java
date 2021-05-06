@@ -188,10 +188,6 @@ public class EditAccountActivity extends DisplayAccountActivity{
                                                             MainActivity.displayToast(this,accountName + getResources().getString(R.string.accountUpdated),Toast.LENGTH_LONG,Gravity.CENTER);
                                                             //If that is the case we need to manually force MainActivity to be displayed
                                                             Intent i = new Intent(this,MainActivity.class);
-//                                                            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                    TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-//// Adds the back stack
-//                    stackBuilder.addParentStack(LoginActivity.class);
                                                             startActivity(i);
                                                         }else{
                                                             //Call method to update data set displayed on the recycler view and display proper message after adding the grocery to the DB
