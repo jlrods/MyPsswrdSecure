@@ -339,8 +339,11 @@
 
     <!--    Extra messages-->
     <string name="errorLoadCamera">Error when loading picture from camera</string>
-    <string name="errorSearchTextEmpty">Lo siento,el texto a buscar está vacíoi</string>
+    <string name="errorSearchTextEmpty">Sorry, the searched text was empty</string>
     <string name="appLoginUpdateError">Sorry, the DB failed to record the changes in the app login!</string>
     <string name="logOutServiceDescription">Service to manage MyPsswrdSecure automatic logout count down timer</string>
+    <string name="logOutTitle">Logout</string>
+    <string name="logOutMssg">Log out Timeout!</string>
+    <string name="logOutContinue">Continue?</string>
 
 </resources>

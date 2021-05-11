@@ -30,12 +30,10 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import java.util.concurrent.Executor;
 import javax.crypto.spec.IvParameterSpec;
-
 import io.github.jlrods.mypsswrdsecure.Account;
 import io.github.jlrods.mypsswrdsecure.AccountsDB;
 import io.github.jlrods.mypsswrdsecure.AppLoggin;
 import io.github.jlrods.mypsswrdsecure.AutoLogOutService;
-import io.github.jlrods.mypsswrdsecure.Category;
 import io.github.jlrods.mypsswrdsecure.Cryptographer;
 import io.github.jlrods.mypsswrdsecure.EditAccountActivity;
 import io.github.jlrods.mypsswrdsecure.Psswrd;

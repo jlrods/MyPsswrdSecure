@@ -8,8 +8,6 @@ import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.SwitchPreference;
 
-import io.github.jlrods.mypsswrdsecure.login.LoginActivity;
-
 /**
  * Created by rodjose1 on 18/07/2018.
  */
@@ -41,9 +39,7 @@ public class PreferencesFragment extends androidx.preference.PreferenceFragmentC
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         Log.d("preference", "Pending Preference value is: " + newValue);
         if(preference.equals(findPreference("appTheme")) || preference.equals(findPreference("languages")) ){
-            Intent intent = new Intent(this.getContext(), LoginActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            MainActivity.logout(this.getContext());
         }else if(((SwitchPreference)preference).equals(findPreference("isAutoLogOutActive"))){
             ListPreference timeOutTime = (ListPreference) findPreference("logOutTime");
             //Set new state of switch as the new time out time preference visibility
@@ -54,20 +50,21 @@ public class PreferencesFragment extends androidx.preference.PreferenceFragmentC
             }else{
                 Intent autoLogOutService = new Intent(getContext(), AutoLogOutService.class);
                 getActivity().stopService(autoLogOutService);
-                CountDownTimer delayTimer = new CountDownTimer(2000,250) {
-                    @Override
-                    public void onTick(long millisUntilFinished) {
 
-                    }
-
-                    @Override
-                    public void onFinish() {
-                        ((LogOutTimer)AutoLogOutService.getLogOutTimer()).setContext(getActivity());
-                    }
-                };
-                delayTimer.start();
             }
+            CountDownTimer delayTimer = new CountDownTimer(2000,250) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    Log.d("onTick", "Enter/Exit  CountDownTimer onTick method  in PreferenceFragment class.");
+                }//End of onTick method
 
+                @Override
+                public void onFinish() {
+                    ((LogOutTimer)AutoLogOutService.getLogOutTimer()).setContext(getActivity());
+                    Log.d("onTick", "Enter/Exit  CountDownTimer onFinish method  in PreferenceFragment class.");
+                }//End of onFinish method
+            };
+            delayTimer.start();
         }// End of if else statements to check what preference changed
         return true;
     }//End of onPreferenceChange method

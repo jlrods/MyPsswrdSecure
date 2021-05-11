@@ -532,6 +532,13 @@ public class MainActivity extends AppCompatActivity {
                 notificationManager.notify(expiredPasswordAccountID,notificationBuilder.build());
             }//End of if statement to check if push notification has been sent to Android OS
         }//End of if statement to check if push notification has been sent to OS
+        //Dismiss alert dialog if displayed to avoid window leakage
+        AlertDialog alertDialog = ((LogOutTimer)AutoLogOutService.getLogOutTimer()).getAlertDialog();
+        if( alertDialog != null){
+            alertDialog.dismiss();
+            alertDialog = null;
+            //((LogOutTimer)AutoLogOutService.getLogOutTimer()).setAlertDialog(null);
+        }
     }//End of onStop method
 
     @Override
@@ -546,29 +553,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        //Make sure aler dialog window created by LogOutTimer class is dismissed before destroying current activity
+        if( ((LogOutTimer)AutoLogOutService.getLogOutTimer()).getAlertDialog() != null){
+            ((LogOutTimer)AutoLogOutService.getLogOutTimer()).getAlertDialog().dismiss();
+            ((LogOutTimer)AutoLogOutService.getLogOutTimer()).setAlertDialog(null);
+        }
+    }//End of onDestroy method
 
-    }
 
-    //Method to logout app
-    private void logout() {
-        Log.d("logout", "Enter logout method in MainActivity class.");
-        //Display alert with justification about why permit is necessary
-        AlertDialog.Builder alert = displayAlertDialogNoInput(this, "Logout", "Log out Timeout!");
-        alert.setPositiveButton("Continue",new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                ((LogOutTimer)AutoLogOutService.getLogOutTimer()).start();
-            }
-
-        }).setNegativeButton("LogOut",new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        callFinish();
-                    }
-
-                }).show();
-        Log.d("logout", "Exit logout method in MainActivity class.");
-    }//End of logout method
 
     //Method to call android finish method
     public void callFinish(){
@@ -2971,8 +2963,33 @@ public class MainActivity extends AppCompatActivity {
         return isLogOut;
     }//End of setAppTheme method
 
+    //Method to logout app
+    private void logout() {
+        Log.d("logout", "Enter logout method in MainActivity class.");
+        //Display alert with justification about why permit is necessary
+        AlertDialog.Builder alert = displayAlertDialogNoInput(this, "Logout", "Log out Timeout!");
+        alert.setPositiveButton("Continue",new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                ((LogOutTimer)AutoLogOutService.getLogOutTimer()).start();
+            }
+
+        }).setNegativeButton("LogOut",new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                callFinish();
+            }//End of on Click method
+
+        }).show();
+        Log.d("logout", "Exit logout method in MainActivity class.");
+    }//End of logout method
+
     public static void logout(Context context){
         Log.d("logout", "Enter logout method in MainActivity class called by: "+ context.toString());
+        if(isAutoLogOutActive()){
+            Intent iService = new Intent(context,AutoLogOutService.class);
+            context.stopService(iService);
+        }
         Intent i = new Intent((Activity)context, LoginActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         ((Activity)context).startActivity(i);

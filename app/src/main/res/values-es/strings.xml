@@ -331,7 +331,10 @@
 
     <!--    Extra messages-->
     <string name="errorLoadCamera">Error al cargar image desde la cámara</string>
-    <string name="errorSearchTextEmpty">Sorry, the searched text was empty</string>
+    <string name="errorSearchTextEmpty">Lo siento,el texto a buscar está vacío</string>
     <string name="appLoginUpdateError">Los siento, la base de datos ha fallado en registrar los cambios en el login!</string>
     <string name="logOutServiceDescription">Servicio para administrar deslogueo automático de la applicación MyPsswrdSecure</string>
+    <string name="logOutTitle">Desloguear</string>
+    <string name="logOutMssg">Tiempo de logueo ha expirado!</string>
+    <string name="logOutContinue">Continuar?</string>
 </resources>
