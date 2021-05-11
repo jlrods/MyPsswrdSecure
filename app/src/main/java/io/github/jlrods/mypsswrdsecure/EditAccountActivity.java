@@ -28,6 +28,8 @@ public class EditAccountActivity extends DisplayAccountActivity{
         if(extras.getBoolean("isActivityCalledFromNotification")){
             //Reset boolean flag to display notification
             MainActivity.setIsPushNotificationSent(false);
+            //Remove back arrow button to avoid stopping service
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         }
         //Set activity title
         getSupportActionBar().setTitle(R.string.editAccTitle);
@@ -103,8 +105,21 @@ public class EditAccountActivity extends DisplayAccountActivity{
     @Override
     public void onResume() {
         super.onResume();
-//        MainActivity.displayToast(this,"OnResume called",Toast.LENGTH_LONG,Gravity.CENTER);
     }//End of onResume method
+
+    @Override
+    public void onBackPressed(){
+        Log.d("onResumeMain", "Enter onBackPressed method in MainActivity class.");
+        if(extras.getBoolean("isActivityCalledFromNotification")){
+            if(MainActivity.isAutoLogOutActive()){
+                Intent iService = new Intent(this,AutoLogOutService.class);
+                this.stopService(iService);
+            }//End of if statement to check auto logout is active
+        }//End of if statement to check activity was called from push notification
+        super.onBackPressed();
+        Log.d("onResumeMain", "Exit onBackPressed method in MainActivity class.");
+    }//End of onBackPressed method
+
 
     // Method to check the menu item selected and execute the corresponding actions
     @Override
@@ -311,14 +326,10 @@ public class EditAccountActivity extends DisplayAccountActivity{
                     //If that is the case we need to manually force MainActivity to be displayed
                     Intent i = new Intent(this,MainActivity.class);
                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                    TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-//// Adds the back stack
-//                    stackBuilder.addParentStack(LoginActivity.class);
                     startActivity(i);
                 }else{
                     finish();
-                }
-
+                }//End of if else statement to check activity is called from push notification
                 break;
             case R.id.action_logout:
                 //Call method to throw LoginActivity and clear activity stack.

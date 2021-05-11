@@ -11,6 +11,7 @@ public class LogOutTimer extends CountDownTimer {
     long logOutTimeRemainder;
     private Context context;
     private AlertDialog alertDialog;
+    private boolean isTimerDone = false;
     /**
      * @param logOutTime    The number of millis in the future from the call
      *                          to {@link #start()} until the countdown is done and {@link #onFinish()}
@@ -21,6 +22,7 @@ public class LogOutTimer extends CountDownTimer {
     public LogOutTimer(long logOutTime, long countDownInterval, Context context) {
         super(logOutTime, countDownInterval);
         this.context = context;
+        this.isTimerDone = false;
         Log.d("LogOutTimer", "Enter/Exit  LogOutTimer constructor method  in LogOutTime class.");
     }//End of Constructor method
 
@@ -39,6 +41,7 @@ public class LogOutTimer extends CountDownTimer {
     public void onFinish() {
         Log.d("onFinish", "Enter CountDownTimer onFinish method for logout in LogOutTime class.");
         Toast.makeText(context, "Logout Timer is done!", Toast.LENGTH_SHORT).show();
+        this.isTimerDone = true;
         //Call method to handle logout timeout event
         this.timeOut();
         Log.d("onFinish", "Exit CountDownTimer onFinish method for logout in LogOutTime class.");
@@ -58,6 +61,7 @@ public class LogOutTimer extends CountDownTimer {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 start();
+                isTimerDone = false;
             }
 
         }).setNegativeButton(R.string.logOutTitle,new DialogInterface.OnClickListener() {
@@ -96,4 +100,12 @@ public class LogOutTimer extends CountDownTimer {
     }//End of serAlertDialog method
 
     public AlertDialog getAlertDialog(){return  this.alertDialog;}//End of getAlerDialog method
+
+    public boolean isTimerDone() {
+        return isTimerDone;
+    }//End of isTimerDone method
+
+    public void setTimerDone(boolean timerDone) {
+        isTimerDone = timerDone;
+    }//End of setTimerDone method
 }//End of LogoOutTimer class
