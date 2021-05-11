@@ -582,7 +582,7 @@ public class MainActivity extends AppCompatActivity {
         super.onBackPressed();
         Log.d("onResumeMain", "Exit onBackPressed method in MainActivity class.");
     }//End of onBackPressed method
-    
+
     //Method to call android finish method
     public void callFinish(){
         Log.d("callFinish", "Enter|Exit logout method in MainActivity class.");
