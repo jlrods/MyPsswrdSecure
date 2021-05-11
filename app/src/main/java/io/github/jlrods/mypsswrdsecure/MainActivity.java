@@ -84,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
     private static Cryptographer cryptographer;
     private boolean goodResultDelivered = false;
     private int itemPosition = -1;
+    private boolean mainActLauchedFromLoginAct = false;
 
     //Set notify change type to insert item type
     private NotifyChangeType changeType = NotifyChangeType.DATA_SET_CHANGED;
@@ -209,6 +210,9 @@ public class MainActivity extends AppCompatActivity {
         //Get extras coming from LogginActivity (AppLoggin ID)
         //Extract extra data from owner Activity
         this.extras = getIntent().getExtras();
+        if(this.extras !=null){
+            mainActLauchedFromLoginAct = true;
+        }
         //Get the tool bar off layout
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -426,7 +430,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Create current AppLoggin by passing extra information coming from login activity. This was intended to support multiple user login.
         //Workaround to fix push notification task stack reset
-        if(this.extras!=null){
+        if(mainActLauchedFromLoginAct){
             //If extras are sent from LogginActivity, get ID from extras
             this.currentAppLoggin = AppLoggin.extractAppLoggin(accountsDB.getAppLoginCursor(this.extras.getInt("appLoginID")));
         }else{
@@ -516,6 +520,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onStop(){
         super.onStop();
+        Log.d("onStopMain", "Enter onStop method in MainActivity class.");
         if(isPushNotificationSent){
             //Update the intent so it calls the login screen
             Intent intent = new Intent(this, LoginActivity.class);
@@ -539,33 +544,45 @@ public class MainActivity extends AppCompatActivity {
             alertDialog = null;
             //((LogOutTimer)AutoLogOutService.getLogOutTimer()).setAlertDialog(null);
         }
+        Log.d("onStopMain", "Exit onStop method in MainActivity class.");
     }//End of onStop method
 
     @Override
     public void onResume() {
         super.onResume();
+        Log.d("onResumeMain", "Enter onResume method in MainActivity class.");
         if(MainActivity.isAutoLogOutActive()){
             //Set current activity context for the Logout timer in order to display auto logout prompt
             ((LogOutTimer)AutoLogOutService.getLogOutTimer()).setContext(this);
         }
+        Log.d("onResumeMain", "Exit onResume method in MainActivity class.");
     }//End of onResume method
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.d("onResumeMain", "Enter onDestroy method in MainActivity class.");
         //Make sure aler dialog window created by LogOutTimer class is dismissed before destroying current activity
         if( ((LogOutTimer)AutoLogOutService.getLogOutTimer()).getAlertDialog() != null){
             ((LogOutTimer)AutoLogOutService.getLogOutTimer()).getAlertDialog().dismiss();
             ((LogOutTimer)AutoLogOutService.getLogOutTimer()).setAlertDialog(null);
         }
-        if(isAutoLogOutActive()){
-            Intent iService = new Intent(this,AutoLogOutService.class);
-            this.stopService(iService);
-        }
+        Log.d("onResumeMain", "Exit onDestroy method in MainActivity class.");
     }//End of onDestroy method
 
-
-
+    @Override
+    public void onBackPressed(){
+        Log.d("onResumeMain", "Enter onBackPressed method in MainActivity class.");
+        if(mainActLauchedFromLoginAct){
+            if(isAutoLogOutActive()){
+                Intent iService = new Intent(this,AutoLogOutService.class);
+                this.stopService(iService);
+            }
+        }
+        super.onBackPressed();
+        Log.d("onResumeMain", "Exit onBackPressed method in MainActivity class.");
+    }//End of onBackPressed method
+    
     //Method to call android finish method
     public void callFinish(){
         Log.d("callFinish", "Enter|Exit logout method in MainActivity class.");
