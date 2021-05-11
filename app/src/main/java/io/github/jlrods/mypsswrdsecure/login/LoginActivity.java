@@ -288,6 +288,23 @@ public class LoginActivity extends AppCompatActivity {
         Log.d("Ext_onCreateLogin","Exit onCreate method in LoginActivity class.");
     }//End of onCreate method
 
+    @Override
+    //User on resume method to call biometric authentication method again
+    public void onResume(){
+        super.onResume();
+        Log.d("onResume","Enter onResume method in the LoginActivity class.");
+        //Clear previous entered data
+        EditText etUsernameId = findViewById(R.id.etUsernameId);
+        EditText etPassword = findViewById(R.id.etPassword);
+        etUsernameId.setText("");
+        etPassword.setText("");
+        //Call method to display biometric authentication dialog if setting is active
+        if(getIsBioLoginActive(this) && !displaySignUp){
+            this.callBiometricAuthentication();
+        }
+        Log.d("onResume","Enter onResume method in the LoginActivity class.");
+    }//End of onResume method
+
     private boolean encryptedCredentialValidation(byte[] encryptedCredential, byte[] credentialIV ,TextView tvCredential){
         return cryptographer.decryptText(encryptedCredential,new IvParameterSpec(credentialIV)).equals(tvCredential.getText().toString().trim());
     }
@@ -295,9 +312,6 @@ public class LoginActivity extends AppCompatActivity {
     private void updateUiWithUser(LoggedInUserView model) {
         String welcome = getString(R.string.welcome) + model.getDisplayName();
         // TODO : initiate successful logged in experience
-//        Intent i = new Intent(this,MainActivity.class);
-//        this.startActivity(i);
-//        Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
     }
 
     private void showLoginFailed(@StringRes Integer errorString) {
@@ -406,22 +420,7 @@ public class LoginActivity extends AppCompatActivity {
         Log.d("biometricAuthentication","Exit biometricAuthentication method in the LoginActivity class.");
     }//End of biometricAuthentication method
 
-    @Override
-    //User on resume method to call biometric authentication method again
-    public void onResume(){
-        super.onResume();
-        Log.d("onResume","Enter onResume method in the LoginActivity class.");
-        //Clear previous entered data
-        EditText etUsernameId = findViewById(R.id.etUsernameId);
-        EditText etPassword = findViewById(R.id.etPassword);
-        etUsernameId.setText("");
-        etPassword.setText("");
-        //Call method to display biometric authentication dialog if setting is active
-        if(getIsBioLoginActive(this) && !displaySignUp){
-            this.callBiometricAuthentication();
-        }
-        Log.d("onResume","Enter onResume method in the LoginActivity class.");
-    }//End of onResume method
+
 
     //Method to throw new MainActivity method
     private void throwMainActivity(int appLoginId){

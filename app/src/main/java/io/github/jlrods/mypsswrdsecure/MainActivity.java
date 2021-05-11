@@ -558,6 +558,10 @@ public class MainActivity extends AppCompatActivity {
             ((LogOutTimer)AutoLogOutService.getLogOutTimer()).getAlertDialog().dismiss();
             ((LogOutTimer)AutoLogOutService.getLogOutTimer()).setAlertDialog(null);
         }
+        if(isAutoLogOutActive()){
+            Intent iService = new Intent(this,AutoLogOutService.class);
+            this.stopService(iService);
+        }
     }//End of onDestroy method
 
 
