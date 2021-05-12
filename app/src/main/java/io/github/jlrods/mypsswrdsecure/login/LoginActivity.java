@@ -431,6 +431,7 @@ public class LoginActivity extends AppCompatActivity {
         Intent i= new Intent(LoginActivity.this, MainActivity.class);
         //Put appLogin
         i.putExtra("appLoginID",appLoginId);
+        i.putExtra("isMainActCalledFromLoginAct",true);
         //Start the MainActivity class
         startActivity(i);
         Log.d("ThrowMain","Exit throwMainActivity method in the LoginActivity class.");

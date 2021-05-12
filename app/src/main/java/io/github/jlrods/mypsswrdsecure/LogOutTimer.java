@@ -1,11 +1,15 @@
 package io.github.jlrods.mypsswrdsecure;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
+
+import static android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND;
+import static android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_VISIBLE;
 
 public class LogOutTimer extends CountDownTimer {
     long logOutTimeRemainder;
@@ -55,39 +59,47 @@ public class LogOutTimer extends CountDownTimer {
     //Method to handle logout timeout event
     private void timeOut() {
         Log.d("timeOut", "Enter  timeOut method for logout in LogOutTime class.");
-        //Display alert with justification about why permit is necessary
-        final AlertDialog.Builder alert = MainActivity.displayAlertDialogNoInput(this.context, context.getString(R.string.logOutTitle), context.getString(R.string.logOutMssg));
-        alert.setPositiveButton(R.string.logOutContinue,new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                start();
-                isTimerDone = false;
-            }
-
-        }).setNegativeButton(R.string.logOutTitle,new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //Dismiss current alert dialog window
-                if( alertDialog != null){
-                    alertDialog.dismiss();
-                    alertDialog = null;
+        //Check if app is on the foreground, then display alert dialog if so
+        if(this.isAppInForeground()){
+            //Display alert with justification about why permit is necessary
+            final AlertDialog.Builder alert = MainActivity.displayAlertDialogNoInput(this.context, context.getString(R.string.logOutTitle), context.getString(R.string.logOutMssg));
+            alert.setPositiveButton(R.string.logOutContinue,new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    start();
+                    isTimerDone = false;
                 }
-                MainActivity.logout(context);
-            }//End of onClick method
 
-        }).setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialog) {
-                //Dismiss current alert dialog window
-                if( alertDialog != null){
-                    alertDialog.dismiss();
-                    alertDialog = null;
-                }
-                MainActivity.logout(context);
-            }//End of onCancel method
-        });
-        alertDialog = alert.create();
-        alertDialog.show();
+            }).setNegativeButton(R.string.logOutTitle,new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //Dismiss current alert dialog window
+                    if( alertDialog != null){
+                        alertDialog.dismiss();
+                        alertDialog = null;
+                    }
+                    MainActivity.logout(context);
+                }//End of onClick method
+
+            }).setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    //Dismiss current alert dialog window
+                    if( alertDialog != null){
+                        alertDialog.dismiss();
+                        alertDialog = null;
+                    }
+                    MainActivity.logout(context);
+                }//End of onCancel method
+            });
+            alertDialog = alert.create();
+            alertDialog.show();
+        }else{
+            //Call main activity logout method to kill service and call LoginActivity
+            MainActivity.logout(context);
+        }//End of if else statement to check app is on the foreground
+        //Otherwise, stop service
+
         Log.d("timeOut", "Exit  timeOut method for logout in LogOutTime class.");
     }//End of logout method
 
@@ -108,4 +120,13 @@ public class LogOutTimer extends CountDownTimer {
     public void setTimerDone(boolean timerDone) {
         isTimerDone = timerDone;
     }//End of setTimerDone method
+
+    //Method to check if MyPsswrdSecure app is on the foreground (important for Auto Logout Alert dialog display)
+    public boolean isAppInForeground() {
+        Log.d("isAppInForeground", "Enter  isAppInForeground method for logout in LogOutTimer class.");
+        ActivityManager.RunningAppProcessInfo appProcessInfo = new ActivityManager.RunningAppProcessInfo();
+        ActivityManager.getMyMemoryState(appProcessInfo);
+        Log.d("isAppInForeground", "Exit  isAppInForeground method for logout in LogOutTime class.");
+        return (appProcessInfo.importance == IMPORTANCE_FOREGROUND || appProcessInfo.importance == IMPORTANCE_VISIBLE);
+    }//End of isAppInForeground method
 }//End of LogoOutTimer class

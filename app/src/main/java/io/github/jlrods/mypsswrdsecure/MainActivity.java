@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
     private static Cryptographer cryptographer;
     private boolean goodResultDelivered = false;
     private int itemPosition = -1;
-    private boolean mainActLauchedFromLoginAct = false;
+    private boolean mainActLauchedFromLoginAct;
 
     //Set notify change type to insert item type
     private NotifyChangeType changeType = NotifyChangeType.DATA_SET_CHANGED;
@@ -211,7 +211,9 @@ public class MainActivity extends AppCompatActivity {
         //Extract extra data from owner Activity
         this.extras = getIntent().getExtras();
         if(this.extras !=null){
-            mainActLauchedFromLoginAct = true;
+            if(extras.getBoolean("isMainActCalledFromLoginAct")){
+                mainActLauchedFromLoginAct = true;
+            }
         }
         //Get the tool bar off layout
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -574,7 +576,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed(){
-        Log.d("onResumeMain", "Enter onBackPressed method in MainActivity class.");
+        Log.d("onBackPressedMain", "Enter onBackPressed method in MainActivity class.");
         if(mainActLauchedFromLoginAct){
             if(isAutoLogOutActive()){
                 Intent iService = new Intent(this,AutoLogOutService.class);
@@ -582,7 +584,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         super.onBackPressed();
-        Log.d("onResumeMain", "Exit onBackPressed method in MainActivity class.");
+        Log.d("onBackPressedMain", "Exit onBackPressed method in MainActivity class.");
     }//End of onBackPressed method
 
     //Method to call android finish method

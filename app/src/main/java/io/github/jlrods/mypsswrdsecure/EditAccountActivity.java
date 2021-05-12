@@ -107,7 +107,7 @@ public class EditAccountActivity extends DisplayAccountActivity{
 
     @Override
     public void onBackPressed(){
-        Log.d("onResumeMain", "Enter onBackPressed method in MainActivity class.");
+        Log.d("onBackPressedEditAcc", "Enter onBackPressed method in EditAccountActivity class.");
         //Check if activity was called from notification and if notification comes from when MainActivity was  running or not
         if(extras.getBoolean("isActivityCalledFromNotification") && !extras.getBoolean("notifiCationIssuedFromMainAct")){
             if(MainActivity.isAutoLogOutActive()){
@@ -116,7 +116,7 @@ public class EditAccountActivity extends DisplayAccountActivity{
             }//End of if statement to check auto logout is active
         }//End of if statement to check activity was called from push notification
         super.onBackPressed();
-        Log.d("onResumeMain", "Exit onBackPressed method in MainActivity class.");
+        Log.d("onBackPressedEditAcc", "Exit onBackPressed method in EditAccountActivity class.");
     }//End of onBackPressed method
 
 
@@ -202,6 +202,7 @@ public class EditAccountActivity extends DisplayAccountActivity{
                                                             MainActivity.displayToast(this,accountName + getResources().getString(R.string.accountUpdated),Toast.LENGTH_LONG,Gravity.CENTER);
                                                             //If that is the case we need to manually force MainActivity to be displayed
                                                             Intent i = new Intent(this,MainActivity.class);
+                                                            intent.putExtra("isMainActCalledFromEditAccAct",true);
                                                             startActivity(i);
                                                         }else{
                                                             //Call method to update data set displayed on the recycler view and display proper message after adding the grocery to the DB
@@ -212,9 +213,7 @@ public class EditAccountActivity extends DisplayAccountActivity{
                                                             setResult(RESULT_OK, intent);
                                                             Log.d("onOptionsItemSelected","Set activity result to OK  on onOptionsItemSelected method in EditAccountActivity class.");
                                                             finish();
-                                                        }
-
-
+                                                        }//End of if else statement that checks activity is called from notification
                                                     }else{
                                                         //In case of failure updating the account, try to roll back the question list assigned to account on DB
                                                         //Check the new and old list are not the same
