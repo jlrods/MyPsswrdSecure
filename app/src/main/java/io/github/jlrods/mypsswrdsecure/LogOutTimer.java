@@ -93,6 +93,7 @@ public class LogOutTimer extends CountDownTimer {
                 }//End of onCancel method
             });
             alertDialog = alert.create();
+            alertDialog.setCanceledOnTouchOutside(false);
             alertDialog.show();
         }else{
             //Call main activity logout method to kill service and call LoginActivity
@@ -127,6 +128,6 @@ public class LogOutTimer extends CountDownTimer {
         ActivityManager.RunningAppProcessInfo appProcessInfo = new ActivityManager.RunningAppProcessInfo();
         ActivityManager.getMyMemoryState(appProcessInfo);
         Log.d("isAppInForeground", "Exit  isAppInForeground method for logout in LogOutTime class.");
-        return (appProcessInfo.importance == IMPORTANCE_FOREGROUND || appProcessInfo.importance == IMPORTANCE_VISIBLE);
+        return (appProcessInfo.importance == IMPORTANCE_FOREGROUND);
     }//End of isAppInForeground method
 }//End of LogoOutTimer class

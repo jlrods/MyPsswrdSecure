@@ -541,13 +541,6 @@ public class MainActivity extends AppCompatActivity {
                 notificationManager.notify(expiredPasswordAccountID,notificationBuilder.build());
             }//End of if statement to check if push notification has been sent to Android OS
         }//End of if statement to check if push notification has been sent to OS
-        //Dismiss alert dialog if displayed to avoid window leakage
-        AlertDialog alertDialog = ((LogOutTimer)AutoLogOutService.getLogOutTimer()).getAlertDialog();
-        if( alertDialog != null){
-            alertDialog.dismiss();
-            alertDialog = null;
-            //((LogOutTimer)AutoLogOutService.getLogOutTimer()).setAlertDialog(null);
-        }
         Log.d("onStopMain", "Exit onStop method in MainActivity class.");
     }//End of onStop method
 
@@ -565,13 +558,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d("onResumeMain", "Enter onDestroy method in MainActivity class.");
-        //Make sure aler dialog window created by LogOutTimer class is dismissed before destroying current activity
-        if( ((LogOutTimer)AutoLogOutService.getLogOutTimer()).getAlertDialog() != null){
-            ((LogOutTimer)AutoLogOutService.getLogOutTimer()).getAlertDialog().dismiss();
-            ((LogOutTimer)AutoLogOutService.getLogOutTimer()).setAlertDialog(null);
-        }
-        Log.d("onResumeMain", "Exit onDestroy method in MainActivity class.");
+        Log.d("onResumeMain", "Enter/Exit onDestroy method in MainActivity class.");
     }//End of onDestroy method
 
     @Override
@@ -581,8 +568,8 @@ public class MainActivity extends AppCompatActivity {
             if(isAutoLogOutActive()){
                 Intent iService = new Intent(this,AutoLogOutService.class);
                 this.stopService(iService);
-            }
-        }
+            }//End of if statement to check auto logout feature is activated
+        }//End of if statement to check main Activity was launched from Login Activity
         super.onBackPressed();
         Log.d("onBackPressedMain", "Exit onBackPressed method in MainActivity class.");
     }//End of onBackPressed method
