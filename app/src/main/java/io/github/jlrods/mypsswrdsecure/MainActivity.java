@@ -490,6 +490,7 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("category", expiredPsswrdAccount.getCategory().get_id());
             intent.putExtra(ID_COLUMN, expiredPsswrdAccount.get_id());
             intent.putExtra("isActivityCalledFromNotification",true);
+            intent.putExtra("notifiCationIssuedFromMainAct",true);
             stackBuilder.addNextIntentWithParentStack(intent);
             PendingIntent pendingIntent = stackBuilder.getPendingIntent(THROW_EDIT_ACCOUNT_ACT_REQCODE, PendingIntent.FLAG_UPDATE_CURRENT);
             notificationBuilder = new NotificationCompat.Builder(this,CHANNEL_ID)
@@ -529,6 +530,7 @@ public class MainActivity extends AppCompatActivity {
             //intent.putExtra("category", expiredPsswrdAccount.getCategory().get_id());
             intent.putExtra("isActivityCalledFromNotification", true);
             intent.putExtra("expiredPasswordAccountID",expiredPasswordAccountID);
+            intent.putExtra("notifiCationIssuedFromMainAct",false);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             stackBuilder.addNextIntentWithParentStack(intent);
             PendingIntent pendingIntent = stackBuilder.getPendingIntent(THROW_EDIT_ACCOUNT_ACT_REQCODE, PendingIntent.FLAG_UPDATE_CURRENT);

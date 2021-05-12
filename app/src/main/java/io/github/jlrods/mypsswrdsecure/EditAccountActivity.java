@@ -12,9 +12,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.TaskStackBuilder;
 
-import io.github.jlrods.mypsswrdsecure.login.LoginActivity;
 
 public class EditAccountActivity extends DisplayAccountActivity{
     //Attribute definition
@@ -110,7 +108,8 @@ public class EditAccountActivity extends DisplayAccountActivity{
     @Override
     public void onBackPressed(){
         Log.d("onResumeMain", "Enter onBackPressed method in MainActivity class.");
-        if(extras.getBoolean("isActivityCalledFromNotification")){
+        //Check if activity was called from notification and if notification comes from when MainActivity was  running or not
+        if(extras.getBoolean("isActivityCalledFromNotification") && !extras.getBoolean("notifiCationIssuedFromMainAct")){
             if(MainActivity.isAutoLogOutActive()){
                 Intent iService = new Intent(this,AutoLogOutService.class);
                 this.stopService(iService);
