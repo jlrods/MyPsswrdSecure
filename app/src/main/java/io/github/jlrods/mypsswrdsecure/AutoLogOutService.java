@@ -13,12 +13,13 @@ import androidx.annotation.Nullable;
 public class AutoLogOutService extends Service {
     //LogOutTimer object, which counts down time to prompt user about login out of app or continue working.
     private static LogOutTimer logOutTimer;
+    public static int COUNT_DOWN_INTERVAL = 250;
 
     @Override
     public void onCreate(){
         Log.d("timeOut", "Enter  onCreate method AutoLogOutService class.");
         long logOutTime = MainActivity.getLogOutTime(this);
-        this.logOutTimer = new LogOutTimer(logOutTime, 250,this);
+        this.logOutTimer = new LogOutTimer(logOutTime, COUNT_DOWN_INTERVAL,this);
         Log.d("timeOut", "Exit  onCreate method AutoLogOutService class.");
     }//End of onCreate method
 
