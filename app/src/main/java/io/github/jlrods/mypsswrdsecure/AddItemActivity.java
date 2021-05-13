@@ -368,6 +368,8 @@ public abstract class AddItemActivity extends AppCompatActivity {
             final ArrayList[] listOfAccountsUsingTheItemArray = {listOfAccountsUsingTheItem};
             Cursor listOfQuestionListsUsingTheQuestion = null;
             final Cursor[] listOfQuestionListsUsingTheQuestionArray = {listOfQuestionListsUsingTheQuestion};
+            //Keep original value of the alert dialog message
+            final String alertDialogMessageOriginal = alertDialogMessage;
             //Check if the item is being used in any account
             //If item's being used, alert the user where to find it by modifying the alertDialogMessage text
             if(this.item instanceof Psswrd){
@@ -392,9 +394,9 @@ public abstract class AddItemActivity extends AppCompatActivity {
                 listOfAccountsUsingTheItem = accountsDB.getAccountsIDListUsingItemWithID(itemType,itemID);
                 listOfAccountsUsingTheItemArray[0] = listOfAccountsUsingTheItem;
                 if(timesUsed > 1){
-                    alertDialogMessage += "\nThe "+ itemType+ " is being used " + timesUsed + " times.\nThe item will be removed from the following accounts:";
+                    alertDialogMessage += getString(R.string.the_item)+ getString(R.string.being_used) + timesUsed + getString(R.string.several_accounts_to_remove);
                 }else{
-                    alertDialogMessage += "\nThe "+ itemType+ " is being used " + timesUsed + " time.\nThe item will be removed from the following account:";
+                    alertDialogMessage += getString(R.string.the_item)+ getString(R.string.being_used) + timesUsed + getString(R.string.one_account_to_remove);
                 }
                 //Concat the accounts names to the warning text
                 for(int i=0;i < listOfAccountsUsingTheItem.size();i++){
@@ -411,14 +413,14 @@ public abstract class AddItemActivity extends AppCompatActivity {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     //Reset dialog alert text so message is not duplicated when cancelled alert dialog box
-                    alertDialogMessage = "";
+                    alertDialogMessage = alertDialogMessageOriginal;
                 }
             });
             dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
                 @Override
                 public void onCancel(DialogInterface dialog) {
                     //Reset dialog alert text so message is not duplicated when exit alert dialog box without pressing any button
-                    alertDialogMessage = "";
+                    alertDialogMessage = alertDialogMessageOriginal;
                 }
             });
             dialog.setPositiveButton(R.string.dialog_OK, new DialogInterface.OnClickListener() {

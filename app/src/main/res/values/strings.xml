@@ -39,9 +39,12 @@
     <string name="about">About...</string>
     <string name="action_search">Search</string>
     <string name="action_accounts">Account</string>
-    <string name="action_userNames">User name</string>
-    <string name="action_psswrds">Password</string>
+    <string name="action_userNames">User names</string>
+    <string name="action_userName">User name</string>
+    <string name="action_psswrds">Passwords</string>
+    <string name="action_psswrd">Password</string>
     <string name="action_secQuestions">Security questions</string>
+    <string name="action_secQuestion">Security question</string>
 
     <!--    Add account layout icons-->
     <string name="account_logo">Logo</string>
@@ -345,5 +348,9 @@
     <string name="logOutTitle">Logout</string>
     <string name="logOutMssg">Log out Timeout!</string>
     <string name="logOutContinue">Continue?</string>
-
+    <string name="cat_select_icon_mssge">Select an icon for this category:</string>
+    <string name="the_item">\nThe item \</string>
+    <string name="being_used">\ is being used \</string>
+    <string name="several_accounts_to_remove">\ times.\nThe item will be removed from the following accounts:\</string>
+    <string name="one_account_to_remove">\ time.\nThe item will be removed from the following account:\</string>
 </resources>

@@ -41,8 +41,11 @@
     <string name="action_search">Buscar</string>
     <string name="action_accounts">Lista de cuentas</string>
     <string name="action_userNames">Nombres de usuario</string>
+    <string name="action_userName">Nombre de usuario</string>
     <string name="action_psswrds">Lista de contraseñas</string>
+    <string name="action_psswrd">Contraseña</string>
     <string name="action_secQuestions">Preguntas de seguridad</string>
+    <string name="action_secQuestion">Pregunta de seguridad</string>
 
     <!--    Add account layout icons-->
     <string name="account_logo">Logo</string>
@@ -116,7 +119,7 @@
 
     <!--    AddUserName Activity-->
     <string name="addUserTitle">Añadir usuario</string>
-    <string name="userNameAdded">Nuevo usuario agregado stisfactoriamente!</string>
+    <string name="userNameAdded">Nuevo usuario agregado satisfactoriamente!</string>
     <string name="userNameNotEntered">Lo siento, no ha introducido un nombre de usuario</string>
 
     <!--    EditUserName Activity   -->
@@ -125,11 +128,11 @@
     <string name="userNameUpdated">El nombre de usuario ha sido actualizado</string>
     <string name="userNameDeleted">nombre de usuario ha sido elimidado</string>
     <string name="userNameDeleteTitle">Eliminar nombre de usuario</string>
-    <string name="userNameDeleteMssg">Está seguro que desea eliminar este nombre du usuario?</string>
+    <string name="userNameDeleteMssg">Está seguro que desea eliminar este nombre de usario?</string>
 
     <!--    AddPsswrd Activity-->
     <string name="addPsswrdTitle">Añadir contraseña</string>
-    <string name="psswrdAdded">New password added successfully!</string>
+    <string name="psswrdAdded">Nuevo usuario agregado satisfactoriamente!</string>
     <string name="psswrdNotEntered">Lo siento, no ha introducido una contraseña</string>
 
     <!--    EditPsswrd Activity   -->
@@ -302,8 +305,8 @@
     <string name="signUp"><a href="">Sign Up?</a></string>
     <string name="signIn"><a href="">Sign In?</a></string>
     <string name="authenErr">Error de autenticación: </string>
-    <string name="authenSuccessful">Authentication succeeded!</string>
-    <string name="authenFailed">Autenticacón fallida</string>
+    <string name="authenSuccessful">Autenticación exitosa!</string>
+    <string name="authenFailed">Autenticación fallida</string>
     <string name="biometLoginTitle">Validación biométrica para MyPsswrdSecure</string>
     <string name="biometLoginSubTitle">Logueé usando sus credenciales biométricas</string>
     <string name="biometLoginCancelMssg">Usar usuario y clave</string>
@@ -337,4 +340,10 @@
     <string name="logOutTitle">Desloguear</string>
     <string name="logOutMssg">Tiempo de logueo ha expirado!</string>
     <string name="logOutContinue">Continuar?</string>
+    <string name="cat_select_icon_mssge">Seleccione un ícono para esta categoríá:</string>
+    <string name="the_item">\nEl ítem</string>
+    <string name="being_used">\ está siendo usado \</string>
+    <string name="several_accounts_to_remove">\ veces.\nEl ítem será eliminado de las siguientes cuentas:\</string>
+    <string name="one_account_to_remove">\ vez.\nEl ítem será eliminado de la siguiente cuenta:\</string>
+
 </resources>
