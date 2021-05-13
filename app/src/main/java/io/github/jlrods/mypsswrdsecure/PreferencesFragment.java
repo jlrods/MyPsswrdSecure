@@ -50,7 +50,6 @@ public class PreferencesFragment extends androidx.preference.PreferenceFragmentC
             }else{
                 Intent autoLogOutService = new Intent(getContext(), AutoLogOutService.class);
                 getActivity().stopService(autoLogOutService);
-
             }
             CountDownTimer delayTimer = new CountDownTimer(2000,250) {
                 @Override
@@ -61,7 +60,7 @@ public class PreferencesFragment extends androidx.preference.PreferenceFragmentC
                 @Override
                 public void onFinish() {
                     ((LogOutTimer)AutoLogOutService.getLogOutTimer()).setContext(getActivity());
-                    Log.d("onTick", "Enter/Exit  CountDownTimer onFinish method  in PreferenceFragment class.");
+                    Log.d("onFinish", "Enter/Exit  CountDownTimer onFinish method  in PreferenceFragment class.");
                 }//End of onFinish method
             };
             delayTimer.start();

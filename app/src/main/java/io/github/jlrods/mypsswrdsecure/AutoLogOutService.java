@@ -14,6 +14,7 @@ public class AutoLogOutService extends Service {
     //LogOutTimer object, which counts down time to prompt user about login out of app or continue working.
     private static LogOutTimer logOutTimer;
     public static int COUNT_DOWN_INTERVAL = 250;
+    public static boolean isServiceRunning = false;
 
     @Override
     public void onCreate(){
@@ -30,6 +31,8 @@ public class AutoLogOutService extends Service {
         Toast.makeText(this, "Service started", Toast.LENGTH_SHORT).show();
         //Start timeout timer
         this.logOutTimer.start();
+        //Set boolean flag for running service to true
+        isServiceRunning = true;
         Log.d("onStartCommand", "Enter  onStartCommand method AutoLogOutService class, Service has started on the background.");
         return START_NOT_STICKY;
     }//End of onStartCommand method
@@ -43,6 +46,8 @@ public class AutoLogOutService extends Service {
     @Override
     public void onDestroy(){
         Log.d("onDestroyServ", "Enter  onDestroy method in AutoLogOutService class, Service is done on the background.");
+        //Set boolean flag for service running to false
+        isServiceRunning = false;
         //Stop the logout timer
         logOutTimer.cancel();
         Toast.makeText(this, "Service done", Toast.LENGTH_SHORT).show();
