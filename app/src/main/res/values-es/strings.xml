@@ -95,7 +95,7 @@
 
     <!--    Add Account Activity-->
     <string name="addAccTitle">Añadir cuenta</string>
-    <string name="addEditAccName">Introduzca el nomber de la cuenta...</string>
+    <string name="addEditAccName">Introduzca el nombre de la cuenta...</string>
     <string name="selectCatHint">Seleccione una categoría...</string>
     <string name="selectUserHint">Seleccione un nombre de Usuario...</string>
     <string name="selectPsswrdHint">Seleccione una contraseña...</string>
@@ -296,7 +296,7 @@
     <string name="invalid_username">Nombre de usuarion inválido</string>
     <string name="invalid_password">Clave de seguridad debe ser >5 caracteres</string>
     <string name="login_failed">Inicio de sesión fallido</string>
-    <string name="prompt_enterUserID">Introduzca su nombre de usuario</string>
+    <string name="prompt_enterUserID">Introduzca su usuario</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_passwordConfirm">Confirme su clave</string>
     <string name="prompt_enterUserName">Introduzca su nombre</string>

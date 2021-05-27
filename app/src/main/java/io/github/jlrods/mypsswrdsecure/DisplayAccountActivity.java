@@ -312,7 +312,9 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
     public void onResume() {
         super.onResume();
         //Set current activity context for the Logout timer in order to display auto logout prompt
-        ((LogOutTimer)AutoLogOutService.getLogOutTimer()).setContext(this);
+        if(MainActivity.isAutoLogOutActive()){
+            ((LogOutTimer)AutoLogOutService.getLogOutTimer()).setContext(this);
+        }
     }//End of onResume method
 
     @Override
