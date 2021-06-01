@@ -7,7 +7,6 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 
 public class AddAccountActivity extends DisplayAccountActivity {
@@ -89,14 +88,22 @@ public class AddAccountActivity extends DisplayAccountActivity {
                                                 //Put extra info to transfer to the Main activity
                                                 intent.putExtra("accountID",this.account.get_id());
                                                 intent.putExtra("accountName",this.account.getName());
-                                                //Put remainder time for logout so MainActivity can continue the count down
-                                                intent.putExtra("timeOutRemainder",logOutTimeRemainder);
                                                 setResult(RESULT_OK, intent);
                                                 Log.d("onOptionsItemSelected","Set activity result to OK  on onOptionsItemSelected method in AddAccountActivity class.");
                                                 finish();
+                                            }else{
+                                                setResult(RESULT_CANCELED, intent);
+                                                //Call method to roll back QuesitonList insertion
+                                                if(account.getQuestionList()!=null || account.getQuestionList().getSize() > 0){
+                                                    rollBackQuestionListInsertion(account.getQuestionList());
+                                                }
+                                                //Display error about DB insertion
+                                                MainActivity.displayToast(this,getResources().getString(R.string.accountUpdateError),Toast.LENGTH_LONG,Gravity.CENTER);
                                             }//End of if statement to check the accountID is not -1
                                         }else{
                                             setResult(RESULT_CANCELED, intent);
+                                            //Display error about DB insertion
+                                            MainActivity.displayToast(this,getResources().getString(R.string.accountUpdateError),Toast.LENGTH_LONG,Gravity.CENTER);
                                             Log.d("onOptionsItemSelected","Set activity result to CANCELED  on onOptionsItemSelected method in AddAccountActivity class.");
                                         }//End of if else statement to check the account retrieved form UI isn't null
                                     }else{
@@ -148,6 +155,4 @@ public class AddAccountActivity extends DisplayAccountActivity {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d("onActivityResult","Enter/Exit the onActivityResult method in the AddAccountActivity class.");
     }//End of onActivityResult method
-
-
 }//End of AddAccountActivity method

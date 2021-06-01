@@ -2,7 +2,6 @@ package io.github.jlrods.mypsswrdsecure;
 
 import android.database.Cursor;
 import android.util.Log;
-
 import java.util.ArrayList;
 
 class QuestionList {
@@ -30,7 +29,6 @@ class QuestionList {
         Log.d("QuestionList","Exit the QuestionList overloaded constructor method 1 in the QuestionList class.");
     }//End of overloaded constructor
 
-
     public QuestionList(int _id,Question q1){
         Log.d("QuestionList2","Enter the QuestionList overloaded constructor method 2 in the QuestionList class.");
         this._id = _id;
@@ -55,35 +53,36 @@ class QuestionList {
         if(qList != null && qList.getCount()>0){
             while(qList.moveToNext()){
                 questions.add(Question.extractQuestion(qList));
-            }
+            }//End of while loop
         }else{
             this.questions = null;
-        }
+        }//End of if else statement to check question list isn't null or empty
         Log.d("QuestionList4","Exit the QuestionList overloaded constructor method 4 in the QuestionList class.");
     }//End of overloaded constructor
 
     //Getter and setter methods
     public int get_id() {
         return _id;
-    }
+    }//End of get_id method
 
     public void set_id(int _id) {
         this._id = _id;
-    }
+    }//End of set_id method
 
     public ArrayList<Question> getQuestions() {
         return questions;
-    }
+    }//End of getQuestions method
 
     public void setQuestions(ArrayList<Question> questions) {
         this.questions = questions;
-    }
+    }//End of getQuestions method
 
     //Other methods
     public void addQuestion(Question q){
         this.questions.add(q);
-    }
+    }//End of addQuestion method
 
+    //method to add two questions to a list in one go
     public void addTwoQuestions(Question q1, Question q2){
         Log.d("QuestionList4","Enter the QuestionList overloaded constructor method 4 in the QuestionList class.");
         this.questions.add(q1);
@@ -93,9 +92,9 @@ class QuestionList {
 
     public void removeQuestion(Question q){
         this.questions.remove(q);
-    }
+    }//End of removeQuestion method
 
     public int getSize(){
         return this.questions.size();
-    }
+    }//End of getSize method
 }//End of QuestionList class

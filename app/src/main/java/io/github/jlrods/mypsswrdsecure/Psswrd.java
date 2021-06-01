@@ -2,14 +2,9 @@ package io.github.jlrods.mypsswrdsecure;
 
 import android.database.Cursor;
 import android.util.Log;
-
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.solver.widgets.ConstraintAnchor;
-
 import java.util.ArrayList;
-
 import javax.crypto.spec.IvParameterSpec;
-
 import io.github.jlrods.mypsswrdsecure.login.LoginActivity;
 
 // Class to handle Psswrd object definition
@@ -37,23 +32,23 @@ public class Psswrd extends UserName{
         //Call inner method to calculate the password strength to be displayed on the RV
         this.strength = calculatePsswrdStrength(value, iv);
         Log.d("PsswrdConst2","Exit Constructor of Psswrd class with 3 arguments.");
-    }
+    }//End of Psswrd constructor
 
     public Psswrd(int _id, byte[] value,byte[] iv){
         super(_id,value,iv);
         this.strength = PsswrdStrength.WEAK;
         Log.d("PsswrdConst2","Exit Constructor of Psswrd class with 3 arguments.");
-    }
+    }//End of Psswrd constructor
 
     public Psswrd(byte[] value, byte[] iv){
         this(-1, value,iv);
         Log.d("PsswrdConst3","Exit Constructor of Psswrd class with 2 arguments.");
-    }
+    }//End of Psswrd constructor
 
     public Psswrd(){
         this(-1,null,null);
         Log.d("PsswrdConst4","Exit Constructor of Psswrd class with no arguments.");
-    }
+    }//End of Psswrd constructor
 
     @NonNull
     @Override
@@ -62,13 +57,14 @@ public class Psswrd extends UserName{
         return "Password ID: " + this._id +"\nValue: " + this.value+"\nStrength: "+this.strength.toString();
     }//End of toString method
 
+    //Getter and setter methods
     public PsswrdStrength getStrength() {
         return strength;
-    }
+    }//End of getStrength method
 
     public void setStrength(PsswrdStrength strength) {
         this.strength = strength;
-    }
+    }//End of setStrength method
 
     //Method to extract a password from a cursor object
     public static Psswrd extractPsswrd(Cursor c){
@@ -83,57 +79,75 @@ public class Psswrd extends UserName{
         return psswrd;
     }// End of extractPsswrd method
 
-
-    //Find a system by receiving the ordinal
+    //Method that calculates the password strength
     public static PsswrdStrength calculatePsswrdStrength(byte[] value, byte[] iv){
         Log.d("calculatePsswrdStrength","Enter calculatePsswrdStrength method in the Psswrd class.");
         //Declare and instantiate strength object to be returned by method
         PsswrdStrength strength = null;
         //Declare and initialize variables to be used as criteria for assessment
         int strengthRating = 0;
-        int minLength = 10;
+        int minLength = 7;
+        int mediumLength = 9;
+        int goodLength = 12;
         //Declare and initialize cryptographer object to decrypt password passed in as argument
         Cryptographer cryptographer = LoginActivity.getCryptographer();
         String password = cryptographer.decryptText(value,new IvParameterSpec(iv));
         //Check password length
-        if(password.length() >= minLength){
+        if(password.length() >= goodLength){
             strengthRating += 3;
-        }else if(password.length() > 5 && password.length() < minLength){
+        }else if(password.length() >= mediumLength && password.length() < goodLength){
+            strengthRating += 2;
+        }else if(password.length() >= minLength && password.length() < mediumLength){
             strengthRating += 1;
-        }
+        }//End of if else chain to check the password length
         //Check if password has one special char at least
-        if(password.matches(".*[!-/]+.*")){
-            strengthRating += 2;
-        }
+        if(password.matches(".*[!-/].*") || password.matches(".*[:-@].*")){
+            strengthRating += 1;
+            //Check if password has one special char or more
+            if(password.matches(".*[!-/].*[!-/]+.*") || password.matches(".*[:-@].*[:-@]+.*") ||
+                    (password.matches(".*[!-/].*") && password.matches(".*[:-@].*"))){
+                strengthRating += 1;
+            }//End of if statement that checks password matches at least two special chars
+        }//End of if statement that checks password matches special chars
         //Check if password has a combination of capital letters and lower case letters
-        if(password.matches(".*[A-Z]+.*") && password.matches(".*[a-z]+.*")){
+        if(password.matches(".*[a-z]+.*") && password.matches(".*[A-Z]+.*")){
             strengthRating += 3;
-        }
-        //Check if password has one number at least
-        if(password.matches(".*\\d+.*")){
+        }else if(password.matches(".*[A-Z]+.*") || password.matches(".*[a-z]+.*")){
             strengthRating += 2;
+        }//End of if else chain to check password has lower case and capital case combination
+        //Check if password has one number at least
+        if(password.matches(".*\\d.*")){
+            strengthRating += 1;
+            //Check if password has one number or more
+            if(password.matches(".*\\d.*\\d.*")){
+                strengthRating += 1;
+            }//End of if statement tha checks password has two digits at least
         }//End of if chain to check password composition
 
         //Check the result of assessment against corresponding values in the scale to assign final password strength
         switch (strengthRating){
-            case 3:
             case 4:
-                strength = PsswrdStrength.WEAK;
-                break;
             case 5:
-            case 6:
-                strength = PsswrdStrength.MEDIUM;
+                strength = PsswrdStrength.WEAK;
+                Log.d("calculatePsswrdStrength","Assigning WEAK strength to password: "+ password+" in calculatePsswrdStrength method in the Psswrd class.");
                 break;
+            case 6:
             case 7:
+                strength = PsswrdStrength.MEDIUM;
+                Log.d("calculatePsswrdStrength","Assigning MEDIUM strength to password: "+ password+" in calculatePsswrdStrength method in the Psswrd class.");
+                break;
             case 8:
             case 9:
                 strength = PsswrdStrength.STRONG;
+                Log.d("calculatePsswrdStrength","Assigning STRONG strength to password: "+ password+" in calculatePsswrdStrength method in the Psswrd class.");
                 break;
             case 10:
                 strength = PsswrdStrength.VERY_STRONG;
+                Log.d("calculatePsswrdStrength","Assigning VERY STRONG strength to password: "+ password+" in calculatePsswrdStrength method in the Psswrd class.");
                 break;
             default:
                 strength = PsswrdStrength.VERY_WEEK;
+                Log.d("calculatePsswrdStrength","Assigning  VERY WEAK strength to password: "+ password+" in calculatePsswrdStrength method in the Psswrd class.");
                 break;
         }//End of switch statement
         Log.d("calculatePsswrdStrength","Exit calculatePsswrdStrength method in the Psswrd class.");

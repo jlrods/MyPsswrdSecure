@@ -3,10 +3,7 @@ package io.github.jlrods.mypsswrdsecure;
 import android.database.Cursor;
 import android.util.Log;
 
-import java.util.ArrayList;
-
 class Icon {
-
     //Attribute definition
     private int _id;
     private String name;
@@ -30,27 +27,22 @@ class Icon {
         this(-1,name,location,false,-1);
         Log.d("Icon_Full_Ext","Exit Icon Constructor with no arguments");
     }
-
     public Icon(String name, String location, int resourceID){
         this(-1,name,location,false,resourceID);
         Log.d("Icon_Full_Ext","Exit Icon Constructor with no arguments");
     }
-
     public Icon(String name, String location, boolean isSelected,int resourceID){
         this(-1,name,location,isSelected,resourceID);
         Log.d("Icon_Full_Ext","Exit Icon Constructor with no arguments");
     }
-
     public Icon(int _id, String name, String location, boolean isSelected){
         this(_id,name,location,isSelected,-1);
         Log.d("Icon_Full_Ext","Exit Icon Constructor with no arguments");
     }
-
     public Icon(){
         this(-1,"","",false,-1);
         Log.d("Icon_Full_Ext","Exit Icon Constructor with no arguments");
     }
-
 
 
     public int getResourceID() {
@@ -114,5 +106,4 @@ class Icon {
         Log.d("Ext_ExtractIcon","Exit extractIcon method in the Icon class.");
         return icon;
     }// End of extractIcon method
-
 }// End of Icon class

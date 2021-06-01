@@ -5,19 +5,17 @@ import android.database.Cursor;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
-
 
 public class SecurityQuestionAdapter extends UserNameAdapter {
 
+    //Constructor method
     public SecurityQuestionAdapter(Context context, Cursor cursor) {
         super(context, cursor);
     }//End of default constructor
 
     @Override
     public UserNameAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
         Log.d("QuestAdaptVHOnCre","Enter onCreateViewHolder method in the SecurityQuestionAdapter class.");
         SecurityQuestionAdapter.ViewHolder viewHolder = super.onCreateViewHolder(parent,viewType);
         Log.d("QuestAdaptVHOnCre","Exit onCreateViewHolder method in the SecurityQuestionAdapter class.");
@@ -30,11 +28,8 @@ public class SecurityQuestionAdapter extends UserNameAdapter {
         AccountsDB accountsDB = new AccountsDB(getContext());
         //Move current cursor to position passed in as parameter
         cursor.moveToPosition(position);
-        //super.onBindViewHolder(holder,position);
         //Extract the data from cursor to create a new User or Password
         Question question = (Question) Question.extractQuestion(cursor);
-        //holder.tvStrength.setVisibility(View.VISIBLE);
-        //holder.tvStrength.setText(psswrd.getStrength().toString());
         holder.imgIcon.setImageResource(R.mipmap.ic_shield_lock_black_48dp);
         //Declare and instantiate an int to hold the string id from resources
         int questionID = context.getResources().getIdentifier(question.getValue(),"string",context.getPackageName());
@@ -48,8 +43,6 @@ public class SecurityQuestionAdapter extends UserNameAdapter {
         }//End of if else statement
         holder.tvDateCreated.setVisibility(View.GONE);
         holder.tvDateCreatedTag.setVisibility(View.GONE);
-        //SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy");
-        //holder.tvDateCreated.setText(format.format(date));
         int timesUsed = accountsDB.getTimesUsedQuestion(question.get_id());
         holder.tvTimesUsed.setText(String.valueOf(timesUsed));
         Log.d("SecQuestOnBindVH","Exit onBindViewHolder method in SecurityQuestionAdapter class.");

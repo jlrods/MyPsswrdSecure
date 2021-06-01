@@ -10,12 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.crypto.spec.IvParameterSpec;
-
 
 public class UserNameAdapter extends RecyclerView.Adapter<UserNameAdapter.ViewHolder> {
 
@@ -24,7 +22,6 @@ public class UserNameAdapter extends RecyclerView.Adapter<UserNameAdapter.ViewHo
     protected Cursor cursor;// List to hold all User or Password data coming from the database
     protected View.OnClickListener listener; // Click listener to take actions when item is clicked on Rec Viewer
     protected Cryptographer cryptographer;
-    //protected AdapterView.OnItemClickListener onItemClickListener;
     protected static SparseBooleanArray itemStateArray= new SparseBooleanArray();
     protected ThemeUpdater themeUpdater;
     // Pass in the contact array into the constructor
@@ -81,30 +78,29 @@ public class UserNameAdapter extends RecyclerView.Adapter<UserNameAdapter.ViewHo
     @Override
     public int getItemCount() {
         return this.cursor.getCount();
-    }
+    }//End of getItemCount method
 
     public Context getContext() {
         return context;
-    }
+    }//End of getContext method
 
     public void setContext(Context context) {
         this.context = context;
-    }
+    }//End of setContext method
 
     public Cursor getCursor() {
         return cursor;
-    }
+    }//End of getCursor method
 
     public void setCursor(Cursor cursor) {
         this.cursor = cursor;
-    }
+    }//End of setCursor method
 
     // Define the method that allows the parent activity or fragment to define the listener
     public void setOnClickListener(View.OnClickListener listener) {
         Log.d("UserAdapterVHOnClick","Enter setOnClickListener in the UserNameAdapter class.");
         this.listener= listener;
     }//End of setOnItemClickListener
-
 
     //Inner class to inherit from RV ViewHolder class
     protected static class ViewHolder extends RecyclerView.ViewHolder{
@@ -119,7 +115,6 @@ public class UserNameAdapter extends RecyclerView.Adapter<UserNameAdapter.ViewHo
         ViewHolder(View itemView) {
             //Call super constructor method
             super(itemView);
-            //itemView.setOnClickListener(this);
             Log.d("UserNameVHCreator","Enter ViewHolder constructor in the UserNameAdapter class.");
             //DInstantiate variables to represent logically the item layout components
             this.tvStrength = (TextView) itemView.findViewById(R.id.tvPsswrdStength);

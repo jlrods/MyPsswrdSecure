@@ -5,15 +5,15 @@ import android.database.Cursor;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-
 import javax.crypto.spec.IvParameterSpec;
 
-import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
-
+//Class to handle the adapter objects to link spinners UI and encrypted data
 public class SpinnerAdapterEncrypted extends SpinnerAdapter {
+    //Constructor method
     public SpinnerAdapterEncrypted(Context context, Cursor c, int flags) {
         super(context, c, flags);
-    }
+        Log.d("SpinnerAdapterEncrypted","Enter|Exit SpinnerAdapterEncrypted constructor method in SpinnerAdapterEncrypted class.");
+    }//End of SpinnerAdapterEncrypted constructor method
 
     //Method to bind the view and the data via a cursor
     @Override

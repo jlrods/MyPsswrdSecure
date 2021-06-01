@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
 
 public class AboutActivity extends AppCompatActivity {
@@ -35,11 +34,24 @@ public class AboutActivity extends AppCompatActivity {
         tvAuthorWebsiteDownloads.setMovementMethod(LinkMovementMethod.getInstance());
         Log.d("OnCreate", "Exit onCreate method in the AboutActivity abstract class.");
     }//End of onCreate method
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(MainActivity.isAutoLogOutActive()){
+            //Set current activity context for the Logout timer in order to display auto logout prompt
+            ((LogOutTimer)AutoLogOutService.getLogOutTimer()).setContext(this);
+        }
+
+    }//End of onResume method
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        Log.d("onCreateOptionsMenu","Enter onCreateOptionsMenu method in AboutActivity abstract class.");
         getMenuInflater().inflate(R.menu.activity_menu_save_cancel, menu);
         menu.getItem(0).setVisible(false);
         menu.getItem(1).setVisible(false);
+        Log.d("onCreateOptionsMenu","Exit onCreateOptionsMenu method in AboutActivity abstract class.");
         return true;
     }// Find fe OnCreateOptionsMenu
 
@@ -60,5 +72,5 @@ public class AboutActivity extends AppCompatActivity {
         Log.d("onOptionsItemSelected","Exit successfully onOptionsItemSelected method in AboutActivity class.");
         finish();
         return result;
-    }
+    }//End of onOptionsItemSelected method
 }//End of AboutActivity class

@@ -3,9 +3,7 @@ package io.github.jlrods.mypsswrdsecure;
 import android.database.Cursor;
 import android.util.Log;
 
-import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
-
-class Category {
+public class Category {
 
     //Attribute definition
     private int _id; // DB unique ID
@@ -20,21 +18,22 @@ class Category {
         this.name = name;
         this.icon = icon;
         Log.d("Cat_Full_Ext","Exit Category Full Constructor in Category class.");
-    }
+    }//End of Category constructor
+
     public Category(){
         this(-1,"",null);
         Log.d("Cat_Def_Ent","Enter Category  DefaultConstructor in Category class.");
-    }
+    }//End of Category constructor
 
     public Category(int _id, String name){
         this(_id,name,null);
         Log.d("Cat_NoIcon_Ent","Enter Category No Icon Constructor in Category class.");
-    }
+    }//End of Category constructor
 
     public Category(String name, Icon icon){
         this(-1,name,icon);
         Log.d("Cat_NoIcon_Ent","Enter Category No Icon Constructor in Category class.");
-    }
+    }//End of Category constructor
 
 
     //Getters and Setters

@@ -1,6 +1,5 @@
 package io.github.jlrods.mypsswrdsecure;
 
-
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,19 +13,22 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
-import java.lang.reflect.Field;
 
-public class EditAccountActivity extends DisplayAccountActivity {
+public class EditAccountActivity extends DisplayAccountActivity{
     //Attribute definition
-    //private Bundle extras;
     final private Intent[] intents = {new Intent()};
     //Method definition
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("OnCreateEditAcc","Enter onCreate method in the EditAccountActivity abstract class.");
-        //Extract extra data from owner Activity
-        //this.extras = getIntent().getExtras();
+        //Check if Activity was call by notification pending intent
+        if(extras.getBoolean("isActivityCalledFromNotification")){
+            //Reset boolean flag to display notification
+            MainActivity.setIsPushNotificationSent(false);
+            //Remove back arrow button to avoid stopping service
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        }
         //Set activity title
         getSupportActionBar().setTitle(R.string.editAccTitle);
         //Extract account details by passing in the _id attribute stored in the extras
@@ -54,7 +56,7 @@ public class EditAccountActivity extends DisplayAccountActivity {
                     found =true;
                 }
                 i++;
-            }
+            }//End of while statement
         }else if(this.account.getIcon().getLocation().equals(String.valueOf(R.mipmap.ic_my_psswrd_secure))){
             //Setup the app logo if required
             this.imgAccLogo.setImageResource(R.mipmap.ic_my_psswrd_secure);
@@ -98,13 +100,33 @@ public class EditAccountActivity extends DisplayAccountActivity {
         Log.d("OnCreateEditAcc","Exit onCreate method in the EditAccountActivity abstract class.");
     }//End of onCreate method
 
+    @Override
+    public void onResume() {
+        super.onResume();
+    }//End of onResume method
+
+    @Override
+    public void onBackPressed(){
+        Log.d("onBackPressedEditAcc", "Enter onBackPressed method in EditAccountActivity class.");
+        //Check if activity was called from notification and if notification comes from when MainActivity was  running or not
+        if(extras.getBoolean("isActivityCalledFromNotification") && !extras.getBoolean("notifiCationIssuedFromMainAct")){
+            if(MainActivity.isAutoLogOutActive()){
+                Intent iService = new Intent(this,AutoLogOutService.class);
+                this.stopService(iService);
+            }//End of if statement to check auto logout is active
+        }//End of if statement to check activity was called from push notification
+        super.onBackPressed();
+        Log.d("onBackPressedEditAcc", "Exit onBackPressed method in EditAccountActivity class.");
+    }//End of onBackPressed method
+
+
     // Method to check the menu item selected and execute the corresponding actions
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Log.d("onOptionsItemSelected","Enter onOptionsItemSelected method in EditAccountActivity class.");
         //Boolean to return method result
         boolean result = false;
-        Intent intent = new Intent();
+        final Intent intent = new Intent();
         this.intents[0] = intent;
         //Check the id of item selected in menu
         switch (item.getItemId()) {
@@ -115,8 +137,8 @@ public class EditAccountActivity extends DisplayAccountActivity {
                 //Check all data input is valid and correct (Account name not in use and valid password renew date, as most data come from dropdown menus which are already valid)
                 //Check the name entered is not empty
                 if(!accountName.equals("")){
-                    //Check account name is available but first check if it contains apostrophe so the sql query contains scape character
-                    //Fixme: it might be possible to remove this as nadroid update method manages the apostrophe issue
+                    //Check account name is available but first check if it contains apostrophe so the sql query to check name is used contains scape character
+                    // to avoid app crash
                     if(accountName.contains("'")){
                         accountName = accountsDB.includeApostropheEscapeChar(accountName);
                     }//End of if to check the name contains apostrophe
@@ -139,13 +161,14 @@ public class EditAccountActivity extends DisplayAccountActivity {
                                             //Check at least one value has change on the UI, otherwise prompt the user
                                             if(this.account != null){
                                                 //Check at least one value has change on the UI, otherwise prompt the user
+                                                //First call method to compare the two question lists and record its result
+                                                Boolean isQuestionListsTheSame = this.isQuestionListTheSame(this.account.getQuestionList(),newAccount.getQuestionList());
                                                 if(!(this.account.getName().equals(newAccount.getName())
                                                         && this.account.getIcon().get_id() == newAccount.getIcon().get_id()
                                                         && this.account.getCategory().get_id() == newAccount.getCategory().get_id()
                                                         && this.isItemTheSame(this.account.getUserName(),newAccount.getUserName())
                                                         && this.isItemTheSame(this.account.getPsswrd(),newAccount.getPsswrd())
-                                                        //@Fixme: improve the way question lists are checked and recorded on DB
-                                                        && this.isQuestionListTheSame(this.account.getQuestionList(),newAccount.getQuestionList())
+                                                        && isQuestionListsTheSame
                                                         && this.account.isFavorite() == newAccount.isFavorite()
                                                         //Date created is not checked as this value is not editable, so it must remain the same in the DB
                                                         //&& this.account.getDateCreated() == newAccount.getDateCreated()
@@ -157,7 +180,7 @@ public class EditAccountActivity extends DisplayAccountActivity {
                                                     values.put(MainActivity.getUserNameIdColumn(),newAccount.getUserName().get_id());
                                                     values.put(MainActivity.getPsswrdIdColumn(),newAccount.getPsswrd().get_id());
 
-                                                    if(!this.isQuestionListTheSame(this.account.getQuestionList(),newAccount.getQuestionList())){
+                                                    if(!isQuestionListsTheSame){
                                                         if(this.account.getQuestionList() == null && newAccount.getQuestionList() != null){
                                                             values.put(MainActivity.getQuestionListIdColumn(),newAccount.getQuestionList().get_id());
                                                         }else if(this.account.getQuestionList() != null && newAccount.getQuestionList() == null){
@@ -173,15 +196,55 @@ public class EditAccountActivity extends DisplayAccountActivity {
                                                     //values.put("DateCreated",this.account.getDateCreated());
                                                     values.put(MainActivity.getDateChangeColumn(),newAccount.getDateChange());
                                                     if(result = this.accountsDB.updateTable(MainActivity.getAccountsTable(),values)){
-                                                        //Call method to update data set displayed on the recycler view and display proper message after adding the grocery to the DB
-                                                        //Put extra info to transfer to the Main activity
-                                                        intent.putExtra("accountID",newAccount.get_id());
-                                                        intent.putExtra("accountName",newAccount.getName());
-                                                        intent.putExtra("position",extras.getInt("position"));
-                                                        setResult(RESULT_OK, intent);
-                                                        Log.d("onOptionsItemSelected","Set activity result to OK  on onOptionsItemSelected method in EditAccountActivity class.");
-                                                        finish();
+
+
+                                                        if(extras.getBoolean("isActivityCalledFromNotification")){
+                                                            MainActivity.displayToast(this,accountName + getResources().getString(R.string.accountUpdated),Toast.LENGTH_LONG,Gravity.CENTER);
+                                                            //If that is the case we need to manually force MainActivity to be displayed
+                                                            Intent i = new Intent(this,MainActivity.class);
+                                                            intent.putExtra("isMainActCalledFromEditAccAct",true);
+                                                            startActivity(i);
+                                                        }else{
+                                                            //Call method to update data set displayed on the recycler view and display proper message after adding the grocery to the DB
+                                                            //Put extra info to transfer to the Main activity
+                                                            intent.putExtra("accountID",newAccount.get_id());
+                                                            intent.putExtra("accountName",newAccount.getName());
+                                                            intent.putExtra("position",extras.getInt("position"));
+                                                            setResult(RESULT_OK, intent);
+                                                            Log.d("onOptionsItemSelected","Set activity result to OK  on onOptionsItemSelected method in EditAccountActivity class.");
+                                                            finish();
+                                                        }//End of if else statement that checks activity is called from notification
                                                     }else{
+                                                        //In case of failure updating the account, try to roll back the question list assigned to account on DB
+                                                        //Check the new and old list are not the same
+                                                        if(!isQuestionListsTheSame){
+                                                            //If not the same, remove the new question list from DB
+                                                            rollBackQuestionListInsertion(newAccount.getQuestionList());
+                                                            //Try to bring back old list to DB
+                                                            //Get the old question list from the original account object
+                                                            QuestionList oldSecurityQuestionList = this.account.getQuestionList();
+                                                            //Check it's not null
+                                                            if(oldSecurityQuestionList != null) {
+                                                                //Check if the current list is in use
+                                                                int timesUsedQuestionList = accountsDB.getTimesUsedQuestionList(oldSecurityQuestionList.get_id());
+                                                                if(timesUsedQuestionList > 0){
+                                                                    //If is in use, proceed to update the account ????
+                                                                    values = new ContentValues();
+                                                                    values.put(MainActivity.getIdColumn(),account.get_id());
+                                                                    values.put(MainActivity.getQuestionListIdColumn(),oldSecurityQuestionList.get_id());
+                                                                    accountsDB.updateTable(MainActivity.getAccountsTable(),values);
+                                                                }else{
+                                                                    //add the list and retrieve new list _id
+                                                                    int _id = accountsDB.addItem(oldSecurityQuestionList);
+                                                                    //Update the account row with old list, but new list _id
+                                                                    values = new ContentValues();
+                                                                    values.put(MainActivity.getIdColumn(),account.get_id());
+                                                                    values.put(MainActivity.getQuestionListIdColumn(),_id);
+                                                                    //update account with new list _id
+                                                                    accountsDB.updateTable(MainActivity.getAccountsTable(),values);
+                                                                }//End of if else statement
+                                                            }//End of if statement to check the old question list isn't null
+                                                        }//End of if  statement to check the questions list are not the same
                                                         //Report DB error when updating the record
                                                         MainActivity.displayToast(this,getResources().getString(R.string.accountUpdateError),Toast.LENGTH_LONG,Gravity.CENTER);
                                                     }//End of if statement to check the accountID is not -1
@@ -193,6 +256,8 @@ public class EditAccountActivity extends DisplayAccountActivity {
                                             //Check the id from the DB is valid and different than the dummy one.
                                         }else{
                                             setResult(RESULT_CANCELED, intent);
+                                            //Display error about DB insertion
+                                            MainActivity.displayToast(this,getResources().getString(R.string.accountUpdateError),Toast.LENGTH_LONG,Gravity.CENTER);
                                             Log.d("onOptionsItemSelected","Set activity result to CANCELED  on onOptionsItemSelected method in EditAccountActivity class.");
                                         }//End of if else statement to check the account retrieved form UI isn't null
                                     }else{
@@ -240,10 +305,13 @@ public class EditAccountActivity extends DisplayAccountActivity {
                                     finish();
                                 }else{
                                     //Display error message
-                                }
+                                    //Prompt the user about a DB error while updating the user name
+                                    MainActivity.displayToast(getBaseContext(),getResources().getString(R.string.itemNotDeletedMssg),Toast.LENGTH_LONG,Gravity.CENTER);
+                                    Log.d("onOptionsItemSelected","The account "+ account.getName() +" has not been updated due to DB issue.");
+                                }//End of if else statement that checks account deletion was successful
                                 //Check the boolean flag that confirms the account was deleted so proper info is passed back to caller activity
                             }//End of onClick method
-                });//End of
+                });//End of setPositive button action
                 dialog.show();
                 Log.d("onOptionsItemSelected","Delete option selected on onOptionsItemSelected method in EditAccountActivity class.");
                 break;
@@ -251,7 +319,15 @@ public class EditAccountActivity extends DisplayAccountActivity {
                 //Set activity result as cancelled so DisplayAccActivity can decide what to do if this is the case
                 setResult(RESULT_CANCELED, intent);
                 //Go back to previous activity
-                finish();
+                //Check if activity got call from a notification
+                if(extras.getBoolean("isActivityCalledFromNotification")){
+                    //If that is the case we need to manually force MainActivity to be displayed
+                    Intent i = new Intent(this,MainActivity.class);
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(i);
+                }else{
+                    finish();
+                }//End of if else statement to check activity is called from push notification
                 break;
             case R.id.action_logout:
                 //Call method to throw LoginActivity and clear activity stack.
@@ -261,6 +337,7 @@ public class EditAccountActivity extends DisplayAccountActivity {
         Log.d("onOptionsItemSelected","Exit successfully onOptionsItemSelected method in EditAccountActivity class.");
         return result;
     }//End of onOptionsItemSelected method
+
 
     //Method to check two accounts have different question list (including null list)
     private boolean isItemTheSame(UserName item1,UserName item2){

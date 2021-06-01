@@ -15,16 +15,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import java.util.ArrayList;
-
 import javax.crypto.spec.IvParameterSpec;
-
 import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
 
 public abstract class AddItemActivity extends AppCompatActivity {
@@ -40,8 +35,8 @@ public abstract class AddItemActivity extends AppCompatActivity {
     protected Cryptographer cryptographer = MainActivity.getCryptographer();
     //Floating action button to delete existing item
     protected FloatingActionButton fabDelete = null;
-    protected LogOutTimer logOutTimer;
-    protected long logOutTime;
+//    protected LogOutTimer logOutTimer;
+//    protected long logOutTime;
     Bundle extras;
 
     //Method definition
@@ -57,11 +52,11 @@ public abstract class AddItemActivity extends AppCompatActivity {
         //Set language as per preferences
         MainActivity.setAppLanguage(this);
         this.extras = getIntent().getExtras();
-        if(MainActivity.isIsLogOutActive()){
-            logOutTime = this.extras.getLong("timeOutRemainder");
-            logOutTimer = new LogOutTimer(logOutTime, 250,this);
-            logOutTimer.start();
-        }
+//        if(MainActivity.isAutoLogOutActive()){
+//            logOutTime = this.extras.getLong("timeOutRemainder");
+//            logOutTimer = new LogOutTimer(logOutTime, 250,this);
+//            logOutTimer.start();
+//        }
         //Set layout for this activity
         setContentView(R.layout.activity_add_item);
         this.accountsDB = HomeFragment.getAccountsDB();
@@ -72,6 +67,15 @@ public abstract class AddItemActivity extends AppCompatActivity {
         this.fabDelete = findViewById(R.id.fabDelete);
         Log.d("OnCreateAddQuest","Exit onCreate method in the AddItemActivity class.");
     }//End of onCreate method
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        //Set current activity context for the Logout timer in order to display auto logout prompt
+        if(MainActivity.isAutoLogOutActive()){
+            ((LogOutTimer)AutoLogOutService.getLogOutTimer()).setContext(this);
+        }
+    }//End of onResume method
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -295,6 +299,7 @@ public abstract class AddItemActivity extends AppCompatActivity {
         return this.isDataValid(type,-1);
     }//End of isDataValid overloaded method
 
+    //Method to check if a question was preloaded and populated on DB during app install process
     protected boolean isQuestionPreLoaded(Question question, boolean isStringID){
         Log.d("isQuestionPreLoaded","Enter the isQuestionPreLoaded method in AddQuestionActivity class.");
         //Declare and instantiate variables to look for the questions
@@ -363,6 +368,8 @@ public abstract class AddItemActivity extends AppCompatActivity {
             final ArrayList[] listOfAccountsUsingTheItemArray = {listOfAccountsUsingTheItem};
             Cursor listOfQuestionListsUsingTheQuestion = null;
             final Cursor[] listOfQuestionListsUsingTheQuestionArray = {listOfQuestionListsUsingTheQuestion};
+            //Keep original value of the alert dialog message
+            final String alertDialogMessageOriginal = alertDialogMessage;
             //Check if the item is being used in any account
             //If item's being used, alert the user where to find it by modifying the alertDialogMessage text
             if(this.item instanceof Psswrd){
@@ -387,9 +394,9 @@ public abstract class AddItemActivity extends AppCompatActivity {
                 listOfAccountsUsingTheItem = accountsDB.getAccountsIDListUsingItemWithID(itemType,itemID);
                 listOfAccountsUsingTheItemArray[0] = listOfAccountsUsingTheItem;
                 if(timesUsed > 1){
-                    alertDialogMessage += "\nThe "+ itemType+ " is being used " + timesUsed + " times.\nThe item will be removed from the following accounts:";
+                    alertDialogMessage += getString(R.string.the_item)+ getString(R.string.being_used) + timesUsed + getString(R.string.several_accounts_to_remove);
                 }else{
-                    alertDialogMessage += "\nThe "+ itemType+ " is being used " + timesUsed + " time.\nThe item will be removed from the following accounts:";
+                    alertDialogMessage += getString(R.string.the_item)+ getString(R.string.being_used) + timesUsed + getString(R.string.one_account_to_remove);
                 }
                 //Concat the accounts names to the warning text
                 for(int i=0;i < listOfAccountsUsingTheItem.size();i++){
@@ -402,6 +409,20 @@ public abstract class AddItemActivity extends AppCompatActivity {
             //Otherwise, just alert user is about to delete an item and display the alertDialogMessage
             //Display AlertDialog to warn user it's about to delete an item
             AlertDialog.Builder dialog = MainActivity.displayAlertDialogNoInput(fabDelete.getContext(),alertDiaglogTitle,alertDialogMessage);
+            dialog.setNegativeButton(R.string.cancel,new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //Reset dialog alert text so message is not duplicated when cancelled alert dialog box
+                    alertDialogMessage = alertDialogMessageOriginal;
+                }
+            });
+            dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    //Reset dialog alert text so message is not duplicated when exit alert dialog box without pressing any button
+                    alertDialogMessage = alertDialogMessageOriginal;
+                }
+            });
             dialog.setPositiveButton(R.string.dialog_OK, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -426,7 +447,7 @@ public abstract class AddItemActivity extends AppCompatActivity {
                             boolean only1QuestionAssignmentToDelete = false;
 
                             //When removing a question from a question list there are there main possibilities:
-                            //1.- The question to be removed is not the only quesntion in the list
+                            //1.- The question to be removed is not the only question in the list
                             //2.- The question to be removed is the only question in the list
 
                             if(questionListUsingTheQuestionToBeDeleted != null){
@@ -511,16 +532,24 @@ public abstract class AddItemActivity extends AppCompatActivity {
                             }//End of for loop to iterate through list of Accounts holding the item to be deleted
                         }
                         //If item to delete isn't a question, start iterating through list of accounts that hold the item to be deleted
-
                     }//End of if else statement to check if item is a Question or any type of object
 
                     //All different paths merge here, final deletion of the item and preparation of result transfer to caller method
                     //Request delete item on DB and handle bad result
                     if(accountsDB.deleteItem(item)){
-                        //MainActivity.displayToast(getBaseContext(),itemDeletedToastText,Toast.LENGTH_LONG,Gravity.CENTER);
                         Intent intent = new Intent();
                         intent.putExtra("itemDeletedName",itemDeletedName);
                         intent.putExtra(itemDeletedNameForIntent,true);
+                        String itemDeletedType = "";
+                        //Check the type of item deleted and associate it's type accordingly
+                        if(item instanceof Psswrd){
+                            itemDeletedType = "psswrdValue";
+                        }else if(item instanceof UserName){
+                            itemDeletedType = "userNameValue";
+                        }else if(item instanceof Question){
+                            itemDeletedType = "questionValue";
+                        }
+                        intent.putExtra("itemDeletedType",itemDeletedType);
                         intent.putExtra("position",itemPosition);
                         setResult(RESULT_OK,intent);
                         finish();

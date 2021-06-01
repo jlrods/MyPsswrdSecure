@@ -6,14 +6,12 @@ import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-
 import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
 
 class IconAdapter extends RecyclerView.Adapter<IconAdapter.ViewHolder> {
@@ -83,8 +81,6 @@ class IconAdapter extends RecyclerView.Adapter<IconAdapter.ViewHolder> {
         if(logo.isSelected()){
             //If that is the case set background color to itemSelected colour from Color values file
             imgLogo.setBackgroundColor(this.themeUpdater.fetchThemeColor("colorAccent"));
-            //imgLogo.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorPrimaryDark));
-            //this.selectedPosition = position;
         }else{
             //Otherwise, set background to white background
             imgLogo.setBackgroundColor(ContextCompat.getColor(this.context, R.color.whiteBackground));
@@ -102,18 +98,20 @@ class IconAdapter extends RecyclerView.Adapter<IconAdapter.ViewHolder> {
 
 
     public ArrayList<Icon> getIconList() {
+        Log.d("getIconList","Enter|Exit getIconList method in the IconAdapter class.");
         return iconList;
-    }
+    }//End of getIconList
 
     public void setIconList(ArrayList<Icon> iconList) {
+        Log.d("getIconList","Enter|Exit setIconList method in the IconAdapter class.");
         this.iconList = iconList;
-    }
+    }//End of setIconList method
 
     // Define the method that allows the parent activity or fragment to define the listener
     public void setOnItemClickListener(View.OnClickListener listener) {
         Log.d("IconVHOnClick","Enter IconAdapter setOnItemClickListerner in the IconAdapter class.");
         this.listener = listener;
-    }
+    }//End of setOnItemClickListener method
 
     //Method to update the key value list that keeps record of current state of each icon selection
     public void updateItemIsSelected(int position,boolean isSelected){
@@ -137,7 +135,6 @@ class IconAdapter extends RecyclerView.Adapter<IconAdapter.ViewHolder> {
         public ViewHolder(View itemView) {
             //Call super constructor method
             super(itemView);
-            //itemView.setOnClickListener(this);
             Log.d("IconVHCreator","Enter ViewHolder constructor in the IconAdapter class.");
             //DInstantiate variables to represent logically the item layout components
             icon = (ImageView) itemView.findViewById(R.id.imgLogo);

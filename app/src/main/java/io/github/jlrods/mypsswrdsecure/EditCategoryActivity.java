@@ -13,7 +13,6 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TableRow;
 import android.widget.Toast;
-import androidx.core.content.ContextCompat;
 
 public class EditCategoryActivity extends AddCategoryAcitivity {
     //Attribute definition
@@ -55,16 +54,11 @@ public class EditCategoryActivity extends AddCategoryAcitivity {
             }
         }//End of safe if statement to check the category retrieved is not null
         //Remove selection color from default image (formatted bullet list)
-        //this.imgSelectedIcon.setColorFilter(ContextCompat.getColor(this, R.color.colorBlack), android.graphics.PorterDuff.Mode.SRC_IN);
         this.imgSelectedIcon.setImageTintList(ColorStateList.valueOf(Color.BLACK));
-        //int resID = getResources().getIdentifier(this.category.getIcon().getName(),"drawable",getPackageName());
-
         //Assign selection to category icon by passing in its ID, found via the resource name
         this.imgSelectedIcon = this.findIconImageByName(this.category.getIcon().getName());
         //Set up the selection color to the new selected icon
         if(this.imgSelectedIcon != null){
-            //this.imgSelectedIcon.setColorFilter(this.themeUpdater.fetchThemeColor("colorAccent"), android.graphics.PorterDuff.Mode.SRC_IN);
-            //this.imgSelectedIcon.setColorFilter(ContextCompat.getColor(this, R.color.colorPrimaryDark), android.graphics.PorterDuff.Mode.SRC_IN);
             this.imgSelectedIcon.setImageTintList(ColorStateList.valueOf(this.themeUpdater.fetchThemeColor("colorAccent")));
             this.categoryIcon = new Icon(getResources().getResourceEntryName(this.imgSelectedIcon.getId()),MainActivity.getRESOURCES(),true, this.imgSelectedIcon.getId());
         }//End of if statement to check the image selected image view isn't null
@@ -77,8 +71,6 @@ public class EditCategoryActivity extends AddCategoryAcitivity {
         Log.d("onOptionsItemSelected","Enter onOptionsItemSelected method in EditCategoryActivity class.");
         //Boolean to return method result
         boolean result = false;
-        int categoryID = -1;
-        int iconID = -1;
         Intent intent = new Intent();
         //Check the id of item selected in menu
         switch (item.getItemId()) {
@@ -86,12 +78,10 @@ public class EditCategoryActivity extends AddCategoryAcitivity {
                 Log.d("onOptionsItemSelected","Save option selected on onOptionsItemSelected method in EditCategoryActivity class.");
                 //Flag to make sure all data was added on DB
                 boolean dbTransCompleted = true;
-                //Check if Category attributes are  valid
-
                 //Boolean flag to be checked later in code, if true continue with update process
                 boolean isIconAndCatNameValid;
                 //Check what piece of data changed during the edition process and the category name is valid by calling method to do the check
-                if(!(isIconAndCatNameValid=this.checkForCategoryChanges())){
+                if(!(isIconAndCatNameValid = this.checkForCategoryChanges())){
                     //If no change, Throw user notification toast
                     //Prompt the user the category name or icon value have not changed
                     MainActivity.displayToast(this, getResources().getString(R.string.categoryAndIconNoTChanged), Toast.LENGTH_SHORT, Gravity.CENTER);
@@ -228,7 +218,7 @@ public class EditCategoryActivity extends AddCategoryAcitivity {
                 //If name didn't change, no need for validation, set flag to true to continue with process
                 isIconAndCatNameValid = true;
             }//End of if else statement to check if category name changed
-        }
+        }//End of if statement that checks the icon changed or the category name changed
         Log.d("checkForCategoryChanges","Exit checkForCategoryChanges method in EditCategoryActivity class.");
         return isIconAndCatNameValid;
     } //End of checkForCategoryChanges method

@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import java.util.ArrayList;
-import java.util.Calendar;
+
 
 import javax.crypto.spec.IvParameterSpec;
 
@@ -34,44 +34,8 @@ public class AccountsDB extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         Log.d("Ent_DBOncreate","Enter onCreate method in AccountsDB class.");
-
         //Create table to store security answers. Leave empty as user has to create their own answers
         db.execSQL("CREATE TABLE "+MainActivity.getAnswerTable()+" (_id INTEGER PRIMARY KEY AUTOINCREMENT,"+MainActivity.getValueColumn()+" BLOB, "+MainActivity.getInitVectorColumn()+" BLOB);");
-
-        //Include test data for Answers
-//        byte[] answer1 = cryptographer.encryptText("Sasha");
-//        ContentValues answerValues1 = new ContentValues();
-        //values.put("_id",null);
-//        answerValues1.put("Value",answer1);
-//        answerValues1.put("initVector",cryptographer.getIv().getIV());
-//        int answerID1 = (int) db.insert("ANSWER",null,answerValues1);
-
-        //db.execSQL("INSERT INTO ANSWER VALUES(null,'Sasha');");
-
-//        byte[] answer2 = cryptographer.encryptText("Machito88");
-//        ContentValues answerValues2 = new ContentValues();
-//        //values.put("_id",null);
-//        answerValues2.put("Value",answer2);
-//        answerValues2.put("initVector",cryptographer.getIv().getIV());
-//        int answerID2 = (int) db.insert("ANSWER",null,answerValues2);
-//        //db.execSQL("INSERT INTO ANSWER VALUES(null,'Machito88');");
-//
-//        byte[] answer3 = cryptographer.encryptText("Mamama");
-//        ContentValues answerValues3 = new ContentValues();
-//        //values.put("_id",null);
-//        answerValues3.put("Value",answer3);
-//        answerValues3.put("initVector",cryptographer.getIv().getIV());
-//        int answerID3 = (int) db.insert("ANSWER",null,answerValues3);
-//
-//        //db.execSQL("INSERT INTO ANSWER VALUES(null,'Mamama');");
-//
-//        byte[] answer4 = cryptographer.encryptText("Caracas");
-//        ContentValues answerValues4 = new ContentValues();
-//        //values.put("_id",null);
-//        answerValues4.put("Value",answer4);
-//        answerValues4.put("initVector",cryptographer.getIv().getIV());
-//        int answerID4 = (int) db.insert("ANSWER",null,answerValues4);
-//        //db.execSQL("INSERT INTO ANSWER VALUES(null,'Caracas');");
 
         //Create table to store security questions (linked to Answer ID as Foreign key)"
         db.execSQL("CREATE TABLE "+MainActivity.getQuestionTable() +" (_id INTEGER PRIMARY KEY AUTOINCREMENT,"+MainActivity.getValueColumn()+" TEXT,\n" +
@@ -140,239 +104,148 @@ public class AccountsDB extends SQLiteOpenHelper {
         //Create a table to store the accounts items
         // Leave empty as user has to create their accounts.
         db.execSQL("CREATE TABLE "+MainActivity.getAccountsTable()+"(_id INTEGER PRIMARY KEY AUTOINCREMENT, "+MainActivity.getNameColumn()+" TEXT, \n" +
-                MainActivity.getCategoryIdColumn()+" INTEGER , "+MainActivity.getUserNameIdColumn()+" INTEGER, "+MainActivity.getPsswrdIdColumn()+" INTEGER, "+MainActivity.getQuestionIdColumn()+" INTEGER,\n" +
+                MainActivity.getCategoryIdColumn()+" INTEGER , "+MainActivity.getUserNameIdColumn()+" INTEGER, "+MainActivity.getPsswrdIdColumn()+" INTEGER, "+MainActivity.getQuestionListIdColumn()+" INTEGER,\n" +
                 MainActivity.getIconIdColumn()+" INTEGER,  "+MainActivity.getIsFavoriteColumn()+" INTEGER, "+MainActivity.getDateCreatedColumn()+" BIGINT, "+MainActivity.getDateChangeColumn()+" BIGINT,\n" +
                 "FOREIGN KEY ("+MainActivity.getCategoryIdColumn()+") REFERENCES CATEGORY(_id),\n" +
                 "FOREIGN KEY ("+MainActivity.getUserNameIdColumn()+") REFERENCES USERNAME(_id),\n" +
                 "FOREIGN KEY ("+MainActivity.getPsswrdIdColumn()+") REFERENCES PSSWRD(_id),\n" +
-                "FOREIGN KEY ("+MainActivity.getQuestionIdColumn()+") REFERENCES QUESTIONLIST(_id),\n" +
+                "FOREIGN KEY ("+MainActivity.getQuestionListIdColumn()+") REFERENCES QUESTIONLIST(_id),\n" +
                 "FOREIGN KEY ("+MainActivity.getIconIdColumn()+") REFERENCES ICON(_id));");
 
 
         //App resources
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_aa','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+")  VALUES('logo_aerlingus_green','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+")  VALUES('logo_aib','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+")  VALUES('logo_amazon','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+")  VALUES('logo_apple','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_apple_vintange','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_axa','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_booking','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_cpl','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_donedelal','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_dropbox','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_edx','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_eir','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_facebook','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_firefox','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_github','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_glassdoor_green','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_google','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_huawei','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_instagram','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_irish_life','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_irish_life_health','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_linkedin','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_marvin','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_microsoft','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_microsoft_dark','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_netflix','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_netflix_black','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_paypal','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_pinterest','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_ptsb','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_reddit','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_revenue','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_ryanair','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_ryanair_blue','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_samsung','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_small_world','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_sportify_black','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_sportify_fullblack','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_sse_airtricity','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_subway','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_teamviewer','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_three','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_twitter','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_vhi','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_virgin_media','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_vodafone','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_vue','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_aa','Resources');");//1
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_aerlingus_green','Resources');");//2
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_aib','Resources');");//3
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_allianz','Resources');");//4
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_amazon','Resources');");//5
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_amazon_alexa','Resources');");//6
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_amazon_prime_video','Resources');");//7
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_android','Resources');");//8
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_anpost','Resources');");//9
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_apple','Resources');");//10
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_apple_vintange','Resources');");//11
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_argos','Resources');");//12
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_axa','Resources');");//13
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_booking','Resources');");//14
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_chess_com','Resources');");//15
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_conqueror','Resources');");//16
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_cpl','Resources');");//17
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_daft_ie','Resources');");//18
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_disney','Resources');");//19
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_domino','Resources');");//20
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_donedelal','Resources');");//21
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_dropbox','Resources');");//22
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_ebay','Resources');");//23
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_edx','Resources');");//24
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_eir','Resources');");//25
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_ezliving_furniture','Resources');");//26
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_facebook','Resources');");//27
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_finding_pinguins','Resources');");//28
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_firefox','Resources');");//29
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_garmin','Resources');");//30
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_garmin_connect','Resources');");//31
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_github','Resources');");//32
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_glassdoor_green','Resources');");//33
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_google','Resources');");//34
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_huawei','Resources');");//35
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_ikea','Resources');");//36
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_insomnia','Resources');");//37
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_instagram','Resources');");//38
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_instructables','Resources');");//39
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_irish_jobs','Resources');");//40
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_irish_life','Resources');");//41
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_irish_life_health','Resources');");//42
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_jellyfin','Resources');");//43
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_jobs_ie','Resources');");//44
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_kfc','Resources');");//45
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_lana','Resources');");//46
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_lidl','Resources');");//47
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_linkedin','Resources');");//48
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_lotto','Resources');");//49
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_marvin','Resources');");//50
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_medium','Resources');");//51
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_microsoft','Resources');");//52
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_microsoft_dark','Resources');");//53
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_netflix','Resources');");//54
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_netflix_black','Resources');");//55
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_nike','Resources');");//56
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_paypal','Resources');");//57
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_pinterest','Resources');");//58
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_ptsb','Resources');");//59
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_reddit','Resources');");//60
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_revenue','Resources');");//61
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_ryanair','Resources');");//62
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_ryanair_blue','Resources');");//63
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_samsung','Resources');");//64
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_shazam','Resources');");//65
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_small_world','Resources');");//66
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_sonos','Resources');");//67
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_sportify_black','Resources');");//68
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_sportify_fullblack','Resources');");//69
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_sse_airtricity','Resources');");//70
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_star_wars','Resources');");//71
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_starbucks','Resources');");//72
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_subway','Resources');");//73
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_supermacs','Resources');");//74
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_supervalue','Resources');");//75
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_tcl','Resources');");//76
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_teamviewer','Resources');");//77
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_tesco','Resources');");//78
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_tesco_mobile','Resources');");//79
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_the_range','Resources');");//80
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_three','Resources');");//81
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_twitter','Resources');");//82
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_vhi','Resources');");//83
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_virgin_media','Resources');");//84
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_vodafone','Resources');");//85
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_vue','Resources');");//86
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_youtube','Resources');");//87
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('logo_youtube_music','Resources');");//88
+
         //Android resources
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('facebook','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('popcorn','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('ic_cat_cellphone_wireless','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('briefcase_clock','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('web','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('shopping','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('airplane_takeoff','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('android_studio','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('food','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('currency_eur','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('shield_check','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('briefcase_search','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('tools','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('facebook','Resources');");//89
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('popcorn','Resources');");//90
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('ic_cat_cellphone_wireless','Resources');");//91
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('briefcase_clock','Resources');");//92
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('web','Resources');");//93
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('shopping','Resources');");//94
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('airplane_takeoff','Resources');");//95
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('android_studio','Resources');");//96
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('food','Resources');");//97
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('currency_eur','Resources');");//98
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('shield_check','Resources');");//99
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('briefcase_search','Resources');");//100
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('tools','Resources');");//101
         //NavDrawer Resources
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg1','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg2','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg3','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg4','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg5','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg6','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg7','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg8','Resources');");
-        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg9','Resources');");
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg','Resources');");//102
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg1','Resources');");//103
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg2','Resources');");//104
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg3','Resources');");//105
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg4','Resources');");//106
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg5','Resources');");//109
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg6','Resources');");//108
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg7','Resources');");//109
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg8','Resources');");//110
+        db.execSQL("INSERT INTO "+MainActivity.getIconTable()+" ("+MainActivity.getNameColumn()+", "+MainActivity.getIconLocationColumn()+") VALUES('nav_menu_header_bg9','Resources');");//111
+
 
 
 
         //Populate the Category table with some default category items
-        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('SocialMedia',49);");
-        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Entertainment',50);");
-        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Communication',51);");
-        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Work',52);");
-        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Internet',53);");
-        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Shopping',54);");
-        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Travel',55);");
-        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Learning',56);");
-        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Food',57);");
-        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Finance',58);");
-        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Insurance',59);");
-        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('JobHunting',60);");
-        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Utilities',61);");
-
-
-        //Test and sample data
-        //Question Lists
-//        db.execSQL("INSERT INTO QUESTIONLIST VALUES(null,1,2,3);");
-//        db.execSQL("INSERT INTO QUESTIONLIST VALUES(null,4,null,null);");
-//        db.execSQL("INSERT INTO QUESTIONLIST VALUES(null,2,3,4);");
-
-        //Question assignment
-//        db.execSQL("INSERT INTO QUESTIONASSIGNMENT VALUES(null,1,1);");
-//        db.execSQL("INSERT INTO QUESTIONASSIGNMENT VALUES(null,1,2);");
-//        db.execSQL("INSERT INTO QUESTIONASSIGNMENT VALUES(null,1,3);");
-//        db.execSQL("INSERT INTO QUESTIONASSIGNMENT VALUES(null,2,4);");
-//        db.execSQL("INSERT INTO QUESTIONASSIGNMENT VALUES(null,3,2);");
-//        db.execSQL("INSERT INTO QUESTIONASSIGNMENT VALUES(null,3,3);");
-//        db.execSQL("INSERT INTO QUESTIONASSIGNMENT VALUES(null,3,4);");
-
-        //Include test data for User names
-//        byte[] user1 = cryptographer.encryptText("jlrods");
-//        ContentValues values1 = new ContentValues();
-//        values1.put("Value",user1);
-//        values1.put("DateCreated", Calendar.getInstance().getTimeInMillis());
-//        values1.put("initVector",cryptographer.getIv().getIV());
-//        int userID1 = (int) db.insert("USERNAME",null,values1);
-//
-//        byte[] user2 = cryptographer.encryptText("jlrods@gmail.com");
-//        ContentValues values2 = new ContentValues();
-//        //values.put("_id",null);
-//        values2.put("Value",user2);
-//        values2.put("DateCreated", Calendar.getInstance().getTimeInMillis());
-//        values2.put("initVector",cryptographer.getIv().getIV());
-//        int userID2 = (int) db.insert("USERNAME",null,values2);
-//        //String user2 = cryptographer.encryptText("jlrods@gmail.com").toString();
-//        //db.execSQL("INSERT INTO USERNAME (Value, DateCreated) VALUES('"+user2+"',1588267878640);");
-//        byte[] user3 = cryptographer.encryptText("j_rodriguez");
-//        ContentValues values3 = new ContentValues();
-//        //values.put("_id",null);
-//        values3.put("Value",user3);
-//        values3.put("DateCreated", Calendar.getInstance().getTimeInMillis());
-//        values3.put("initVector",cryptographer.getIv().getIV());
-//        int userID3 = (int) db.insert("USERNAME",null,values3);
-//        //String user3 = cryptographer.encryptText("j_rodriguez").toString();
-//        //db.execSQL("INSERT INTO USERNAME (Value, DateCreated) VALUES('"+user3+"',1588367878641);");
-//        byte[]  user4 = cryptographer.encryptText("j_rodriguez@modularauto.ie");
-//        ContentValues values4 = new ContentValues();
-//        //values.put("_id",null);
-//        values4.put("Value",user4);
-//        values4.put("DateCreated", Calendar.getInstance().getTimeInMillis());
-//        values4.put("initVector",cryptographer.getIv().getIV());
-//        int userID4 = (int) db.insert("USERNAME",null,values4);
-//        //String user4 = cryptographer.encryptText("j_rodriguez@modularauto.ie").toString();
-//        //db.execSQL("INSERT INTO USERNAME (Value, DateCreated) VALUES('"+user4+"',1588467878642);");
-//
-//        ////Include test data for passwords
-//        byte[] psswrd1 = cryptographer.encryptText("Machito88");
-//        ContentValues values11 = new ContentValues();
-//        //values.put("_id",null);
-//        values11.put("Value",psswrd1);
-//        values11.put("DateCreated", Calendar.getInstance().getTimeInMillis());
-//        values11.put("initVector",cryptographer.getIv().getIV());
-//        int psswrdID1 = (int) db.insert("PSSWRD",null,values11);
-//        //String psswrd1 = cryptographer.encryptText("Machito88").toString();
-//        //db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('"+psswrd1+"',1588167878639);");
-//        byte[] psswrd2 = cryptographer.encryptText("JoseLeonardo");
-//        ContentValues values12 = new ContentValues();
-//        //values.put("_id",null);
-//        values12.put("Value",psswrd2);
-//        values12.put("DateCreated", Calendar.getInstance().getTimeInMillis());
-//        values12.put("initVector",cryptographer.getIv().getIV());
-//        int psswrdID2 = (int) db.insert("PSSWRD",null,values12);
-//        //String psswrd2 = cryptographer.encryptText("JoseLeonardo").toString();
-//        //db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('"+psswrd2+"',1588267878640);");
-//        byte[]  psswrd3 = cryptographer.encryptText("Paracotos12!");
-//        ContentValues values13 = new ContentValues();
-//        //values.put("_id",null);
-//        values13.put("Value",psswrd3);
-//        values13.put("DateCreated", Calendar.getInstance().getTimeInMillis());
-//        values13.put("initVector",cryptographer.getIv().getIV());
-//        int psswrdID3 = (int) db.insert("PSSWRD",null,values13);
-//        //String psswrd3 = cryptographer.encryptText("Paracotos12!").toString();
-//        //db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('"+psswrd3+"',1588367878641);");
-//        byte[] psswrd4 = cryptographer.encryptText("Roraima2020!");
-//        ContentValues values14 = new ContentValues();
-//        //values.put("_id",null);
-//        values14.put("Value",psswrd4);
-//        values14.put("DateCreated", Calendar.getInstance().getTimeInMillis());
-//        values14.put("initVector",cryptographer.getIv().getIV());
-//        int psswrdID4 = (int) db.insert("PSSWRD",null,values14);
-//        //String psswrd4 = cryptographer.encryptText("Roraima2020!").toString();
-//        //db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('"+psswrd4+"',1588467878642);");
-//        byte[] psswrd5 = cryptographer.encryptText("M;Mach;to88!");
-//        ContentValues values15 = new ContentValues();
-//        //values.put("_id",null);
-//        values15.put("Value",psswrd5);
-//        values15.put("DateCreated", Calendar.getInstance().getTimeInMillis());
-//        values15.put("initVector",cryptographer.getIv().getIV());
-//        int psswrdID5 = (int) db.insert("PSSWRD",null,values15);
-//        String psswrd5 = cryptographer.encryptText("M;Mach;to88!").toString();
-//        db.execSQL("INSERT INTO PSSWRD (Value, DateCreated) VALUES('"+psswrd5+"',1588167878639);");
-
-//        Cursor psswrdRow5 = db.rawQuery("SELECT * FROM PSSWRD WHERE _id = "+psswrdID5,null);
-//        psswrdRow5.moveToFirst();
-//        int idPsswrd5 = psswrdRow5.getInt(0);
-//        long datePsswrd5 = psswrdRow5.getLong(3);
-//        byte[] encryptedPsswrd5 = psswrdRow5.getBlob(1);
-//        String psswrd15 = cryptographer.decryptText(encryptedPsswrd5,cryptographer.getIv());
-
-//        Cursor psswrdRow1 = db.rawQuery("SELECT * FROM PSSWRD WHERE _id = "+psswrdID1,null);
-//        psswrdRow1.moveToFirst();
-//        int idPsswrd1 = psswrdRow1.getInt(0);
-//        long datePsswrd1 = psswrdRow1.getLong(2);
-//        byte[] encryptedPsswrd1 = psswrdRow1.getBlob(1);
-//        byte[] ivPsswrd1 = psswrdRow1.getBlob(3);
-//        String psswrd11 = cryptographer.decryptText(encryptedPsswrd1,new IvParameterSpec(ivPsswrd1));
-//
-//        Cursor userRow3 = db.rawQuery("SELECT * FROM USERNAME WHERE _id = "+userID3,null);
-//        userRow3.moveToFirst();
-//        int idUser3 = userRow3.getInt(0);
-//        long dateUser3 = userRow3.getLong(2);
-//        byte[] encryptedUser3 = userRow3.getBlob(1);
-//        byte[] ivUser3 = userRow3.getBlob(3);
-//        String user13 = cryptographer.decryptText(encryptedUser3,new IvParameterSpec(ivUser3));
-
-
-        //Accounts
-//        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'Modular',4,4,4,1,-1,0,1588567878642,0);");
-//        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'Google',4,2,3,null,18,0,1588867878642,0);");
-//        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'TMS',4,4,2,2,-1,0,1588767878642,0);");
-//        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'Facebook',1,2,1,null,14,0,1588967878642,0);");
-//        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'Instagram',1,2,5,null,20,0,1588867878642,0);");
-//        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'AA',11,2,5,null,1,0,1588967878642,0);");
-//        db.execSQL("INSERT INTO ACCOUNTS VALUES(null,'Integro',4,4,3,3,-1,0,1588667878642,0);");
-
+        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('SocialMedia',89);");
+        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Entertainment',90);");
+        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Communication',91);");
+        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Work',92);");
+        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Internet',93);");
+        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Shopping',94);");
+        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Travel',95);");
+        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Learning',96);");
+        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Food',97);");
+        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Finance',98);");
+        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Insurance',99);");
+        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('JobHunting',100);");
+        db.execSQL("INSERT INTO "+MainActivity.getCategoryTable()+" ("+MainActivity.getNameColumn()+","+MainActivity.getIconIdColumn()+") VALUES('Utilities',101);");
         Log.d("Ext_DBOncreate","Exit onCreate method in AccountsDB class.");
     }//End of onCreate method
 
@@ -401,86 +274,6 @@ public class AccountsDB extends SQLiteOpenHelper {
         }//End of try catch block
     }//End of runQuery method
 
-
-
-    //Methods to update the DB
-    //Method to update AppState in DB
-//    public boolean updateAppStateOld(int currentCategory, int currentTab, int showAllAccounts, int isFavoriteFilter, int isSearchFilter, String lastSearchText){
-//        Log.d("UpdateState","Enter the updateAppState method in the AccountsDB class.");
-//        boolean success = false;
-//        Cursor appState;
-//        //Declare and instantiate a new database object to handle the database operations
-//        SQLiteDatabase db = getWritableDatabase();
-//        appState = this.runQuery("SELECT * FROM APPSTATE");
-//        //Declare string for the fist part of sql query
-//        String updateState ="UPDATE APPSTATE SET ";
-//        //Prepare lastSearchTask and lastSearchGrocery text before sql is run --> include escape character for apostrophe
-//        if(lastSearchText.contains(apostrophe)){
-//            lastSearchText = this.includeApostropheEscapeChar(lastSearchText);
-//        }//End of if statement
-//        //Form all the query fields section
-//        String fields = " currentCategoryID = " + currentCategory + ","+
-//                " currentTab = " + currentTab+ ","+
-//                " showAllAccounts = "+ showAllAccounts + ","+
-//                " isFavoriteFilter = "+ isFavoriteFilter + ","+
-//                " isSearchFilter = " + isSearchFilter + ","+
-//                " lastSearch = '" + lastSearchText+ "'";
-//        //String to hold the where part of the query
-//        String whereId = " WHERE _id = ";
-//        String whereClause = "_id = ";
-//        //String to hold the complete sql query
-//        String sql = "";
-//        //get next app state (only one should be saved)
-//        if(appState.moveToNext()){
-//            sql = updateState+fields+ whereId+appState.getInt(0);
-//        }
-//        //Try Catch block to execute the sql command to update corresponding table
-//        try{
-//            //Run the query and change success to true if no issues
-//            db.execSQL(sql);
-//            success = true;
-//            Log.d("UpdateState","Exit successfully the updateAppState method in the Accounts class.");
-//        }catch (Exception e) {
-//            //Log the exception message
-//            Log.d("UpdateState","Exit the updateAppState method in the Accounts class with exception: "+e.getMessage());
-//        }
-//        finally{
-//            db.close();
-//            return success;
-//        }//End of try and catch block
-//    }//End of updateAppState
-
-    //Method to update AppState in DB
-//    public boolean updateAppState(int currentCategory, int currentTab, int showAllAccounts, int isFavoriteFilter, int isSearchFilter, String lastSearchText){
-//        Log.d("UpdateState","Enter the updateAppState method in the AccountsDB class.");
-//        boolean updated = false;
-//        int _id = -1;
-//        String whereClause = "_id = ";
-//        boolean success = false;
-//        //Declare and instantiate a new database object to handle the database operations
-//        SQLiteDatabase db = getWritableDatabase();
-//        ContentValues values = new ContentValues();
-//        values.put("currentCategoryID",currentCategory);
-//        values.put("currentTab",currentTab);
-//        values.put("showAllAccounts",showAllAccounts);
-//        values.put("isFavoriteFilter",isFavoriteFilter);
-//        values.put("isSearchFilter",isSearchFilter);
-//        values.put("lastSearch",lastSearchText);
-//        try{
-//            _id = this.getMaxItemIdInTable(MainActivity.getAppstateTable());
-//            whereClause += _id;
-//            if(db.update(MainActivity.getAppstateTable(),values,whereClause,null) > 0){
-//                updated = true;
-//            }
-//            Log.d("updateTable","Exit successfully the updateTable  method in the Accounts class.");
-//        }catch (Exception e){
-//            Log.d("updateTable","Exit the updateTable  method in the Accounts class with exception "+e.getMessage());
-//        }finally{
-//            db.close();
-//            return updated;
-//        }//End of try catch block
-//    }//End of updateAppState
-
     public boolean updateTable(String table, ContentValues values){
         Log.d("updateTable","Enter the updateTable method in the AccountsDB class.");
         boolean updated = false;
@@ -508,7 +301,6 @@ public class AccountsDB extends SQLiteOpenHelper {
         Log.d("getMaxItemInTable","Enter the getMaxItemInTable method in the AccountsDB class.");
         int _id =-1;
         Cursor cursor =null;
-        //SQLiteDatabase db = getReadableDatabase();
         try{
             cursor = this.runQuery("SELECT MAX(_id) FROM "+table);
             if(cursor.moveToNext()){
@@ -534,11 +326,7 @@ public class AccountsDB extends SQLiteOpenHelper {
         byte[] itemNameEcrypted = null;
         //Declare and initialize int variable to hold the item id to be returned. Default value is -1
         int id =-1;
-        //Declare and initialize variables to be used in the insert statement (Values got from account object parameter)
-        //String description;
-        int category;
-        long dateCreated;
-
+        //Check type of object item is
         if(item instanceof Category){
             //if item is a Category object, update the Task table where the id corresponds
             table = MainActivity.getCategoryTable();
@@ -610,7 +398,7 @@ public class AccountsDB extends SQLiteOpenHelper {
                 fields.put(MainActivity.getQuestionListIdColumn(),account.getQuestionList().get_id());
             }
             fields.put(MainActivity.getIconIdColumn(),account.getIcon().get_id());
-            fields.put(MainActivity.getIsFavoriteColumn(),account.isFavorite());
+            fields.put(MainActivity.getIsFavoriteColumn(),toInt(account.isFavorite()));
             fields.put(MainActivity.getDateCreatedColumn(),account.getDateCreated());
             //A password renew date is always given,either an actual long number or 0 if not required
             fields.put(MainActivity.getDateChangeColumn(),account.getDateChange());
@@ -658,7 +446,6 @@ public class AccountsDB extends SQLiteOpenHelper {
         if(item instanceof Category){
             table = MainActivity.getCategoryTable();
             //Delete all items from TASK table where Category ID = id
-            // db.execSQL(deleteFrom+"TASK WHERE Category = "+ ((Category) item).getId());
             id = ((Category) item).get_id();
             Log.d("deleteCATEGORY","CATEGORY to be deleted.");
         }else if(item instanceof Psswrd){
@@ -708,11 +495,6 @@ public class AccountsDB extends SQLiteOpenHelper {
 
     //Methods to query the DB
 
-    //Method to get the list of user names from the DB
-    public Cursor getIconList(){
-        return  this.runQuery("SELECT * FROM "+MainActivity.getIconTable());
-    }
-
     //Method to get tha app state cursor
     public Cursor getAppState(){
         Log.d("getAppState","Enter the getAppState method in the AccountsDB class.");
@@ -732,23 +514,17 @@ public class AccountsDB extends SQLiteOpenHelper {
         if(cursor != null && cursor.getCount()>0){
             cursor.moveToFirst();
         }
+        Log.d("getAppLogin","Exit the getCategoryByID method in the AccountsDB class.");
         return cursor;
     }//End of getUserNameByID method
 
-//    public Cursor getAppLoginCursorUserAndPsswrdData(int _id){
-//        Log.d("getAppLogin","Enter the getCategoryByID method in the AccountsDB class.");
-//        Cursor cursor = this.runQuery(
-//                "SELECT APPLOGGIN.*, Psswrd.Value as PsswrdValue, Psswrd.initVector as PsswrdIV\n" +
-//                        "FROM APPLOGGIN INNER JOIN PSSWRD\n" +
-//                        "ON APPLOGGIN.PsswrdID = Psswrd._id\n" +
-//                        "WHERE  APPLOGGIN.UserNameID = "+ _id);
-//        return cursor;
-//    }
 
     public Cursor getAllAppLoginCursor(){
+        Log.d("getAllAppLoginCursor","Enter the getAllAppLoginCursor method in the AccountsDB class.");
         Cursor loginList = this.runQuery("SELECT * FROM "+MainActivity.getApplogginTable());
+        Log.d("getAllAppLoginCursor","Exit the getAllAppLoginCursor method in the AccountsDB class.");
         return loginList;
-    }
+    }//End of getAllAppLoginCursor
 
     //Method to get a specific Category, by passing in its DB _id as an argument
     public Category getCategoryByID(int _id){
@@ -765,8 +541,9 @@ public class AccountsDB extends SQLiteOpenHelper {
 
     //Method to get the list of categories names from the DB
     public Cursor getCategoryListCursor(){
+        Log.d("getCategoryListCursor","Enter|Exit the getCategoryListCursor method in the AccountsDB class.");
         return  this.runQuery("SELECT * FROM "+MainActivity.getCategoryTable());
-    }
+    }//Endo of getCategoryListCursor method
 
     //Method to get a specific user name, by passing in its DB _id as an argument
     public Cursor getCategoryByName(String category){
@@ -785,8 +562,9 @@ public class AccountsDB extends SQLiteOpenHelper {
 
     //Method to get the list of user names from the DB
     public Cursor getUserNameList(){
+        Log.d("getUserNameList","Enter|Exit the getUserNameList method in the AccountsDB class.");
         return  this.runQuery("SELECT * FROM "+MainActivity.getUsernameTable());
-    }
+    }//End of getUserNameList method
 
     //Method to get a specific Category, by passing in its DB _id as an argument
     public Account getAccountByID(int _id){
@@ -832,13 +610,13 @@ public class AccountsDB extends SQLiteOpenHelper {
     public Cursor getAccountsList(){
         Log.d("getAccountsList","Enter/Exit the getAccountsList method in the AccountsDB class.");
         return  this.runQuery("SELECT * FROM "+MainActivity.getAccountsTable());
-    }
+    }//End of getAccountsList method
 
     //Method to get the number of times a specific user name is being used in different accounts as per the DB
     public int getTimesUsedUserName(int userNameID){
         Log.d("getTimesUsedUserName","Enter/Exit the getTimesUsedUserName method in the AccountsDB class.");
         return this.runQuery("SELECT * FROM "+MainActivity.getAccountsTable()+" WHERE "+MainActivity.getUserNameIdColumn()+" = "+userNameID).getCount();
-    }
+    }//End of getTimesUsedUserName method
 
     //Method to return a cursor with all the UserNames items sorted by number of times used
     public Cursor getUserNameCursorSortedByTimesUsed(){
@@ -854,7 +632,7 @@ public class AccountsDB extends SQLiteOpenHelper {
     public int getTimesUsedPsswrd(int psswrdID){
         Log.d("getTimesUsedPsswrd","Enter/Exit the getTimesUsedPsswrd method in the AccountsDB class.");
         return this.runQuery("SELECT * FROM "+MainActivity.getAccountsTable()+" WHERE "+MainActivity.getPsswrdIdColumn()+" = "+psswrdID).getCount();
-    }
+    }//End of getTimesUsedPsswrd method
 
     //Method to return a cursor with all the UserNames items sorted by number of times used
     public Cursor getPsswrdsSortedByTimesUsed(){
@@ -1116,36 +894,13 @@ public class AccountsDB extends SQLiteOpenHelper {
         listOfAccountsSortedAlpha = runQuery("SELECT * FROM "+MainActivity.getPsswrdTable()+ " ORDER BY " + column + " " +order);
         Log.d("getPsswrdsSorted","Exit the getPsswrdsSortedColumnUpDown method in the AccountsDB class.");
         return listOfAccountsSortedAlpha;
-//        Log.d("getPsswrdsSorted","Enter the getUserNameByName method in the AccountsDB class.");
-//        //Declare and initialize a boolean flag to inform the name was found
-//        boolean found = false;
-//        String psswrdDecrypted = "";
-//        //Get all data from PSSWRD table
-//        Cursor psswrdCursor = this.runQuery("SELECT * FROM PSSWRD");
-//        //Iterate through it, decrypt user name values and compare against value passed in as parameter
-//        while(!found && psswrdCursor.moveToNext()){
-//            //Decrypt the user name value coming form DB
-//            psswrdDecrypted = cryptographer.decryptText(psswrdCursor.getBlob(1),new IvParameterSpec(psswrdCursor.getBlob(2)));
-//            //Compare the decrypted user name user name being looked for
-//            if(psswrd.trim().equals(psswrdDecrypted.trim())){
-//                found = true;
-//            }//End of if statement to compare user names
-//        }//End of while loop to iterate through list of user names
-//        if(found){
-//            Log.d("getPsswrdByName","Exit successfully (password with value " +psswrd + " has been found) the getPsswrdByName method in the AccountsDB class.");
-//            return this.getPsswrdCursorByID(psswrdCursor.getInt(0));
-//        }else{
-//            Log.d("getPsswrdByName","Exit the getPsswrdByName method in the AccountsDB class without finding the password with value: "+psswrd);
-//            //This is a work around to avoid null exception when the password being looked for does not exist. Down the road the returned cursor
-//            //can be checked that count is > 0.
-//            return  this.getPsswrdCursorByID(-1);
-//        }//End of if else statement
     }//End of getUserNameByID method
 
     //Method to get the list of passwords from the DB
     public Cursor getPsswrdList(){
+        Log.d("getPsswrdList","Enter|Exit the getPsswrdsSortedColumnUpDown method in the AccountsDB class.");
         return  this.runQuery("SELECT * FROM "+MainActivity.getPsswrdTable());
-    }
+    }//End of getPsswrdList method
 
     //Method to retrieve the list of categories stored on the database
     public ArrayList<Category> getCategoryList(){
@@ -1440,7 +1195,7 @@ public class AccountsDB extends SQLiteOpenHelper {
         if(itemType.equals(MainActivity.getQUESTION())){
             //In case of questions, the SQL must be run differently as the accounts hold the question list ID and not the question ID itself
             //First, it's necessary to check all the questionLists that have the question to be deleted
-            Cursor questionListsWithQuestionToBeDeleted = this.getQuestionAssignmentCursorFor1QuestionID(itemID); //runQuery("SELECT * FROM QUESTIONASSIGNMENT WHERE QUESTIONASSIGNMENT.QuestionID = "+ itemID);
+            Cursor questionListsWithQuestionToBeDeleted = this.getQuestionAssignmentCursorFor1QuestionID(itemID);
             //Now query the DB to find all the accounts with each questionListID that holds the question to be deleted
             column = MainActivity.getQuestionListIdColumn();
             //Get the list of questionList ids that holds the question and store it in ArrayList
@@ -1451,7 +1206,6 @@ public class AccountsDB extends SQLiteOpenHelper {
             }
             //Call method to get account row from ACCOUNTS table that contains any of the values passed in
             listOfAccountUsingTheItem = this.getRowsThatMeetMultipleValuesCriteria(MainActivity.getAccountsTable(),column, listOfQuestionListIDsUsingTheItem);
-            // listOfAccountUsingTheItem = this.runQuery("SELECT * FROM ACCOUNTS WHERE "+ column + " = " + questionListsWithQuestionToBeDeleted.getInt(1));
         }else{
             listOfAccountUsingTheItem = this.runQuery("SELECT * FROM "+MainActivity.getAccountsTable()+" WHERE "+ column + " = " + itemID);
         }//End of if else statement to check if item type is question
@@ -1465,6 +1219,15 @@ public class AccountsDB extends SQLiteOpenHelper {
         Log.d("getAccUsingItemWithID","Exit the getAccountsUsingItemWithID method in the AccountsDB class.");
         return listOfAccountIDsUsingTheItem;
     }//End of getAccountsUsingItemWithID method
+
+    //Method to return a cursor with rows of accouts with ChangeDate greater than 0 and less than current date in milliseconds. All accounts with expired passowrds.
+    public Cursor getExpiredPsswrdAccounts(){
+        Log.d("getExpiredPsswrdAcc","Enter the getExpiredPsswrdAccounts method in the AccountsDB class.");
+        Cursor expiredPsswrdAccounts = null;
+        expiredPsswrdAccounts = runQuery("SELECT * FROM "+ MainActivity.getAccountsTable()+ " WHERE "+MainActivity.getDateChangeColumn()+" > 0 AND "+ MainActivity.getDateChangeColumn()+ " < " + System.currentTimeMillis());
+        Log.d("getExpiredPsswrdAcc","Exit the getExpiredPsswrdAccounts method in the AccountsDB class.");
+        return expiredPsswrdAccounts;
+    }//End of getExpiredPsswrdAccounts method
 
     //Method to return cursor with rows from the accounts table with specific value in the column name passed in as argument
     public Cursor getAccountsWithSpecifcValue(String column, int itemID){
@@ -1609,7 +1372,6 @@ public class AccountsDB extends SQLiteOpenHelper {
     public int re_sctructureQuestionList(QuestionList questionListUsingTheQuestionToBeDeleted, int questionID){
         Log.d("re_sctrctrQuestionList","Enter the re_sctructureQuestionList method in the AccountsDB class.");
         //Boolean flag to define the question list re-structure was successful and value to be returned by method
-        boolean re_structuredListAlreadyExists = false;
         int initPosition = -1;
         final String questionID1 = MainActivity.getQuestionId1Column();
         final String questionID2 = MainActivity.getQuestionId2Column();
@@ -1639,8 +1401,6 @@ public class AccountsDB extends SQLiteOpenHelper {
                 }else{
                     remainderQuestionPosition1 = 0;
                 }
-                newQuestionListAfterRemovingQuestion.addQuestion(questionListUsingTheQuestionToBeDeleted.getQuestions().get(remainderQuestionPosition1));
-                //newQuestionListAfterRemovingQuestion = this.getQuestionCursorByID((questionListUsingTheQuestionToBeDeleted.getQuestions().get(remainderQuestionPosition1).get_id()));
                 break;
             case 2:
                 int remainderQuestionPosition2 = -1;
@@ -1700,7 +1460,6 @@ public class AccountsDB extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         //Declare and initialize a query string
         String deleteFrom = "DELETE FROM ";
-//        table= MainActivity.getQuestionassignmentTable();
         String whereClause =" WHERE "+ column +" = ";
         //Run SQL statement to delete the task with id x from the TASK table
         try{

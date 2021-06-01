@@ -2,7 +2,6 @@ package io.github.jlrods.mypsswrdsecure;
 
 import android.database.Cursor;
 import android.util.Log;
-
 import java.util.ArrayList;
 
 // Class define d to handle all string value classes
@@ -21,38 +20,37 @@ abstract class StringValue {
         this.value = value;
         this.iv = iv;
         Log.d("StrVal_Full_Ext","Exit StringValue  Full Constructor");
-    }
+    }//End of StringValue constructor method
 
     public StringValue(){
         this(-1,null,null);
         Log.d("StrVal_Def_Ext","Exit StringValue  Default Constructor");
-    }
-
+    }//End of StringValue constructor method
 
     //Setter and Getter methods
     public int get_id() {
         return _id;
-    }
+    }//End of get_id method
 
     public byte[] getValue() {
         return value;
-    }
+    }//End of getValue method
 
     public void set_id(int _id) {
         this._id = _id;
-    }
+    }//End of set_id method
 
     public void setValue(byte[] value) {
         this.value = value;
-    }
+    }//End of setValue method
 
     public byte[] getIv() {
         return iv;
-    }
+    }//End of getIv method
 
     public void setIv(byte[] iv) {
         this.iv = iv;
-    }
+    }//End of setIv method
 
     //Other methods
     //Method to extract a StringValue object from a cursor object

@@ -41,8 +41,11 @@
     <string name="action_search">Buscar</string>
     <string name="action_accounts">Lista de cuentas</string>
     <string name="action_userNames">Nombres de usuario</string>
+    <string name="action_userName">Nombre de usuario</string>
     <string name="action_psswrds">Lista de contraseñas</string>
+    <string name="action_psswrd">Contraseña</string>
     <string name="action_secQuestions">Preguntas de seguridad</string>
+    <string name="action_secQuestion">Pregunta de seguridad</string>
 
     <!--    Add account layout icons-->
     <string name="account_logo">Logo</string>
@@ -92,7 +95,7 @@
 
     <!--    Add Account Activity-->
     <string name="addAccTitle">Añadir cuenta</string>
-    <string name="addEditAccName">Introduzca el nomber de la cuenta...</string>
+    <string name="addEditAccName">Introduzca el nombre de la cuenta...</string>
     <string name="selectCatHint">Seleccione una categoría...</string>
     <string name="selectUserHint">Seleccione un nombre de Usuario...</string>
     <string name="selectPsswrdHint">Seleccione una contraseña...</string>
@@ -103,6 +106,7 @@
     <string name="accountNoUserSelected">Los siento, no ha seleccionado un nombre de usuario en el menu despegable</string>
     <string name="accountNoPsswrdSelected">Los siento, no ha seleccionado una contraseña en el menu despegable</string>
     <string name="accountAdded"> has sido agregada a sus lista!</string>
+    <string name="accountRepeatQuestion">Esta pregunta ya se encuentra en la lista</string>
 
     <!--    Edit Account Activity-->
     <string name="editAccTitle">Editar cuenta</string>
@@ -115,7 +119,7 @@
 
     <!--    AddUserName Activity-->
     <string name="addUserTitle">Añadir usuario</string>
-    <string name="userNameAdded">Nuevo usuario agregado stisfactoriamente!</string>
+    <string name="userNameAdded">Nuevo usuario agregado satisfactoriamente!</string>
     <string name="userNameNotEntered">Lo siento, no ha introducido un nombre de usuario</string>
 
     <!--    EditUserName Activity   -->
@@ -124,12 +128,11 @@
     <string name="userNameUpdated">El nombre de usuario ha sido actualizado</string>
     <string name="userNameDeleted">nombre de usuario ha sido elimidado</string>
     <string name="userNameDeleteTitle">Eliminar nombre de usuario</string>
-    <string name="userNameDeleteMssg">Está seguro que desea eliminar este nombre du usuario?</string>
-
+    <string name="userNameDeleteMssg">Está seguro que desea eliminar este nombre de usario?</string>
 
     <!--    AddPsswrd Activity-->
     <string name="addPsswrdTitle">Añadir contraseña</string>
-    <string name="psswrdAdded">New password added successfully!</string>
+    <string name="psswrdAdded">Nuevo usuario agregado satisfactoriamente!</string>
     <string name="psswrdNotEntered">Lo siento, no ha introducido una contraseña</string>
 
     <!--    EditPsswrd Activity   -->
@@ -285,7 +288,6 @@
     <string name="moreAppsTag">Para más apps:</string>
     <string name="softwareInfoTitle">Información sobre el software</string>
 
-
     <!--    Login Activity-->
     <string name="prompt_password">Clave</string>
     <string name="action_sign_in">Iniciar sesión</string>
@@ -294,7 +296,7 @@
     <string name="invalid_username">Nombre de usuarion inválido</string>
     <string name="invalid_password">Clave de seguridad debe ser >5 caracteres</string>
     <string name="login_failed">Inicio de sesión fallido</string>
-    <string name="prompt_enterUserID">Introduzca su nombre de usuario</string>
+    <string name="prompt_enterUserID">Introduzca su usuario</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_passwordConfirm">Confirme su clave</string>
     <string name="prompt_enterUserName">Introduzca su nombre</string>
@@ -303,8 +305,8 @@
     <string name="signUp"><a href="">Sign Up?</a></string>
     <string name="signIn"><a href="">Sign In?</a></string>
     <string name="authenErr">Error de autenticación: </string>
-    <string name="authenSuccessful">Authentication succeeded!</string>
-    <string name="authenFailed">Autenticacón fallida</string>
+    <string name="authenSuccessful">Autenticación exitosa!</string>
+    <string name="authenFailed">Autenticación fallida</string>
     <string name="biometLoginTitle">Validación biométrica para MyPsswrdSecure</string>
     <string name="biometLoginSubTitle">Logueé usando sus credenciales biométricas</string>
     <string name="biometLoginCancelMssg">Usar usuario y clave</string>
@@ -312,7 +314,7 @@
     <string name="moreThanOneLoginError">Lo siento, hay más de una cuenta registrada en la app. Por favor, desinstalle y vuelva a instalar.</string>
     <string name="wrongCredentialsError">Lo siento, la combinación de usuario y contraseña es inválida, intent de nuevo...</string>
 
-
+    <!--    App state-->
     <string name="appStateError">Error de estado de la app</string>
     <string name="appStateErrorMssg">La app falló en actualizar su estado</string>
     <string name="itemNotDeletedMssg">Lo siento, el ítem no fue eliminado de la base de datos</string>
@@ -320,6 +322,28 @@
     <!--    AppLoginActivity-->
     <string name="appLoginUserNamePrompt">Este nombre de usuario es parte de las credenciales de la app. No puede ser eliminada hasta que las credenciales de acceso sean cambiadas</string>
     <string name="appLoginPsswrdPrompt">Esta contraseña es parte de las credenciales de la app. No puede ser eliminada hasta que las credenciales de acceso sean cambiadas</string>
+    <string name="appLoginCredentialsNotChanged">Lo siento,las credenciales no han sido cambiadas, cambie al menos uno de los campos en los menus disponibles</string>
+    <string name="appLoginPsswrdNotSelected">Por favor, seleccione una contraseña en el menu correspondiente</string>
+    <string name="appLoginUserNotSelected">Por favor, seleccione un nombre de usuario en el menu correspondiente</string>
 
+    <!--    Push Notification-->
+    <string name="pushNotificationPsswrdExpMssg">Contraseña expiró</string>
+    <string name="pushNotPsswrHasExp2"> ha expirado</string>
+    <string name="pushNotPsswrdHasExp1">La contraseña de </string>
+    <string name="imgSourceTitle">Selecione una imagen</string>
+
+    <!--    Extra messages-->
+    <string name="errorLoadCamera">Error al cargar image desde la cámara</string>
+    <string name="errorSearchTextEmpty">Lo siento,el texto a buscar está vacío</string>
+    <string name="appLoginUpdateError">Los siento, la base de datos ha fallado en registrar los cambios en el login!</string>
+    <string name="logOutServiceDescription">Servicio para administrar deslogueo automático de la applicación MyPsswrdSecure</string>
+    <string name="logOutTitle">Desloguear</string>
+    <string name="logOutMssg">Tiempo de logueo ha expirado!</string>
+    <string name="logOutContinue">Continuar?</string>
+    <string name="cat_select_icon_mssge">Seleccione un ícono para esta categoríá:</string>
+    <string name="the_item">\nEl ítem</string>
+    <string name="being_used">\ está siendo usado \</string>
+    <string name="several_accounts_to_remove">\ veces.\nEl ítem será eliminado de las siguientes cuentas:\</string>
+    <string name="one_account_to_remove">\ vez.\nEl ítem será eliminado de la siguiente cuenta:\</string>
 
 </resources>

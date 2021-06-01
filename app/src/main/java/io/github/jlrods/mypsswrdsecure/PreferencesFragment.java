@@ -1,20 +1,12 @@
 package io.github.jlrods.mypsswrdsecure;
 
-import android.app.Activity;
 import android.content.Intent;
-//import android.os.Bundle;
-//import android.preference.Preference;
-//import android.preference.PreferenceFragment;
-//import android.support.v7.preference.ListPreference;
-//import android.support.v7.preference.PreferenceFragmentCompat;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
-
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.SwitchPreference;
-
-import io.github.jlrods.mypsswrdsecure.login.LoginActivity;
 
 /**
  * Created by rodjose1 on 18/07/2018.
@@ -22,57 +14,9 @@ import io.github.jlrods.mypsswrdsecure.login.LoginActivity;
 
 //Class to handle the fragment to be set into the PreferencesActivity
 public class PreferencesFragment extends androidx.preference.PreferenceFragmentCompat implements Preference.OnPreferenceChangeListener {
-/*    @Override
-    public void onCreate(Bundle savedInstanceState) {
-
-    }// End of constructor method*/
-
-//    @Override
-//    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-//        //Call the super method
-//        //super.onCreate(savedInstanceState);
-//        //Set the layout
-//        setPreferencesFromResource(R.xml.preferences, rootKey);
-//        //addPreferencesFromResource(R.xml.preferences);
-//
-//        ListPreference themePreference = (ListPreference) findPreference("appTheme");
-//        themePreference.setOnPreferenceChangeListener(this);
-//        ListPreference dateFormatPreference = (ListPreference) findPreference("dateFormat");
-//        dateFormatPreference.setOnPreferenceChangeListener(this);
-//        ListPreference language = (ListPreference) findPreference("languages");
-//        language.setOnPreferenceChangeListener(this);
-//
-//    }
-
-//    @Override
-//    public boolean onPreferenceChange(android.support.v7.preference.Preference preference, Object newValue) {
-//        Log.e("preference", "Pending Preference value is: " + newValue);
-//        if(preference.equals(findPreference("appTheme")) || preference.equals(findPreference("languages")) ){
-//            Intent intent = new Intent(this.getContext(),MainActivity.class);
-//            startActivity(intent);
-//        }else if(preference.equals(findPreference("dateFormat"))){
-//            MainActivity.setDateFormatChanged(true);
-//        }
-//        return true;
-//    }
-
-//    @Override
-//    public boolean onPreferenceChange(Preference preference, Object newValue) {
-//        Log.e("preference", "Pending Preference value is: " + newValue);
-//        if(preference.equals(findPreference("appTheme")) || preference.equals(findPreference("languages")) ){
-//            Intent intent = new Intent(this.getContext(),MainActivity.class);
-//            startActivity(intent);
-//        }else if(preference.equals(findPreference("dateFormat"))){
-//            MainActivity.setDateFormatChanged(true);
-//        }
-//        return true;
-//    }
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-
-        //Call the super method
-        //super.onCreate(savedInstanceState);
         //Set the layout
         setPreferencesFromResource(R.xml.preferences, rootKey);
         //addPreferencesFromResource(R.xml.preferences);
@@ -88,37 +32,38 @@ public class PreferencesFragment extends androidx.preference.PreferenceFragmentC
         ListPreference timeOutTime = (ListPreference) findPreference("logOutTime");
         timeOutTime.setEnabled(isLogOutActive.isChecked());
         isLogOutActive.setOnPreferenceChangeListener(this);
-//        isLogOutActive.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-//            @Override
-//            public boolean onPreferenceChange(Preference preference, Object newValue) {
-//                if ((boolean) newValue) {
-//                    timeOutTime.setEnabled(true);
-//                } else {
-//                    timeOutTime.setEnabled(false);
-//                }
-//                return (boolean) newValue;
-//            }
-//
-//        });
-//        isLogOutActive.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-//            @Override
-//            public boolean onPreferenceClick(Preference preference) {
-//                (SwitchPreference) preference
-//                return false;
-//            }
-//    });
-    }
+    }//End of onCreatePreferences method
+
+    //Method to catch changes on preferences
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         Log.d("preference", "Pending Preference value is: " + newValue);
         if(preference.equals(findPreference("appTheme")) || preference.equals(findPreference("languages")) ){
-            Intent intent = new Intent(this.getContext(), LoginActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            MainActivity.logout(this.getContext());
         }else if(((SwitchPreference)preference).equals(findPreference("isAutoLogOutActive"))){
             ListPreference timeOutTime = (ListPreference) findPreference("logOutTime");
-            //Set new state of switch as thenew time out time preference visibility
+            //Set new state of switch as the new time out time preference visibility
             timeOutTime.setEnabled((boolean) newValue);
+            if((boolean)newValue){
+                Intent autoLogOutService = new Intent(getContext(), AutoLogOutService.class);
+                getActivity().startService(autoLogOutService);
+            }else{
+                Intent autoLogOutService = new Intent(getContext(), AutoLogOutService.class);
+                getActivity().stopService(autoLogOutService);
+            }
+            CountDownTimer delayTimer = new CountDownTimer(2000,250) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    Log.d("onTick", "Enter/Exit  CountDownTimer onTick method  in PreferenceFragment class.");
+                }//End of onTick method
+
+                @Override
+                public void onFinish() {
+                    ((LogOutTimer)AutoLogOutService.getLogOutTimer()).setContext(getActivity());
+                    Log.d("onFinish", "Enter/Exit  CountDownTimer onFinish method  in PreferenceFragment class.");
+                }//End of onFinish method
+            };
+            delayTimer.start();
         }// End of if else statements to check what preference changed
         return true;
     }//End of onPreferenceChange method

@@ -3,17 +3,17 @@ package io.github.jlrods.mypsswrdsecure;
 import android.database.Cursor;
 import android.util.Log;
 import java.util.ArrayList;
-import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
+import io.github.jlrods.mypsswrdsecure.login.LoginActivity;
 
 public class Account extends Loggin {
     // Attribute definition
-
     private Category category; // Account type
     private QuestionList questionList; // List of Question objects (up to 3 questions stored in DB)
     private Icon icon; // Icon object to store URI icon location
     private boolean isFavorite; // Boolean attribute to identify the account as Favorite or not
     private long dateCreated;
     private long dateChange;
+
     //Method definition
 
     //Constructors
@@ -161,7 +161,7 @@ public class Account extends Loggin {
    public static Account extractAccount(Cursor c){
        Log.d("Ent_ExtractAccount","Enter extractAccount method in the Account class.");
        //Declare and initialize a db manager class to run sql queries
-       AccountsDB accountsDB = HomeFragment.getAccountsDB();
+       AccountsDB accountsDB = LoginActivity.getAccountsDB();
        //Declare and initialize a null category object, the one to be returned by the method
        Account account = null;
        //Declare and initialize objects required to create a new account object
@@ -209,7 +209,6 @@ public class Account extends Loggin {
            //Create new account object with data extracted from cursor and objects created to make the account object
            account = new Account((int) attributes.get(0),(String) attributes.get(1),userName, psswrd,category,questionList,icon,isFavorite,dateCreated,dateChange);
        }
-
        Log.d("Ext_ExtractAccount","Exit extractAccount method in the Account class.");
        //Return the category object
        return account;

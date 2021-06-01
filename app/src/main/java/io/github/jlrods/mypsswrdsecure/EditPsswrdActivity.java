@@ -43,7 +43,7 @@ public class EditPsswrdActivity extends AddPsswrdActivity {
             );
         }else{
             MainActivity.displayToast(this,getString(R.string.appLoginPsswrdPrompt),Toast.LENGTH_LONG,Gravity.CENTER);
-        }
+        }//End of if else statement to check the current password display on the activity isn't part of app credentials
         Log.d("OnCreateEditPsswrd","Exit onCreate method in the EditPsswrdActivity class.");
     }//End of onCreate method
 
@@ -101,6 +101,4 @@ public class EditPsswrdActivity extends AddPsswrdActivity {
         }//End of switch statement
         return result;
     }//End of onOptionsItemSelected method
-
 }//End of EditPsswrdActivity
-

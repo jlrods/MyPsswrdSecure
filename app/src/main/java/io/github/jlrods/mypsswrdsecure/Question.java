@@ -2,12 +2,7 @@ package io.github.jlrods.mypsswrdsecure;
 
 import android.database.Cursor;
 import android.util.Log;
-
 import androidx.annotation.NonNull;
-
-import java.util.ArrayList;
-
-import io.github.jlrods.mypsswrdsecure.ui.home.HomeFragment;
 
 // Class to handle Question object definition
 class Question{
@@ -25,42 +20,41 @@ class Question{
         this.value = value;
         this.answer = answer;
         Log.d("QuestionFullConst","Exit Question Full Constructor");
-    }
+    }//End of Question constructor method
 
     public Question(int _id, String value,int AnswerID,byte[] answerText,byte[] answerIV){
         this(_id,value,new Answer(_id, answerText,answerIV));
         Log.d("QuestionConst1","Exit Question Constructor 4 arguments");
-    }
+    }//End of Question constructor method
 
     public Question(String value, Answer answer){
         this(-1,value,answer);
         Log.d("UserNameConst2","Exit Question Constructor 2 arguments");
-    }
+    }//End of Question constructor method
 
     public Question(String value,int AnswerID,byte[] answerText, byte[] answerIV){
         this(value,new Answer(AnswerID, answerText,answerIV));
         Log.d("QuestionConst3","Exit Question Constructor 3 arguments");
-    }
+    }//End of Question constructor method
 
     public Question(String value){
         this(value,null);
         Log.d("QuestionConst4","Exit Question Constructor 1 arguments");
-    }
+    }//End of Question constructor method
 
     public Question(){
         this("",null);
         Log.d("QuestionConst5","Exit Question Constructor no arguments");
-    }
+    }//End of Question constructor method
 
 
-
-    //
+    //Method to return string information of the question object
     @NonNull
     @Override
     public String toString() {
         Log.d("Question_ToStr_Ent","Enter Question class ToString method");
         return "Question ID: " + this._id +"\nValue: " + this.value+"\nAnswer: "+ this.answer.toString() ;
-    }
+    }//End of toString method
 
     //Method to extract an Answer from a cursor object
     public static Question extractQuestion(Cursor c){
@@ -81,8 +75,6 @@ class Question{
     }// End of extractAnswer method
 
     //Setter and getter methods
-
-
     public int get_id() {
         return _id;
     }

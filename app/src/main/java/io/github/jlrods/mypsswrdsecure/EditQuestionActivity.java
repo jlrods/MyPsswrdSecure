@@ -9,7 +9,6 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
-
 import javax.crypto.spec.IvParameterSpec;
 
 public class EditQuestionActivity extends AddQuestionActivity {
@@ -52,9 +51,8 @@ public class EditQuestionActivity extends AddQuestionActivity {
                             getResources().getString(R.string.questionDeleteMssg),
                             question.getValue(),
                             "itemDeleted",position)
-            );
-        }
-
+            );//End of setOnClickEventHandler method
+        }//End of if statement to check the question is not preloaded
         Log.d("OnCreateEditUser","Exit onCreate method in the EditQuestionActivity class.");
     }//End of onCreate method
 

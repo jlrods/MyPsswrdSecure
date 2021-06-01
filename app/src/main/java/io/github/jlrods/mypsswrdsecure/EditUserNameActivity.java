@@ -1,31 +1,21 @@
 package io.github.jlrods.mypsswrdsecure;
 
 import android.content.ContentValues;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.Toast;
-
-import androidx.appcompat.app.AlertDialog;
-
 import javax.crypto.spec.IvParameterSpec;
 
 public class EditUserNameActivity extends AddUserNameActivity {
-    //Attribute definition
-    //private Bundle extras;
-    //private boolean toBeDeleted = false;
     //Method definition
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("OnCreateEditUser","Enter onCreate method in the EditUserNameActivity class.");
-
         //Set activity title
         getSupportActionBar().setTitle(R.string.editUserTitle);
         //Extract user name by passing in the _id attribute stored in the extras
@@ -104,5 +94,4 @@ public class EditUserNameActivity extends AddUserNameActivity {
         }//End of switch statement
         return result;
     }//End of onOptionsItemSelected method
-
 }//End of class EditUserNameActivity

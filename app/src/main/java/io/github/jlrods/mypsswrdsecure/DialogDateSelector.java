@@ -15,7 +15,7 @@ public class DialogDateSelector extends DialogFragment {
     private DatePickerDialog.OnDateSetListener listener;
     public void setOnDateSetListener(DatePickerDialog.OnDateSetListener listener){
         this.listener = listener;
-    }
+    }//End of setOnDateSetListener
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Calendar calendar = Calendar.getInstance();
@@ -28,5 +28,5 @@ public class DialogDateSelector extends DialogFragment {
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         return new DatePickerDialog(getActivity(), listener, year,month,day);
-    }
-}
+    }//End of onCreateDialog method
+}//End of DialogDateSelector method
