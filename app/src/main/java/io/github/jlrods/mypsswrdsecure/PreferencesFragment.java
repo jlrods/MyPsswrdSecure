@@ -32,6 +32,7 @@ public class PreferencesFragment extends androidx.preference.PreferenceFragmentC
         ListPreference timeOutTime = (ListPreference) findPreference("logOutTime");
         timeOutTime.setEnabled(isLogOutActive.isChecked());
         isLogOutActive.setOnPreferenceChangeListener(this);
+        timeOutTime.setOnPreferenceChangeListener(this);
     }//End of onCreatePreferences method
 
     //Method to catch changes on preferences
@@ -40,6 +41,19 @@ public class PreferencesFragment extends androidx.preference.PreferenceFragmentC
         Log.d("preference", "Pending Preference value is: " + newValue);
         if(preference.equals(findPreference("appTheme")) || preference.equals(findPreference("languages")) ){
             MainActivity.logout(this.getContext());
+        }else if(preference.equals(findPreference("logOutTime"))){
+            (AutoLogOutService.getLogOutTimer()).cancel();
+            long logOutTime;
+            if(newValue.equals("1")){
+                logOutTime = 3;
+            }else if(newValue.equals("2")){
+                logOutTime = 5;
+            }else{
+                logOutTime= 1;
+            }
+            logOutTime = logOutTime*10*1000;
+            AutoLogOutService.setLogOutTimer(new LogOutTimer(logOutTime,250,getActivity()));
+            AutoLogOutService.getLogOutTimer().start();
         }else if(((SwitchPreference)preference).equals(findPreference("isAutoLogOutActive"))){
             ListPreference timeOutTime = (ListPreference) findPreference("logOutTime");
             //Set new state of switch as the new time out time preference visibility

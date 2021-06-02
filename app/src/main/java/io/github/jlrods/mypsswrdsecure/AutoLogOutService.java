@@ -62,4 +62,8 @@ public class AutoLogOutService extends Service {
     public static CountDownTimer getLogOutTimer(){
         return  logOutTimer;
     }//End of getLogOutTimer method
+
+    public static void setLogOutTimer(LogOutTimer logOutTimer){
+        AutoLogOutService.logOutTimer = logOutTimer;
+    };
 }//End of AutoLogoutService
