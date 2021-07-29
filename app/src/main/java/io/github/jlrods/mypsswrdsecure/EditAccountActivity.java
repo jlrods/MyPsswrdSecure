@@ -25,7 +25,7 @@ public class EditAccountActivity extends DisplayAccountActivity{
         //Check if Activity was call by notification pending intent
         if(extras.getBoolean("isActivityCalledFromNotification")){
             //Reset boolean flag to display notification
-            MainActivity.setIsPushNotificationSent(false);
+            MainActivity.setPushNotificationSent(false);
             //Remove back arrow button to avoid stopping service
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         }

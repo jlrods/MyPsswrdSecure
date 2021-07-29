@@ -14,13 +14,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 //Class to handle the nav drawer background selection. Unlike SelectLogoActivity, this activity does not retrieved
 //the current selection or background used at the moment, it displays the list of available backgrounds from the top.
-public class SelectNavDrawerBckGrnd extends AppCompatActivity {
+public class SelectNavDrawerBckGrndActivity extends AppCompatActivity {
     Icon selectedIcon = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("SelBckgrndOnCreate", "Enter onCreate method in SelectNavDrawerBckGrnd class.");
+        Log.d("SelBckgrndOnCreate", "Enter onCreate method in SelectNavDrawerBckGrndActivity class.");
         //Get default current app theme from preferences
         int appThemeSelected = MainActivity.setAppTheme(this);
         //Set the theme by passing theme id number coming from preferences
@@ -67,7 +67,7 @@ public class SelectNavDrawerBckGrnd extends AppCompatActivity {
         rvLogos.setLayoutManager(new LinearLayoutManager(getBaseContext()));
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(getBaseContext(), DividerItemDecoration.VERTICAL);
         rvLogos.addItemDecoration(itemDecoration);
-        Log.d("SelBckgrndOnCreate", "Exit onCreate method in SelectNavDrawerBckGrnd class.");
+        Log.d("SelBckgrndOnCreate", "Exit onCreate method in SelectNavDrawerBckGrndActivity class.");
         //Set the logo OnClickListener object so the Logo is selected when clicked on it
     }//End of onCreate method
 
@@ -80,6 +80,13 @@ public class SelectNavDrawerBckGrnd extends AppCompatActivity {
         }
     }//End of onResume method
 
+    public void onStop(){
+        super.onStop();
+        Log.d("onStopMain", "Enter onStop method in SelectNavDrawerBckGrndActivity class.");
+        MainActivity. checkForNotificationSent(this);
+        Log.d("onStopMain", "Exit onStop method in SelectNavDrawerBckGrndActivity class.");
+    }//End of onStop method
+
     //Method to inflate the menu into the addTaskActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -90,7 +97,7 @@ public class SelectNavDrawerBckGrnd extends AppCompatActivity {
     //Method to check the menu item selected and execute the corresponding actions
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Log.d("onOptionsItemSelected","Enter onOptionsItemSelected method in SelectNavDrawerBckGrnd class.");
+        Log.d("onOptionsItemSelected","Enter onOptionsItemSelected method in SelectNavDrawerBckGrndActivity class.");
         //Boolean to return method result
         boolean result = false;
         Intent intent = new Intent();
@@ -102,19 +109,19 @@ public class SelectNavDrawerBckGrnd extends AppCompatActivity {
                     intent.putExtra("selectedImgResourceID",this.selectedIcon.getResourceID());
                     setResult(RESULT_OK, intent);
                 }//End of if statement to check the selected icon isn't null
-                Log.d("onOptionsItemSelected","Save option selected on onOptionsItemSelected method in SelectNavDrawerBckGrnd class.");
+                Log.d("onOptionsItemSelected","Save option selected on onOptionsItemSelected method in SelectNavDrawerBckGrndActivity class.");
                 break;
             case R.id.select_logo_cancel:
                 //Set activity result as cancelled so DisplayAccActivity can decide what to do if this is the case
                 setResult(RESULT_CANCELED, intent);
-                Log.d("onOptionsItemSelected","Cancel option selected on onOptionsItemSelected method in SelectNavDrawerBckGrnd class.");
+                Log.d("onOptionsItemSelected","Cancel option selected on onOptionsItemSelected method in SelectNavDrawerBckGrndActivity class.");
                 break;
             case R.id.action_logout:
                 //Call method to throw LoginActivity and clear activity stack.
-                Log.d("onOptionsItemSelected","Logout option selected on onOptionsItemSelected method in SelectNavDrawerBckGrnd class.");
+                Log.d("onOptionsItemSelected","Logout option selected on onOptionsItemSelected method in SelectNavDrawerBckGrndActivity class.");
                 MainActivity.logout(this);
         }//End of switch statement
-        Log.d("onOptionsItemSelected","Exit successfully onOptionsItemSelected method in SelectNavDrawerBckGrnd class.");
+        Log.d("onOptionsItemSelected","Exit successfully onOptionsItemSelected method in SelectNavDrawerBckGrndActivity class.");
         finish();
         return result;
     }//End of onOptionsItem selected method

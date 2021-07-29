@@ -39,6 +39,13 @@ public class PreferencesActivity extends AppCompatActivity {
         }
     }//End of onResume method
 
+    public void onStop(){
+        super.onStop();
+        Log.d("onStopMain", "Enter onStop method in PreferencesActivity class.");
+        MainActivity. checkForNotificationSent(this);
+        Log.d("onStopMain", "Exit onStop method in PreferencesActivity class.");
+    }//End of onStop method
+
     //Method to populate menu object and configure menu items visibility
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

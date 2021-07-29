@@ -97,6 +97,13 @@ public class SelectLogoActivity extends AppCompatActivity {
         }
     }//End of onResume method
 
+    public void onStop(){
+        super.onStop();
+        Log.d("onStopMain", "Enter onStop method in SelectLogoActivity class.");
+        MainActivity. checkForNotificationSent(this);
+        Log.d("onStopMain", "Exit onStop method in SelectLogoActivity class.");
+    }//End of onStop method
+
     //Method to inflate the menu into the addTaskActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -1,5 +1,6 @@
 package io.github.jlrods.mypsswrdsecure;
 
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
@@ -8,6 +9,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.TaskStackBuilder;
+
+import io.github.jlrods.mypsswrdsecure.login.LoginActivity;
 
 public class AboutActivity extends AppCompatActivity {
     ThemeUpdater themeUpdater;
@@ -44,6 +48,14 @@ public class AboutActivity extends AppCompatActivity {
         }
 
     }//End of onResume method
+
+    @Override
+    public void onStop(){
+        super.onStop();
+        Log.d("onStopMain", "Enter onStop method in AboutActivity class.");
+        MainActivity. checkForNotificationSent(this);
+        Log.d("onStopMain", "Exit onStop method in AboutActivity class.");
+    }//End of onStop method
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

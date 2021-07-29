@@ -146,7 +146,7 @@ public class LogOutTimer extends CountDownTimer {
     }//End of setTimerDone method
 
     //Method to check if MyPsswrdSecure app is on the foreground (important for Auto Logout Alert dialog display)
-    public boolean isAppInForeground() {
+    public static boolean isAppInForeground() {
         Log.d("isAppInForeground", "Enter  isAppInForeground method for logout in LogOutTimer class.");
         ActivityManager.RunningAppProcessInfo appProcessInfo = new ActivityManager.RunningAppProcessInfo();
         ActivityManager.getMyMemoryState(appProcessInfo);
