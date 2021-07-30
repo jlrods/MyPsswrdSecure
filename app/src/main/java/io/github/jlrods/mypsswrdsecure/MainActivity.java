@@ -354,7 +354,7 @@ public class MainActivity extends AppCompatActivity {
         });// End of addOnTabSelectedListener method for tabLayout
 
         //Create and set default logo for accounts
-        myPsswrdSecureLogo = new Icon(R.mipmap.ic_my_psswrd_secure, "MyPsswrdSecureIcon", String.valueOf(R.mipmap.ic_my_psswrd_secure), false);
+        myPsswrdSecureLogo = new Icon(R.mipmap.ic_my_psswrd_secure_new, "MyPsswrdSecureIcon", String.valueOf(R.mipmap.ic_my_psswrd_secure_new), false);
         cryptographer = LoginActivity.getCryptographer();
         //Create a new object to manage all DB interaction
         accountsDB = LoginActivity.getAccountsDB();
