@@ -373,9 +373,9 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             saveState.putString("logoLocation",MainActivity.getRESOURCES());
             saveState.putInt("logoListPosition",this.selectedPosition);
             saveState.putString("logoName",this.logo.getName());
-        }else if(this.logo.getLocation().equals(String.valueOf(R.mipmap.ic_my_psswrd_secure))){
-            saveState.putString("logoLocation",String.valueOf(R.mipmap.ic_my_psswrd_secure));
-            saveState.putInt("logoListPosition",R.mipmap.ic_my_psswrd_secure);
+        }else if(this.logo.getLocation().equals(String.valueOf(R.mipmap.ic_my_psswrd_secure_new))){
+            saveState.putString("logoLocation",String.valueOf(R.mipmap.ic_my_psswrd_secure_new));
+            saveState.putInt("logoListPosition",R.mipmap.ic_my_psswrd_secure_new);
         }else if(this.logo.getLocation().startsWith(MainActivity.getExternalImageStorageClue())){
             saveState.putString("logoName",this.logo.getName());
             saveState.putString("logoLocation",this.logo.getLocation());
@@ -497,7 +497,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
                 this.imgAccLogo.setImageURI(Uri.parse(logoLocation));
             }else{
                 this.logo = MainActivity.getMyPsswrdSecureLogo();
-                this.imgAccLogo.setImageResource(R.mipmap.ic_my_psswrd_secure);
+                this.imgAccLogo.setImageResource(R.mipmap.ic_my_psswrd_secure_new);
             }//End of if else statement to check the logo location and set up logo object and img accordingly based on the source.
             //No need to set up the app logo, as this is set up during onCreate method
 
@@ -859,8 +859,8 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
                 this.selectedPosition = data.getExtras().getInt("selectedImgPosition");
                 this.logo = this.iconAdapter.getIconList().get(this.selectedPosition);
                 this.imgAccLogo.setImageResource(this.logo.getResourceID());
-            }else if(data.getExtras().getString("selectedImgLocation").equals(String.valueOf(R.mipmap.ic_my_psswrd_secure))){
-                this.imgAccLogo.setImageResource(R.mipmap.ic_my_psswrd_secure);
+            }else if(data.getExtras().getString("selectedImgLocation").equals(String.valueOf(R.mipmap.ic_my_psswrd_secure_new))){
+                this.imgAccLogo.setImageResource(R.mipmap.ic_my_psswrd_secure_new);
             }//End of if else statement to check if logo comes from app resources
         }else if(requestCode==this.throwSelectLogoActReqCode && resultCode==RESULT_CANCELED){
             //In the event of receiving a cancel result, no change to be done on the current account, no logo change to be applied
@@ -1361,7 +1361,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
     protected void setAppLogoAsAccIcon(){
         Log.d("setAppLogoAsAccIcon", "Enter setAppLogoAsAccIcon overloaded method in DisplayAccountActivity abstract class.");
         this.logo = MainActivity.getMyPsswrdSecureLogo();
-        this.imgAccLogo.setImageResource(R.mipmap.ic_my_psswrd_secure);
+        this.imgAccLogo.setImageResource(R.mipmap.ic_my_psswrd_secure_new);
         Log.d("setAppLogoAsAccIcon", "Exit setAppLogoAsAccIcon overloaded method in DisplayAccountActivity abstract class.");
     }//End of setAppLogoAsAccIcon method
 

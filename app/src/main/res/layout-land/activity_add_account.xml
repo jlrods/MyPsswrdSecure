@@ -374,7 +374,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="?listPreferredItemHeight"
                         android:layout_gravity="center"
-                        android:src="@mipmap/ic_my_psswrd_secure"
+                        android:src="@mipmap/ic_my_psswrd_secure_new"
                         android:layout_margin="5dp"
                         android:padding="5dp"
                         android:layout_weight="3" />

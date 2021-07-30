@@ -57,9 +57,9 @@ public class EditAccountActivity extends DisplayAccountActivity{
                 }
                 i++;
             }//End of while statement
-        }else if(this.account.getIcon().getLocation().equals(String.valueOf(R.mipmap.ic_my_psswrd_secure))){
+        }else if(this.account.getIcon().getLocation().equals(String.valueOf(R.mipmap.ic_my_psswrd_secure_new))){
             //Setup the app logo if required
-            this.imgAccLogo.setImageResource(R.mipmap.ic_my_psswrd_secure);
+            this.imgAccLogo.setImageResource(R.mipmap.ic_my_psswrd_secure_new);
         }else if(this.account.getIcon().getLocation().startsWith(MainActivity.getExternalImageStorageClue())){
             //Set up image from URI if required
             this.logo = this.accountsDB.getIconByID(this.account.getIcon().get_id());

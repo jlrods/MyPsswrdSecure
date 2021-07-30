@@ -16,7 +16,7 @@
         android:layout_width="wrap_content"
         android:layout_height="?listPreferredItemHeight"
         android:layout_marginLeft="5dp"
-        android:src="@mipmap/ic_my_psswrd_secure_round"
+        android:src="@mipmap/ic_my_psswrd_secure_new"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 

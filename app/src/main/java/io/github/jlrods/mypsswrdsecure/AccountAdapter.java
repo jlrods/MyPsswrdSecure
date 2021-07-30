@@ -64,7 +64,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
             MainActivity.setAccountLogoImageFromRes(holder.imgIcon,context,account.getIcon().getName());
         }else{
             //Any other case, use the default app logo
-            holder.imgIcon.setImageResource(R.mipmap.ic_my_psswrd_secure);
+            holder.imgIcon.setImageResource(R.mipmap.ic_my_psswrd_secure_new);
         }//End of if else statement
         if(account.isFavorite()){
             holder.imgFavoriteStar.setImageResource(android.R.drawable.btn_star_big_on);
