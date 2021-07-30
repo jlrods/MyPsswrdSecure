@@ -83,7 +83,7 @@ public class SelectNavDrawerBckGrndActivity extends AppCompatActivity {
     public void onStop(){
         super.onStop();
         Log.d("onStopMain", "Enter onStop method in SelectNavDrawerBckGrndActivity class.");
-        MainActivity. checkForNotificationSent(this);
+        MainActivity. checkForNotificationSent(this,false);
         Log.d("onStopMain", "Exit onStop method in SelectNavDrawerBckGrndActivity class.");
     }//End of onStop method
 
@@ -117,8 +117,10 @@ public class SelectNavDrawerBckGrndActivity extends AppCompatActivity {
                 Log.d("onOptionsItemSelected","Cancel option selected on onOptionsItemSelected method in SelectNavDrawerBckGrndActivity class.");
                 break;
             case R.id.action_logout:
-                //Call method to throw LoginActivity and clear activity stack.
                 Log.d("onOptionsItemSelected","Logout option selected on onOptionsItemSelected method in SelectNavDrawerBckGrndActivity class.");
+                //Call method to check for notification sent and update if required
+                MainActivity.checkForNotificationSent(this,true);
+                //Call method to throw LoginActivity and clear activity stack.
                 MainActivity.logout(this);
         }//End of switch statement
         Log.d("onOptionsItemSelected","Exit successfully onOptionsItemSelected method in SelectNavDrawerBckGrndActivity class.");

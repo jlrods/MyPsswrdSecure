@@ -42,7 +42,7 @@ public class PreferencesActivity extends AppCompatActivity {
     public void onStop(){
         super.onStop();
         Log.d("onStopMain", "Enter onStop method in PreferencesActivity class.");
-        MainActivity. checkForNotificationSent(this);
+        MainActivity. checkForNotificationSent(this,false);
         Log.d("onStopMain", "Exit onStop method in PreferencesActivity class.");
     }//End of onStop method
 
@@ -67,8 +67,10 @@ public class PreferencesActivity extends AppCompatActivity {
         //Check the id of item selected in menu
         switch (item.getItemId()) {
             case R.id.action_logout:
-                //Call method to throw LoginActivity and clear activity stack.
                 Log.d("onOptionsItemSelected","Logout option selected on onOptionsItemSelected method in PreferencesActivity class.");
+                //Call method to check for notification sent and update if required
+                MainActivity.checkForNotificationSent(this,true);
+                //Call method to throw LoginActivity and clear activity stack.
                 MainActivity.logout(this);
         }//End of switch statement
         Log.d("onOptionsItemSelected","Exit successfully onOptionsItemSelected method in PreferencesActivity class.");

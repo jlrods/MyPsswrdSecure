@@ -475,6 +475,9 @@ public class MainActivity extends AppCompatActivity {
         } else {
             //Call logout method and display error message???
             displayToast(((Activity)this).getParent(),"Log in error, the app loggin supplied doesn't match the one in the app records!",Toast.LENGTH_LONG,Gravity.CENTER);
+            //Call method to check for notification sent and update if required
+            MainActivity.checkForNotificationSent(this,true);
+            //Call method to throw LoginActivity and clear activity stack.
             logout();
         }//End of if statement to check user cursor is not empty
         //Check for expired password accounts to display push notifications
@@ -513,7 +516,6 @@ public class MainActivity extends AppCompatActivity {
         }//End of if statement to check at least one account has expired password
         Log.d("Ext_onCreateMain", "Exit onCreate method in MainActivity class.");
     }//End of onCreate method
-
     @Override
     public void onPause(){
         super.onPause();
@@ -523,31 +525,10 @@ public class MainActivity extends AppCompatActivity {
     public void onStop(){
         super.onStop();
         Log.d("onStopMain", "Enter onStop method in MainActivity class.");
-        checkForNotificationSent(this);
+        //Call method to check for notification sent and update if required
+        checkForNotificationSent(this,false);
         Log.d("onStopMain", "Exit onStop method in MainActivity class.");
     }//End of onStop method
-
-    public static void checkForNotificationSent(Context context) {
-        if(isPushNotificationSent){
-            if(!LogOutTimer.isAppInForeground()){
-                //Update the intent so it calls the login screen
-                Intent intent = new Intent(context, LoginActivity.class);
-                TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-                //Set up extra information into the intent to be sent the the EditAccountActivity
-                //intent.putExtra("category", expiredPsswrdAccount.getCategory().get_id());
-                intent.putExtra("isActivityCalledFromNotification", true);
-                intent.putExtra("expiredPasswordAccountID",expiredPasswordAccountID);
-                intent.putExtra("notifiCationIssuedFromMainAct",false);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                stackBuilder.addNextIntentWithParentStack(intent);
-                PendingIntent pendingIntent = stackBuilder.getPendingIntent(THROW_EDIT_ACCOUNT_ACT_REQCODE, PendingIntent.FLAG_UPDATE_CURRENT);
-                notificationBuilder.setContentIntent(pendingIntent);
-                if(notificationManager != null){
-                    notificationManager.notify(expiredPasswordAccountID,notificationBuilder.build());
-                }//End of if statement to check if push notification has been sent to Android OS
-            }
-        }//End of if statement to check if push notification has been sent to OS
-    }
 
     @Override
     public void onResume() {
@@ -563,8 +544,44 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        //Call method to check for notification sent and update if required
+        checkForNotificationSent(this,true);
         Log.d("onResumeMain", "Enter/Exit onDestroy method in MainActivity class.");
     }//End of onDestroy method
+
+    public static void checkForNotificationSent(Context context, boolean isLogOutCalled) {
+        Log.d("onStopMain", "Enter checkForNotificationSent method in MainActivity class.");
+        if(!isLogOutCalled){
+            if(isPushNotificationSent && !LogOutTimer.isAppInForeground()){
+                updateNotificationIntent(context);
+            }//End of if statement to check if push notification has been sent to OS and app not in foreground
+        }else{
+            if(isPushNotificationSent && LogOutTimer.isAppInForeground()){
+                updateNotificationIntent(context);
+            }//End of if statement to check push notification has been sent and app in foreground
+        }//End of if else statement to check manual or out logout method was called
+        Log.d("onStopMain", "Exit checkForNotificationSent method in MainActivity class.");
+    }//End of checkForNotificationSent method
+
+
+    public static void updateNotificationIntent(Context context) {
+        //Update the intent so it calls the login screen
+        Intent intent = new Intent(context, LoginActivity.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+        //Set up extra information into the intent to be sent the the EditAccountActivity
+        //intent.putExtra("category", expiredPsswrdAccount.getCategory().get_id());
+        intent.putExtra("isActivityCalledFromNotification", true);
+        intent.putExtra("expiredPasswordAccountID", expiredPasswordAccountID);
+        intent.putExtra("notifiCationIssuedFromMainAct", false);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        stackBuilder.addNextIntentWithParentStack(intent);
+        PendingIntent pendingIntent = stackBuilder.getPendingIntent(THROW_EDIT_ACCOUNT_ACT_REQCODE, PendingIntent.FLAG_UPDATE_CURRENT);
+        notificationBuilder.setContentIntent(pendingIntent);
+        if (notificationManager != null) {
+            notificationManager.notify(expiredPasswordAccountID, notificationBuilder.build());
+        }//End of if statement to check if push notification has been sent to Android OS
+    }//End of updateNotificationIntent method
+
 
     @Override
     public void onBackPressed(){
@@ -630,6 +647,9 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("onOptionsItemSelected", "Exit the onOptionsItemSelected method in the MainActivity class with App Login option selected.");
                 return true;
             case R.id.action_logout:
+                //Call method to check for notification sent and update if required
+                MainActivity.checkForNotificationSent(this,true);
+                //Call method to throw LoginActivity and clear activity stack.
                 logout(this);
                 Log.d("onOptionsItemSelected", "Exit the onOptionsItemSelected method in the MainActivity class with Logout option selected.");
                 return true;

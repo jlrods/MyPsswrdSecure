@@ -320,7 +320,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
     public void onStop(){
         super.onStop();
         Log.d("onStopMain", "Enter onStop method in DisplayAccountActivity class.");
-        MainActivity. checkForNotificationSent(this);
+        MainActivity. checkForNotificationSent(this,false);
         Log.d("onStopMain", "Exit onStop method in DisplayAccountActivity class.");
     }//End of onStop method
 

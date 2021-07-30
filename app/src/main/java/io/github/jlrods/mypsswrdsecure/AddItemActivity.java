@@ -80,7 +80,7 @@ public abstract class AddItemActivity extends AppCompatActivity {
     public void onStop(){
         super.onStop();
         Log.d("onStopMain", "Enter onStop method in AddItemActivity class.");
-        MainActivity. checkForNotificationSent(this);
+        MainActivity. checkForNotificationSent(this, false);
         Log.d("onStopMain", "Exit onStop method in AddItemActivity class.");
     }//End of onStop method
 

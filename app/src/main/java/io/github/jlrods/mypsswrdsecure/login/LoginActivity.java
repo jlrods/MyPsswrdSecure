@@ -305,6 +305,14 @@ public class LoginActivity extends AppCompatActivity {
         Log.d("onResume","Enter onResume method in the LoginActivity class.");
     }//End of onResume method
 
+    @Override
+    public void onStop(){
+        super.onStop();
+        Log.d("onStopMain", "Enter onStop method in LogingActivity class.");
+        MainActivity. checkForNotificationSent(this, false);
+        Log.d("onStopMain", "Exit onStop method in LogingActivity class.");
+    }//End of onStop method
+
     private boolean encryptedCredentialValidation(byte[] encryptedCredential, byte[] credentialIV ,TextView tvCredential){
         return cryptographer.decryptText(encryptedCredential,new IvParameterSpec(credentialIV)).equals(tvCredential.getText().toString().trim());
     }
