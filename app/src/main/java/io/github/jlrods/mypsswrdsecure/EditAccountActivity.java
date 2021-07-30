@@ -25,7 +25,7 @@ public class EditAccountActivity extends DisplayAccountActivity{
         //Check if Activity was call by notification pending intent
         if(extras.getBoolean("isActivityCalledFromNotification")){
             //Reset boolean flag to display notification
-            MainActivity.setIsPushNotificationSent(false);
+            MainActivity.setPushNotificationSent(false);
             //Remove back arrow button to avoid stopping service
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         }
@@ -330,8 +330,10 @@ public class EditAccountActivity extends DisplayAccountActivity{
                 }//End of if else statement to check activity is called from push notification
                 break;
             case R.id.action_logout:
-                //Call method to throw LoginActivity and clear activity stack.
                 Log.d("onOptionsItemSelected","Logout option selected on onOptionsItemSelected method in EditAccountActivity class.");
+                //Call method to check for notification sent and update if required
+                MainActivity.checkForNotificationSent(this,true);
+                //Call method to throw LoginActivity and clear activity stack.
                 MainActivity.logout(this);
         }//End of switch statement
         Log.d("onOptionsItemSelected","Exit successfully onOptionsItemSelected method in EditAccountActivity class.");

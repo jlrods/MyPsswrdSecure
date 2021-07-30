@@ -50,7 +50,7 @@
         <activity
             android:name=".EditCategoryActivity" />
         <activity
-            android:name=".SelectNavDrawerBckGrnd" />
+            android:name=".SelectNavDrawerBckGrndActivity" />
         <activity
             android:name=".PreferencesActivity"
             android:theme="@style/AppTheme.NoActionBar"/>

@@ -1,5 +1,6 @@
 package io.github.jlrods.mypsswrdsecure;
 
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
@@ -8,6 +9,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.TaskStackBuilder;
+
+import io.github.jlrods.mypsswrdsecure.login.LoginActivity;
 
 public class AboutActivity extends AppCompatActivity {
     ThemeUpdater themeUpdater;
@@ -46,6 +50,14 @@ public class AboutActivity extends AppCompatActivity {
     }//End of onResume method
 
     @Override
+    public void onStop(){
+        super.onStop();
+        Log.d("onStopMain", "Enter onStop method in AboutActivity class.");
+        MainActivity. checkForNotificationSent(this, false);
+        Log.d("onStopMain", "Exit onStop method in AboutActivity class.");
+    }//End of onStop method
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.d("onCreateOptionsMenu","Enter onCreateOptionsMenu method in AboutActivity abstract class.");
         getMenuInflater().inflate(R.menu.activity_menu_save_cancel, menu);
@@ -65,8 +77,10 @@ public class AboutActivity extends AppCompatActivity {
         //Check the id of item selected in menu
         switch (item.getItemId()) {
             case R.id.action_logout:
-                //Call method to throw LoginActivity and clear activity stack.
                 Log.d("onOptionsItemSelected","Logout option selected on onOptionsItemSelected method in AboutActivity abstract class.");
+                //Call method to check for notification sent and update if required
+                MainActivity.checkForNotificationSent(this,true);
+                //Call method to throw LoginActivity and clear activity stack.
                 MainActivity.logout(this);
         }
         Log.d("onOptionsItemSelected","Exit successfully onOptionsItemSelected method in AboutActivity class.");

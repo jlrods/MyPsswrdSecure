@@ -73,8 +73,10 @@ public class AddPsswrdActivity extends AddItemActivity {
                 finish();
                 break;
             case R.id.action_logout:
-                //Call method to throw LoginActivity and clear activity stack.
                 Log.d("onOptionsItemSelected","Logout option selected on onOptionsItemSelected method in AddPsswrdActivity class.");
+                //Call method to check for notification sent and update if required
+                MainActivity.checkForNotificationSent(this,true);
+                //Call method to throw LoginActivity and clear activity stack.
                 MainActivity.logout(this);
         }//End of switch statement to check the menu option selected
         Log.d("onOptionsItemSelected","Exit onOptionsItemSelected method in AddPsswrdActivity class.");

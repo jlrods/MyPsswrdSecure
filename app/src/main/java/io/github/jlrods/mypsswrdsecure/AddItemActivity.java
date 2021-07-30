@@ -77,6 +77,13 @@ public abstract class AddItemActivity extends AppCompatActivity {
         }
     }//End of onResume method
 
+    public void onStop(){
+        super.onStop();
+        Log.d("onStopMain", "Enter onStop method in AddItemActivity class.");
+        MainActivity. checkForNotificationSent(this, false);
+        Log.d("onStopMain", "Exit onStop method in AddItemActivity class.");
+    }//End of onStop method
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.d("onCreateOptionsMenu","Enter onCreateOptionsMenu method in the AddItemActivity class.");

@@ -183,8 +183,8 @@ public class MainActivity extends AppCompatActivity {
     private static boolean isAutoLogOutActive;
     private static boolean isPushNotificationSent = false;
     private static int expiredPasswordAccountID = -1;
-    NotificationManagerCompat notificationManager = null;
-    NotificationCompat.Builder notificationBuilder = null;
+    private static NotificationManagerCompat notificationManager = null;
+    private static NotificationCompat.Builder notificationBuilder = null;
 
 
     @Override
@@ -475,6 +475,9 @@ public class MainActivity extends AppCompatActivity {
         } else {
             //Call logout method and display error message???
             displayToast(((Activity)this).getParent(),"Log in error, the app loggin supplied doesn't match the one in the app records!",Toast.LENGTH_LONG,Gravity.CENTER);
+            //Call method to check for notification sent and update if required
+            MainActivity.checkForNotificationSent(this,true);
+            //Call method to throw LoginActivity and clear activity stack.
             logout();
         }//End of if statement to check user cursor is not empty
         //Check for expired password accounts to display push notifications
@@ -510,11 +513,9 @@ public class MainActivity extends AppCompatActivity {
             isPushNotificationSent = true;
             expiredPasswordAccountID = expiredPsswrdAccount.get_id();
             notificationManager.notify(expiredPasswordAccountID, notificationBuilder.build());
-
         }//End of if statement to check at least one account has expired password
         Log.d("Ext_onCreateMain", "Exit onCreate method in MainActivity class.");
     }//End of onCreate method
-
     @Override
     public void onPause(){
         super.onPause();
@@ -524,23 +525,8 @@ public class MainActivity extends AppCompatActivity {
     public void onStop(){
         super.onStop();
         Log.d("onStopMain", "Enter onStop method in MainActivity class.");
-        if(isPushNotificationSent){
-            //Update the intent so it calls the login screen
-            Intent intent = new Intent(this, LoginActivity.class);
-            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-            //Set up extra information into the intent to be sent the the EditAccountActivity
-            //intent.putExtra("category", expiredPsswrdAccount.getCategory().get_id());
-            intent.putExtra("isActivityCalledFromNotification", true);
-            intent.putExtra("expiredPasswordAccountID",expiredPasswordAccountID);
-            intent.putExtra("notifiCationIssuedFromMainAct",false);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            stackBuilder.addNextIntentWithParentStack(intent);
-            PendingIntent pendingIntent = stackBuilder.getPendingIntent(THROW_EDIT_ACCOUNT_ACT_REQCODE, PendingIntent.FLAG_UPDATE_CURRENT);
-            notificationBuilder.setContentIntent(pendingIntent);
-            if(notificationManager != null){
-                notificationManager.notify(expiredPasswordAccountID,notificationBuilder.build());
-            }//End of if statement to check if push notification has been sent to Android OS
-        }//End of if statement to check if push notification has been sent to OS
+        //Call method to check for notification sent and update if required
+        checkForNotificationSent(this,false);
         Log.d("onStopMain", "Exit onStop method in MainActivity class.");
     }//End of onStop method
 
@@ -558,8 +544,44 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        //Call method to check for notification sent and update if required
+        checkForNotificationSent(this,true);
         Log.d("onResumeMain", "Enter/Exit onDestroy method in MainActivity class.");
     }//End of onDestroy method
+
+    public static void checkForNotificationSent(Context context, boolean isLogOutCalled) {
+        Log.d("onStopMain", "Enter checkForNotificationSent method in MainActivity class.");
+        if(!isLogOutCalled){
+            if(isPushNotificationSent && !LogOutTimer.isAppInForeground()){
+                updateNotificationIntent(context);
+            }//End of if statement to check if push notification has been sent to OS and app not in foreground
+        }else{
+            if(isPushNotificationSent && LogOutTimer.isAppInForeground()){
+                updateNotificationIntent(context);
+            }//End of if statement to check push notification has been sent and app in foreground
+        }//End of if else statement to check manual or out logout method was called
+        Log.d("onStopMain", "Exit checkForNotificationSent method in MainActivity class.");
+    }//End of checkForNotificationSent method
+
+
+    public static void updateNotificationIntent(Context context) {
+        //Update the intent so it calls the login screen
+        Intent intent = new Intent(context, LoginActivity.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+        //Set up extra information into the intent to be sent the the EditAccountActivity
+        //intent.putExtra("category", expiredPsswrdAccount.getCategory().get_id());
+        intent.putExtra("isActivityCalledFromNotification", true);
+        intent.putExtra("expiredPasswordAccountID", expiredPasswordAccountID);
+        intent.putExtra("notifiCationIssuedFromMainAct", false);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        stackBuilder.addNextIntentWithParentStack(intent);
+        PendingIntent pendingIntent = stackBuilder.getPendingIntent(THROW_EDIT_ACCOUNT_ACT_REQCODE, PendingIntent.FLAG_UPDATE_CURRENT);
+        notificationBuilder.setContentIntent(pendingIntent);
+        if (notificationManager != null) {
+            notificationManager.notify(expiredPasswordAccountID, notificationBuilder.build());
+        }//End of if statement to check if push notification has been sent to Android OS
+    }//End of updateNotificationIntent method
+
 
     @Override
     public void onBackPressed(){
@@ -625,6 +647,9 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("onOptionsItemSelected", "Exit the onOptionsItemSelected method in the MainActivity class with App Login option selected.");
                 return true;
             case R.id.action_logout:
+                //Call method to check for notification sent and update if required
+                MainActivity.checkForNotificationSent(this,true);
+                //Call method to throw LoginActivity and clear activity stack.
                 logout(this);
                 Log.d("onOptionsItemSelected", "Exit the onOptionsItemSelected method in the MainActivity class with Logout option selected.");
                 return true;
@@ -986,7 +1011,7 @@ public class MainActivity extends AppCompatActivity {
     protected void throwSelectNavDrawerBackgroundActivity() {
         Log.d("throwSelectBckActivity", "Enter the throwSelectNavDrawerBackgroundActivity method in the DisplayAccountActivity class.");
         //Declare and instantiate a new intent object
-        Intent i = new Intent(this, SelectNavDrawerBckGrnd.class);
+        Intent i = new Intent(this, SelectNavDrawerBckGrndActivity.class);
         //Add extras to the intent object, specifically the current category where the add button was pressed from
         // the current logo data which is sent back if select logo is cancel or updated if new logo has been selected
         i.putExtra("selectedImgPosition", -1);
@@ -1081,7 +1106,7 @@ public class MainActivity extends AppCompatActivity {
         } else if (requestCode == THROW_EDIT_CATEGORY_ACT_REQCODE && resultCode == Activity.RESULT_CANCELED) {
             Log.d("onActivityResult", "Received BAD result from EditCategoryActivity received by MainAcitvity.");
         } else if (requestCode == THROW_SELECT_NAVDRAWERBCKGRND_ACT_REQCODE && resultCode == Activity.RESULT_OK) {
-            Log.d("onActivityResult", "Received GOOD result from SelectNavDrawerBckGrnd received by MainAcitvity.");
+            Log.d("onActivityResult", "Received GOOD result from SelectNavDrawerBckGrndActivity received by MainAcitvity.");
             //Get the nadvigationView object
             NavigationView navigationView = findViewById(R.id.nav_view);
             //Get the header view object
@@ -1095,7 +1120,7 @@ public class MainActivity extends AppCompatActivity {
             //Call DB method to updated APPLOGIN table with new background selected
             accountsDB.updateTable(APPLOGGIN_TABLE, values);
         } else if (requestCode == THROW_SELECT_NAVDRAWERBCKGRND_ACT_REQCODE && resultCode == Activity.RESULT_CANCELED) {
-            Log.d("onActivityResult", "Received BAD result from SelectNavDrawerBckGrnd received by MainAcitvity.");
+            Log.d("onActivityResult", "Received BAD result from SelectNavDrawerBckGrndActivity received by MainAcitvity.");
         }else if(requestCode == THROW_UPDATE_APPLOGIN_ACT_REQCODE && resultCode == Activity.RESULT_OK){
             Log.d("onActivityResult", "Received GOOD result from UpdateAppLoginActivity received by MainAcitvity.");
             //Update current appLogin so it matches same data from DB, otherwise it will keep old value during current session
@@ -1815,12 +1840,44 @@ public class MainActivity extends AppCompatActivity {
         return isAutoLogOutActive;
     }
     
-    public static boolean isIsPushNotificationSent() {
+    public static boolean isPushNotificationSent() {
         return isPushNotificationSent;
     }
 
-    public static void setIsPushNotificationSent(boolean isPushNotificationSent) {
+    public static void setPushNotificationSent(boolean isPushNotificationSent) {
         MainActivity.isPushNotificationSent = isPushNotificationSent;
+    }
+
+    public static int getExpiredPasswordAccountID() {
+        return expiredPasswordAccountID;
+    }
+
+    public static void setExpiredPasswordAccountID(int expiredPasswordAccountID) {
+        MainActivity.expiredPasswordAccountID = expiredPasswordAccountID;
+    }
+
+    public int getTHROW_UPDATE_APPLOGIN_ACT_REQCODE() {
+        return THROW_UPDATE_APPLOGIN_ACT_REQCODE;
+    }
+
+    public static NotificationManagerCompat getNotificationManager() {
+        return notificationManager;
+    }
+
+    public static void setNotificationManager(NotificationManagerCompat notificationManager) {
+        MainActivity.notificationManager = notificationManager;
+    }
+
+    public static NotificationCompat.Builder getNotificationBuilder() {
+        return notificationBuilder;
+    }
+
+    public static void setNotificationBuilder(NotificationCompat.Builder notificationBuilder) {
+        MainActivity.notificationBuilder = notificationBuilder;
+    }
+
+    public int getTHROW_ADD_ACCOUNT_ACT_REQCODE() {
+        return THROW_ADD_ACCOUNT_ACT_REQCODE;
     }
 
     //Generic method to display a toast with control vocer the duritation length and the gravity  position

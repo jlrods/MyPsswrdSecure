@@ -146,8 +146,10 @@ public class UpdateAppLoginActivity extends DisplayAccountActivity{
                 Log.d("onOptionsItemSelected","Cancel option selected on onOptionsItemSelected method in UpdateAppLoginActivity class.");
                 break;
             case R.id.action_logout:
-                //Call method to throw LoginActivity and clear activity stack.
                 Log.d("onOptionsItemSelected", "Logout option selected on onOptionsItemSelected method in UpdateAppLoginActivity class.");
+                //Call method to check for notification sent and update if required
+                MainActivity.checkForNotificationSent(this,true);
+                //Call method to throw LoginActivity and clear activity stack.
                 MainActivity.logout(this);
                 break;
         }//End of switch statement to check menu item id selected by user

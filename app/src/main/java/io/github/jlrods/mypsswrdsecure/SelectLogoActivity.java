@@ -97,6 +97,13 @@ public class SelectLogoActivity extends AppCompatActivity {
         }
     }//End of onResume method
 
+    public void onStop(){
+        super.onStop();
+        Log.d("onStopMain", "Enter onStop method in SelectLogoActivity class.");
+        MainActivity. checkForNotificationSent(this,false);
+        Log.d("onStopMain", "Exit onStop method in SelectLogoActivity class.");
+    }//End of onStop method
+
     //Method to inflate the menu into the addTaskActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -128,8 +135,10 @@ public class SelectLogoActivity extends AppCompatActivity {
                 Log.d("onOptionsItemSelected","Cancel option selected on onOptionsItemSelected method in SelectLogoActivity class.");
                 break;
             case R.id.action_logout:
-                //Call method to throw LoginActivity and clear activity stack.
                 Log.d("onOptionsItemSelected","Logout option selected on onOptionsItemSelected method in SelectLogoActivity class.");
+                //Call method to check for notification sent and update if required
+                MainActivity.checkForNotificationSent(this,true);
+                //Call method to throw LoginActivity and clear activity stack.
                 MainActivity.logout(this);
         }//End of switch statement
         Log.d("onOptionsItemSelected","Exit successfully onOptionsItemSelected method in SelectLogoActivity class.");
