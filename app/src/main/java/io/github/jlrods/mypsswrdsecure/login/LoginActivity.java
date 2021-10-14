@@ -36,6 +36,7 @@ import io.github.jlrods.mypsswrdsecure.AppLoggin;
 import io.github.jlrods.mypsswrdsecure.AutoLogOutService;
 import io.github.jlrods.mypsswrdsecure.Cryptographer;
 import io.github.jlrods.mypsswrdsecure.EditAccountActivity;
+import io.github.jlrods.mypsswrdsecure.LogOutTimer;
 import io.github.jlrods.mypsswrdsecure.Psswrd;
 import io.github.jlrods.mypsswrdsecure.R;
 import io.github.jlrods.mypsswrdsecure.MainActivity;
@@ -422,8 +423,10 @@ public class LoginActivity extends AppCompatActivity {
                     .setNegativeButtonText(getString(R.string.biometLoginCancelMssg))
                     .setAllowedAuthenticators(BIOMETRIC_STRONG)
                     .build();
-            //Prompt fingerprint authentication straight away.
-            biometricPrompt.authenticate(promptInfo);
+            //Check the app is on the foreground before call method to display biometrics box
+            if(LogOutTimer.isAppInForeground()){
+                biometricPrompt.authenticate(promptInfo);
+            }
         }//End of if statemenet to check it can be authenticated
         Log.d("biometricAuthentication","Exit biometricAuthentication method in the LoginActivity class.");
     }//End of biometricAuthentication method
@@ -474,7 +477,13 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onFinish() {
                 Log.d("onFinish","Log onFinish method call as delay time in callBiometricAuthentication method in the LoginActivity class has finished.");
-                biometricAuthentication(accountsDB.getAppLoginCursor(accountsDB.getMaxItemIdInTable(MainActivity.getApplogginTable())).getInt(0));
+                //Check the app is on the foreground before call method to display biometrics box
+                if (LogOutTimer.isAppInForeground()){
+                    biometricAuthentication(accountsDB.getAppLoginCursor(accountsDB.getMaxItemIdInTable(MainActivity.getApplogginTable())).getInt(0));
+                }
+
+//                biometricAuthentication(accountsDB.getAppLoginCursor(accountsDB.getMaxItemIdInTable(MainActivity.getApplogginTable())).getInt(0));
+
             }
         };
         biometricDelay.start();

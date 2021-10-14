@@ -91,10 +91,10 @@ public class SelectLogoActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        if(MainActivity.isAutoLogOutActive()){
-            //Set current activity context for the Logout timer in order to display auto logout prompt
-            ((LogOutTimer)AutoLogOutService.getLogOutTimer()).setContext(this);
-        }
+        Log.d("onResumeMain", "Enter onResume method in SelectLogoActivity class.");
+        //Call MainActivity static method to check for logout timeout to display logout prompt accordingly
+        MainActivity.checkLogOutTimeOut(this);
+        Log.d("onResumeMain", "Exit onResume method in SelectLogoActivity class.");
     }//End of onResume method
 
     public void onStop(){

@@ -100,10 +100,6 @@ public class EditAccountActivity extends DisplayAccountActivity{
         Log.d("OnCreateEditAcc","Exit onCreate method in the EditAccountActivity abstract class.");
     }//End of onCreate method
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }//End of onResume method
 
     @Override
     public void onBackPressed(){

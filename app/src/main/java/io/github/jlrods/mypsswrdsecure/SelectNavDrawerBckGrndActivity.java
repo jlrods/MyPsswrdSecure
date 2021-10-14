@@ -74,10 +74,10 @@ public class SelectNavDrawerBckGrndActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        if(MainActivity.isAutoLogOutActive()){
-            //Set current activity context for the Logout timer in order to display auto logout prompt
-            ((LogOutTimer)AutoLogOutService.getLogOutTimer()).setContext(this);
-        }
+        Log.d("onResumeSelectNav", "Enter onResume method in SelectNavDrawerBckGrndActivity class.");
+        //Call MainActivity static method to check for logout timeout to display logout prompt accordingly
+        MainActivity.checkLogOutTimeOut(this);
+        Log.d("onResumeSelectNav", "Exit onResume method in SelectNavDrawerBckGrndActivity class.");
     }//End of onResume method
 
     public void onStop(){

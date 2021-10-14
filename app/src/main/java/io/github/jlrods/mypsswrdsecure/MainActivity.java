@@ -534,10 +534,22 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         Log.d("onResumeMain", "Enter onResume method in MainActivity class.");
-        if(MainActivity.isAutoLogOutActive()){
-            //Set current activity context for the Logout timer in order to display auto logout prompt
-            ((LogOutTimer)AutoLogOutService.getLogOutTimer()).setContext(this);
-        }
+//        if(MainActivity.isAutoLogOutActive()){
+//            LogOutTimer logOutTimer = (LogOutTimer)AutoLogOutService.getLogOutTimer();
+//            //Set current activity context for the Logout timer in order to display auto logout prompt
+//            logOutTimer.setContext(this);
+//            //Check if previous activity triggered the timeout timer and the timeout idle timer.
+//            //If idle inner timer is running, stop it, as it will be restarted when the .timeout() method id called
+//            if(logOutTimer.isPromptIdleTimerRunning()){
+//                logOutTimer.getPromptIdleTimer().cancel();
+//            }//End of if statement to check the inner idle time is running
+//            if(logOutTimer.isLogOutTimeout()){
+//              //Only then display Dialog alert prompt
+//                logOutTimer.timeOut();
+//            }//End of if statement to check logout timeout
+//        }//End of if statement to check auto logout is active
+        //Call MainActivity static method to check for logout timeout to display logout prompt accordingly
+        this.checkLogOutTimeOut(this);
         Log.d("onResumeMain", "Exit onResume method in MainActivity class.");
     }//End of onResume method
 
@@ -546,7 +558,7 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         //Call method to check for notification sent and update if required
         checkForNotificationSent(this,true);
-        Log.d("onResumeMain", "Enter/Exit onDestroy method in MainActivity class.");
+        Log.d("onDestroyMain", "Enter/Exit onDestroy method in MainActivity class.");
     }//End of onDestroy method
 
     public static void checkForNotificationSent(Context context, boolean isLogOutCalled) {
@@ -3083,4 +3095,25 @@ public class MainActivity extends AppCompatActivity {
         }//End of if statement to check SDK version
         Log.d("createNotChannel", "Exit createNotificationChannel method in MainActivity class.");
     }//End of createNotificationChannel method
+
+    public static void checkLogOutTimeOut(Context context){
+        Log.d("checkLogOut", "Enter checkLogOutTimeOut method in MainActivity class.");
+        if(MainActivity.isAutoLogOutActive()){
+            LogOutTimer logOutTimer = (LogOutTimer)AutoLogOutService.getLogOutTimer();
+            //Set current activity context for the Logout timer in order to display auto logout prompt
+            logOutTimer.setContext(context);
+            //Check if previous activity triggered the timeout timer and the timeout idle timer.
+            //If idle inner timer is running, stop it, as it will be restarted when the .timeout() method id called
+            if(logOutTimer.isPromptIdleTimerRunning()){
+                logOutTimer.getPromptIdleTimer().cancel();
+                Log.d("checkLogOut", "Inner logout time is cancelled by "+context.toString());
+            }//End of if statement to check the inner idle time is running
+            if(logOutTimer.isLogOutTimeout()){
+                //Only then display Dialog alert prompt
+                logOutTimer.timeOut();
+                Log.d("checkTimeOut", "Inner logout time is cancelled by "+context.toString());
+            }//End of if statement to check logout timeout
+        }//End of if statement to check auto logout is active
+        Log.d("checkLogOut", "Exit checkLogOutTimeOut method in MainActivity class.");
+    }//End of checkLogOutTimeOut method
 }//End of MainActivity class.

@@ -69,14 +69,7 @@ public class UpdateAppLoginActivity extends DisplayAccountActivity{
         Log.d("OnCreateUpAppLog", "Exit onCreate method in the a UpdateAppLoginActivity class.");
     }//End of onCreate method
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        if(MainActivity.isAutoLogOutActive()){
-            //Set current activity context for the Logout timer in order to display auto logout prompt
-            ((LogOutTimer)AutoLogOutService.getLogOutTimer()).setContext(this);
-        }
-    }//End of onResume method
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

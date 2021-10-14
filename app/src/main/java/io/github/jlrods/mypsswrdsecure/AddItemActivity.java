@@ -71,10 +71,10 @@ public abstract class AddItemActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        //Set current activity context for the Logout timer in order to display auto logout prompt
-        if(MainActivity.isAutoLogOutActive()){
-            ((LogOutTimer)AutoLogOutService.getLogOutTimer()).setContext(this);
-        }
+        Log.d("onResumeMain", "Enter onResume method in AddItemActivity class.");
+        //Call MainActivity static method to check for logout timeout to display logout prompt accordingly
+        MainActivity.checkLogOutTimeOut(this);
+        Log.d("onResumeMain", "Exit onResume method in AddItemActivity class.");
     }//End of onResume method
 
     public void onStop(){
