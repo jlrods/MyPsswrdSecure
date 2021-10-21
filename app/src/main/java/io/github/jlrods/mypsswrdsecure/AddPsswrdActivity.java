@@ -16,6 +16,9 @@ public class AddPsswrdActivity extends AddItemActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("OnCreateAddQuest","Enter onCreate method in the AddPsswrdActivity class.");
+//        if(this.extras.getBoolean("isActivityThrownFromDisplayAct")){
+//            this.isRunDecryptService = this.extras.getBoolean("isActivityThrownFromDisplayAct",false);
+//        }
         //Set activity title
         getSupportActionBar().setTitle(R.string.addPsswrdTitle);
         //Update layout fields according to Add Security question layout
@@ -49,6 +52,10 @@ public class AddPsswrdActivity extends AddItemActivity {
                     //Call DB method to insert  the Psswrd object into the DB
                     psswrdID = this.accountsDB.addItem(this.psswrd);
                     if(psswrdID > 0 ){
+//                        if(this.isRunDecryptService){
+//                            Intent decryptDataService = new Intent(this, DecryptDataService.class);
+//                            startService(decryptDataService);
+//                        }
                         //Update the Psswrd object ID and prepare data to exit the activity
                         this.psswrd.set_id(psswrdID);
                         intent.putExtra("psswrdID",this.psswrd.get_id());

@@ -11,11 +11,15 @@ public class AddUserNameActivity extends AddItemActivity{
     //Attributes to be used while saving the new question
     protected UserName userName = null;
 
+
     //Method definition
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("OnCreateAddQuest","Enter onCreate method in the AddUserNameActivity class.");
+//        if(this.extras.getBoolean("isActivityThrownFromDisplayAct",false)){
+//            this.isRunDecryptService = this.extras.getBoolean("isActivityThrownFromDisplayAct");
+//        }
         //Update layout fields according to Add Security question layout
         this.imgAddActivityIcon.setImageResource(R.mipmap.ic_account_black_48dp);
         this.tvAddActivityTag.setText(R.string.account_userName);
@@ -36,6 +40,7 @@ public class AddUserNameActivity extends AddItemActivity{
         switch (item.getItemId()) {
             case R.id.select_logo_save:
                 Log.d("onOptionsItemSelected","Save option selected on onOptionsItemSelected method in AddUserNameActivity class.");
+
                 //Create userName object
                 String userNameValue = this.etNewItemField.getText().toString().trim();
                 byte[] userNameValueEncrypted =  null;
@@ -48,6 +53,10 @@ public class AddUserNameActivity extends AddItemActivity{
                     //Call DB method to insert  the user name object into the DB
                     userNameID = this.accountsDB.addItem(this.userName);
                     if(userNameID > 0 ){
+//                        if(this.isRunDecryptService){
+//                            Intent decryptDataService = new Intent(this, DecryptDataService.class);
+//                            startService(decryptDataService);
+//                        }
                         //Update the userName object ID and prepare data to exit activity
                         this.userName.set_id(userNameID);
                         intent.putExtra("userNameID",this.userName.get_id());

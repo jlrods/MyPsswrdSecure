@@ -101,9 +101,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
     int throwSelectLogoActReqCode = 5555;
     Icon logo = null;
     int selectedPosition = -1;
-//    LogOutTimer logOutTimer;
-//    long logOutTime;
-//    long logOutTimeRemainder;
+    protected boolean isAddActivityLaunched = false;
 
 
     //Method definition
@@ -112,13 +110,8 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("OnCreateDispAcc","Enter onCreate method in the DisplayAccountActivity abstract class.");
-        this.extras = getIntent().getExtras();
-//        if(MainActivity.isAutoLogOutActive()){
-//            logOutTime = this.extras.getLong("timeOutRemainder");
-//            logOutTimer = new LogOutTimer(logOutTime, 250,this);
-//            logOutTimer.start();
-//        }
 
+        this.extras = getIntent().getExtras();
         //Get default current app theme from preferences
         int appThemeSelected = MainActivity.setAppTheme(this);
         //Set the theme by passing theme id number coming from preferences
@@ -141,7 +134,6 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             @Override
             public void onClick(View v){
                 displayAlertDialogForImgSource();
-                //throwSelectLogoActivity();
             }
         });//End of setOnClickListener
         //Initialize logo with default app logo
@@ -290,13 +282,13 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
 
         //Setup the Category spinner and populate with data
         this.cursorCategory = this.accountsDB.getCategoryListCursor();
-        this.setUpSpinnerData(cursorCategory,spCategory,CATEGORY_SPINNER);
+        this.setUpSpinnerData(this.cursorCategory,spCategory,CATEGORY_SPINNER);
         //Setup the UserName spinner and populate with data
         this.cursorUserName = this.accountsDB.getUserNameList();
-        this.setUpSpinnerData(cursorUserName,spAccUserName,USERNAME_SPINNER);
+        this.setUpSpinnerData(this.cursorUserName,spAccUserName,USERNAME_SPINNER);
         //Setup the Psswrd spinner and populate with data
         this.cursorPsswrd = this.accountsDB.getPsswrdList();
-        this.setUpSpinnerData(cursorPsswrd, spAccPsswrd,PSSWRD_SPINNER);
+        this.setUpSpinnerData(this.cursorPsswrd, spAccPsswrd,PSSWRD_SPINNER);
         //Setup the Security Question List spinner
         //Call method to configure security question list spinner. Use a Dummy cursor to be able to setup prompt.
         //This dummy cursor will held one question item but wont be displayed
@@ -321,6 +313,12 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         super.onStop();
         Log.d("onStopMain", "Enter onStop method in DisplayAccountActivity class.");
         MainActivity. checkForNotificationSent(this,false);
+        //Check flag to see if current activity is closing to open any AddItemActivity children
+        //In those cases, decrypt data service should not be stopped.
+        if(!this.isAddActivityLaunched){
+            Intent iService = new Intent(this,DecryptDataService.class);
+            this.stopService(iService);
+        }
         Log.d("onStopMain", "Exit onStop method in DisplayAccountActivity class.");
     }//End of onStop method
 
@@ -561,7 +559,8 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
 
     //Method to set up spinner data by passing in a cursor and the adapter as arguments
     protected void setUpSpinnerData(Cursor cursor,Spinner sp,int type){
-        SpinnerAdapter adapter = null;
+        SpinnerAdapter adapterCategory = null;
+        SpinnerArrayAdapter adapterUserNamePsswrd = null;
         Log.d("setUpSpinnerData","Enter the setUpSpinnerData method in the DisplayAccountActivity class.");
         //Get resources for displaying spinner
         String spHint = "";
@@ -572,21 +571,23 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
                 Log.d("setUpSpinnerData","CATEGORY_SPINNER passed in as spinner type in setUpSpinnerData method call  in the DisplayAccountActivity class.");
                 spHint = res.getString(R.string.selectCatHint);
                 //Create new spinner adapter object
-                adapter = new SpinnerAdapter(this,cursor, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER) ;
+                adapterCategory = new SpinnerAdapter(this,cursor, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER) ;
                 break;
             case USERNAME_SPINNER:
                 Log.d("setUpSpinnerData","USERNAME_SPINNER passed in as spinner type in setUpSpinnerData method call  in the DisplayAccountActivity class.");
                 spHint = res.getString(R.string.selectUserHint);
                 etHint = res.getString(R.string.selectUserHint);
                 //Create new spinner adapter object
-                adapter = new SpinnerAdapterEncrypted(this,cursor, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER) ;
+                //adapter = new SpinnerAdapterEncrypted(this,cursor, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER) ;
+                adapterUserNamePsswrd = new SpinnerArrayAdapter(this,R.layout.spinner_item_string_value, R.id.tvItem,DecryptDataService.getDecryptedUserNameList().toArray());
                 break;
             case PSSWRD_SPINNER:
                 Log.d("setUpSpinnerData","PSSWRD_SPINNER passed in as spinner type in setUpSpinnerData method call  in the DisplayAccountActivity class.");
                 spHint = res.getString(R.string.selectPsswrdHint);
                 etHint = res.getString(R.string.selectPsswrdHint);
                 //Create new spinner adapter object
-                adapter = new SpinnerAdapterEncrypted(this,cursor, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER) ;
+                //adapterUserNamePsswrd = new SpinnerArrayAdapter(this,cursor, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER) ;
+                adapterUserNamePsswrd = new SpinnerArrayAdapter(this,R.layout.spinner_item_string_value, R.id.tvItem,DecryptDataService.getDecryptedPsswrdList().toArray());
                 break;
             default:
                 spHint = "";
@@ -600,7 +601,11 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             sp.setEnabled(false);
         }// End of if else statement to check cursor isn't null or empty
         //Set the adapter for the Category spinner
-        sp.setAdapter(adapter);
+        if(type == USERNAME_SPINNER || type == PSSWRD_SPINNER){
+            sp.setAdapter(adapterUserNamePsswrd);
+        }else{
+            sp.setAdapter(adapterCategory);
+        }//End of if else statement to set the proper adapter based on the type of spinner
         Log.d("setUpSpinnerData","Exit the setUpSpinnerData method in the DisplayAccountActivity class.");
     }//End of setUpSpinnerData method
 
@@ -618,9 +623,10 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
     private void throwActivityNoExtras(Class className,int requestCode) {
         Log.d("throwActivityNoExtras", "Enter throwActivityNoExtras method in the DisplayAccountActivity class.");
         //Declare and instantiate a new intent object
-        //Intent i = new Intent(MainActivity.this, AddPsswrdActivity.class);
         Intent i = new Intent(this,className);
         //Start the AddItemActivity class
+        i.putExtra("isActivityThrownFromDisplayAct",true);
+        this.isAddActivityLaunched = true;
         if(requestCode > 0){
             startActivityForResult(i, requestCode);
             Log.d("throwActivityNoExtras", "startActivityForResult called by throwActivityNoExtras method in the DisplayAccountActivity class with request code: "+requestCode);
@@ -870,8 +876,10 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             int userNameID = data.getExtras().getInt("userNameID");
             //Update the userName object ID
             this.userName = this.accountsDB.getUserNameByID(userNameID);
-            //userName.set_id(userNameID);
+            //Update decrypted list of user names
+            DecryptDataService.updateList(DecryptDataService.getListTypeUserName());
             this.cursorUserName = this.accountsDB.getUserNameList();
+
             //Populate the user name spinner with new data set
             this.setUpSpinnerData(this.cursorUserName,this.spAccUserName,this.USERNAME_SPINNER);
             //Move spinner to new user name just inserted
@@ -888,6 +896,8 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             //Update the password object
             this.psswrd = this.accountsDB.getPsswrdByID(psswrdID);
             this.cursorPsswrd = this.accountsDB.getPsswrdList();
+            //Update decrypted list of passwords
+            DecryptDataService.updateList(DecryptDataService.getListTypePsswrd());
             //Populate the password spinner with new data set
             this.setUpSpinnerData(this.cursorPsswrd,this.spAccPsswrd,this.PSSWRD_SPINNER);
             //Move spinner to new password just inserted
@@ -1072,10 +1082,12 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             if(item instanceof Psswrd){
                 cursor =  accountsDB.getPsswrdList();
                 spinnerType = PSSWRD_SPINNER;
+                DecryptDataService.updateList(DecryptDataService.getListTypePsswrd());
                 Log.d("SnackBarOnClick","PSSWRD object passed into the onClick method method in the SnackBarClickHandler subclass from DisplayTaskActivity abstract class.");
             }else if(item instanceof UserName){
                 cursor = accountsDB.getUserNameList();
                 spinnerType = USERNAME_SPINNER;
+                DecryptDataService.updateList(DecryptDataService.getListTypeUserName());
                 Log.d("SnackBarOnClick","USERNAME object passed into the onClick method method in the SnackBarClickHandler subclass form DisplayTaskActivity abstract class.");
             }else if(item instanceof Question){
                 cursor = accountsDB.getListQuestionsAvailable();
@@ -1113,8 +1125,10 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         //Start extracting data from UI
         accountName = this.etAccountName.getText().toString();
         category = accountsDB.getCategoryByID((int) this.spCategory.getSelectedItemId());
-        userName = accountsDB.getUserNameByID((int) this.spAccUserName.getSelectedItemId());
-        psswrd = accountsDB.getPsswrdByID((int) this.spAccPsswrd.getSelectedItemId());
+        //userName = accountsDB.getUserNameByID((int) this.spAccUserName.getSelectedItemId());
+        userName = accountsDB.getUserNameByID((int) DecryptDataService.getSelectedItemID( this.spAccUserName.getSelectedItem().toString(),DecryptDataService.getListTypeUserName()));
+        //psswrd = accountsDB.getPsswrdByID((int) this.spAccPsswrd.getSelectedItemId());
+        psswrd = accountsDB.getPsswrdByID((int) DecryptDataService.getSelectedItemID(this.spAccPsswrd.getSelectedItem().toString(),DecryptDataService.getListTypePsswrd()));
         securityQuestionList = this.extractQuestionsFromSpinner(spAccSecQuestionList);
         psswrdChangeDate = this.getPsswrdRenewDate();
         //Check the security question list isn't empty

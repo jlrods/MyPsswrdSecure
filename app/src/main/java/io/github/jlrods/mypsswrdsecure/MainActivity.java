@@ -901,6 +901,8 @@ public class MainActivity extends AppCompatActivity {
     //Method to throw new AddTaskActivity
     private void throwAddAccountActivity() {
         Log.d("ThrowAddAcc", "Enter throwAddAccountActivity method in the MainActivity class.");
+        Intent decryptDataService = new Intent(this, DecryptDataService.class);
+        startService(decryptDataService);
         //Declare and instantiate a new intent object
         Intent i = new Intent(getBaseContext(), AddAccountActivity.class);
         //Add extras to the intent object, specifically the current category where the add button was pressed from
