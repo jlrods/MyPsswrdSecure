@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import io.github.jlrods.mypsswrdsecure.AccountAdapter;
 import io.github.jlrods.mypsswrdsecure.AccountsDB;
+import io.github.jlrods.mypsswrdsecure.DecryptDataService;
 import io.github.jlrods.mypsswrdsecure.MainActivity;
 import io.github.jlrods.mypsswrdsecure.R;
 
@@ -49,6 +50,9 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Log.d("ThrowEditAcc","Enter throwEditAccountActivity method in the MainActivity class.");
+                //Launch decrypt service
+                Intent decryptDataService = new Intent(v.getContext(), DecryptDataService.class);
+                v.getContext().startService(decryptDataService);
                 //Call method to get intent setup to throw EditAccountActivity
                 Intent i = MainActivity.prepareThrowEditAccountActivity(getContext(),v);
                 //Start the AddItemActivity class

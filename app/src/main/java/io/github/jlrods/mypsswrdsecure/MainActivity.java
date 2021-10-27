@@ -901,6 +901,7 @@ public class MainActivity extends AppCompatActivity {
     //Method to throw new AddTaskActivity
     private void throwAddAccountActivity() {
         Log.d("ThrowAddAcc", "Enter throwAddAccountActivity method in the MainActivity class.");
+        //Launch decrypt service
         Intent decryptDataService = new Intent(this, DecryptDataService.class);
         startService(decryptDataService);
         //Declare and instantiate a new intent object
@@ -937,6 +938,9 @@ public class MainActivity extends AppCompatActivity {
     //Method to throw new EditAccountActivity
     private void throwEditAccountActivity(View v) {
         Log.d("ThrowEditAcc", "Enter throwEditAccountActivity method in the MainActivity class.");
+        //Launch decrypt service
+        Intent decryptDataService = new Intent(this, DecryptDataService.class);
+        startService(decryptDataService);
         Intent i  = prepareThrowEditAccountActivity(MainActivity.this,v);
         //Start the AddItemActivity class
         startActivityForResult(i, THROW_EDIT_ACCOUNT_ACT_REQCODE);

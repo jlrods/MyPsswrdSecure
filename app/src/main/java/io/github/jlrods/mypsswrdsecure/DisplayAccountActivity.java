@@ -101,7 +101,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
     int throwSelectLogoActReqCode = 5555;
     Icon logo = null;
     int selectedPosition = -1;
-    protected boolean isAddActivityLaunched = false;
+    protected boolean isInnerActivityLaunched = false;
 
 
     //Method definition
@@ -315,7 +315,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         MainActivity. checkForNotificationSent(this,false);
         //Check flag to see if current activity is closing to open any AddItemActivity children
         //In those cases, decrypt data service should not be stopped.
-        if(!this.isAddActivityLaunched){
+        if(!this.isInnerActivityLaunched){
             Intent iService = new Intent(this,DecryptDataService.class);
             this.stopService(iService);
         }
@@ -626,7 +626,8 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         Intent i = new Intent(this,className);
         //Start the AddItemActivity class
         i.putExtra("isActivityThrownFromDisplayAct",true);
-        this.isAddActivityLaunched = true;
+        //Set boolean flag to keep decrypt service running
+        this.isInnerActivityLaunched = true;
         if(requestCode > 0){
             startActivityForResult(i, requestCode);
             Log.d("throwActivityNoExtras", "startActivityForResult called by throwActivityNoExtras method in the DisplayAccountActivity class with request code: "+requestCode);
@@ -842,6 +843,8 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
     //Method to throw the SelectLogoActivity
     protected void throwSelectLogoActivity(){
         Log.d("throwSelectLogoActivity","Enter the throwSelectLogoActivity method in the DisplayAccountActivity class.");
+        //Set boolean flag to keep decrypt service running
+        this.isInnerActivityLaunched = true;
         //Declare and instantiate a new intent object
         Intent i= new Intent(this, SelectLogoActivity.class);
         //Add extras to the intent object, specifically the current category where the add button was pressed from
@@ -857,6 +860,8 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        //Reset flag that prevents decrypt service from being stopped when going to AddItemActivity. This way, service can be stopped when necessary.
+        this.isInnerActivityLaunched = false;
         Log.d("onActivityResult","Enter the onActivityResult method in the DisplayAccountActivity class.");
         if (requestCode==this.throwSelectLogoActReqCode && resultCode==RESULT_OK) {
             Log.d("onActivityResult","Received GOOD result from SelectLogoActivity in the DisplayAccountActivity class.");
@@ -879,7 +884,6 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
             //Update decrypted list of user names
             DecryptDataService.updateList(DecryptDataService.getListTypeUserName());
             this.cursorUserName = this.accountsDB.getUserNameList();
-
             //Populate the user name spinner with new data set
             this.setUpSpinnerData(this.cursorUserName,this.spAccUserName,this.USERNAME_SPINNER);
             //Move spinner to new user name just inserted
@@ -1344,10 +1348,14 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
                         int selectedOption = ((AlertDialog)dialog).getListView().getCheckedItemPosition();
                         switch(selectedOption){
                             case 0:
+                                //Set boolean flag to keep decrypt service running
+                                isInnerActivityLaunched = true;
                                 setExternalImageAsAccLogo(Manifest.permission.WRITE_EXTERNAL_STORAGE,getResources().getString(R.string.cameraAccesRqst),
                                         MainActivity.getThrowImageCameraReqCode(),MainActivity.getCameraAccessRequest());
                                 break;
                             case 1:
+                                //Set boolean flag to keep decrypt service running
+                                isInnerActivityLaunched = true;
                                 //Call method to set up an image from the phone gallery
                                 setExternalImageAsAccLogo(Manifest.permission.READ_EXTERNAL_STORAGE,getResources().getString(R.string.galleryAccesRqst),
                                                             MainActivity.getThrowImageGalleryReqCode(),MainActivity.getGalleryAccessRequest());

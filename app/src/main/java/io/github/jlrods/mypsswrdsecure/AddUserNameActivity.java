@@ -53,10 +53,6 @@ public class AddUserNameActivity extends AddItemActivity{
                     //Call DB method to insert  the user name object into the DB
                     userNameID = this.accountsDB.addItem(this.userName);
                     if(userNameID > 0 ){
-//                        if(this.isRunDecryptService){
-//                            Intent decryptDataService = new Intent(this, DecryptDataService.class);
-//                            startService(decryptDataService);
-//                        }
                         //Update the userName object ID and prepare data to exit activity
                         this.userName.set_id(userNameID);
                         intent.putExtra("userNameID",this.userName.get_id());
