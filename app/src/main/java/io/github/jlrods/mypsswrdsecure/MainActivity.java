@@ -49,7 +49,10 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import javax.crypto.spec.IvParameterSpec;
 import io.github.jlrods.mypsswrdsecure.login.LoginActivity;
@@ -487,7 +490,6 @@ public class MainActivity extends AppCompatActivity {
         if(expiredPsswrdAccounts.moveToFirst()){
             //Extract first item in the list of accounts with expired password
             Account expiredPsswrdAccount = Account.extractAccount(expiredPsswrdAccounts);
-
             // Create an explicit intent for an Activity
             Intent intent = new Intent(this, EditAccountActivity.class);
             TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
@@ -534,10 +536,8 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         Log.d("onResumeMain", "Enter onResume method in MainActivity class.");
-        if(MainActivity.isAutoLogOutActive()){
-            //Set current activity context for the Logout timer in order to display auto logout prompt
-            ((LogOutTimer)AutoLogOutService.getLogOutTimer()).setContext(this);
-        }
+        //Call MainActivity static method to check for logout timeout to display logout prompt accordingly
+        this.checkLogOutTimeOut(this);
         Log.d("onResumeMain", "Exit onResume method in MainActivity class.");
     }//End of onResume method
 
@@ -546,7 +546,7 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         //Call method to check for notification sent and update if required
         checkForNotificationSent(this,true);
-        Log.d("onResumeMain", "Enter/Exit onDestroy method in MainActivity class.");
+        Log.d("onDestroyMain", "Enter/Exit onDestroy method in MainActivity class.");
     }//End of onDestroy method
 
     public static void checkForNotificationSent(Context context, boolean isLogOutCalled) {
@@ -586,12 +586,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed(){
         Log.d("onBackPressedMain", "Enter onBackPressed method in MainActivity class.");
-        if(mainActLauchedFromLoginAct){
-            if(isAutoLogOutActive()){
-                Intent iService = new Intent(this,AutoLogOutService.class);
-                this.stopService(iService);
-            }//End of if statement to check auto logout feature is activated
-        }//End of if statement to check main Activity was launched from Login Activity
+        //Call logout method to launch login screen and clear stack
+        this.logout(this);
         super.onBackPressed();
         Log.d("onBackPressedMain", "Exit onBackPressed method in MainActivity class.");
     }//End of onBackPressed method
@@ -643,7 +639,8 @@ public class MainActivity extends AppCompatActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_applogin:
-                this.throwActivityNoExtras(MainActivity.this,UpdateAppLoginActivity.class,THROW_UPDATE_APPLOGIN_ACT_REQCODE);
+//                this.throwActivityNoExtras(MainActivity.this,UpdateAppLoginActivity.class,THROW_UPDATE_APPLOGIN_ACT_REQCODE);
+                this.throwUpdateAppLoginActivity();
                 Log.d("onOptionsItemSelected", "Exit the onOptionsItemSelected method in the MainActivity class with App Login option selected.");
                 return true;
             case R.id.action_logout:
@@ -886,11 +883,37 @@ public class MainActivity extends AppCompatActivity {
         Log.d("throwActivityNoExtras", "Exit throwActivityNoExtras method in the MainActivity class.");
     }//End of throwActivityNoExtras method
 
+    private void throwUpdateAppLoginActivity() {
+        Log.d("throwUpdateAppLog", "Enter throwActivityNoExtras method in the MainActivity class.");
+        //Launch decrypt service
+        Intent decryptDataService = new Intent(this, DecryptDataService.class);
+        startService(decryptDataService);
+        //Declare and instantiate a new intent object
+        Intent i = new Intent(this,UpdateAppLoginActivity.class);
+        //Add extras to the intent object, specifically the current category where the add button was pressed from
+        i.putExtra("isActivityCalledFromNotification", false);
+        i.putExtra("notifiCationIssuedFromMainAct",false);
+        //Start the addTaskActivity class
+        startActivityForResult(i, THROW_UPDATE_APPLOGIN_ACT_REQCODE);
+        //Start the AddItemActivity class
+//        if(requestCode > 0){
+//            startActivityForResult(i, requestCode);
+//            Log.d("throwActivityNoExtras", "startActivityForResult called by throwActivityNoExtras method in the MainActivity class with request code: "+requestCode);
+//        }else{
+//            startActivity(i);
+//            Log.d("throwActivityNoExtras", "startActivity called by throwActivityNoExtras method in the MainActivity class.");
+//        }//End of if else statement to check request code is greater than 0
+        Log.d("throwUpdateAppLog", "Exit throwActivityNoExtras method in the MainActivity class.");
+    }//End of throwActivityNoExtras method
+
     //Method to throw new AddTaskActivity
     private void throwAddAccountActivity() {
         Log.d("ThrowAddAcc", "Enter throwAddAccountActivity method in the MainActivity class.");
+        //Launch decrypt service
+        Intent decryptDataService = new Intent(this, DecryptDataService.class);
+        startService(decryptDataService);
         //Declare and instantiate a new intent object
-        Intent i = new Intent(getBaseContext(), AddAccountActivity.class);
+        Intent i = new Intent(this, AddAccountActivity.class);
         //Add extras to the intent object, specifically the current category where the add button was pressed from
         i.putExtra("category", this.currentCategory.get_id());
         //Start the addTaskActivity class
@@ -923,6 +946,9 @@ public class MainActivity extends AppCompatActivity {
     //Method to throw new EditAccountActivity
     private void throwEditAccountActivity(View v) {
         Log.d("ThrowEditAcc", "Enter throwEditAccountActivity method in the MainActivity class.");
+        //Launch decrypt service
+        Intent decryptDataService = new Intent(this, DecryptDataService.class);
+        startService(decryptDataService);
         Intent i  = prepareThrowEditAccountActivity(MainActivity.this,v);
         //Start the AddItemActivity class
         startActivityForResult(i, THROW_EDIT_ACCOUNT_ACT_REQCODE);
@@ -3083,4 +3109,25 @@ public class MainActivity extends AppCompatActivity {
         }//End of if statement to check SDK version
         Log.d("createNotChannel", "Exit createNotificationChannel method in MainActivity class.");
     }//End of createNotificationChannel method
+
+    public static void checkLogOutTimeOut(Context context){
+        Log.d("checkLogOut", "Enter checkLogOutTimeOut method in MainActivity class.");
+        if(MainActivity.isAutoLogOutActive()){
+            LogOutTimer logOutTimer = (LogOutTimer)AutoLogOutService.getLogOutTimer();
+            //Set current activity context for the Logout timer in order to display auto logout prompt
+            logOutTimer.setContext(context);
+            //Check if previous activity triggered the timeout timer and the timeout idle timer.
+            //If idle inner timer is running, stop it, as it will be restarted when the .timeout() method id called
+            if(logOutTimer.isPromptIdleTimerRunning()){
+                logOutTimer.getPromptIdleTimer().cancel();
+                Log.d("checkLogOut", "Inner logout time is cancelled by "+context.toString());
+            }//End of if statement to check the inner idle time is running
+            if(logOutTimer.isLogOutTimeout()){
+                //Only then display Dialog alert prompt
+                logOutTimer.timeOut();
+                Log.d("checkTimeOut", "Inner logout time is cancelled by "+context.toString());
+            }//End of if statement to check logout timeout
+        }//End of if statement to check auto logout is active
+        Log.d("checkLogOut", "Exit checkLogOutTimeOut method in MainActivity class.");
+    }//End of checkLogOutTimeOut method
 }//End of MainActivity class.

@@ -16,6 +16,7 @@ public class AddPsswrdActivity extends AddItemActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("OnCreateAddQuest","Enter onCreate method in the AddPsswrdActivity class.");
+
         //Set activity title
         getSupportActionBar().setTitle(R.string.addPsswrdTitle);
         //Update layout fields according to Add Security question layout

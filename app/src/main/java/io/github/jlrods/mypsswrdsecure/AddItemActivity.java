@@ -35,8 +35,8 @@ public abstract class AddItemActivity extends AppCompatActivity {
     protected Cryptographer cryptographer = MainActivity.getCryptographer();
     //Floating action button to delete existing item
     protected FloatingActionButton fabDelete = null;
-//    protected LogOutTimer logOutTimer;
-//    protected long logOutTime;
+    protected boolean isRunDecryptService = false;
+
     Bundle extras;
 
     //Method definition
@@ -52,11 +52,6 @@ public abstract class AddItemActivity extends AppCompatActivity {
         //Set language as per preferences
         MainActivity.setAppLanguage(this);
         this.extras = getIntent().getExtras();
-//        if(MainActivity.isAutoLogOutActive()){
-//            logOutTime = this.extras.getLong("timeOutRemainder");
-//            logOutTimer = new LogOutTimer(logOutTime, 250,this);
-//            logOutTimer.start();
-//        }
         //Set layout for this activity
         setContentView(R.layout.activity_add_item);
         this.accountsDB = HomeFragment.getAccountsDB();
@@ -71,16 +66,20 @@ public abstract class AddItemActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        //Set current activity context for the Logout timer in order to display auto logout prompt
-        if(MainActivity.isAutoLogOutActive()){
-            ((LogOutTimer)AutoLogOutService.getLogOutTimer()).setContext(this);
-        }
+        Log.d("onResumeMain", "Enter onResume method in AddItemActivity class.");
+        //Call MainActivity static method to check for logout timeout to display logout prompt accordingly
+        MainActivity.checkLogOutTimeOut(this);
+        Log.d("onResumeMain", "Exit onResume method in AddItemActivity class.");
     }//End of onResume method
 
     public void onStop(){
         super.onStop();
         Log.d("onStopMain", "Enter onStop method in AddItemActivity class.");
         MainActivity. checkForNotificationSent(this, false);
+//        if(this.isRunDecryptService){
+//            Intent decryptDataService = new Intent(this, DecryptDataService.class);
+//            startService(decryptDataService);
+//        }
         Log.d("onStopMain", "Exit onStop method in AddItemActivity class.");
     }//End of onStop method
 
