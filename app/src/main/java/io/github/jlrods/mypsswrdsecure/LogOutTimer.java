@@ -67,7 +67,7 @@ public class LogOutTimer extends CountDownTimer {
             promptIdleTimer = new CountDownTimer(INNER_COUNTE_DOWN_INTERVAL,AutoLogOutService.COUNT_DOWN_INTERVAL) {
                 @Override
                 public void onTick(long millisUntilFinished) {
-                    Log.d("onTick", "Enter/Exit Inner CountDownTimer onTick method for logout in LogOutTime class.");
+                    Log.d("onTickInner", "Enter/Exit Inner CountDownTimer onTick method for logout in LogOutTime class.");
                     if(isPromptIdleTimerRunning == false){
                         isPromptIdleTimerRunning = true;
                     }

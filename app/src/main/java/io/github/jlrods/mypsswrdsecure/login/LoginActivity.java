@@ -35,6 +35,7 @@ import io.github.jlrods.mypsswrdsecure.AccountsDB;
 import io.github.jlrods.mypsswrdsecure.AppLoggin;
 import io.github.jlrods.mypsswrdsecure.AutoLogOutService;
 import io.github.jlrods.mypsswrdsecure.Cryptographer;
+import io.github.jlrods.mypsswrdsecure.DecryptDataService;
 import io.github.jlrods.mypsswrdsecure.EditAccountActivity;
 import io.github.jlrods.mypsswrdsecure.LogOutTimer;
 import io.github.jlrods.mypsswrdsecure.Psswrd;
@@ -255,6 +256,9 @@ public class LoginActivity extends AppCompatActivity {
                     Bundle extras = getIntent().getExtras();
                     if(extras!=null){
                         if(extras.getBoolean("isActivityCalledFromNotification")){
+                            //Launch decrypt service
+                            Intent decryptDataService = new Intent(getBaseContext(), DecryptDataService.class);
+                            startService(decryptDataService);
                             checkIsAutoLogOutActive();
                             int accountID = extras.getInt("expiredPasswordAccountID");
                             Account expiredPasswordAccount = Account.extractAccount(accountsDB.getAccountCursorByID(accountID));
@@ -386,7 +390,9 @@ public class LoginActivity extends AppCompatActivity {
                     Bundle extras = getIntent().getExtras();
                     if(extras!=null){
                         if(extras.getBoolean("isActivityCalledFromNotification")){
-                            //@Fixme: There's duplication here, create a method
+                            //Launch decrypt service
+                            Intent decryptDataService = new Intent(getBaseContext(), DecryptDataService.class);
+                            startService(decryptDataService);
                             checkIsAutoLogOutActive();
                             int accountID = extras.getInt("expiredPasswordAccountID");
                             Account expiredPasswordAccount = Account.extractAccount(accountsDB.getAccountCursorByID(accountID));

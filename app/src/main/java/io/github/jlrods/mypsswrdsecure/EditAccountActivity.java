@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -24,6 +25,12 @@ public class EditAccountActivity extends DisplayAccountActivity{
         Log.d("OnCreateEditAcc","Enter onCreate method in the EditAccountActivity abstract class.");
         //Check if Activity was call by notification pending intent
         if(extras.getBoolean("isActivityCalledFromNotification")){
+            if(extras.getBoolean("notifiCationIssuedFromMainAct")){
+                //Launch decrypt service
+                Intent decryptDataService = new Intent(this, DecryptDataService.class);
+                startService(decryptDataService);
+            }
+
             //Reset boolean flag to display notification
             MainActivity.setPushNotificationSent(false);
             //Remove back arrow button to avoid stopping service
@@ -65,6 +72,7 @@ public class EditAccountActivity extends DisplayAccountActivity{
             this.logo = this.accountsDB.getIconByID(this.account.getIcon().get_id());
             this.imgAccLogo.setImageURI(Uri.parse(this.account.getIcon().getLocation()));
         }//End of if else statement to check if logo comes from app resources
+
         //Set up the category spinner to display the category assigned to the account by calling method that gets the cursor position by passing in it's text value
         this.spCategory.setSelection(this.getItemPositionInSpinner(this.cursorCategory,this.account.getCategory().get_id()));
         //Set up the user name spinner to display the user name assigned to the account by calling method that gets the cursor position by passing in it's text value
@@ -99,6 +107,14 @@ public class EditAccountActivity extends DisplayAccountActivity{
         }//End of if statement that checks the renew password date is to be updated on UI
         Log.d("OnCreateEditAcc","Exit onCreate method in the EditAccountActivity abstract class.");
     }//End of onCreate method
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("onResumeEdit", "Enter onResume method in EditAccountActivity class.");
+
+        Log.d("onResumeEdit", "Exit onResume method in EditAccountActivity class.");
+    }//End of onResume method
 
 
     @Override

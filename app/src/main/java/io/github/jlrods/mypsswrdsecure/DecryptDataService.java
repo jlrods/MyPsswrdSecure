@@ -66,6 +66,11 @@ public class DecryptDataService extends Service {
     public void onDestroy(){
         Log.d("onDestroyDecryptSer", "Enter  onDestroy method DecryptService class, Service has started on the background.");
         Toast.makeText(this, "Decrypt service done", Toast.LENGTH_SHORT).show();
+        //Clear all lists
+        decryptedUserNameList.clear();
+        decryptedUserNameIDList.clear();
+        decryptedPsswrdList.clear();
+        decryptedPsswrdIDList.clear();
         this.stopSelf();
         Log.d("onDestroyDecryptSer", "Exit  onDestroy method DecryptService class, Service has started on the background.");
     }//End of onDestroy method
@@ -115,6 +120,8 @@ public class DecryptDataService extends Service {
     public static void setListTypePsswrd(int listTypePsswrd) {
         LIST_TYPE_PSSWRD = listTypePsswrd;
     }
+
+
 
     //Method to get ID from selected item on the respective spinners (User name or password)
     public static int getSelectedItemID(String value, int listType){

@@ -92,9 +92,9 @@ public class UpdateAppLoginActivity extends DisplayAccountActivity{
                 cryptographer = MainActivity.getCryptographer();
                 //Check a user name has been selected
                 if(this.spAccUserName.getSelectedItemPosition() >=0 ){
-                    this.userName = this.accountsDB.getUserNameByID((int) this.spAccUserName.getSelectedItemId());
+                    this.userName = accountsDB.getUserNameByID((int) DecryptDataService.getSelectedItemID( this.spAccUserName.getSelectedItem().toString(),DecryptDataService.getListTypeUserName()));
                     if(this.spAccPsswrd.getSelectedItemPosition() >= 0){
-                        this.psswrd = this.accountsDB.getPsswrdByID((int) this.spAccPsswrd.getSelectedItemId());
+                        this.psswrd = accountsDB.getPsswrdByID((int) DecryptDataService.getSelectedItemID(this.spAccPsswrd.getSelectedItem().toString(),DecryptDataService.getListTypePsswrd()));
                         //Check user name and password aren't the same as the values already stored in DB
                         if(this.appLoggin.getUserName().get_id() != this.userName.get_id() ||
                             this.appLoggin.getPsswrd().get_id() != this.psswrd.get_id()){

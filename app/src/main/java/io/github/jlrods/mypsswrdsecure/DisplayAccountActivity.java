@@ -309,6 +309,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         Log.d("onResumeMain", "Exit onResume method in DisplayAccountActivity class.");
     }//End of onResume method
 
+    @Override
     public void onStop(){
         super.onStop();
         Log.d("onStopMain", "Enter onStop method in DisplayAccountActivity class.");
@@ -561,6 +562,7 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
     protected void setUpSpinnerData(Cursor cursor,Spinner sp,int type){
         SpinnerAdapter adapterCategory = null;
         SpinnerArrayAdapter adapterUserNamePsswrd = null;
+        SpinnerAdapter encryptedAdapter = null;
         Log.d("setUpSpinnerData","Enter the setUpSpinnerData method in the DisplayAccountActivity class.");
         //Get resources for displaying spinner
         String spHint = "";
@@ -577,17 +579,25 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
                 Log.d("setUpSpinnerData","USERNAME_SPINNER passed in as spinner type in setUpSpinnerData method call  in the DisplayAccountActivity class.");
                 spHint = res.getString(R.string.selectUserHint);
                 etHint = res.getString(R.string.selectUserHint);
-                //Create new spinner adapter object
-                //adapter = new SpinnerAdapterEncrypted(this,cursor, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER) ;
-                adapterUserNamePsswrd = new SpinnerArrayAdapter(this,R.layout.spinner_item_string_value, R.id.tvItem,DecryptDataService.getDecryptedUserNameList().toArray());
+                //Create new spinner adapter object: SpinnerAdapterEncrypted if requests comes from Activity started from PushNotification Issued from MainActivity
+                // due to Start service issue. All other cases, SpinnerArrayAdapter will work.
+                if(this.extras.getBoolean("isActivityCalledFromNotification",false) && this.extras.getBoolean("notifiCationIssuedFromMainAct",false) ){
+                    encryptedAdapter = new SpinnerAdapterEncrypted(this,cursor,CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+                }else{
+                    adapterUserNamePsswrd = new SpinnerArrayAdapter(this,R.layout.spinner_item_string_value, R.id.tvItem,DecryptDataService.getDecryptedUserNameList().toArray());
+                }
                 break;
             case PSSWRD_SPINNER:
                 Log.d("setUpSpinnerData","PSSWRD_SPINNER passed in as spinner type in setUpSpinnerData method call  in the DisplayAccountActivity class.");
                 spHint = res.getString(R.string.selectPsswrdHint);
                 etHint = res.getString(R.string.selectPsswrdHint);
-                //Create new spinner adapter object
-                //adapterUserNamePsswrd = new SpinnerArrayAdapter(this,cursor, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER) ;
-                adapterUserNamePsswrd = new SpinnerArrayAdapter(this,R.layout.spinner_item_string_value, R.id.tvItem,DecryptDataService.getDecryptedPsswrdList().toArray());
+                //Create new spinner adapter object: SpinnerAdapterEncrypted if requests comes from Activity started from PushNotification Issued from MainActivity
+                // due to Start service issue. All other cases, SpinnerArrayAdapter will work.
+                if(this.extras.getBoolean("isActivityCalledFromNotification") && this.extras.getBoolean("notifiCationIssuedFromMainAct") ){
+                    encryptedAdapter = new SpinnerAdapterEncrypted(this,cursor,CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+                }else{
+                    adapterUserNamePsswrd = new SpinnerArrayAdapter(this,R.layout.spinner_item_string_value, R.id.tvItem,DecryptDataService.getDecryptedPsswrdList().toArray());
+                }
                 break;
             default:
                 spHint = "";
@@ -602,7 +612,12 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         }// End of if else statement to check cursor isn't null or empty
         //Set the adapter for the Category spinner
         if(type == USERNAME_SPINNER || type == PSSWRD_SPINNER){
-            sp.setAdapter(adapterUserNamePsswrd);
+            if(this.extras.getBoolean("isActivityCalledFromNotification") && this.extras.getBoolean("notifiCationIssuedFromMainAct")){
+                sp.setAdapter(encryptedAdapter);
+            }else{
+                sp.setAdapter(adapterUserNamePsswrd);
+            }
+
         }else{
             sp.setAdapter(adapterCategory);
         }//End of if else statement to set the proper adapter based on the type of spinner
@@ -1129,10 +1144,16 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         //Start extracting data from UI
         accountName = this.etAccountName.getText().toString();
         category = accountsDB.getCategoryByID((int) this.spCategory.getSelectedItemId());
-        //userName = accountsDB.getUserNameByID((int) this.spAccUserName.getSelectedItemId());
-        userName = accountsDB.getUserNameByID((int) DecryptDataService.getSelectedItemID( this.spAccUserName.getSelectedItem().toString(),DecryptDataService.getListTypeUserName()));
-        //psswrd = accountsDB.getPsswrdByID((int) this.spAccPsswrd.getSelectedItemId());
-        psswrd = accountsDB.getPsswrdByID((int) DecryptDataService.getSelectedItemID(this.spAccPsswrd.getSelectedItem().toString(),DecryptDataService.getListTypePsswrd()));
+        //Extract user name and password from spinners: SpinnerAdapterEncrypted if requests comes from Activity started from PushNotification Issued from MainActivity
+        // due to Start service issue. All other cases, SpinnerArrayAdapter will work, so dependes on running the DecryptDataService.
+        if(this.extras.getBoolean("isActivityCalledFromNotification") && this.extras.getBoolean("notifiCationIssuedFromMainAct")){
+            userName = accountsDB.getUserNameByID((int) this.spAccUserName.getSelectedItemId());
+            psswrd = accountsDB.getPsswrdByID((int) this.spAccPsswrd.getSelectedItemId());
+        }else{
+            userName = accountsDB.getUserNameByID((int) DecryptDataService.getSelectedItemID( this.spAccUserName.getSelectedItem().toString(),DecryptDataService.getListTypeUserName()));
+            psswrd = accountsDB.getPsswrdByID((int) DecryptDataService.getSelectedItemID(this.spAccPsswrd.getSelectedItem().toString(),DecryptDataService.getListTypePsswrd()));
+        }//End of if else statement to check if activity got called from push notification from MainActivity.
+
         securityQuestionList = this.extractQuestionsFromSpinner(spAccSecQuestionList);
         psswrdChangeDate = this.getPsswrdRenewDate();
         //Check the security question list isn't empty
