@@ -58,6 +58,9 @@
             android:name=".AboutActivity" />
         <activity
             android:name=".UpdateAppLoginActivity" />
+        <activity
+            android:theme="@style/Base.Theme.AppCompat.Dialog"
+            android:name=".AutoLogOutDialogActivity" />
         <service android:name=".AutoLogOutService"
             android:exported="false"
             android:description="@string/logOutServiceDescription"/>

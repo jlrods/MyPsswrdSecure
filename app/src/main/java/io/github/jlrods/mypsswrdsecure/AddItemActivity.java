@@ -76,10 +76,6 @@ public abstract class AddItemActivity extends AppCompatActivity {
         super.onStop();
         Log.d("onStopMain", "Enter onStop method in AddItemActivity class.");
         MainActivity. checkForNotificationSent(this, false);
-//        if(this.isRunDecryptService){
-//            Intent decryptDataService = new Intent(this, DecryptDataService.class);
-//            startService(decryptDataService);
-//        }
         Log.d("onStopMain", "Exit onStop method in AddItemActivity class.");
     }//End of onStop method
 

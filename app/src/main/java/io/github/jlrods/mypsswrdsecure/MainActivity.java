@@ -50,9 +50,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import javax.crypto.spec.IvParameterSpec;
 import io.github.jlrods.mypsswrdsecure.login.LoginActivity;
@@ -521,12 +519,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onPause(){
         super.onPause();
-    }
+    }//End of onPause method
 
     @Override
     public void onStop(){
         super.onStop();
-        Log.d("onStopMain", "Enter onStop method in MainActivity class.");
         //Call method to check for notification sent and update if required
         checkForNotificationSent(this,false);
         Log.d("onStopMain", "Exit onStop method in MainActivity class.");
@@ -3116,17 +3113,9 @@ public class MainActivity extends AppCompatActivity {
             LogOutTimer logOutTimer = (LogOutTimer)AutoLogOutService.getLogOutTimer();
             //Set current activity context for the Logout timer in order to display auto logout prompt
             logOutTimer.setContext(context);
-            //Check if previous activity triggered the timeout timer and the timeout idle timer.
-            //If idle inner timer is running, stop it, as it will be restarted when the .timeout() method id called
-            if(logOutTimer.isPromptIdleTimerRunning()){
-                logOutTimer.getPromptIdleTimer().cancel();
-                Log.d("checkLogOut", "Inner logout time is cancelled by "+context.toString());
-            }//End of if statement to check the inner idle time is running
-            if(logOutTimer.isLogOutTimeout()){
-                //Only then display Dialog alert prompt
-                logOutTimer.timeOut();
-                Log.d("checkTimeOut", "Inner logout time is cancelled by "+context.toString());
-            }//End of if statement to check logout timeout
+            if(AutoLogOutDialogActivity.isPopUpToBeDisplayed()){
+                logOutTimer.logOutTimeOut();
+            }//End of if statement to check the popup can be displayed
         }//End of if statement to check auto logout is active
         Log.d("checkLogOut", "Exit checkLogOutTimeOut method in MainActivity class.");
     }//End of checkLogOutTimeOut method
