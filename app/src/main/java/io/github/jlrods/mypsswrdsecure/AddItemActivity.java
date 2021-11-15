@@ -74,10 +74,21 @@ public abstract class AddItemActivity extends AppCompatActivity {
 
     public void onStop(){
         super.onStop();
-        Log.d("onStopMain", "Enter onStop method in AddItemActivity class.");
-        MainActivity. checkForNotificationSent(this, false);
-        Log.d("onStopMain", "Exit onStop method in AddItemActivity class.");
+        Log.d("onStopAddItem", "Enter onStop method in AddItemActivity class.");
+        //Call method to check for notification sent and update if required. Pass in as argument the flag to identify if auto log out has timed out
+        MainActivity. checkForNotificationSent(this, MainActivity.checkIsAppLoggedOut());
+        Log.d("onStopAddItem", "Exit onStop method in AddItemActivity class.");
     }//End of onStop method
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //Call method to check for notification sent and update if required. Pass in as argument the flag to identify if auto log out has timed out
+        MainActivity.checkForNotificationSent(this,MainActivity.checkIsAppLoggedOut());
+        Log.d("onDestroyAddItem", "Enter/Exit onDestroy method in AddItemActivity class.");
+    }//End of onDestroy method
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -313,10 +313,20 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onStop(){
         super.onStop();
-        Log.d("onStopMain", "Enter onStop method in LogingActivity class.");
-        MainActivity. checkForNotificationSent(this, false);
-        Log.d("onStopMain", "Exit onStop method in LogingActivity class.");
+        Log.d("onStopLogin", "Enter onStop method in LogingActivity class.");
+        //Call method to check for notification sent and update if required. Pass in as argument the flag to identify if auto log out has timed out
+        MainActivity.checkForNotificationSent(this,MainActivity.checkIsAppLoggedOut());
+        Log.d("onStopLogin", "Exit onStop method in LogingActivity class.");
     }//End of onStop method
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //Call method to check for notification sent and update if required. Pass in as argument the flag to identify if auto log out has timed out
+        MainActivity.checkForNotificationSent(this,MainActivity.checkIsAppLoggedOut());
+        //Call method to check for notification sent and update if required
+        Log.d("onDestroyLogin", "Enter/Exit onDestroy method in LoginActivity class.");
+    }//End of onDestroy method
 
     private boolean encryptedCredentialValidation(byte[] encryptedCredential, byte[] credentialIV ,TextView tvCredential){
         return cryptographer.decryptText(encryptedCredential,new IvParameterSpec(credentialIV)).equals(tvCredential.getText().toString().trim());
