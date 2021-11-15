@@ -313,7 +313,8 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
     public void onStop(){
         super.onStop();
         Log.d("onStopMain", "Enter onStop method in DisplayAccountActivity class.");
-        MainActivity. checkForNotificationSent(this,false);
+        //Call method to check for notification sent and update if required. Pass in as argument the flag to identify if auto log out has timed out
+        MainActivity. checkForNotificationSent(this,MainActivity.checkIsAppLoggedOut());
         //Check flag to see if current activity is closing to open any AddItemActivity children
         //In those cases, decrypt data service should not be stopped.
         if(!this.isInnerActivityLaunched){
@@ -322,6 +323,14 @@ abstract class DisplayAccountActivity extends AppCompatActivity implements DateP
         }
         Log.d("onStopMain", "Exit onStop method in DisplayAccountActivity class.");
     }//End of onStop method
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //Call method to check for notification sent and update if required. Pass in as argument the flag to identify if auto log out has timed out
+        MainActivity.checkForNotificationSent(this,MainActivity.checkIsAppLoggedOut());
+        Log.d("onDestroyDisplayAcc", "Enter/Exit onDestroy method in DisplayAccountActivity abstract class.");
+    }//End of onDestroy method
 
 
     @Override

@@ -82,10 +82,19 @@ public class SelectNavDrawerBckGrndActivity extends AppCompatActivity {
 
     public void onStop(){
         super.onStop();
-        Log.d("onStopMain", "Enter onStop method in SelectNavDrawerBckGrndActivity class.");
-        MainActivity. checkForNotificationSent(this,false);
-        Log.d("onStopMain", "Exit onStop method in SelectNavDrawerBckGrndActivity class.");
+        Log.d("onStopNavBck", "Enter onStop method in SelectNavDrawerBckGrndActivity class.");
+        //Call method to check for notification sent and update if required. Pass in as argument the flag to identify if auto log out has timed out
+        MainActivity.checkForNotificationSent(this,MainActivity.checkIsAppLoggedOut());
+        Log.d("onStopNavBck", "Exit onStop method in SelectNavDrawerBckGrndActivity class.");
     }//End of onStop method
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //Call method to check for notification sent and update if required. Pass in as argument the flag to identify if auto log out has timed out
+        MainActivity.checkForNotificationSent(this,MainActivity.checkIsAppLoggedOut());
+        Log.d("onDestroyNavBck", "Enter/Exit onDestroy method in SelectNavDrawerBckGrndActivity class.");
+    }//End of onDestroy method
 
     //Method to inflate the menu into the addTaskActivity
     @Override

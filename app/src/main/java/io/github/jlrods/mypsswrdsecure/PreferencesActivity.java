@@ -41,10 +41,19 @@ public class PreferencesActivity extends AppCompatActivity {
 
     public void onStop(){
         super.onStop();
-        Log.d("onStopMain", "Enter onStop method in PreferencesActivity class.");
-        MainActivity. checkForNotificationSent(this,false);
-        Log.d("onStopMain", "Exit onStop method in PreferencesActivity class.");
+        Log.d("onStopPref", "Enter onStop method in PreferencesActivity class.");
+        //Call method to check for notification sent and update if required. Pass in as argument the flag to identify if auto log out has timed out
+        MainActivity. checkForNotificationSent(this,MainActivity.checkIsAppLoggedOut());
+        Log.d("onStopPref", "Exit onStop method in PreferencesActivity class.");
     }//End of onStop method
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //Call method to check for notification sent and update if required. Pass in as argument the flag to identify if auto log out has timed out
+        MainActivity.checkForNotificationSent(this,MainActivity.checkIsAppLoggedOut());
+        Log.d("onDestroyPref", "Enter/Exit onDestroy method in PreferencesActivity class.");
+    }//End of onDestroy method
 
     //Method to populate menu object and configure menu items visibility
     @Override

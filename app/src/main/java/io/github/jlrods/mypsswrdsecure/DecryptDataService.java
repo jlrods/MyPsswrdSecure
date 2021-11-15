@@ -31,7 +31,6 @@ public class DecryptDataService extends Service {
     private static int LIST_TYPE_PSSWRD = 1;
     @Override
     public void onCreate(){
-        Toast.makeText(this, "Decrypt service started", Toast.LENGTH_SHORT).show();
         Log.d("decryptServ", "Enter  onCreate method DecryptDataService class.");
         //Initialize util objects
         this.cryptographer = MainActivity.getCryptographer();
@@ -42,13 +41,12 @@ public class DecryptDataService extends Service {
         //Initialize array list to store decrypted list of user names and passwords
         this.decryptedUserNameList = new ArrayList<String>();
         this.decryptedPsswrdList = new ArrayList<String>();
-        //Initializa has map to keep decrypted item and ID relatioship
+        //Initialize has map to keep decrypted item and ID relatioship
         this.decryptedUserNameIDList = new HashMap(encryptedUserNameCursor.getCount());
         this.decryptedPsswrdIDList = new HashMap(encryptedPsswrdCursor.getCount());
         //Update and populate user name and password decrypted list
         if(this.updateList(LIST_TYPE_USER_NAME) && this.updateList(LIST_TYPE_PSSWRD)){
             this.isDecryptionFinished = true;
-            Toast.makeText(this, "User name list size = " + decryptedUserNameIDList.size()+"\nUPsswrd list size = "+ decryptedPsswrdIDList.size() , Toast.LENGTH_SHORT).show();
         }//End of is statement
         Log.d("decryptServ", "Exit  onCreate method DecryptDataService class.");
     }//End of onCreate method
@@ -56,16 +54,13 @@ public class DecryptDataService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent,flags,startId);
-        Log.d("onStartCommand", "Enter  onStartCommand method DecryptService class, Service has started on the background.");
-        Toast.makeText(this, "Decrypt service started", Toast.LENGTH_SHORT).show();
-        Log.d("onStartCommand", "Enter  onStartCommand method DecryptService class, Service has started on the background.");
+        Log.d("onStartCommand", "Enter/Exit  onStartCommand method DecryptService class, Service has started on the background.");
         return START_NOT_STICKY;
     }//End of onStartCommand method
 
     @Override
     public void onDestroy(){
         Log.d("onDestroyDecryptSer", "Enter  onDestroy method DecryptService class, Service has started on the background.");
-        Toast.makeText(this, "Decrypt service done", Toast.LENGTH_SHORT).show();
         //Clear all lists
         decryptedUserNameList.clear();
         decryptedUserNameIDList.clear();

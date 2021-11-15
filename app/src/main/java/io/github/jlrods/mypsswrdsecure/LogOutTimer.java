@@ -1,23 +1,24 @@
 package io.github.jlrods.mypsswrdsecure;
 
+
 import android.app.ActivityManager;
 import android.content.Context;
-import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
-
 import static android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND;
 
 public class LogOutTimer extends CountDownTimer {
     long logOutTimeRemainder;
     private Context context;
     private AlertDialog alertDialog;
-    private boolean isLogOutTimeout = false;
+    private boolean isLogOutTimeout;
     private static final long INNER_COUNTE_DOWN_INTERVAL = 10000;
     private static CountDownTimer promptIdleTimer = null;
     private static boolean isPromptIdleTimerRunning = false;
+
     /**
      * @param logOutTime    The number of millis in the future from the call
      *                          to {@link #start()} until the countdown is done and {@link #onFinish()}
@@ -48,8 +49,31 @@ public class LogOutTimer extends CountDownTimer {
         Log.d("onFinish", "Enter CountDownTimer onFinish method for logout in LogOutTime class.");
         Toast.makeText(context, "Logout Timer is done!", Toast.LENGTH_SHORT).show();
         this.isLogOutTimeout = true;
+        promptIdleTimer = new CountDownTimer(INNER_COUNTE_DOWN_INTERVAL,AutoLogOutService.COUNT_DOWN_INTERVAL) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                Log.d("onTickInner", "Enter/Exit Inner CountDownTimer onTick method for logout in LogOutTime class.");
+                if(isPromptIdleTimerRunning == false){
+                    isPromptIdleTimerRunning = true;
+                }
+            }//End of onTick method
+
+            @Override
+            public void onFinish() {
+                Log.d("onFinish", "Enter Inner CountDownTimer onFinish method for logout in LogOutTime class.");
+                //@TODO: Toast to be deleted
+                Toast.makeText(getContext(), "Inner Timer is done!", Toast.LENGTH_SHORT).show();
+                //Reset flag for inner time running
+                isPromptIdleTimerRunning = false;
+                //Call logout method to go back to login screen
+                MainActivity.logout(getContext());
+                Log.d("onFinish", "Exit Inner CountDownTimer onFinish method for logout in LogOutTime class.");
+            }//End of onFinish method
+        };
+        //Start the idle prompt timer
+        promptIdleTimer.start();
         //Call method to handle logout timeout event
-        this.timeOut();
+        this.logOutTimeOut();
         Log.d("onFinish", "Exit CountDownTimer onFinish method for logout in LogOutTime class.");
     }//End of onFinish method
 
@@ -58,85 +82,26 @@ public class LogOutTimer extends CountDownTimer {
         return this.logOutTimeRemainder;
     }//End of getLogOutTimeRemainder method
 
-    //Method to handle logout timeout event
-    public void timeOut() {
-        Log.d("timeOut", "Enter  timeOut method for logout in LogOutTime class.");
-        //Check if app is on the foreground, then display alert dialog if so
-        if(this.isAppInForeground()){
-            //Display alert with justification about why permit is necessary
-            promptIdleTimer = new CountDownTimer(INNER_COUNTE_DOWN_INTERVAL,AutoLogOutService.COUNT_DOWN_INTERVAL) {
-                @Override
-                public void onTick(long millisUntilFinished) {
-                    Log.d("onTickInner", "Enter/Exit Inner CountDownTimer onTick method for logout in LogOutTime class.");
-                    if(isPromptIdleTimerRunning == false){
-                        isPromptIdleTimerRunning = true;
-                    }
-                }//End of onTick method
+    public void logOutTimeOut(){
+        Log.d("logOutTimeOut", "Enter  logOutTimeOut method for logout in LogOutTime class.");
 
-                @Override
-                public void onFinish() {
-                    Log.d("onFinish", "Enter Inner CountDownTimer onFinish method for logout in LogOutTime class.");
-                    Toast.makeText(context, "Inner Timer is done!", Toast.LENGTH_SHORT).show();
-                    if( alertDialog != null){
-                        alertDialog.dismiss();
-                        alertDialog = null;
-                    }
-                    isPromptIdleTimerRunning = false;
-                    MainActivity.logout(context);
-                    Log.d("onFinish", "Exit Inner CountDownTimer onFinish method for logout in LogOutTime class.");
-                }//End of onFinish method
-            };
-            //Declare and initialize alert builder object for Auto logout prompt
-            final AlertDialog.Builder alert = MainActivity.displayAlertDialogNoInput(this.context, context.getString(R.string.logOutTitle), context.getString(R.string.logOutMssg));
-            alert.setPositiveButton(R.string.logOutContinue,new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Log.d("onClickLogOutPromt", "Enter Possitive button onClick method for logout in LogOutTime class.");
-                    //Start logout timer
-                    start();
-                    //Reset boolean flag for timer done
-                    isLogOutTimeout = false;
-                    //Stop timer for idle auto logout prompt
-                    promptIdleTimer.cancel();
-                    Log.d("onClickLogOutPromt", "Exit Positive button onClick method for logout in LogOutTime class.");
-                }//End of onClick method
-
-            }).setNegativeButton(R.string.logOutTitle,new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    logout(promptIdleTimer);
-                    Log.d("onClickLogOutPromt", "Enter/Exit Negative button onClick method for logout in LogOutTime class.");
-                }//End of onClick method
-
-            }).setOnCancelListener(new DialogInterface.OnCancelListener() {
-                @Override
-                public void onCancel(DialogInterface dialog) {
-                    logout(promptIdleTimer);
-                    Log.d("onClickLogOutPromt", "Enter/Exit onCancel method for logout in LogOutTime class.");
-                }//End of onCancel method
-            });
-            //Create the dialog
-            alertDialog = alert.create();
-            //Ignore touch outside the prompt alert box
-            alertDialog.setCanceledOnTouchOutside(false);
-            //Display the auto logout timeout prompt
-            if(this.isAppInForeground()){
-                alertDialog.show();
-            }
-            //Start inner count down timer for auto logout on idle response to prompt
-            promptIdleTimer.start();
-            //Create a inner timer to carry out auto logout if window expires
-        }else{
-            //Call main activity logout method to kill service and call LoginActivity
-            MainActivity.logout(context);
-        }//End of if else statement to check app is on the foreground
-        //Otherwise, stop service
-        Log.d("timeOut", "Exit  timeOut method for logout in LogOutTime class.");
-    }//End of logout method
+        //Declare and instantiate a new intent object
+        Intent i = new Intent(this.context,AutoLogOutDialogActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
+        this.context.startActivity(i);
+        //Set flag for the time out pop up is being shown
+        AutoLogOutDialogActivity.setIsTimeOutPopUpShowing(true);
+        Log.d("logOutTimeOutSent", "logOutTimeOut intent sent for display from  LogOutTime class.");
+        Log.d("logOutTimeOut", "Exit  logOutTimeOut method for logout in LogOutTime class.");
+    }//End logOutTimeOut method
 
     public void  setContext(Context context){
         this.context = context;
     }//End of setContext method
+
+    public Context getContext() {
+        return context;
+    }
 
     public void setAlertDialog(AlertDialog alertDialog){
         this.alertDialog = alertDialog;
@@ -168,6 +133,7 @@ public class LogOutTimer extends CountDownTimer {
         LogOutTimer.isPromptIdleTimerRunning = isPromptIdleTimerRunning;
     }
 
+
     //Method to check if MyPsswrdSecure app is on the foreground (important for Auto Logout Alert dialog display)
     public static boolean isAppInForeground() {
         Log.d("isAppInForeground", "Enter  isAppInForeground method for logout in LogOutTimer class.");
@@ -176,21 +142,4 @@ public class LogOutTimer extends CountDownTimer {
         Log.d("isAppInForeground", "Exit  isAppInForeground method for logout in LogOutTime class.");
         return (appProcessInfo.importance == IMPORTANCE_FOREGROUND);
     }//End of isAppInForeground method
-
-    //Method that carries out steps for proper logout
-    private void logout(CountDownTimer promptIdleTimer){
-        Log.d("logoutTimer", "Enter  logout method for logout in LogOutTimer class.");
-        //Dismiss current alert dialog window
-        if( alertDialog != null){
-            alertDialog.dismiss();
-            alertDialog = null;
-        }
-        //Stop timer for idle auto logout prompt
-        promptIdleTimer.cancel();
-        //Call method to check for notification sent and update if required
-        MainActivity.checkForNotificationSent(context,true);
-        //Call logout method
-        MainActivity.logout(context);
-        Log.d("logoutTimer", "Exit  logout method for logout in LogOutTimer class.");
-    }//End of logout method
 }//End of LogoOutTimer class

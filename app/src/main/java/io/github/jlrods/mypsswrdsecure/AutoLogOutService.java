@@ -2,7 +2,6 @@ package io.github.jlrods.mypsswrdsecure;
 
 import android.app.Service;
 import android.content.Intent;
-import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
@@ -59,7 +58,7 @@ public class AutoLogOutService extends Service {
     } //End of terminateService method
 
 
-    public static CountDownTimer getLogOutTimer(){
+    public static LogOutTimer getLogOutTimer(){
         return  logOutTimer;
     }//End of getLogOutTimer method
 

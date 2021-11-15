@@ -50,9 +50,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import javax.crypto.spec.IvParameterSpec;
 import io.github.jlrods.mypsswrdsecure.login.LoginActivity;
@@ -184,6 +182,7 @@ public class MainActivity extends AppCompatActivity {
     private Bundle extras;
     private static AppLoggin currentAppLoggin;
     private static boolean isAutoLogOutActive;
+    private static boolean isLoggedOut;
     private static boolean isPushNotificationSent = false;
     private static int expiredPasswordAccountID = -1;
     private static NotificationManagerCompat notificationManager = null;
@@ -521,14 +520,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onPause(){
         super.onPause();
-    }
+    }//End of onPause method
 
     @Override
     public void onStop(){
         super.onStop();
-        Log.d("onStopMain", "Enter onStop method in MainActivity class.");
-        //Call method to check for notification sent and update if required
-        checkForNotificationSent(this,false);
+        //Call method to check for notification sent and update if required. Pass in as argument the flag to identify if auto log out has timed out
+        checkForNotificationSent(this,checkIsAppLoggedOut());
         Log.d("onStopMain", "Exit onStop method in MainActivity class.");
     }//End of onStop method
 
@@ -544,22 +542,46 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        //Call method to check for notification sent and update if required. Pass in as argument the flag to identify if auto log out has timed out
+        checkForNotificationSent(this,checkIsAppLoggedOut());
         //Call method to check for notification sent and update if required
-        checkForNotificationSent(this,true);
         Log.d("onDestroyMain", "Enter/Exit onDestroy method in MainActivity class.");
     }//End of onDestroy method
 
+    public static boolean checkIsAppLoggedOut(){
+        Log.d("checkIsAppLoggedOut", "Enter checkIsAppLoggedOut method in MainActivity class.");
+        boolean isAppLogged = false;
+        //Check if auto logout is being used
+        if(MainActivity.isAutoLogOutActive()){
+            //Get logout timer object
+            LogOutTimer logOutTimer = (LogOutTimer)AutoLogOutService.getLogOutTimer();
+            //Check if logout time out has been reached and if inner timer finished too
+            //Meaning the app has now logged out
+            isAppLogged = logOutTimer.isLogOutTimeout() && !logOutTimer.isPromptIdleTimerRunning();
+        }else{
+            //If not auto logout funtion not in use, just check and return the isLoggedOut static flag
+            isAppLogged = MainActivity.isLoggedOut;
+        }
+        Log.d("checkIsAppLoggedOut", "Exit checkIsAppLoggedOut method in MainActivity class.");
+        return isAppLogged;
+    }//End of checkIsAppLoggedOut method
+
     public static void checkForNotificationSent(Context context, boolean isLogOutCalled) {
         Log.d("onStopMain", "Enter checkForNotificationSent method in MainActivity class.");
-        if(!isLogOutCalled){
-            if(isPushNotificationSent && !LogOutTimer.isAppInForeground()){
-                updateNotificationIntent(context);
-            }//End of if statement to check if push notification has been sent to OS and app not in foreground
-        }else{
-            if(isPushNotificationSent && LogOutTimer.isAppInForeground()){
-                updateNotificationIntent(context);
-            }//End of if statement to check push notification has been sent and app in foreground
-        }//End of if else statement to check manual or out logout method was called
+        //Check if app has been logged out. In that case, update the notification intent to open from login display instead.
+        if(isLogOutCalled){
+            updateNotificationIntent(context);
+        }//End of if statement to check the isLogOutCalled parameter
+
+//        if(!isLogOutCalled){
+//            if(isPushNotificationSent && !LogOutTimer.isAppInForeground()){
+//                updateNotificationIntent(context);
+//            }//End of if statement to check if push notification has been sent to OS and app not in foreground
+//        }else{
+//            if(isPushNotificationSent && LogOutTimer.isAppInForeground()){
+//                updateNotificationIntent(context);
+//            }//End of if statement to check push notification has been sent and app in foreground
+//        }//End of if else statement to check manual or out logout method was called
         Log.d("onStopMain", "Exit checkForNotificationSent method in MainActivity class.");
     }//End of checkForNotificationSent method
 
@@ -639,7 +661,7 @@ public class MainActivity extends AppCompatActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_applogin:
-//                this.throwActivityNoExtras(MainActivity.this,UpdateAppLoginActivity.class,THROW_UPDATE_APPLOGIN_ACT_REQCODE);
+                //Call method to update app login
                 this.throwUpdateAppLoginActivity();
                 Log.d("onOptionsItemSelected", "Exit the onOptionsItemSelected method in the MainActivity class with App Login option selected.");
                 return true;
@@ -1906,6 +1928,14 @@ public class MainActivity extends AppCompatActivity {
         return THROW_ADD_ACCOUNT_ACT_REQCODE;
     }
 
+    public static boolean isLoggedOut() {
+        return isLoggedOut;
+    }
+
+    public static void setIsLoggedOut(boolean isLoggedOut) {
+        MainActivity.isLoggedOut = isLoggedOut;
+    }
+
     //Generic method to display a toast with control vocer the duritation length and the gravity  position
     public static void displayToast(Context context, String text, int toastLength, int gravity) {
         Log.d("displayToast", "Enter displayToast method in the MainActivity class.");
@@ -3059,6 +3089,7 @@ public class MainActivity extends AppCompatActivity {
     }//End of setAppTheme method
 
     //Method to logout app
+    //@TODO: What's this? to be removed?
     private void logout() {
         Log.d("logout", "Enter logout method in MainActivity class.");
         //Display alert with justification about why permit is necessary
@@ -3086,7 +3117,10 @@ public class MainActivity extends AppCompatActivity {
             context.stopService(iService);
         }
         Intent i = new Intent((Activity)context, LoginActivity.class);
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        //Add intent falgs to clear the back stack, so pressing back button on LoginActivity will not go into the app activities without logging in.
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        //Set boolean flag to confirm app has logged out
+        MainActivity.isLoggedOut = true;
         ((Activity)context).startActivity(i);
         Log.d("logout", "Exit logout method in MainActivity class called by: "+ context.toString());
     }//End of logout method
@@ -3116,18 +3150,12 @@ public class MainActivity extends AppCompatActivity {
             LogOutTimer logOutTimer = (LogOutTimer)AutoLogOutService.getLogOutTimer();
             //Set current activity context for the Logout timer in order to display auto logout prompt
             logOutTimer.setContext(context);
-            //Check if previous activity triggered the timeout timer and the timeout idle timer.
-            //If idle inner timer is running, stop it, as it will be restarted when the .timeout() method id called
-            if(logOutTimer.isPromptIdleTimerRunning()){
-                logOutTimer.getPromptIdleTimer().cancel();
-                Log.d("checkLogOut", "Inner logout time is cancelled by "+context.toString());
-            }//End of if statement to check the inner idle time is running
-            if(logOutTimer.isLogOutTimeout()){
-                //Only then display Dialog alert prompt
-                logOutTimer.timeOut();
-                Log.d("checkTimeOut", "Inner logout time is cancelled by "+context.toString());
-            }//End of if statement to check logout timeout
+            if(AutoLogOutDialogActivity.isPopUpToBeDisplayed()){
+                logOutTimer.logOutTimeOut();
+            }//End of if statement to check the popup can be displayed
         }//End of if statement to check auto logout is active
         Log.d("checkLogOut", "Exit checkLogOutTimeOut method in MainActivity class.");
     }//End of checkLogOutTimeOut method
+
+
 }//End of MainActivity class.
