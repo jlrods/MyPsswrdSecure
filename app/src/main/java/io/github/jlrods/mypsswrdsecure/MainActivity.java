@@ -1,6 +1,7 @@
 package io.github.jlrods.mypsswrdsecure;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -9,6 +10,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -51,6 +54,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import javax.crypto.spec.IvParameterSpec;
 import io.github.jlrods.mypsswrdsecure.login.LoginActivity;
@@ -559,7 +563,7 @@ public class MainActivity extends AppCompatActivity {
             //Meaning the app has now logged out
             isAppLogged = logOutTimer.isLogOutTimeout() && !logOutTimer.isPromptIdleTimerRunning();
         }else{
-            //If not auto logout funtion not in use, just check and return the isLoggedOut static flag
+            //If not auto logout function not in use, just check and return the isLoggedOut static flag
             isAppLogged = MainActivity.isLoggedOut;
         }
         Log.d("checkIsAppLoggedOut", "Exit checkIsAppLoggedOut method in MainActivity class.");
@@ -587,19 +591,22 @@ public class MainActivity extends AppCompatActivity {
 
 
     public static void updateNotificationIntent(Context context) {
-        //Update the intent so it calls the login screen
-        Intent intent = new Intent(context, LoginActivity.class);
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-        //Set up extra information into the intent to be sent the the EditAccountActivity
-        //intent.putExtra("category", expiredPsswrdAccount.getCategory().get_id());
-        intent.putExtra("isActivityCalledFromNotification", true);
-        intent.putExtra("expiredPasswordAccountID", expiredPasswordAccountID);
-        intent.putExtra("notifiCationIssuedFromMainAct", false);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        stackBuilder.addNextIntentWithParentStack(intent);
-        PendingIntent pendingIntent = stackBuilder.getPendingIntent(THROW_EDIT_ACCOUNT_ACT_REQCODE, PendingIntent.FLAG_UPDATE_CURRENT);
-        notificationBuilder.setContentIntent(pendingIntent);
+
+        //Here needs to be check notification manager was created, that means a notificaiton was sent during onCreate activity.
+        //Therefore, the update is required.
         if (notificationManager != null) {
+            //Update the intent so it calls the login screen
+            Intent intent = new Intent(context, LoginActivity.class);
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+            //Set up extra information into the intent to be sent the the EditAccountActivity
+            //intent.putExtra("category", expiredPsswrdAccount.getCategory().get_id());
+            intent.putExtra("isActivityCalledFromNotification", true);
+            intent.putExtra("expiredPasswordAccountID", expiredPasswordAccountID);
+            intent.putExtra("notifiCationIssuedFromMainAct", false);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            stackBuilder.addNextIntentWithParentStack(intent);
+            PendingIntent pendingIntent = stackBuilder.getPendingIntent(THROW_EDIT_ACCOUNT_ACT_REQCODE, PendingIntent.FLAG_UPDATE_CURRENT);
+            notificationBuilder.setContentIntent(pendingIntent);
             notificationManager.notify(expiredPasswordAccountID, notificationBuilder.build());
         }//End of if statement to check if push notification has been sent to Android OS
     }//End of updateNotificationIntent method
@@ -3116,12 +3123,21 @@ public class MainActivity extends AppCompatActivity {
             Intent iService = new Intent(context,AutoLogOutService.class);
             context.stopService(iService);
         }
-        Intent i = new Intent((Activity)context, LoginActivity.class);
-        //Add intent falgs to clear the back stack, so pressing back button on LoginActivity will not go into the app activities without logging in.
-        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        //Set boolean flag to confirm app has logged out
-        MainActivity.isLoggedOut = true;
-        ((Activity)context).startActivity(i);
+        if(LogOutTimer.isAppInForeground()){
+
+            Intent i = new Intent(context, LoginActivity.class);
+            //Add intent falgs to clear the back stack, so pressing back button on LoginActivity will not go into the app activities without logging in.
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            //Set boolean flag to confirm app has logged out
+            MainActivity.isLoggedOut = true;
+            (context).startActivity(i);
+
+        }else{
+            //Call method to recursively finish all activities in the back stack
+            ((Activity)context).finishAffinity();
+            Log.d("finishApp", "Finish all activities in the back stack.");
+        }//End of if else to check app is in the foreground
+
         Log.d("logout", "Exit logout method in MainActivity class called by: "+ context.toString());
     }//End of logout method
 
