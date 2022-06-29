@@ -98,6 +98,7 @@ public class LoginActivity extends AppCompatActivity {
                     etPassword.setError(getString(loginFormState.getPasswordError()));
                 }
                 if(etUsernameId.hasFocus() && !displaySignUp){
+                    //Display biometric prompt button when user name field not empty
                     imgFingerPrint.setVisibility(View.VISIBLE);
                 }
             }
@@ -306,6 +307,7 @@ public class LoginActivity extends AppCompatActivity {
         if(!displaySignUp){
             //Call method to display biometric authentication dialog if setting is active
             if(getIsBioLoginActive(this) && !displaySignUp){
+
                 this.callBiometricAuthentication();
             }
         }//End of if statement to check sigup display isn't in use
@@ -502,27 +504,16 @@ public class LoginActivity extends AppCompatActivity {
         }//End of try catch finally block
     }//End of checkIsAutoLogOutActive method
 
+
     //Method to delay and wait for login activity then call biometric authentication method
     private void callBiometricAuthentication(){
         Log.d("callBiometAuthenT","Enter callBiometricAuthentication method in the LoginActivity class.");
-        CountDownTimer biometricDelay = new CountDownTimer(BIOMETRIC_DELAY_TIME, COUNT_DOWN_INTERVAL) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                Log.d("onTick","Log remainder time in  callBiometricAuthentication method in the LoginActivity class.");
-            }//End of onTick method
-
-            @Override
-            public void onFinish() {
-                Log.d("onFinish","Log onFinish method call as delay time in callBiometricAuthentication method in the LoginActivity class has finished.");
-                //Check the app is on the foreground before call method to display biometrics box
-                if (LogOutTimer.isAppInForeground()){
-                    ImageView imgFingerPrint = findViewById(R.id.imgBiometricButton);
-                    imgFingerPrint.setVisibility(View.GONE);
-                    biometricAuthentication(accountsDB.getAppLoginCursor(accountsDB.getMaxItemIdInTable(MainActivity.getApplogginTable())).getInt(0));
-                }//End of if statement to check app is in foreground
-            }//End of onFinish method
-        };
-        biometricDelay.start();
+        //Get biometric image button
+        ImageView imgFingerPrint = findViewById(R.id.imgBiometricButton);
+        //Hide the button
+        imgFingerPrint.setVisibility(View.GONE);
+        //Call method to display biometric prompt
+        biometricAuthentication(accountsDB.getAppLoginCursor(accountsDB.getMaxItemIdInTable(MainActivity.getApplogginTable())).getInt(0));
         Log.d("callBiometAuthenT","Exit callBiometricAuthentication method in the LoginActivity class.");
     }//End of callBiometricAuthentication method
 
