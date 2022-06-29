@@ -16,6 +16,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -58,6 +59,7 @@ public class LoginActivity extends AppCompatActivity {
     private long BIOMETRIC_DELAY_TIME = 1500;
     private long COUNT_DOWN_INTERVAL = 250;
 
+
     //Methods definition
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -80,6 +82,7 @@ public class LoginActivity extends AppCompatActivity {
         final EditText etPasswordConfirm = findViewById(R.id.etPasswordConfirm);
         final EditText etUserName = findViewById(R.id.etUserName);
         final EditText etUserMessage = findViewById(R.id.etUserMessage);
+        final ImageView imgFingerPrint = findViewById(R.id.imgBiometricButton);
 
         loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
             @Override
@@ -93,6 +96,9 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 if (loginFormState.getPasswordError() != null) {
                     etPassword.setError(getString(loginFormState.getPasswordError()));
+                }
+                if(etUsernameId.hasFocus() && !displaySignUp){
+                    imgFingerPrint.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -165,6 +171,19 @@ public class LoginActivity extends AppCompatActivity {
         }else{
             displaySignUp = true;
         }//End of if else statement to check the login list isn't empty
+
+        //Set on click listener for the fingerprint image view
+        imgFingerPrint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!displaySignUp){
+                    //Call method to display biometric authentication dialog if setting is active
+                    if(getIsBioLoginActive(v.getContext()) && !displaySignUp){
+                        callBiometricAuthentication();
+                    }
+                }//End of if statement to check sigup display isn't in use
+            }
+        });
 
         //Set on click listener for the login button
         btnLoginButton.setOnClickListener(new View.OnClickListener() {
@@ -342,6 +361,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
+
+
     //Getter and Setter methods
 
     public static Cryptographer getCryptographer() {
@@ -488,19 +509,18 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onTick(long millisUntilFinished) {
                 Log.d("onTick","Log remainder time in  callBiometricAuthentication method in the LoginActivity class.");
-            }
+            }//End of onTick method
 
             @Override
             public void onFinish() {
                 Log.d("onFinish","Log onFinish method call as delay time in callBiometricAuthentication method in the LoginActivity class has finished.");
                 //Check the app is on the foreground before call method to display biometrics box
                 if (LogOutTimer.isAppInForeground()){
+                    ImageView imgFingerPrint = findViewById(R.id.imgBiometricButton);
+                    imgFingerPrint.setVisibility(View.GONE);
                     biometricAuthentication(accountsDB.getAppLoginCursor(accountsDB.getMaxItemIdInTable(MainActivity.getApplogginTable())).getInt(0));
-                }
-
-//                biometricAuthentication(accountsDB.getAppLoginCursor(accountsDB.getMaxItemIdInTable(MainActivity.getApplogginTable())).getInt(0));
-
-            }
+                }//End of if statement to check app is in foreground
+            }//End of onFinish method
         };
         biometricDelay.start();
         Log.d("callBiometAuthenT","Exit callBiometricAuthentication method in the LoginActivity class.");
