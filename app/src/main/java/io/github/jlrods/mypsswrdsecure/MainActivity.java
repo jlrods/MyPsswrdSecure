@@ -518,6 +518,10 @@ public class MainActivity extends AppCompatActivity {
             isPushNotificationSent = true;
             expiredPasswordAccountID = expiredPsswrdAccount.get_id();
             notificationManager.notify(expiredPasswordAccountID, notificationBuilder.build());
+        }else{
+            if (notificationManager != null){
+                NotificationManagerCompat.from(this).cancelAll();
+            }
         }//End of if statement to check at least one account has expired password
         Log.d("Ext_onCreateMain", "Exit onCreate method in MainActivity class.");
     }//End of onCreate method
@@ -576,16 +580,6 @@ public class MainActivity extends AppCompatActivity {
         if(isLogOutCalled){
             updateNotificationIntent(context);
         }//End of if statement to check the isLogOutCalled parameter
-
-//        if(!isLogOutCalled){
-//            if(isPushNotificationSent && !LogOutTimer.isAppInForeground()){
-//                updateNotificationIntent(context);
-//            }//End of if statement to check if push notification has been sent to OS and app not in foreground
-//        }else{
-//            if(isPushNotificationSent && LogOutTimer.isAppInForeground()){
-//                updateNotificationIntent(context);
-//            }//End of if statement to check push notification has been sent and app in foreground
-//        }//End of if else statement to check manual or out logout method was called
         Log.d("onStopMain", "Exit checkForNotificationSent method in MainActivity class.");
     }//End of checkForNotificationSent method
 
@@ -2451,7 +2445,7 @@ public class MainActivity extends AppCompatActivity {
             }//End of if statement to check the category id
             i++;
         }//End of while loop to iterate through the category list
-        //Check if found, if not, retrun -1 instead of category id
+        //Check if found, if not, return -1 instead of category id
         if(!found){
             i = -1;
         }
