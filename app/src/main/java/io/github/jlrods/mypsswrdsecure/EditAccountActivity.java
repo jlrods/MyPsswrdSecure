@@ -7,12 +7,15 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.service.notification.NotificationListenerService;
+import android.service.notification.StatusBarNotification;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.NotificationManagerCompat;
 
 
 public class EditAccountActivity extends DisplayAccountActivity{
@@ -200,8 +203,6 @@ public class EditAccountActivity extends DisplayAccountActivity{
                                                     //values.put("DateCreated",this.account.getDateCreated());
                                                     values.put(MainActivity.getDateChangeColumn(),newAccount.getDateChange());
                                                     if(result = this.accountsDB.updateTable(MainActivity.getAccountsTable(),values)){
-
-
                                                         if(extras.getBoolean("isActivityCalledFromNotification")){
                                                             MainActivity.displayToast(this,accountName + getResources().getString(R.string.accountUpdated),Toast.LENGTH_LONG,Gravity.CENTER);
                                                             //If that is the case we need to manually force MainActivity to be displayed
@@ -215,6 +216,18 @@ public class EditAccountActivity extends DisplayAccountActivity{
                                                             intent.putExtra("accountName",newAccount.getName());
                                                             intent.putExtra("position",extras.getInt("position"));
                                                             setResult(RESULT_OK, intent);
+                                                            //Update notifications and cancel if account before saving had a password "change date" greater than 0
+                                                            //but less than system time OR check box not checked.
+                                                            if ((this.account.getDateChange() > 0 && this.account.getDateChange() < System.currentTimeMillis())
+                                                                && ((this.cbHasToBeChanged.isChecked() && newAccount.getDateChange() > System.currentTimeMillis())
+                                                                || !this.cbHasToBeChanged.isChecked())){
+                                                                    NotificationManagerCompat notificationManager = MainActivity.getNotificationManager();
+                                                                    if (notificationManager != null){
+                                                                        //Send cancel notification request by passing in account ID. If notification was sent
+                                                                        //for this account it will be cancel, otherwise, notification will remain unchanged.
+                                                                        NotificationManagerCompat.from(getBaseContext()).cancel(account.get_id());
+                                                                    }//End of if to check notification manager not null (so notification was sent earlier)
+                                                            }//End of if statement to check account change date was overdue and updated.
                                                             Log.d("onOptionsItemSelected","Set activity result to OK  on onOptionsItemSelected method in EditAccountActivity class.");
                                                             finish();
                                                         }//End of if else statement that checks activity is called from notification
@@ -305,6 +318,16 @@ public class EditAccountActivity extends DisplayAccountActivity{
                                     intents[0].putExtra("accountName",account.getName());
                                     intents[0].putExtra("position",extras.getInt("position"));
                                     setResult(RESULT_OK, intents[0]);
+                                    //Update notifications and cancel if account before saving had a password "change date" greater than 0
+                                    //but less than system time OR check box not checked.
+                                    if (account.getDateChange() > 0 && account.getDateChange() < System.currentTimeMillis()){
+                                        NotificationManagerCompat notificationManager = MainActivity.getNotificationManager();
+                                        if (notificationManager != null){
+                                            //Send cancel notification request by passing in account ID. If notification was sent
+                                            //for this account it will be cancel, otherwise, notification will remain unchanged.
+                                            NotificationManagerCompat.from(getBaseContext()).cancel(account.get_id());
+                                        }//End of if statement to check notification manager is not null, so notification was sent erlier.
+                                    }//End of if statement to check account password was overdue before deleting.
                                     Log.d("onOptionsItemSelected","Set activity result to OK  on onOptionsItemSelected method in EditAccountActivity class.");
                                     finish();
                                 }else{
