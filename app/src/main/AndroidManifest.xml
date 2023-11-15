@@ -55,6 +55,8 @@
             android:name=".PreferencesActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
+            android:name=".Import_ExportActivity" />
+        <activity
             android:name=".AboutActivity" />
         <activity
             android:name=".UpdateAppLoginActivity" />
