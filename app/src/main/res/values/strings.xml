@@ -354,4 +354,9 @@
     <string name="several_accounts_to_remove">\ times.\nThe item will be removed from the following accounts:\</string>
     <string name="one_account_to_remove">\ time.\nThe item will be removed from the following account:\</string>
     <string name="import_export">Import - Export Menu</string>
+    <string name="import_export_data">Import - Export Data</string>
+    <string name="import_description">Import accounts, logins and passwords.</string>
+    <string name="export_description">Export accounts, logins and passwords.</string>
+    <string name="import_data">Import data</string>
+    <string name="export_data">Export data</string>
 </resources>

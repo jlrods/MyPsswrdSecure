@@ -3,6 +3,9 @@ package io.github.jlrods.mypsswrdsecure;
 import android.database.Cursor;
 import android.util.Log;
 import java.util.ArrayList;
+
+import javax.crypto.spec.IvParameterSpec;
+
 import io.github.jlrods.mypsswrdsecure.login.LoginActivity;
 
 public class Account extends Loggin {
@@ -213,4 +216,22 @@ public class Account extends Loggin {
        //Return the category object
        return account;
     }//End of extractCategory method
+
+    @Override
+    public String toString(){
+
+        Log.d("Ent_ToStringAccount","Enter ToString method in the Account class.");
+        //Cryptographer cryptographer = LoginActivity.getCryptographer();
+        String accountString = "";
+        accountString = super.toString();
+//        String userNameString ="";
+//        String psswrdString ="";
+//        //Decrypt user name and store it in a string
+//        userNameString = cryptographer.decryptText(this.userName.getValue(),new IvParameterSpec(this.userName.getIv()));
+//        psswrdString = cryptographer.decryptText(this.psswrd.getValue(), new IvParameterSpec(this.psswrd.getIv()));
+//        accountString = this.name.toString().concat("; ").concat(userNameString).concat("; ").concat(psswrdString);
+        Log.d("Ext_ToStringAccount","Exit ToString method in the Account class.");
+        return accountString;
+    }// End of ToString method
+
 }// End of Account class

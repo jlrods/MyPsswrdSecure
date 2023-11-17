@@ -11,7 +11,7 @@
         android:id="@+id/tvImportExport"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Import - Export Data"
+        android:text="@string/import_export_data"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:layout_marginTop="25dp"/>
 
@@ -31,28 +31,28 @@
             android:id="@+id/tvImportData"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Import accounts, logins and passwords."
+            android:text="@string/import_description"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:layout_marginTop="25dp"/>
         <Button
             android:id="@+id/btnImport"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Import data"
+            android:text="@string/import_data"
             android:layout_gravity="center"
             />
         <TextView
             android:id="@+id/tvExportportData"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Import accounts, logins and passwords."
+            android:text="@string/export_description"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:layout_marginTop="25dp"/>
         <Button
             android:id="@+id/btnExport"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Export data"
+            android:text="@string/export_data"
             android:layout_gravity="center"
             />
 

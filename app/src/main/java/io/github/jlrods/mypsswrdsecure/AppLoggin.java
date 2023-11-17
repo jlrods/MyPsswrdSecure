@@ -92,4 +92,5 @@ public class AppLoggin extends Loggin {
         Log.d("Ext_ExtractLoggin", "Exit extractLoggin method in the AppLoggin  class.");
         return appLoggin;
     }//End of extractAppLoggin method
+
 }// End of AppLogin
