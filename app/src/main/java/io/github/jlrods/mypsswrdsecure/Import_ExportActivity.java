@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 
 import javax.crypto.spec.IvParameterSpec;
 
@@ -116,9 +117,15 @@ public class Import_ExportActivity extends AppCompatActivity {
         if(writeToFile(outputText,context,"Psswrd.txt")){
             outputText = getUserNames();
             if(writeToFile(outputText,context,"UserName.txt")){
-                outputText = getAccounts();
-                if(writeToFile(outputText,context,"Accounts.txt")){
-                    MainActivity.displayToast(this, "Data has been exported successfully", Toast.LENGTH_LONG, Gravity.CENTER);
+                outputText =  getQuestions();
+                if(writeToFile(outputText,context,"Questions.txt")){
+                    outputText = getAccounts();
+                    if(writeToFile(outputText,context,"Accounts.txt")){
+                        outputText = getQuestionLists();
+                        if(writeToFile(outputText,context,"QuestionLists.txt")){
+                            MainActivity.displayToast(this, "Data has been exported successfully", Toast.LENGTH_LONG, Gravity.CENTER);
+                        }
+                    }
                 }
             }
         }
@@ -157,6 +164,34 @@ public class Import_ExportActivity extends AppCompatActivity {
             tempAccount = tempAccount.extractAccount(accountsCursor);
             outputText = outputText.concat(tempAccount.toString()).concat("\n");
         } while (accountsCursor.moveToNext());
+        return  outputText;
+    }
+
+    private String getQuestions(){
+        Cursor questionsCursor = accountsDB.getListQuestionsAvailable();
+        String outputText = "";
+        Question tempQuestion = new Question();
+        questionsCursor.moveToFirst();
+        do {
+            tempQuestion = tempQuestion.extractQuestion(questionsCursor);
+            outputText = outputText.concat(tempQuestion.toString()).concat("\n");
+            //outputText = outputText.concat(cryptographer.decryptText(tempQuestion.getValue(),new IvParameterSpec(tempQuestion.getIv()))).concat("\n");
+        } while (questionsCursor.moveToNext());
+        return  outputText;
+    }
+
+    private String getQuestionLists(){
+        ArrayList<QuestionList> questionLists = accountsDB.getListOfQuestionLists();
+        String outputText = "";
+        QuestionList tempQuestionList = new QuestionList();
+        if (questionLists != null && questionLists.size() > 0){
+            int i = 0;
+            while(i<questionLists.size()){
+                tempQuestionList = questionLists.get(i);
+                outputText = outputText.concat(tempQuestionList.toString()).concat("\n");
+                i++;
+            }
+        }
         return  outputText;
     }
 }

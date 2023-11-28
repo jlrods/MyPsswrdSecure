@@ -2,6 +2,9 @@ package io.github.jlrods.mypsswrdsecure;
 
 import android.database.Cursor;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 
 class QuestionList {
@@ -97,4 +100,22 @@ class QuestionList {
     public int getSize(){
         return this.questions.size();
     }//End of getSize method
+
+    //Method to return string information of the question object
+    @NonNull
+    @Override
+    public String toString() {
+        Log.d("QuestionList_ToStr_Ent","Enter QuestionLIst class ToString method");
+        String separator = "; ";
+        String list = "";
+        if(this.questions != null && this.questions.size() > 0){
+            int i = 0;
+            while(i < this.questions.size()){
+                list = list.concat(this.questions.get(i).toString()).concat(separator);
+                i++;
+            }
+        }
+        return list;
+    }//End of toString method
+
 }//End of QuestionList class

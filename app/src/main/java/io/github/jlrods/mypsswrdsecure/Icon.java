@@ -8,7 +8,7 @@ class Icon {
     private int _id;
     private String name;
     private String location; // File system location (URI)
-    private boolean isSelected; // Bool flat to determine if icon has been selected on RecyclerView
+    private boolean isSelected; // Bool flag to determine if icon has been selected on RecyclerView
     private int resourceID;
 
     //Method definition
