@@ -15,8 +15,11 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
@@ -27,8 +30,10 @@ import io.github.jlrods.mypsswrdsecure.login.LoginActivity;
 public class Import_ExportActivity extends AppCompatActivity {
     ThemeUpdater themeUpdater = null;
     protected Button btnExport = null;
+    protected Button btnImport = null;
     protected AccountsDB accountsDB = null;
     protected Cryptographer cryptographer = null;
+    protected InputStream inputStream = null;
         @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,14 +54,25 @@ public class Import_ExportActivity extends AppCompatActivity {
         TextView tvImportExport = findViewById(R.id.tvImportExport);
         tvImportExport.setTextColor(this.themeUpdater.fetchThemeColor("colorAccent"));
 
-        //String psswrdList = psswrdCursor.toString();
-        btnExport = (Button) findViewById(R.id.btnExport);
+        //String psswrdList = psswrdCursor.toString()
+            // Get the Export button and setup event listener
+        this.btnExport = (Button) findViewById(R.id.btnExport);
         this.btnExport.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 exportData();
             }//End of onClick method
         });//End of setOnClickListener method
+
+        //Get the Import button and setup event listener
+            this.btnImport = (Button) findViewById(R.id.btnImport);
+            this.btnImport.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    importData();
+                }//End of onClick method
+            });//End of setOnClickListener method
+            // Initialize accounts DB object and cryptographer object
             accountsDB = MainActivity.getAccountsDB();
             cryptographer = LoginActivity.getCryptographer();
         Log.d("OnCreate", "Exit onCreate method in the Import_ExportActivity  class.");
@@ -114,9 +130,9 @@ public class Import_ExportActivity extends AppCompatActivity {
         //Call method to get password list as text
         outputText = getPsswrds();
         //Call method to write Passwrods list onto a file
-        if(writeToFile(outputText,context,"Psswrd.txt")){
+        if(writeToFile(outputText,context,getString(R.string.psswrd_txt))){
             outputText = getUserNames();
-            if(writeToFile(outputText,context,"UserName.txt")){
+            if(writeToFile(outputText,context,getString(R.string.username_txt))){
                 outputText =  getQuestions();
                 if(writeToFile(outputText,context,"Questions.txt")){
                     outputText = getAccounts();
@@ -194,4 +210,127 @@ public class Import_ExportActivity extends AppCompatActivity {
         }
         return  outputText;
     }
+
+    private BufferedReader readFromFile(Context context, String fileName) {
+        BufferedReader bufferedReader = null;
+        StringBuilder stringBuilder = null;
+        try {
+            this.inputStream = context.openFileInput(fileName);
+            if ( this.inputStream != null ) {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                bufferedReader = new BufferedReader(inputStreamReader);
+                //text = stringBuilder.toString();
+            }
+        }catch (FileNotFoundException e) {
+            Log.e("login activity", "File not found: " + e.toString());
+            MainActivity.displayToast(this.getBaseContext(),"File with name: "+fileName+" does not exist. Load the fil and try again.",Toast.LENGTH_LONG,Gravity.CENTER);
+        }finally {
+            return bufferedReader;
+        }// End of try catch block
+    }// End of readFromFile method
+
+    private Boolean importData(){
+            Boolean result = false;
+
+        //Call method to get password list as text
+        //Insert pre-defined suggested security questions in the DB. No answer associated to question yet.
+
+        //Check user names are written onto the DB
+        if(writeUserNames()){
+            //Check the passwords are written onto the DB
+            if (writePsswrds()) {
+                result = true;
+            }// End of if that checks writePsswrds finished successfully
+        }// End of if that check write  usernames finished successfully
+
+        String importResultText = "";
+        if (result) {
+            importResultText = "All data has now been imported to the database.";
+        }else{
+            importResultText = "Error while importing data into the database.";
+        }
+        MainActivity.displayToast(this.getBaseContext(),importResultText,Toast.LENGTH_SHORT,Gravity.CENTER);
+         return result;
+        }
+    private Boolean writePsswrds(){
+            Boolean result =false;
+            String inputText = "";
+            Context context = getBaseContext();
+            BufferedReader bufferedReader = readFromFile(context,getString(R.string.psswrd_txt));
+            String receiveString = "";
+            StringBuilder stringBuilder = new StringBuilder();
+            if(bufferedReader != null){
+                try {
+                    while ( (receiveString = bufferedReader.readLine()) != null ) {
+                        //Create Psswrd object
+                        String psswrdValue = receiveString.toString().trim();
+                        //Check the password is not in the DB already.
+                        Cursor cursor = this.accountsDB.getPsswrdByName(psswrdValue);
+                        if (cursor == null || cursor.getCount() == 0) {
+                            byte[] psswrdValueEncrypted =  null;
+                            //Encrypt the Psswrd
+                            psswrdValueEncrypted = this.cryptographer.encryptText(psswrdValue);
+                            //If Psswrd not in the list create new Psswrd object and store it in global variable used to build the account object
+                            Psswrd psswrd = new Psswrd(psswrdValueEncrypted,this.cryptographer.getIv().getIV());
+                            //Call DB method to insert  the Psswrd object into the DB
+                            int psswrdID = -1;
+                            psswrdID = this.accountsDB.addItem(psswrd);
+                            if (psswrdID != -1) {
+                                result = true;
+                            }else {
+                                result = false;
+                            }
+                        } else{
+                            result = true;
+                        }// End of if statement to check password is not in the DB
+                    }// End of while loop to iterate through text file
+                    this.inputStream.close();
+                } catch (IOException e) {
+                    Log.e("Import/Export activity", "Can not read file: " + e.toString());
+                }// End of try catch block
+            }
+
+            return result;
+    }// End of WritePsswrds method
+
+    private Boolean writeUserNames(){
+        Boolean result =false;
+        String inputText = "";
+        Context context = getBaseContext();
+        BufferedReader bufferedReader = readFromFile(context,getString(R.string.username_txt));
+        String receiveString = "";
+        StringBuilder stringBuilder = new StringBuilder();
+        if(bufferedReader != null){
+            try {
+                while ( (receiveString = bufferedReader.readLine()) != null ) {
+                    //Create UserName object
+                    String userNameValue = receiveString.toString().trim();
+                    //Check the password is not in the DB already.
+                    Cursor cursor = this.accountsDB.getUserNameByName(userNameValue);
+                    if (cursor == null || cursor.getCount() == 0) {
+                        byte[] userNameValueEncrypted =  null;
+                        //Encrypt the UserName
+                        userNameValueEncrypted = this.cryptographer.encryptText(userNameValue);
+                        //Create new userName object and store it in global variable used to build the account object
+                        UserName userName = new UserName(userNameValueEncrypted,this.cryptographer.getIv().getIV());
+                        //Call DB method to insert  the userName object into the DB
+                        int userNameID = -1;
+                        userNameID = this.accountsDB.addItem(userName);
+                        if (userNameID != -1) {
+                            result = true;
+                        }else {
+                            result = false;
+                        }//End of if else statement that check userName was inserted into DB
+                    }else{
+                        result = true;
+                    }// End of if to check the user name is not in the DB already
+                }// End of while loop to iterate through text fiile
+                this.inputStream.close();
+            } catch (IOException e) {
+                Log.e("Import/Export activity", "Can not read file: " + e.toString());
+            }// End of try catch block
+        }
+        return result;
+    }// End of writeUserNames method
+
 }

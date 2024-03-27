@@ -359,4 +359,6 @@
     <string name="export_description">Export accounts, logins and passwords.</string>
     <string name="import_data">Import data</string>
     <string name="export_data">Export data</string>
+    <string name="psswrd_txt">Psswrd.txt</string>
+    <string name="username_txt">UserName.txt</string>
 </resources>
