@@ -361,4 +361,5 @@
     <string name="export_data">Export data</string>
     <string name="psswrd_txt">Psswrd.txt</string>
     <string name="username_txt">UserName.txt</string>
+    <string name="questions_txt">Questions.txt</string>
 </resources>

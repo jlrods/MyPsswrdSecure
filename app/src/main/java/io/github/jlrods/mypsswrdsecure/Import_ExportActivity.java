@@ -134,7 +134,7 @@ public class Import_ExportActivity extends AppCompatActivity {
             outputText = getUserNames();
             if(writeToFile(outputText,context,getString(R.string.username_txt))){
                 outputText =  getQuestions();
-                if(writeToFile(outputText,context,"Questions.txt")){
+                if(writeToFile(outputText,context,getString(R.string.questions_txt))){
                     outputText = getAccounts();
                     if(writeToFile(outputText,context,"Accounts.txt")){
                         outputText = getQuestionLists();
@@ -213,7 +213,7 @@ public class Import_ExportActivity extends AppCompatActivity {
 
     private BufferedReader readFromFile(Context context, String fileName) {
         BufferedReader bufferedReader = null;
-        StringBuilder stringBuilder = null;
+        //StringBuilder stringBuilder = null;
         try {
             this.inputStream = context.openFileInput(fileName);
             if ( this.inputStream != null ) {
@@ -239,7 +239,13 @@ public class Import_ExportActivity extends AppCompatActivity {
         if(writeUserNames()){
             //Check the passwords are written onto the DB
             if (writePsswrds()) {
-                result = true;
+                //Check answers are written onto the DB
+                if(writeAnswers()){
+                    //Check questions are written onto the DB.
+                    if(writeQuestions()){
+                        result = true;
+                    }// End of if that checks write Questions finished successfully.
+                }//End of if that checks writeAsnwers finished successfully.
             }// End of if that checks writePsswrds finished successfully
         }// End of if that check write  usernames finished successfully
 
@@ -254,16 +260,15 @@ public class Import_ExportActivity extends AppCompatActivity {
         }
     private Boolean writePsswrds(){
             Boolean result =false;
-            String inputText = "";
             Context context = getBaseContext();
             BufferedReader bufferedReader = readFromFile(context,getString(R.string.psswrd_txt));
             String receiveString = "";
-            StringBuilder stringBuilder = new StringBuilder();
+            //StringBuilder stringBuilder = new StringBuilder();
             if(bufferedReader != null){
                 try {
                     while ( (receiveString = bufferedReader.readLine()) != null ) {
                         //Create Psswrd object
-                        String psswrdValue = receiveString.toString().trim();
+                        String psswrdValue = receiveString.trim();
                         //Check the password is not in the DB already.
                         Cursor cursor = this.accountsDB.getPsswrdByName(psswrdValue);
                         if (cursor == null || cursor.getCount() == 0) {
@@ -279,6 +284,7 @@ public class Import_ExportActivity extends AppCompatActivity {
                                 result = true;
                             }else {
                                 result = false;
+                                break;
                             }
                         } else{
                             result = true;
@@ -295,16 +301,15 @@ public class Import_ExportActivity extends AppCompatActivity {
 
     private Boolean writeUserNames(){
         Boolean result =false;
-        String inputText = "";
         Context context = getBaseContext();
         BufferedReader bufferedReader = readFromFile(context,getString(R.string.username_txt));
         String receiveString = "";
-        StringBuilder stringBuilder = new StringBuilder();
+        //StringBuilder stringBuilder = new StringBuilder();
         if(bufferedReader != null){
             try {
                 while ( (receiveString = bufferedReader.readLine()) != null ) {
                     //Create UserName object
-                    String userNameValue = receiveString.toString().trim();
+                    String userNameValue = receiveString.trim();
                     //Check the password is not in the DB already.
                     Cursor cursor = this.accountsDB.getUserNameByName(userNameValue);
                     if (cursor == null || cursor.getCount() == 0) {
@@ -320,6 +325,7 @@ public class Import_ExportActivity extends AppCompatActivity {
                             result = true;
                         }else {
                             result = false;
+                            break;
                         }//End of if else statement that check userName was inserted into DB
                     }else{
                         result = true;
@@ -333,4 +339,96 @@ public class Import_ExportActivity extends AppCompatActivity {
         return result;
     }// End of writeUserNames method
 
-}
+    private Boolean writeAnswers() {
+        Boolean result = false;
+        Context context = getBaseContext();
+        BufferedReader bufferedReader = readFromFile(context,getString(R.string.questions_txt));
+        String receiveString = "";
+        if(bufferedReader != null){
+            try {
+                while ( (receiveString = bufferedReader.readLine()) != null ) {
+                    //Split the text line into an array to separate text values
+                    String[] questionAnswerArray = receiveString.split("; ");
+                    //Select the correct location from the array to read the answer
+                    String answerValue = questionAnswerArray[3].trim();
+                    //Check the password is not in the DB already.
+                    Cursor cursor = this.accountsDB.getAnswerByName(answerValue);
+                    if (cursor == null || cursor.getCount() == 0) {
+                        byte[] answerValueEncrypted =  null;
+                        //Encrypt the answer
+                        answerValueEncrypted = this.cryptographer.encryptText(answerValue);
+                        //Create new answer object and store it in global variable used to build the account object
+                        Answer answer = new Answer(answerValueEncrypted,this.cryptographer.getIv().getIV());
+                        //Call DB method to insert  the answer object into the DB
+                        int answerID = -1;
+                        answerID = this.accountsDB.addItem(answer);
+                        if (answerID != -1) {
+                            result = true;
+                        }else {
+                            result = false;
+                            break;
+                        }//End of if else statement that check userName was inserted into DB
+                    }else{
+                        result = true;
+                    }// End of if to check the user name is not in the DB already
+                }
+            } catch (IOException e) {
+                Log.e("Import/Export activity", "Can not read file: " + e.toString());
+            }// End of try catch block
+        }
+        return result;
+    }// End of writeAsnwers method
+
+    private Boolean writeQuestions() {
+        Boolean result = false;
+        Context context = getBaseContext();
+        BufferedReader bufferedReader = readFromFile(context,getString(R.string.questions_txt));
+        String receiveString = "";
+        if(bufferedReader != null){
+            try {
+                while ( (receiveString = bufferedReader.readLine()) != null ) {
+                    //Split the line text into an array object
+                    String[] questionAnswerArray = receiveString.split("; ");
+                    //Select the correct location from the array to read the question text
+                    String questionValue = questionAnswerArray[1].trim();
+                    //Select the correct location from the array to read the answer
+                    String answerValue = questionAnswerArray[3].trim();
+                    //Check the answer is in the DB already.
+                    Cursor answerCursor = this.accountsDB.getAnswerByName(answerValue);
+                    Answer answer = null;
+                    //If Answer is in the DB (cursor not null and not empty), get the Answer object
+                    if (answerCursor != null && answerCursor.getCount() > 0) {
+                        answer = Answer.extractAnswer(answerCursor);
+                        //Check the question is not in the DB already.
+                        Cursor cursor = this.accountsDB.getQuestionByValue(questionValue);
+                        if (cursor == null || cursor.getCount() == 0) {
+                            //Create new question object
+                            Question question = new Question(questionValue,answer);
+                            //Call DB method to insert  the question object into the DB
+                            int questionID = -1;
+                            questionID = this.accountsDB.addItem(question);
+                            //Check the question insertion was successful.
+                            if (questionID != -1) {
+                                result = true;
+                            }else {
+                                result = false;
+                                break;
+                            }//End of if else statement that check userName was inserted into DB
+                        }else{
+                            result = true;
+                        }// End of if to check the user name is not in the DB already
+                    }else{
+                        //If answer is not in the DB, already, stop and return failure.
+                        result = false;
+                        break;
+                    }//End of if that checks the answer is already in the DB
+
+                }
+            } catch (IOException e) {
+                Log.e("Import/Export activity", "Can not read file: " + e.toString());
+            }// End of try catch block
+        }
+        return result;
+    }// End of writeQuestions method
+
+}//End of Import_Export class

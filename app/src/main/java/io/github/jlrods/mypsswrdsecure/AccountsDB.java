@@ -942,7 +942,49 @@ public class AccountsDB extends SQLiteOpenHelper {
             Log.d("getAnswerByID","Exit the getAnswerByID method in the AccountsDB class without finding the account with id: "+_id);
             return null;
         }//End of if else statement
+        //return cursor;
     }//End of getAnswerByID method
+
+    public Cursor getAnswerCursorByID(int _id){
+        Log.d("getUserNameByID","Enter the getUserNameByID method in the AccountsDB class.");
+        Cursor cursor = this.runQuery("SELECT * FROM "+MainActivity.getAnswerTable()+" WHERE "+MainActivity.getIdColumn()+" = "+ _id);
+        if(cursor != null && cursor.getCount() >0){
+            cursor.moveToFirst();
+            Log.d("getUserNameByID","Exit successfully (user name with id " +_id+ " has been found) the getUserNameByID method in the AccountsDB class.");
+        }else{
+            Log.d("getUserNameByID","Exit the getUserNameByID method in the AccountsDB class without finding the user name with id: "+_id);
+        }//End of if else statement
+        return cursor;
+    }//End of getUserNameByID method
+
+    //Method to get a specific answer, by passing in its text value as an argument
+    public Cursor getAnswerByName(String answer){
+        Log.d("getAnswerByID","Enter the getAnswerByID method in the AccountsDB class.");
+
+        //Declare and initialize a boolean flag to inform the name was found
+        boolean found = false;
+        String answerDecrypted = "";
+        //Get all data from ANSWER table
+        Cursor answerCursor = this.runQuery("SELECT * FROM "+MainActivity.getAnswerTable());
+        //Iterate through it, decrypt answer values and compare against value passed in as parameter
+        while(!found && answerCursor.moveToNext()){
+            //Decrypt the answer value coming form DB
+            answerDecrypted = cryptographer.decryptText(answerCursor.getBlob(1),new IvParameterSpec(answerCursor.getBlob(2)));
+            //Compare the decrypted answer being looked for
+            if(answer.trim().equals(answerDecrypted.trim())){
+                found = true;
+            }//End of if statement to compare user names
+        }//End of while loop to iterate through list of user names
+        if(found){
+            Log.d("getAnswerByName","Exit successfully (answer with value " +answer + " has been found) the getAnswerdByName method in the AccountsDB class.");
+            return this.getAnswerCursorByID(answerCursor.getInt(0));
+        }else{
+            Log.d("getAnswerByName","Exit the getAnswerByName method in the AccountsDB class without finding the password with value: "+answer);
+            //This is a work around to avoid null exception when the password being looked for does not exist. Down the road the returned cursor
+            //can be checked that count is > 0.
+            return  this.getAnswerCursorByID(-1);
+        }//End of if else statement
+    }//End of getAnswerByName method
 
     //Method to get the list of questions list recorded on the DB
     public ArrayList<QuestionList> getListOfQuestionLists(){
