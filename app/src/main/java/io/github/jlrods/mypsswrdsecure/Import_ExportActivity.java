@@ -127,19 +127,23 @@ public class Import_ExportActivity extends AppCompatActivity {
     private void exportData(){
         String outputText = "";
         Context context = getBaseContext();
-        //Call method to get password list as text
-        outputText = getPsswrds();
-        //Call method to write Passwrods list onto a file
-        if(writeToFile(outputText,context,getString(R.string.psswrd_txt))){
-            outputText = getUserNames();
-            if(writeToFile(outputText,context,getString(R.string.username_txt))){
-                outputText =  getQuestions();
-                if(writeToFile(outputText,context,getString(R.string.questions_txt))){
-                    outputText = getAccounts();
-                    if(writeToFile(outputText,context,"Accounts.txt")){
-                        outputText = getQuestionLists();
-                        if(writeToFile(outputText,context,"QuestionLists.txt")){
-                            MainActivity.displayToast(this, "Data has been exported successfully", Toast.LENGTH_LONG, Gravity.CENTER);
+        //Call method to get category list as text
+        outputText = getCategories();
+        if(writeToFile(outputText,context,getString(R.string.category_txt))){
+            //Call method to get password list as text
+            outputText = getPsswrds();
+            //Call method to write Passwrods list onto a file
+            if(writeToFile(outputText,context,getString(R.string.psswrd_txt))){
+                outputText = getUserNames();
+                if(writeToFile(outputText,context,getString(R.string.username_txt))){
+                    outputText =  getQuestions();
+                    if(writeToFile(outputText,context,getString(R.string.questions_txt))){
+                        outputText = getAccounts();
+                        if(writeToFile(outputText,context,"Accounts.txt")){
+                            outputText = getQuestionLists();
+                            if(writeToFile(outputText,context,"QuestionLists.txt")){
+                                MainActivity.displayToast(this, "Data has been exported successfully", Toast.LENGTH_LONG, Gravity.CENTER);
+                            }
                         }
                     }
                 }
@@ -147,6 +151,17 @@ public class Import_ExportActivity extends AppCompatActivity {
         }
     }
 
+    private String getCategories(){
+        Cursor categoryCursor = accountsDB.getCategoryListCursor();
+        String outputText = "";
+        Category tempCategory = new Category();
+        categoryCursor.moveToFirst();
+        do {
+            tempCategory = tempCategory.extractCategory(categoryCursor);
+            outputText = outputText.concat(tempCategory.toString()).concat("\n");
+        } while (categoryCursor.moveToNext());
+        return  outputText;
+    }
     private String getPsswrds(){
         Cursor psswrdCursor = accountsDB.getPsswrdList();
         String outputText = "";
@@ -187,12 +202,14 @@ public class Import_ExportActivity extends AppCompatActivity {
         Cursor questionsCursor = accountsDB.getListQuestionsAvailable();
         String outputText = "";
         Question tempQuestion = new Question();
-        questionsCursor.moveToFirst();
-        do {
-            tempQuestion = tempQuestion.extractQuestion(questionsCursor);
-            outputText = outputText.concat(tempQuestion.toString()).concat("\n");
-            //outputText = outputText.concat(cryptographer.decryptText(tempQuestion.getValue(),new IvParameterSpec(tempQuestion.getIv()))).concat("\n");
-        } while (questionsCursor.moveToNext());
+        if (questionsCursor.getCount() > 0){
+            questionsCursor.moveToFirst();
+            do {
+                tempQuestion = tempQuestion.extractQuestion(questionsCursor);
+                outputText = outputText.concat(tempQuestion.toString()).concat("\n");
+                //outputText = outputText.concat(cryptographer.decryptText(tempQuestion.getValue(),new IvParameterSpec(tempQuestion.getIv()))).concat("\n");
+            } while (questionsCursor.moveToNext());
+        }
         return  outputText;
     }
 
@@ -235,19 +252,23 @@ public class Import_ExportActivity extends AppCompatActivity {
         //Call method to get password list as text
         //Insert pre-defined suggested security questions in the DB. No answer associated to question yet.
 
-        //Check user names are written onto the DB
-        if(writeUserNames()){
-            //Check the passwords are written onto the DB
-            if (writePsswrds()) {
-                //Check answers are written onto the DB
-                if(writeAnswers()){
-                    //Check questions are written onto the DB.
-                    if(writeQuestions()){
-                        result = true;
-                    }// End of if that checks write Questions finished successfully.
-                }//End of if that checks writeAsnwers finished successfully.
-            }// End of if that checks writePsswrds finished successfully
-        }// End of if that check write  usernames finished successfully
+        //Check categories are written onto the DB
+        if(writeCategories()){
+            //Check user names are written onto the DB
+            if(writeUserNames()){
+                //Check the passwords are written onto the DB
+                if (writePsswrds()) {
+                    //Check answers are written onto the DB
+                    if(writeAnswers()){
+                        //Check questions are written onto the DB.
+                        if(writeQuestions()){
+                            result = true;
+                        }// End of if that checks write Questions finished successfully.
+                    }//End of if that checks writeAsnwers finished successfully.
+                }// End of if that checks writePsswrds finished successfully
+            }// End of if that check write  usernames finished successfully
+        }
+
 
         String importResultText = "";
         if (result) {
@@ -258,6 +279,48 @@ public class Import_ExportActivity extends AppCompatActivity {
         MainActivity.displayToast(this.getBaseContext(),importResultText,Toast.LENGTH_SHORT,Gravity.CENTER);
          return result;
         }
+
+    private Boolean writeCategories(){
+        Boolean result =false;
+        Context context = getBaseContext();
+        BufferedReader bufferedReader = readFromFile(context,getString(R.string.category_txt));
+        String receiveString = "";
+        //StringBuilder stringBuilder = new StringBuilder();
+        if(bufferedReader != null){
+            try {
+                while ( (receiveString = bufferedReader.readLine()) != null ) {
+                    //Create Category object
+                    //Split the text line into an array to separate text values
+                    String[] categoryArray = receiveString.split("; ");
+                    String categoryValue = categoryArray[0].trim();
+                    int iconID = Integer.valueOf(categoryArray[1].trim());
+                    Icon catIcon = accountsDB.getIconByID(iconID);
+                    //Check the category is not in the DB already.
+                    Cursor cursor = this.accountsDB.getCategoryByName(categoryValue);
+                    if (cursor == null || cursor.getCount() == 0) {
+                        //If Category not in the list create new Psswrd object and store it in global variable used to build the account object
+                        Category category = new Category(categoryValue,catIcon);
+                        //Call DB method to insert  the Psswrd object into the DB
+                        int categorydID = -1;
+                        categorydID = this.accountsDB.addItem(category);
+                        if (categorydID != -1) {
+                            result = true;
+                        }else {
+                            result = false;
+                            break;
+                        }
+                    } else{
+                        result = true;
+                    }// End of if statement to check password is not in the DB
+                }// End of while loop to iterate through text file
+                this.inputStream.close();
+            } catch (IOException e) {
+                Log.e("Import/Export activity", "Can not read file: " + e.toString());
+            }// End of try catch block
+        }
+
+        return result;
+    }// End of WritePsswrds method
     private Boolean writePsswrds(){
             Boolean result =false;
             Context context = getBaseContext();

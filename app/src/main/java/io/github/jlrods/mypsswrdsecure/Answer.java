@@ -36,7 +36,7 @@ class Answer extends StringValue{
         Log.d("Answer_ToStr_Ent","Enter Answer class ToString method");
         Cryptographer cryptographer = LoginActivity.getCryptographer();
         String separator = "; ";
-        return this._id + separator + cryptographer.decryptText(this.getValue(),new IvParameterSpec(this.getIv()));
+        return cryptographer.decryptText(this.getValue(),new IvParameterSpec(this.getIv()));
     }//Endof toString method
 
     //Method to extract an Answer from a cursor object
