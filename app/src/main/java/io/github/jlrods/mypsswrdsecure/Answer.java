@@ -35,7 +35,6 @@ class Answer extends StringValue{
     public String toString() {
         Log.d("Answer_ToStr_Ent","Enter Answer class ToString method");
         Cryptographer cryptographer = LoginActivity.getCryptographer();
-        String separator = "; ";
         return cryptographer.decryptText(this.getValue(),new IvParameterSpec(this.getIv()));
     }//Endof toString method
 

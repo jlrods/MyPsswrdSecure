@@ -127,28 +127,45 @@ public class Import_ExportActivity extends AppCompatActivity {
     private void exportData(){
         String outputText = "";
         Context context = getBaseContext();
-        //Call method to get category list as text
-        outputText = getCategories();
-        if(writeToFile(outputText,context,getString(R.string.category_txt))){
-            //Call method to get password list as text
-            outputText = getPsswrds();
-            //Call method to write Passwrods list onto a file
-            if(writeToFile(outputText,context,getString(R.string.psswrd_txt))){
-                outputText = getUserNames();
-                if(writeToFile(outputText,context,getString(R.string.username_txt))){
-                    outputText =  getQuestions();
-                    if(writeToFile(outputText,context,getString(R.string.questions_txt))){
-                        outputText = getAccounts();
-                        if(writeToFile(outputText,context,"Accounts.txt")){
-                            outputText = getQuestionLists();
-                            if(writeToFile(outputText,context,"QuestionLists.txt")){
-                                MainActivity.displayToast(this, "Data has been exported successfully", Toast.LENGTH_LONG, Gravity.CENTER);
+        //Call method to get Icon list as text
+        outputText = getIcons();
+        if(writeToFile(outputText,context,getString(R.string.icons_txt))){
+            //Call method to get category list as text
+            outputText = getCategories();
+            if(writeToFile(outputText,context,getString(R.string.category_txt))){
+                //Call method to get password list as text
+                outputText = getPsswrds();
+                //Call method to write Passwords list onto a file
+                if(writeToFile(outputText,context,getString(R.string.psswrd_txt))){
+                    outputText = getUserNames();
+                    if(writeToFile(outputText,context,getString(R.string.username_txt))){
+                        outputText =  getQuestions();
+                        if(writeToFile(outputText,context,getString(R.string.questions_txt))){
+                            outputText = getAccounts();
+                            if(writeToFile(outputText,context,"Accounts.txt")){
+                                outputText = getQuestionLists();
+                                if(writeToFile(outputText,context,"QuestionLists.txt")){
+                                    MainActivity.displayToast(this, "Data has been exported successfully", Toast.LENGTH_LONG, Gravity.CENTER);
+                                }
                             }
                         }
                     }
                 }
             }
         }
+
+    }
+
+    private String getIcons(){
+        Cursor iconsCursor = accountsDB.getIcons();
+        String outputText = "";
+        Icon tempIcon = new Icon();
+        iconsCursor.moveToFirst();
+        do {
+            tempIcon = tempIcon.extractIcon(iconsCursor);
+            outputText = outputText.concat(tempIcon.toString()).concat("\n");
+        } while (iconsCursor.moveToNext());
+        return  outputText;
     }
 
     private String getCategories(){
@@ -252,22 +269,28 @@ public class Import_ExportActivity extends AppCompatActivity {
         //Call method to get password list as text
         //Insert pre-defined suggested security questions in the DB. No answer associated to question yet.
 
-        //Check categories are written onto the DB
-        if(writeCategories()){
-            //Check user names are written onto the DB
-            if(writeUserNames()){
-                //Check the passwords are written onto the DB
-                if (writePsswrds()) {
-                    //Check answers are written onto the DB
-                    if(writeAnswers()){
-                        //Check questions are written onto the DB.
-                        if(writeQuestions()){
-                            result = true;
-                        }// End of if that checks write Questions finished successfully.
-                    }//End of if that checks writeAsnwers finished successfully.
-                }// End of if that checks writePsswrds finished successfully
-            }// End of if that check write  usernames finished successfully
+        //Check Icons are written onto the DB
+        if(writeIcons()){
+            //Check categories are written onto the DB
+            if(writeCategories()){
+                //Check user names are written onto the DB
+                if(writeUserNames()){
+                    //Check the passwords are written onto the DB
+                    if (writePsswrds()) {
+                        //Check answers are written onto the DB
+                        if(writeAnswers()){
+                            //Check questions are written onto the DB.
+                            if(writeQuestions()){
+                                if(writeQuestionLists()){
+                                    result = true;
+                                }
+                            }// End of if that checks write Questions finished successfully.
+                        }//End of if that checks writeAsnwers finished successfully.
+                    }// End of if that checks writePsswrds finished successfully
+                }// End of if that check write  usernames finished successfully
+            }
         }
+
 
 
         String importResultText = "";
@@ -279,6 +302,46 @@ public class Import_ExportActivity extends AppCompatActivity {
         MainActivity.displayToast(this.getBaseContext(),importResultText,Toast.LENGTH_SHORT,Gravity.CENTER);
          return result;
         }
+
+    private Boolean writeIcons(){
+        Boolean result =false;
+        Context context = getBaseContext();
+        BufferedReader bufferedReader = readFromFile(context,getString(R.string.icons_txt));
+        String receiveString = "";
+        //StringBuilder stringBuilder = new StringBuilder();
+        if(bufferedReader != null){
+            try {
+                while ( (receiveString = bufferedReader.readLine()) != null ) {
+                    //Create Icon object
+                    //Split the text line into an array to separate text values
+                    String[] iconArray = receiveString.split("; ");
+                    String iconName = iconArray[1].trim();
+                    //Check the icon is not in the DB already.
+                    Icon icon = this.accountsDB.getIconByName(iconName);
+                    if (icon == null ) {
+                        //If Category not in the list create new Psswrd object and store it in global variable used to build the account object
+                        icon = new Icon(iconName,"Resources");
+                        //Call DB method to insert  the Category object into the DB
+                        icon.set_id(-1);
+                        icon.set_id(this.accountsDB.addItem(icon));
+                        if (icon.get_id() != -1) {
+                            result = true;
+                        }else {
+                            result = false;
+                            break;
+                        }
+                    } else{
+                        result = true;
+                    }// End of if statement to check password is not in the DB
+                }// End of while loop to iterate through text file
+                this.inputStream.close();
+            } catch (IOException e) {
+                Log.e("Import/Export activity", "Can not read file: " + e.toString());
+            }// End of try catch block
+        }
+
+        return result;
+    }// End of WriteIcons method
 
     private Boolean writeCategories(){
         Boolean result =false;
@@ -293,14 +356,14 @@ public class Import_ExportActivity extends AppCompatActivity {
                     //Split the text line into an array to separate text values
                     String[] categoryArray = receiveString.split("; ");
                     String categoryValue = categoryArray[0].trim();
-                    int iconID = Integer.valueOf(categoryArray[1].trim());
-                    Icon catIcon = accountsDB.getIconByID(iconID);
+                    String iconName = categoryArray[2].trim();
+                    Icon catIcon = accountsDB.getIconByName(iconName);
                     //Check the category is not in the DB already.
                     Cursor cursor = this.accountsDB.getCategoryByName(categoryValue);
                     if (cursor == null || cursor.getCount() == 0) {
                         //If Category not in the list create new Psswrd object and store it in global variable used to build the account object
                         Category category = new Category(categoryValue,catIcon);
-                        //Call DB method to insert  the Psswrd object into the DB
+                        //Call DB method to insert  the Category object into the DB
                         int categorydID = -1;
                         categorydID = this.accountsDB.addItem(category);
                         if (categorydID != -1) {
@@ -318,9 +381,9 @@ public class Import_ExportActivity extends AppCompatActivity {
                 Log.e("Import/Export activity", "Can not read file: " + e.toString());
             }// End of try catch block
         }
-
         return result;
-    }// End of WritePsswrds method
+    }// End of WriteCategories method
+
     private Boolean writePsswrds(){
             Boolean result =false;
             Context context = getBaseContext();
@@ -413,7 +476,7 @@ public class Import_ExportActivity extends AppCompatActivity {
                     //Split the text line into an array to separate text values
                     String[] questionAnswerArray = receiveString.split("; ");
                     //Select the correct location from the array to read the answer
-                    String answerValue = questionAnswerArray[3].trim();
+                    String answerValue = questionAnswerArray[1].trim();
                     //Check the password is not in the DB already.
                     Cursor cursor = this.accountsDB.getAnswerByName(answerValue);
                     if (cursor == null || cursor.getCount() == 0) {
@@ -453,9 +516,9 @@ public class Import_ExportActivity extends AppCompatActivity {
                     //Split the line text into an array object
                     String[] questionAnswerArray = receiveString.split("; ");
                     //Select the correct location from the array to read the question text
-                    String questionValue = questionAnswerArray[1].trim();
+                    String questionValue = questionAnswerArray[0].trim();
                     //Select the correct location from the array to read the answer
-                    String answerValue = questionAnswerArray[3].trim();
+                    String answerValue = questionAnswerArray[1].trim();
                     //Check the answer is in the DB already.
                     Cursor answerCursor = this.accountsDB.getAnswerByName(answerValue);
                     Answer answer = null;
@@ -493,5 +556,65 @@ public class Import_ExportActivity extends AppCompatActivity {
         }
         return result;
     }// End of writeQuestions method
+
+    private Boolean writeQuestionLists() {
+        Boolean result = false;
+        Context context = getBaseContext();
+        BufferedReader bufferedReader = readFromFile(context,getString(R.string.questionlists_txt));
+        String receiveString = "";
+        if(bufferedReader != null){
+            try {
+
+                while ( (receiveString = bufferedReader.readLine()) != null ) {
+                    //Split the line text into an array object
+                    String[] questionAnswerArray = receiveString.split("; ");
+                    QuestionList questionList = new QuestionList();
+                    int i = 1;
+                    while(i <= (questionAnswerArray.length-2) ){
+                        //Select the correct location from the array to read the question text
+                        String questionValue = questionAnswerArray[i].trim();
+                        //Check the question is not in the DB already.
+                        Cursor cursor = this.accountsDB.getQuestionByValue(questionValue);
+                        if (cursor != null && cursor.getCount() > 0) {
+                            Question question = Question.extractQuestion(cursor);
+                            if(question.get_id()!= -1){
+                                questionList.addQuestion(question);
+                            }
+
+                            //Cursor questionListCursor = this.accountsDB.getQuestionCursorByID()
+
+                            //Create new question object
+                            //Question question = Question.extractQuestion(cursor);
+
+                            //Question question = new Question(questionValue,answer);
+                            //Call DB method to insert  the question object into the DB
+                            //int questionID = -1;
+                            //questionID = this.accountsDB.addItem(question);
+                            //Check the question insertion was successful.
+
+                        }else{
+
+                        }// End of if to check the user name is not in the DB already
+                        i = i +2;
+                    }
+                    questionList.set_id(this.accountsDB.getSecQuestionListID(questionList));
+                    if(questionList.get_id() == -1){
+                        questionList.set_id(this.accountsDB.addItem(questionList));
+                        if (questionList.get_id() != -1) {
+                            result = true;
+                        }else {
+                            result = false;
+                            break;
+                        }//End of if else statement that check userName was inserted into DB
+                    }else{
+                        result = true;
+                    }
+                }
+            } catch (IOException e) {
+                Log.e("Import/Export activity", "Can not read file: " + e.toString());
+            }// End of try catch block
+        }
+        return result;
+        }
 
 }//End of Import_Export class

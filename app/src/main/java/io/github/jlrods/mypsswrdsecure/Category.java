@@ -101,7 +101,8 @@ public class Category {
         String categoryString = "";
         //categoryString = super.toString();
         categoryString = categoryString.concat(this.getName())
-                .concat(separator).concat(String.valueOf(this.icon.get_id()));
+                .concat(separator).concat(String.valueOf(this.icon.get_id()))
+                .concat(separator).concat(this.icon.getName());
         Log.d("Ext_ToStringCategory","Exit ToString method in the Category class.");
         return categoryString;
     }// End of ToString method

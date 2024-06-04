@@ -106,4 +106,17 @@ class Icon {
         Log.d("Ext_ExtractIcon","Exit extractIcon method in the Icon class.");
         return icon;
     }// End of extractIcon method
+
+    @Override
+    public String toString(){
+
+        Log.d("Ent_ToStringIcon","Enter ToString method in the Icon class.");
+        String separator = "; ";
+        String iconString = "";
+        iconString = iconString.concat(String.valueOf(this.get_id())).concat(separator).concat(this.getName())
+                .concat(separator).concat(this.location)
+                .concat(separator).concat(String.valueOf(this.resourceID));
+        Log.d("Ext_ToStringIcon","Exit ToString method in the Icon class.");
+        return iconString;
+    }// End of ToString method
 }// End of Icon class

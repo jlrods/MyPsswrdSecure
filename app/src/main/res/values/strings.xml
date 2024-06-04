@@ -363,4 +363,6 @@
     <string name="username_txt">UserName.txt</string>
     <string name="questions_txt">Questions.txt</string>
     <string name="category_txt">Category.txt</string>
+    <string name="icons_txt">Icons.txt</string>
+    <string name="questionlists_txt">QuestionLists.txt</string>
 </resources>

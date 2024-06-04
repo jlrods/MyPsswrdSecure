@@ -110,9 +110,9 @@ class QuestionList {
         String list = "";
         if(this.questions != null && this.questions.size() > 0){
             int i = 0;
-            list = list.concat(String.valueOf(this.get_id())).concat(separator);
+            list = list.concat(String.valueOf(this.get_id()));
             while(i < this.questions.size()){
-                list = list.concat(this.questions.get(i).toString()).concat(separator);
+                list = list.concat(separator).concat(this.questions.get(i).toString());
                 i++;
             }
         }

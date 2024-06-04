@@ -612,6 +612,12 @@ public class AccountsDB extends SQLiteOpenHelper {
         return  this.runQuery("SELECT * FROM "+MainActivity.getAccountsTable());
     }//End of getAccountsList method
 
+    //Method to get the list of accounts from the DB
+    public Cursor getIcons(){
+        Log.d("getIcons","Enter/Exit the getIcons method in the AccountsDB class.");
+        return  this.runQuery("SELECT * FROM "+MainActivity.getIconTable());
+    }//End of getAccountsList method
+
     //Method to get the number of times a specific user name is being used in different accounts as per the DB
     public int getTimesUsedUserName(int userNameID){
         Log.d("getTimesUsedUserName","Enter/Exit the getTimesUsedUserName method in the AccountsDB class.");
