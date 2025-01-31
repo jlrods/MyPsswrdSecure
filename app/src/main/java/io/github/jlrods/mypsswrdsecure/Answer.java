@@ -5,6 +5,10 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import java.util.ArrayList;
 
+import javax.crypto.spec.IvParameterSpec;
+
+import io.github.jlrods.mypsswrdsecure.login.LoginActivity;
+
 // Class to handle Answer object definition
 class Answer extends StringValue{
     //Method definition
@@ -30,7 +34,8 @@ class Answer extends StringValue{
     @Override
     public String toString() {
         Log.d("Answer_ToStr_Ent","Enter Answer class ToString method");
-        return "Answer ID: " + this._id +"\nValue: " + this.value;
+        Cryptographer cryptographer = LoginActivity.getCryptographer();
+        return cryptographer.decryptText(this.getValue(),new IvParameterSpec(this.getIv()));
     }//Endof toString method
 
     //Method to extract an Answer from a cursor object

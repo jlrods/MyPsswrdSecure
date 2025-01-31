@@ -345,5 +345,5 @@
     <string name="being_used">\ está siendo usado \</string>
     <string name="several_accounts_to_remove">\ veces.\nEl ítem será eliminado de las siguientes cuentas:\</string>
     <string name="one_account_to_remove">\ vez.\nEl ítem será eliminado de la siguiente cuenta:\</string>
-
+    <string name="import_export">Menu Importar - Exportar</string>
 </resources>

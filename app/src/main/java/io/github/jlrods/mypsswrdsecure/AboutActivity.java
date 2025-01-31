@@ -1,6 +1,6 @@
 package io.github.jlrods.mypsswrdsecure;
 
-import android.app.PendingIntent;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
@@ -9,9 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.TaskStackBuilder;
 
-import io.github.jlrods.mypsswrdsecure.login.LoginActivity;
 
 public class AboutActivity extends AppCompatActivity {
     ThemeUpdater themeUpdater;

@@ -3,6 +3,9 @@ package io.github.jlrods.mypsswrdsecure;
 import android.database.Cursor;
 import android.util.Log;
 import java.util.ArrayList;
+
+import javax.crypto.spec.IvParameterSpec;
+
 import io.github.jlrods.mypsswrdsecure.login.LoginActivity;
 
 public class Account extends Loggin {
@@ -213,4 +216,32 @@ public class Account extends Loggin {
        //Return the category object
        return account;
     }//End of extractCategory method
+
+    @Override
+    public String toString(){
+
+        Log.d("Ent_ToStringAccount","Enter ToString method in the Account class.");
+        Cryptographer cryptographer = LoginActivity.getCryptographer();
+        String separator = "; ";
+        String accountString = "";
+        accountString = super.toString();
+        accountString = accountString.concat(separator).concat(this.category.getName())
+                .concat(separator).concat(String.valueOf(this.icon.getName())).concat(separator)
+                .concat(String.valueOf(this.isFavorite));
+                if(this.getQuestionList() != null){
+                    accountString = accountString.concat(separator).concat(String.valueOf(this.getQuestionList().get_id()));
+                }else{
+                    accountString = accountString.concat(separator).concat("null");
+                }
+
+//        String userNameString ="";
+//        String psswrdString ="";
+//        //Decrypt user name and store it in a string
+//        userNameString = cryptographer.decryptText(this.userName.getValue(),new IvParameterSpec(this.userName.getIv()));
+//        psswrdString = cryptographer.decryptText(this.psswrd.getValue(), new IvParameterSpec(this.psswrd.getIv()));
+//        accountString = this.name.toString().concat("; ").concat(userNameString).concat("; ").concat(psswrdString);
+        Log.d("Ext_ToStringAccount","Exit ToString method in the Account class.");
+        return accountString;
+    }// End of ToString method
+
 }// End of Account class

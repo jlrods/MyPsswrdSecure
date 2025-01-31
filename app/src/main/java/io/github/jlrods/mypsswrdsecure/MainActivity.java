@@ -578,7 +578,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d("onStopMain", "Enter checkForNotificationSent method in MainActivity class.");
         //Check if app has been logged out. In that case, update the notification intent to open from login display instead.
         if(isLogOutCalled){
-            updateNotificationIntent(context);
+//            updateNotificationIntent(context);
         }//End of if statement to check the isLogOutCalled parameter
         Log.d("onStopMain", "Exit checkForNotificationSent method in MainActivity class.");
     }//End of checkForNotificationSent method
@@ -586,7 +586,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static void updateNotificationIntent(Context context) {
 
-        //Here needs to be check notification manager was created, that means a notificaiton was sent during onCreate activity.
+        //Here needs to be check notification manager was created, that means a notification was sent during onCreate activity.
         //Therefore, the update is required.
         if (notificationManager != null) {
             //Update the intent so it calls the login screen
@@ -689,6 +689,10 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_search:
                 Log.d("onOptionsItemSelected", "Exit the onOptionsItemSelected method in the MainActivity class with Search option selected.");
                 this.search(item);
+                return true;
+            case R.id.action_import_export:
+                Log.d("onOptionsItemSelected", "Exit the onOptionsItemSelected method in the MainActivity class with Import - Export option selected.");
+                this.throwActivityNoExtras(MainActivity.this,Import_ExportActivity.class,-1);
                 return true;
             default:
                 Log.d("onOptionsItemSelected", "Exit the onOptionsItemSelected method in the MainActivity class with Default option selected.");
@@ -3114,18 +3118,22 @@ public class MainActivity extends AppCompatActivity {
     public static void logout(Context context){
         Log.d("logout", "Enter logout method in MainActivity class called by: "+ context.toString());
         if(isAutoLogOutActive()){
+            //Stop the auto logout timer service
             Intent iService = new Intent(context,AutoLogOutService.class);
             context.stopService(iService);
-        }
+            //check for notifications already sent. If notification manager is active, clear all notifications
+            //before logout action.
+            if(notificationManager != null){
+                notificationManager.cancelAll();
+            }
+        }//End of if statement to check auto logout is active
         if(LogOutTimer.isAppInForeground()){
-
             Intent i = new Intent(context, LoginActivity.class);
             //Add intent falgs to clear the back stack, so pressing back button on LoginActivity will not go into the app activities without logging in.
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             //Set boolean flag to confirm app has logged out
             MainActivity.isLoggedOut = true;
             (context).startActivity(i);
-
         }else{
             //Call method to recursively finish all activities in the back stack
             ((Activity)context).finishAffinity();

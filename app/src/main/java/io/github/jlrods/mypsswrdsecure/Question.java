@@ -53,7 +53,8 @@ class Question{
     @Override
     public String toString() {
         Log.d("Question_ToStr_Ent","Enter Question class ToString method");
-        return "Question ID: " + this._id +"\nValue: " + this.value+"\nAnswer: "+ this.answer.toString() ;
+        String separator = "; ";
+        return this.value + separator + this.answer.toString();
     }//End of toString method
 
     //Method to extract an Answer from a cursor object

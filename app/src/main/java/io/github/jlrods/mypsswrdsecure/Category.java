@@ -3,6 +3,8 @@ package io.github.jlrods.mypsswrdsecure;
 import android.database.Cursor;
 import android.util.Log;
 
+import io.github.jlrods.mypsswrdsecure.login.LoginActivity;
+
 public class Category {
 
     //Attribute definition
@@ -90,4 +92,19 @@ public class Category {
         //Return the category object
         return category;
     }//End of extractCategory method
+
+    @Override
+    public String toString(){
+
+        Log.d("Ent_ToStringCategory","Enter ToString method in the Category class.");
+        String separator = "; ";
+        String categoryString = "";
+        //categoryString = super.toString();
+        categoryString = categoryString.concat(this.getName())
+                .concat(separator).concat(String.valueOf(this.icon.get_id()))
+                .concat(separator).concat(this.icon.getName());
+        Log.d("Ext_ToStringCategory","Exit ToString method in the Category class.");
+        return categoryString;
+    }// End of ToString method
+
 }// End of Category class

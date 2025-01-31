@@ -1,5 +1,6 @@
 package io.github.jlrods.mypsswrdsecure;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,6 +30,13 @@ public class AddAccountActivity extends DisplayAccountActivity {
         getSupportActionBar().setTitle(R.string.addAccTitle);
         Log.d("OnCreateDispAcc", "eXIT onCreate method in the AddAccountActivity class.");
     }//End of onCreate method
+
+    // And override this method
+    @Override
+    public boolean onNavigateUp() {
+        finish();
+        return true;
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

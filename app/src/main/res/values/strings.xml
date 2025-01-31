@@ -353,4 +353,16 @@
     <string name="being_used">\ is being used \</string>
     <string name="several_accounts_to_remove">\ times.\nThe item will be removed from the following accounts:\</string>
     <string name="one_account_to_remove">\ time.\nThe item will be removed from the following account:\</string>
+    <string name="import_export">Import - Export Menu</string>
+    <string name="import_export_data">Import - Export Data</string>
+    <string name="import_description">Import accounts, logins and passwords.</string>
+    <string name="export_description">Export accounts, logins and passwords.</string>
+    <string name="import_data">Import data</string>
+    <string name="export_data">Export data</string>
+    <string name="psswrd_txt">Psswrd.txt</string>
+    <string name="username_txt">UserName.txt</string>
+    <string name="questions_txt">Questions.txt</string>
+    <string name="category_txt">Category.txt</string>
+    <string name="icons_txt">Icons.txt</string>
+    <string name="questionlists_txt">QuestionLists.txt</string>
 </resources>
